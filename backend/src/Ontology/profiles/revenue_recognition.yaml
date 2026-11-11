@@ -1,0 +1,67 @@
+profile:
+  id: revenue-recognition-selected
+  ontology_artifact: revenue-recognition
+  description: >-
+    Revenue recognition context: revenue entries, accruals, deferred revenue, fiscal periods and reporting controls.
+    Only the explicitly selected classes are sent to the LLM; parents appear as context only.
+  include_ancestors: true
+
+groups:
+  revenue_recognition:
+    - label: Revenue Entry
+      iri: http://example.org/ontology/revenue-recognition#RevenueEntry
+      parent: Manufacturing Accounting Entry
+      maps_to_business: Accounting Entry
+      definition: "A record of revenue recognized for an order, with a trigger and an accounting standard."
+    - label: Accrual
+      iri: http://example.org/ontology/revenue-recognition#Accrual
+      parent: Manufacturing Accounting Entry
+      maps_to_business: Accounting Entry
+      definition: "A revenue estimate booked before invoicing."
+    - label: Deferred Revenue
+      iri: http://example.org/ontology/revenue-recognition#DeferredRevenue
+      parent: Manufacturing Accounting Entry
+      maps_to_business: Accounting Entry
+      definition: "Revenue received for a contract and held until a release trigger."
+    - label: Fiscal Period
+      iri: http://example.org/ontology/revenue-recognition#FiscalPeriod
+      parent: Reporting Period
+      maps_to_business: Time Period
+      definition: "A fiscal year, quarter, period or week that revenue is posted to."
+    - label: Control
+      iri: http://example.org/ontology/revenue-recognition#Control
+      parent: Manufacturing Control
+      maps_to_business: Control
+      definition: "A check in the reporting process, with a frequency and an owner."
+
+relationships:
+  - label: posted
+    type: POSTED
+    iri: http://example.org/ontology/revenue-recognition#POSTED
+    domain: "Person"
+    range: "Revenue Entry"
+    ends_defined_in_other_files: {Person: manufacturing}
+  - label: posted to
+    type: POSTED_TO
+    iri: http://example.org/ontology/revenue-recognition#POSTED_TO
+    domain: "Revenue Entry"
+    range: "Profit Center"
+    ends_defined_in_other_files: {Profit Center: manufacturing}
+  - label: posted to period
+    type: POSTED_TO_PERIOD
+    iri: http://example.org/ontology/revenue-recognition#POSTED_TO_PERIOD
+    domain: "Revenue Entry"
+    range: "Fiscal Period"
+  - label: recognized as
+    type: RECOGNIZED_AS
+    iri: http://example.org/ontology/revenue-recognition#RECOGNIZED_AS
+    domain: "Sales Order"
+    range: "Revenue Entry"
+    ends_defined_in_other_files: {Sales Order: manufacturing}
+
+# Relationships declared in other files that involve this file's classes
+related_relationships:
+  - type: OWNED_BY
+    declared_in: manufacturing
+    domain: "Control | Process Document"
+    range: "Role"

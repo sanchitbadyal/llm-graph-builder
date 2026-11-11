@@ -1,0 +1,14 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix ex: <urn:ontology-registry:> .
+
+ex:AssertionSubjectShape
+    a sh:NodeShape ;
+    sh:targetClass ex:AssertionSubject ;
+    sh:property [ sh:path ex:subjectClass ; sh:minCount 1 ] ;
+    sh:property [ sh:path ex:evidence ; sh:minCount 1 ] .
+
+ex:EvidenceShape
+    a sh:NodeShape ;
+    sh:targetObjectsOf ex:evidence ;
+    sh:property [ sh:path ex:sourceDocument ; sh:minCount 1 ; sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] ;
+    sh:property [ sh:path ex:sourceChunk ; sh:minCount 1 ; sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] .

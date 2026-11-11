@@ -17,22 +17,25 @@ Follow these steps to set up and run the project locally:
 
 1. Clone the Repository:
 
-> git clone https://github.com/neo4j-labs/llm-graph-builder.git
+ git clone https://github.com/neo4j-labs/llm-graph-builder.git
 
-> cd llm-graph-builder
+ cd llm-graph-builder
 
 2. Create a virtual environment (recommended):
 
-> python3.12 -m venv venv
-> source venv/bin/activate  # On Windows: venv\Scripts\activate
+ python3.12 -m venv venv
+ source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 3. Install Dependency :
 
-> pip install -r requirements.txt
+ pip install -r requirements.txt
 
 ## Run backend project using unicorn
 Run the server:
-> uvicorn score:app --reload
+ uvicorn score:app --reload
+
+# To debug
+ PYTHONPATH=. uvicorn score:app --reload 2>&1 | tee -a backend.log
 
 ## Run project using docker
 ## prerequisite 

@@ -6,6 +6,7 @@ import logging
 import os
 import re
 import time
+import uuid
 from datetime import datetime, timezone
 from typing import List
 
@@ -232,6 +233,7 @@ async def extract_knowledge_graph_from_file(
     """Extract a knowledge graph from a file or URL source."""
     try:
         start_time = time.time()
+        logging.info("OWL ontology profile will provide extraction constraints")
         graph = create_graph_database_connection(credentials)
         graphDb_data_Access = graphDBdataAccess(graph)
 
@@ -625,7 +627,18 @@ async def upload_large_file_into_chunks(
     try:
         start = time.time()
         originalname = sanitize_filename(originalname)
-        upload_id = sanitize_upload_id(uploadId)
+        try:
+            upload_id = sanitize_upload_id(uploadId)
+        except ValueError:
+            # Keep uploads working when older clients omit or send an invalid
+            # upload id. UUID5 makes the fallback stable across chunks for
+            # the same filename and client value.
+            fallback_seed = f"{originalname}:{uploadId or 'default'}"
+            upload_id = str(uuid.uuid5(uuid.NAMESPACE_URL, fallback_seed))
+            logging.warning(
+                "Invalid upload id received; using fallback upload id %s",
+                upload_id,
+            )
         graph = create_graph_database_connection(credentials)
         result = await asyncio.to_thread(upload_file, graph, model, file, chunkNumber, totalChunks, originalname, credentials.uri, CHUNK_DIR, MERGED_DIR, upload_id)
         end = time.time()
@@ -642,9 +655,10 @@ async def upload_large_file_into_chunks(
         message="Unable to upload file in chunks"
         graph = create_graph_database_connection(credentials)   
         graphDb_data_Access = graphDBdataAccess(graph)
-        graphDb_data_Access.update_exception_db(originalname, message)
-        logging.info(message)
-        return create_api_response('Failed', message=message, error="Internal server error", file_name=originalname)
+        error_details = str(e)
+        graphDb_data_Access.update_exception_db(originalname, f"{message}: {error_details}")
+        logging.exception("%s: %s", message, error_details)
+        return create_api_response('Failed', message=message, error=error_details, file_name=originalname)
     finally:
         gc.collect()
             

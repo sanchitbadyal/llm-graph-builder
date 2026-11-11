@@ -1,0 +1,67 @@
+profile:
+  id: certification-complete
+  ontology_artifact: certification
+  description: >-
+    Complete profile generated from Certification.rdf; all named classes and properties declared in the RDF artifact are represented here.
+  include_ancestors: true
+  include_compatible_properties: true
+
+groups:
+  ontology_classes:
+    - label: "Attesting Agent"
+      iri: https://spec.industrialontologies.org/ontology/construct/AttestingAgent
+      parent: "Agent"
+      definition: "agent that has an attesting agent role"
+    - label: "Attesting Agent Role"
+      iri: https://spec.industrialontologies.org/ontology/construct/AttestingAgentRole
+      parent: "Agent Role"
+      definition: "agent role held by an agent acting on behalf of some certifying body when it participates in an attesting process"
+    - label: "Attesting Process"
+      iri: https://spec.industrialontologies.org/ontology/construct/AttestingProcess
+      parent: "Planned Process"
+      definition: "planned process to determine the value of one or more qualities, capabilities, and/or process characteristics of an entity of interest in order to verify that they satisfy some requirement specification prescribed by some standard"
+    - label: "Attestation Certificate"
+      iri: https://spec.industrialontologies.org/ontology/construct/Certificate
+      parent: "Information Content Entity"
+      definition: "information content entity that can serve as proof that one or more attesting processes took place to verify that one or more entities satisfy certain requirement specifications"
+    - label: "Certificate Granting Process"
+      iri: https://spec.industrialontologies.org/ontology/construct/CertificateGrantingProcess
+      parent: "Planned Process"
+      definition: "planned process of granting a certificate for an entity of interest, preceded by the attestation of that entity"
+    - label: "Certifying Body"
+      iri: https://spec.industrialontologies.org/ontology/construct/CertifyingBody
+      parent: "Organization"
+      definition: "organization that has a certifying body role"
+    - label: "Certifying Body Role"
+      iri: https://spec.industrialontologies.org/ontology/construct/CertifyingBodyRole
+      parent: "Role"
+      definition: "role held by an organization that participates in some certificate granting process"
+
+type_sets:
+  certifiable: &certifiable [Material Product, Raw Material, Material Component, Material Artifact, Piece Of Equipment, Engineered System, Person, Organization, Planned Process, Manufacturing Process, Business Process, Capability]
+
+relationships:
+  - label: "attests to"
+    type: ATTESTS_TO
+    iri: https://spec.industrialontologies.org/ontology/construct/attestsTo
+    domain: ["Attesting Process"]
+    range: ["Attestation Certificate"]
+    definition: "relationship from an attesting process to a certificate"
+  - label: "certificate granted by"
+    type: CERTIFICATE_GRANTED_BY
+    iri: https://spec.industrialontologies.org/ontology/construct/certificateGrantedBy
+    domain: ["Attestation Certificate"]
+    range: ["Certifying Body"]
+    definition: "relationship from a certificate to a certifying body that holds when the certifying body issues the certificate as a specified output of some certificate granting process"
+  - label: "certifies"
+    type: CERTIFIES
+    iri: https://spec.industrialontologies.org/ontology/construct/certifies
+    domain: ["Attestation Certificate"]
+    range: *certifiable
+    definition: "relationship from a certificate to an entity that holds when the certificate has been granted by a certifying body that has participated in a certificate granting process"
+  - label: "has certificate"
+    type: HAS_CERTIFICATE
+    iri: https://spec.industrialontologies.org/ontology/construct/hasCertificate
+    domain: *certifiable
+    range: ["Attestation Certificate"]
+    definition: "relationship from an entity to a certificate that holds when the certificate has been granted by a certifying body that has participated in a certificate granting process"

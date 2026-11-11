@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://example.org/ontology/revenue-recognition#"
+     xml:base="http://example.org/ontology/revenue-recognition"
+     xmlns:rev="http://example.org/ontology/revenue-recognition#"
+     xmlns:biz="http://example.org/ontology/business#"
+     xmlns:mfg="http://example.org/ontology/manufacturing#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:dc="http://purl.org/dc/terms/">
+    <owl:Ontology rdf:about="http://example.org/ontology/revenue-recognition">
+        <owl:imports rdf:resource="http://example.org/ontology/manufacturing"/>
+        <owl:versionInfo>0.1.0 draft</owl:versionInfo>
+        <dc:title>Revenue Recognition Ontology</dc:title>
+        <dc:created>2026-11-04</dc:created>
+        <dc:modified>2026-11-04</dc:modified>
+        <dc:description xml:lang="en">Revenue recognition classes for a manufacturer: revenue entries, accruals, deferred revenue, fiscal periods and reporting controls. Each class has one manufacturing-layer parent, which in turn has a business-layer parent. Replace the example.org namespace with your own before use.</dc:description>
+    </owl:Ontology>
+
+    <!-- ///////////////  Classes  /////////////// -->
+
+    <owl:Class rdf:about="http://example.org/ontology/revenue-recognition#RevenueEntry">
+        <rdfs:label xml:lang="en">Revenue Entry</rdfs:label>
+        <skos:prefLabel xml:lang="en">Revenue Entry</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/manufacturing#ManufacturingAccountingEntry"/>
+        <skos:definition xml:lang="en">A record of revenue recognized for an order, with a trigger and an accounting standard.</skos:definition>
+        <dc:source>Order-to-Cash; Revenue Recognition</dc:source>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/revenue-recognition#Accrual">
+        <rdfs:label xml:lang="en">Accrual</rdfs:label>
+        <skos:prefLabel xml:lang="en">Accrual</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/manufacturing#ManufacturingAccountingEntry"/>
+        <skos:definition xml:lang="en">A revenue estimate booked before invoicing.</skos:definition>
+        <dc:source>Revenue Recognition</dc:source>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/revenue-recognition#DeferredRevenue">
+        <rdfs:label xml:lang="en">Deferred Revenue</rdfs:label>
+        <skos:prefLabel xml:lang="en">Deferred Revenue</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/manufacturing#ManufacturingAccountingEntry"/>
+        <skos:definition xml:lang="en">Revenue received for a contract and held until a release trigger.</skos:definition>
+        <dc:source>Revenue Recognition</dc:source>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/revenue-recognition#FiscalPeriod">
+        <rdfs:label xml:lang="en">Fiscal Period</rdfs:label>
+        <skos:prefLabel xml:lang="en">Fiscal Period</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/manufacturing#ReportingPeriod"/>
+        <skos:definition xml:lang="en">A fiscal year, quarter, period or week that revenue is posted to.</skos:definition>
+        <dc:source>Revenue Recognition</dc:source>
+        <skos:editorialNote xml:lang="en">The same fields also sit on Sales Order and Revenue Entry. Decide whether to keep them in one place.</skos:editorialNote>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/revenue-recognition#Control">
+        <rdfs:label xml:lang="en">Control</rdfs:label>
+        <skos:prefLabel xml:lang="en">Control</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/manufacturing#ManufacturingControl"/>
+        <skos:definition xml:lang="en">A check in the reporting process, with a frequency and an owner.</skos:definition>
+        <dc:source>Revenue Recognition</dc:source>
+    </owl:Class>
+
+    <!-- ///////////////  Object properties  /////////////// -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/revenue-recognition#RECOGNIZED_AS">
+        <rdfs:label xml:lang="en">recognized as</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#SalesOrder"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/revenue-recognition#RevenueEntry"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/revenue-recognition#POSTED_TO_PERIOD">
+        <rdfs:label xml:lang="en">posted to period</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/revenue-recognition#RevenueEntry"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/revenue-recognition#FiscalPeriod"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/revenue-recognition#POSTED_TO">
+        <rdfs:label xml:lang="en">posted to</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/revenue-recognition#RevenueEntry"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#ProfitCenter"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/revenue-recognition#POSTED">
+        <rdfs:label xml:lang="en">posted</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#Person"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/revenue-recognition#RevenueEntry"/>
+    </owl:ObjectProperty>
+
+</rdf:RDF>

@@ -1,0 +1,405 @@
+= Ontology Registry Architecture
+:toc:
+:toclevels: 3
+:source-highlighter: highlight.js
+
+== Purpose
+
+`backend/src/ontology_registry/` is the ontology intelligence layer for the Cabalmar knowledge graph. It provides a controlled path from OWL/RDF artifacts to ontology-guided extraction, validation, evidence handling, entity resolution, Neo4j metadata projection, and ontology-aware query support.
+
+The package is intentionally additive. The existing YAML business model and Neo4j LLM Graph Builder remain available as the compatibility path.
+
+== High-level flow
+
+[source,text]
+----
+Ontology files
+  foundational ontology.rdf (BFO)
+  business.owl           (Business Core)
+  cabalmar-domain.owl    (Cabalmar domain)
+        |
+        v
+manifest.yaml
+        |
+        v
+OntologyRepository + LocalImportResolver
+        |
+        v
+SemanticResolver
+        |
+        +--> OntologyContextBuilder --> OntologyExtractionAdapter
+        |                                      |
+        |                                      v
+        |                              LLMGraphTransformer
+        |
+        +--> envelope conversion --> semantic validation --> SHACL validation
+        |                                      |
+        |                                      v
+        |                              evidence verification
+        |                                      |
+        |                                      v
+        |                              entity resolution
+        |                                      |
+        |                                      v
+        |                              Neo4j metadata projection
+        |
+        +--> OntologyQueryPlanner --> GraphRAG answer context
+----
+
+== Files and responsibilities
+
+=== `__init__.py`
+
+The public package façade. It re-exports the main classes and functions so callers can use:
+
+[source,python]
+----
+from src.ontology_registry import SemanticResolver, OntologyRepository
+----
+
+It exposes artifact loading, semantic resolution, context building, extraction envelopes, validation, evidence, entity resolution, query planning, and authority utilities.
+
+=== `manifest.py`
+
+Defines the ontology catalog data model:
+
+* `OntologyArtifact` — one approved ontology file, including its IRI, path, version, layer, imports, media type, and checksum.
+* `OntologyManifest` — the catalog of artifacts and lookup operations by artifact ID or ontology IRI.
+* `load_manifest()` — loads and validates `manifest.yaml`.
+* `ManifestError` — reports malformed metadata, missing files, duplicate IDs, or duplicate IRIs.
+
+`OntologyArtifact.sha256()` calculates a file digest. `verify_checksum()` compares the digest with the declared `sha256:` value. This protects the runtime from silently using a changed ontology file.
+
+=== `repository.py`
+
+Provides the application-facing local catalog through `OntologyRepository`.
+
+Main operations:
+
+* `from_manifest(path)` loads the catalog.
+* `get(id)` returns an artifact.
+* `list_artifacts()` returns all approved artifacts.
+* `imports_for(id)` returns locally recognized import IDs.
+* `verify_artifact(id)` verifies the artifact checksum.
+
+This class does not parse semantic OWL content. It is the artifact boundary.
+
+=== `imports.py`
+
+Implements reproducible RDF/XML import resolution.
+
+`LocalImportResolver`:
+
+* reads `owl:imports` directly from RDF/XML;
+* compares file-declared imports with manifest-declared imports;
+* resolves only imports present in the local catalog;
+* verifies checksums while resolving;
+* detects circular imports;
+* returns a root-first `ResolvedImportClosure`.
+
+For the current Cabalmar catalog, the closure is:
+
+[source,text]
+----
+cabalmar-domain -> business -> bfo
+----
+
+External imports are not downloaded implicitly. They must be added to the local catalog before they can participate in a reproducible closure.
+
+=== `semantic.py`
+
+Implements the Phase 2 semantic index and resolver using the RDF/XML standard library parser.
+
+Data types:
+
+* `OntologyClass` — class IRI, labels, direct parents, layer, and artifact ID.
+* `OntologyProperty` — property IRI, labels, domain, range, inverse properties, layer, and artifact ID.
+* `SemanticIndex` — indexes classes and properties by IRI and labels.
+
+`SemanticResolver`:
+
+* parses every artifact in an import closure;
+* resolves classes and properties by IRI or unique label;
+* calculates transitive subclass ancestry;
+* finds inverse properties declared in either direction;
+* checks subject/property/object compatibility using inherited classes, domains, and ranges;
+* reports the artifact layer (`foundation`, `business-core`, or `domain`).
+
+This is explicit RDF/RDFS-style resolution. It is not a complete OWL reasoner; restrictions, equivalence axioms, and advanced OWL inference are outside this module.
+
+=== `context.py`
+
+Builds a compact prompt-safe representation of semantic information.
+
+`OntologyContextBuilder` creates `OntologyContext` containing:
+
+* canonical class IRIs;
+* preferred labels and labels;
+* direct parents and ancestor closure;
+* property IRIs and labels;
+* domain, range, and inverse metadata;
+* ontology layer;
+* extraction safety instructions.
+
+`OntologyContext.to_prompt()` serializes this profile as JSON embedded in a prompt section. The context is an allowlist, not a suggestion list.
+
+=== `adapter.py`
+
+Connects the ontology context to LangChain's graph transformer without replacing the existing transformer.
+
+`OntologyExtractionAdapter.build()` produces `OntologyExtractionProfile`:
+
+* `allowed_nodes` — labels allowed by `LLMGraphTransformer`;
+* `allowed_relationships` — exact endpoint tuples plus YAML-selected relationship names for inherited or unresolved endpoint rules;
+* `prompt_context` — class and relationship definitions, domain/range guidance, and safety instructions from the selected YAML profiles.
+
+The adapter reads the profile files under `backend/src/Ontology/profiles/` to select prompt context. It does not derive that allowlist from OWL/RDF. The OWL semantic resolver remains available separately for validation and query planning.
+
+The default adapter uses:
+
+* `ONTOLOGY_MANIFEST_PATH`;
+* `ONTOLOGY_ROOT_ID`, defaulting to `business`;
+* `ONTOLOGY_CONTEXT_MAX_CHARS`, an optional prompt-size limit.
+
+`default_profile()` is used by the opt-in LLM integration.
+
+=== `envelope.py`
+
+Defines the stable extraction result independent of LangChain.
+
+`ExtractionAssertion` represents one candidate statement:
+
+* subject IRI and class IRI;
+* predicate IRI;
+* object IRI or literal;
+* mentions;
+* ontology layer;
+* assertion status;
+* evidence;
+* model and timestamp;
+* confidence;
+* validation status.
+
+`OntologyExtractionEnvelope` groups assertions with ontology, source-document, model, and envelope-version metadata.
+
+Assertion status distinguishes `explicit`, `deterministically_derived`, `ontology_inferred`, `llm_candidate`, `quarantined`, `rejected`, and `verified`. Validation status separately tracks `not_validated`, `valid`, `invalid`, and `quarantined`.
+
+The model rejects malformed assertions, simultaneous IRI/literal objects, invalid confidence values, and unknown statuses.
+
+=== `provenance.py`
+
+Defines `EvidenceProvenance` for source traceability.
+
+It records:
+
+* source document ID and version;
+* source chunk ID;
+* page;
+* exact text span;
+* half-open character offsets;
+* source hash;
+* evidence status.
+
+`chunk_hash()` creates the canonical `sha256:<digest>` format. `EvidenceProvenance.verify()` checks that offsets select exactly the recorded text span.
+
+=== `graph_document.py`
+
+Bridges LangChain `GraphDocument` output to the ontology envelope.
+
+`graph_documents_to_envelope()`:
+
+* preserves the original graph-document shape;
+* creates candidate assertions for extracted relationships;
+* maps profile labels to ontology IRIs when available;
+* creates deterministic temporary mention IRIs;
+* records chunk/document references when available;
+* leaves evidence unverified because `GraphDocument` does not expose exact spans.
+
+`filter_graph_documents_by_envelope()` removes graph relationships whose corresponding assertions are not valid before projection.
+
+=== `validation.py`
+
+Performs deterministic semantic validation.
+
+`validate_envelope()` checks:
+
+* subject class exists;
+* predicate exists;
+* object class exists;
+* domain/range compatibility holds.
+
+Unknown terms and incompatible relationships are rejected. Missing object class information is quarantined because entity resolution may recover it later.
+
+`validate_graph_document_nodes()` validates graph-document node classes and removes unknown ontology classes. Full ontology-IRI property keys are checked, while legacy application/YAML properties are preserved for compatibility.
+
+=== `shacl.py`
+
+Validates envelope assertions against SHACL shapes using RDFLib and pySHACL.
+
+`assertion_graph()` creates a small RDF graph for one assertion, including subject class, predicate/object, and evidence metadata.
+
+`validate_envelope_shacl()` loads the default shape file at `backend/src/Ontology/shapes/phase8.ttl`, validates each assertion, and marks nonconforming assertions as quarantined.
+
+SHACL validates instance shape and evidence requirements. It does not replace OWL semantic resolution or Cabalmar business-rule validation.
+
+=== `evidence.py`
+
+Verifies assertion evidence against a chunk map.
+
+`verify_envelope_evidence()` accepts strings or LangChain `Document` objects and checks:
+
+* chunk existence;
+* source hash, when supplied;
+* exact text span and offsets;
+* missing evidence behavior.
+
+With `require_exact=False`, missing spans are reported but do not automatically quarantine candidates. With `require_exact=True`, missing or invalid evidence is quarantined.
+
+=== `entity_resolution.py`
+
+Provides conservative ontology-aware entity resolution.
+
+`EntityResolver` performs exact normalized alias matching only. It never converts LLM confidence into identity.
+
+It supports:
+
+* `EntityCandidate` definitions;
+* resolved, unresolved, and ambiguous outcomes;
+* deterministic duplicate/reconciliation groups;
+* loading ontology-aware candidates from existing Neo4j `__Entity__` nodes;
+* additive entity metadata projection to Neo4j;
+* additive relationship provenance projection to Neo4j;
+* envelope resolution that quarantines ambiguous matches.
+
+Legacy Neo4j entities without `primary_class_iri` are ignored by the ontology resolver and remain available to the old pipeline.
+
+=== `query.py`
+
+Provides lightweight ontology-aware query expansion.
+
+`OntologyQueryPlanner.plan()` matches words in a question to known class and property labels and returns:
+
+* matched class IRIs;
+* matched property IRIs;
+* expanded terms;
+* a safe Cypher predicate requiring valid, non-rejected assertions.
+
+`ontology_answering_context()` supplies answer policy: use valid assertions, distinguish explicit/inferred information, exclude quarantined/rejected facts, and cite evidence when available.
+
+=== `authority.py`
+
+Defines the OWL/YAML authority boundary. YAML profiles select the classes and relationships included in extraction prompts and provide their definitions and domain/range guidance. OWL/RDF remains the semantic validation authority for class/property identity, hierarchy, and relationship compatibility.
+
+The module also assigns YAML authority over business rules, KPIs, conflicts, and source mappings.
+
+The module also compares label sets, checks manifest-version compatibility, and builds explicit IRI migration plans. It does not silently rewrite either source.
+
+== Manifest and ontology artifact flow
+
+The catalog is at `backend/src/Ontology/manifest.yaml`. It currently registers:
+
+[cols="1,2,1,1"]
+|===
+| ID | Layer | File | Import
+
+| `bfo` | foundation | `foundational ontology.rdf` | none
+| `business` | business-core | `business.owl` | BFO
+| `cabalmar-domain` | domain | `cabalmar-domain.owl` | Business Core
+|===
+
+The manifest is authoritative for local artifact paths, versions, layers, and checksums. The RDF/XML files remain authoritative for their declared `owl:imports`; the resolver requires both declarations to agree.
+
+== Runtime extraction flow
+
+The existing path remains active by default:
+
+[source,text]
+----
+ONTOLOGY_GUIDED_EXTRACTION=false
+  -> BusinessModel.yaml context
+  -> existing allowed nodes/relationships
+  -> existing LLMGraphTransformer
+----
+
+The opt-in ontology path is:
+
+[source,text]
+----
+ONTOLOGY_GUIDED_EXTRACTION=true
+  -> default_profile()
+  -> selected YAML profiles
+  -> class/property allowlist and relationship guidance
+  -> ontology context prompt
+  -> dynamic allowed nodes/relationships
+  -> existing LLMGraphTransformer
+  -> existing normalization and persistence
+----
+
+The semantic resolver is loaded separately when downstream ontology validation or query planning needs OWL/RDF semantics.
+
+The adapter does not yet make the LLM output itself ontology-aware. The envelope conversion and validation utilities provide the next boundary for that workflow.
+
+== Configuration
+
+Relevant environment variables:
+
+[source,dotenv]
+----
+ONTOLOGY_GUIDED_EXTRACTION=false
+ONTOLOGY_MANIFEST_PATH=""
+ONTOLOGY_ROOT_ID=business
+ONTOLOGY_CONTEXT_MAX_CHARS=""
+----
+
+An empty manifest path uses `backend/src/Ontology/manifest.yaml`. The context-size setting is optional; if configured and exceeded, extraction fails explicitly rather than silently truncating ontology guidance.
+
+== Recommended assertion pipeline
+
+[source,text]
+----
+GraphDocument
+  -> graph_documents_to_envelope()
+  -> validate_envelope()
+  -> validate_envelope_shacl()
+  -> verify_envelope_evidence()
+  -> resolve_envelope()
+  -> filter_graph_documents_by_envelope()
+  -> project_entity_metadata()
+  -> project_relationship_metadata()
+  -> Neo4j
+----
+
+Each stage returns or produces status metadata. Invalid and ambiguous claims should be quarantined, not coerced into accepted facts.
+
+== Important limitations
+
+* `semantic.py` is not a complete OWL 2 reasoner.
+* Current RDF/XML parsing does not interpret all OWL restrictions or equivalence axioms.
+* LangChain `GraphDocument` generally provides chunk references but not exact text offsets, so evidence starts as unverified.
+* The adapter uses domain labels for backward compatibility with `LLMGraphTransformer`; canonical IRIs are retained in the prompt/envelope layer.
+* Existing YAML business rules remain active and are not automatically generated from OWL.
+* Neo4j remains the operational projection, not the ontology authority.
+
+== Test coverage
+
+Tests for the registry are under `tests/test_ontology_*.py`. They cover:
+
+* manifest and checksum handling;
+* import closure and drift detection;
+* class/property indexing and inheritance;
+* ontology context generation;
+* Phase 4 extraction adapter behavior;
+* envelope and evidence serialization;
+* graph-document conversion;
+* semantic and SHACL validation;
+* evidence verification;
+* entity resolution and Neo4j projection helpers;
+* query planning;
+* authority and migration policy.
+
+Run the focused registry tests with:
+
+[source,bash]
+----
+PYTHONPATH=backend venv/bin/python -m pytest tests/test_ontology_*.py -q
+----

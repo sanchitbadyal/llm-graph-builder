@@ -1,0 +1,182 @@
+= Ontology-Guided Knowledge Graph Architecture
+
+:toc:
+:sectnums:
+
+== Purpose
+
+This document describes the current generic ontology-guided knowledge graph
+runtime. The company-specific YAML business-model implementation has been
+removed. OWL/RDF is the source of semantic identity; SHACL supplies instance
+constraints; Neo4j remains the operational projection.
+
+== Current Runtime Flow
+
+[source,text]
+----
+Source document
+  -> loader and chunker
+  -> OWL manifest and local import closure
+  -> semantic resolver
+  -> human-readable ontology context
+  -> structured transformer allowlists
+  -> LLMGraphTransformer
+  -> ontology extraction envelope
+  -> deterministic validation
+  -> SHACL validation
+  -> optional entity resolution
+  -> evidence verification
+  -> additive Neo4j projection
+  -> ontology-aware GraphRAG
+----
+
+Existing Neo4j labels, node IDs, relationship types, vector indexes, and
+retrieval infrastructure remain compatible.
+
+== Ontology Inputs and LLM Context
+
+The ontology catalog is defined by `backend/src/Ontology/manifest.yaml` and its
+local RDF/OWL artifacts. The manifest records paths, versions, checksums,
+imports, and semantic layers. Imports are resolved locally and are never
+fetched implicitly.
+
+The semantic resolver loads the complete import closure. The extraction adapter
+currently exposes the selected domain layer as the direct allowlist, while
+business and foundational layers contribute ancestors, inheritance,
+domain/range, and compatibility information.
+
+The LLM receives a human-readable context containing:
+
+* class labels and canonical IRIs;
+* ontology layers;
+* direct parents and transitive ancestors;
+* property labels and canonical IRIs;
+* property domains, ranges, and inverses;
+* ontology safety instructions.
+
+The transformer separately receives structured `allowed_nodes` and
+`allowed_relationships`. The raw compact JSON context is retained for
+diagnostics and future machine processing but is not the primary prompt text.
+
+== Structured Extraction
+
+Each transformer result is wrapped in an ontology-independent envelope with:
+
+* assertion ID;
+* subject/object mentions and IRIs;
+* class and predicate IRIs;
+* ontology layer and assertion status;
+* model, timestamp, confidence, and validation status;
+* source document/chunk provenance;
+* page, offsets, exact span, and source hash when available.
+
+LLM output remains a candidate until validation and provenance stages complete.
+
+== Implemented Validation
+
+=== Manifest and imports
+
+Implemented checks include artifact existence, manifest shape, unique IDs/IRIs,
+checksum verification, RDF/XML parsing, import agreement, local closure
+resolution, and circular-import detection.
+
+=== Deterministic ontology validation
+
+The current validator checks known class terms, known property terms,
+domain/range compatibility, node class validity, ontology-IRI node properties,
+and invalid relationship filtering.
+
+=== SHACL
+
+`rdflib` and `pyshacl` validate the initial assertion/evidence contract,
+including required subject class and source document/chunk evidence. Full
+domain-specific shape packages remain to be authored.
+
+=== Evidence
+
+Evidence verification checks chunk existence, exact spans and offsets, optional
+source hashes, and missing/mismatched evidence. Strict enforcement is enabled
+with `ONTOLOGY_REQUIRE_EXACT_EVIDENCE=true`.
+
+=== Entity resolution
+
+The resolver supports normalized aliases, ontology-class-aware matching,
+Neo4j candidate loading, ambiguity quarantine, deterministic duplicate groups,
+and canonical IRI assignment. Vector candidate retrieval and automatic
+duplicate merging are not enabled.
+
+== Neo4j Projection
+
+Projection is additive. Entity metadata includes `iri`, `primary_class_iri`,
+`ontology_layer`, and `aliases`. Relationship metadata includes
+`predicate_iri`, `assertion_id`, assertion/validation status, source document
+and chunk IDs, evidence span, and evidence status. Existing labels and
+relationship types are not replaced.
+
+== GraphRAG
+
+Implemented additions include ontology term matching in questions, class and
+property query planning, expanded ontology terms in answer context, valid-
+assertion guidance, explicit/inferred labeling guidance, and evidence citation
+guidance. Existing vector/full-text retrievers remain in use. Direct application
+of ontology filters inside every Neo4j retrieval query remains future work.
+
+== Authority Boundary
+
+[source,text]
+----
+OWL/RDF = class/property identity, hierarchy, domain/range, semantic meaning
+SHACL   = graph-instance constraints and evidence requirements
+Neo4j   = operational projection, retrieval, and evidence access
+----
+
+Company-specific operational rules must be optional deployment validators or
+ontology-specific SHACL shapes, not a core YAML dependency.
+
+== Observability
+
+Readable ontology extraction events are written to:
+
+[source,text]
+----
+backend/logs/ontology-extraction.log
+----
+
+The context dump script is:
+
+[source,text]
+----
+backend/scripts/dump_ontology_llm_context.py
+----
+
+It displays the effective human-readable context and raw JSON without calling
+an LLM.
+
+== Phase Status
+
+[cols="1,3,3"]
+|===
+| Phase | Status | Remaining work
+| 1 | Complete | None for current manifest model
+| 2 | Complete | Full OWL reasoner is not included
+| 3 | Re-scoped and Complete | YAML-to-OWL compilation was removed from scope; OWL is authored and loaded directly
+| 4 | Complete | None for current semantic index
+| 5 | Complete | Make layer selection configurable per profile
+| 6 | Implemented | Reliable exact span emission remains
+| 7 | Complete for current graph model | Expand literal/value validation
+| 8 | Initial implementation | Add domain-specific SHACL shapes
+| 9 | Deterministic/Neo4j implementation | Add vector candidates and reviewed merging
+| 10 | Implemented | Produce exact evidence during extraction
+| 11 | Additive projection implemented | Add stored-IRI migration execution
+| 12 | Query planning implemented | Apply ontology filters directly in retrieval
+| 13 | Authority/drift/migration tooling implemented | Apply reviewed migrations
+|===
+
+== Tests
+
+The ontology-focused suite covers manifest loading, imports, semantic indexing,
+context generation, envelopes, validation, SHACL, evidence, entity resolution,
+query planning, authority checks, extraction logging, and profile hooks.
+
+The current ontology suite passes with 46 tests. Neo4j integration tests are
+opt-in with `RUN_NEO4J_INTEGRATION_TESTS=true`.

@@ -1,0 +1,117 @@
+profile:
+  id: manufacturing-system-organization-complete
+  ontology_artifact: manufacturing-system-organization
+  description: >-
+    Complete profile generated from ManufacturingSystemOrganization.rdf; all named classes and properties declared in the RDF artifact are represented here.
+  include_ancestors: true
+  include_compatible_properties: true
+
+groups:
+  ontology_classes:
+    - label: "Control Module"
+      iri: https://spec.industrialontologies.org/ontology/construct/ControlModule
+      parent: "Object Aggregate"
+      definition: "object aggregate that is a lowest level grouping that can carry out basic control"
+    - label: "Enterprise"
+      iri: https://spec.industrialontologies.org/ontology/construct/Enterprise
+      parent: "Business Organization"
+      definition: "business organization that is at the highest level of decision-making and control to achieve the common mission, goals, and objectives of manufacturing or providing products or services by coordinating one or more physical sites"
+    - label: "Equipment Module"
+      iri: https://spec.industrialontologies.org/ontology/construct/EquipmentModule
+      parent: "Engineered System"
+      definition: "engineered system typically centered around a piece of equipment that carries out some phase"
+    - label: "Physical Area"
+      iri: https://spec.industrialontologies.org/ontology/construct/PhysicalArea
+      parent: "Object Aggregate"
+      definition: "object aggregate that is a physical, geographical, or logical grouping of one or more work centers or work units within a physical site"
+    - label: "Physical Site"
+      iri: https://spec.industrialontologies.org/ontology/construct/PhysicalSite
+      parent: "Object Aggregate"
+      definition: "object aggregate that is a physical, geographical, or logical grouping of physical areas, work centers or work units determined by the enterprise"
+    - label: "Physical Unit"
+      iri: https://spec.industrialontologies.org/ontology/construct/PhysicalUnit
+      parent: "Work Unit"
+      definition: "work unit that carries out an operation or unit procedure"
+    - label: "Process Cell"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProcessCell
+      parent: "Work Center"
+      definition: "work center that is required for carrying out some control recipe"
+    - label: "Production Line"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductionLine
+      parent: "Work Center"
+      definition: "work center dedicated to the manufacture of a specific product or product family in which the member work units are organized in a sequential manner"
+    - label: "Production Unit"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductionUnit
+      parent: "Work Center"
+      definition: "work center within a broader production system that has specific tasks allocated to it"
+    - label: "Storage Unit"
+      iri: https://spec.industrialontologies.org/ontology/construct/StorageUnit
+      parent: "Work Unit"
+      definition: "work unit that is a member part of a storage zone"
+    - label: "Storage Zone"
+      iri: https://spec.industrialontologies.org/ontology/construct/StorageZone
+      parent: "Work Center"
+      definition: "work center dedicated to the storage of materials or equipment"
+    - label: "Work Cell"
+      iri: https://spec.industrialontologies.org/ontology/construct/WorkCell
+      parent: "Work Unit"
+      definition: "work unit that is a member part of a production line and is used to manufacture some material parts that share manufacturing requirements"
+    - label: "Work Center"
+      iri: https://spec.industrialontologies.org/ontology/construct/WorkCenter
+      parent: "Object Aggregate"
+      definition: "object aggregate that has piece of equipment or agent as its member parts"
+    - label: "Work Unit"
+      iri: https://spec.industrialontologies.org/ontology/construct/WorkUnit
+      parent: "Object Aggregate"
+      definition: "object aggregate that is a member of a work center"
+
+type_sets:
+  object_aggregates: &object_aggregates [Control Module, Equipment Module, Physical Area, Physical Site, Work Center, Work Unit, Physical Unit, Process Cell, Production Line, Production Unit, Storage Unit, Storage Zone, Work Cell, System, Engineered System, Group Of Agents, Organized Group Of Agents, Enterprise]
+  material_entities: &material_entities [Control Module, Equipment Module, Physical Area, Physical Site, Work Center, Work Unit, Physical Unit, Process Cell, Production Line, Production Unit, Storage Unit, Storage Zone, Work Cell, System, Engineered System, Group Of Agents, Organized Group Of Agents, Enterprise, Agent, Person, Material Artifact, Material Product, Raw Material, Material Component, Container, Piece Of Equipment, Machine, Production Machine, Tool, Production Tool, Operator]
+  processes: &processes [Planned Process, Manufacturing Process, Business Process, Measurement Process, Manufacturing Enterprise Process, Manufacturing Operation, Process Step, Changeover Process, Product Production Process, Product Inspection Process, Work-In-Progress Transfer Process]
+  dependent_things: &dependent_things [Capability, Agential Capability, Role, Agent Role, Operator Role, Process Characteristic]
+  information_entities: &information_entities [Information Content Entity, Plan Specification, Process Plan, Production Plan, Inspection Plan, Material Handling Plan, Operation Specification, Process Step Specification, Requirement Specification, Value Expression, Measured Value Expression]
+
+relationships:
+  - label: "has member part at some time"
+    type: HAS_MEMBER_PART_AT_SOME_TIME
+    iri: https://spec.industrialontologies.org/ontology/construct/hasMemberPartAtSomeTime
+    domain: *object_aggregates
+    range: *material_entities
+    definition: "The aggregate has this member at some time."
+  - label: "has member part at all times"
+    type: HAS_MEMBER_PART_AT_ALL_TIMES
+    iri: https://spec.industrialontologies.org/ontology/construct/hasMemberPartAtAllTimes
+    domain: *object_aggregates
+    range: *material_entities
+    definition: "The aggregate always has this member."
+  - label: "member part of at all times"
+    type: MEMBER_PART_OF_AT_ALL_TIMES
+    iri: https://spec.industrialontologies.org/ontology/construct/memberPartOfAtAllTimes
+    domain: *material_entities
+    range: *object_aggregates
+    definition: "The thing is always a member of this aggregate."
+  - label: "is carrier of at some time"
+    type: IS_CARRIER_OF_AT_SOME_TIME
+    iri: https://spec.industrialontologies.org/ontology/construct/isCarrierOfAtSomeTime
+    domain: *material_entities
+    range: *processes
+    definition: "The thing carries out or bears this process."
+  - label: "has material basis at some time"
+    type: HAS_MATERIAL_BASIS_AT_SOME_TIME
+    iri: https://spec.industrialontologies.org/ontology/construct/hasMaterialBasisAtSomeTime
+    domain: *dependent_things
+    range: *material_entities
+    definition: "The capability or role is grounded in this material entity."
+  - label: "prescribed by"
+    type: PRESCRIBED_BY
+    iri: https://spec.industrialontologies.org/ontology/construct/prescribedBy
+    domain: *processes
+    range: *information_entities
+    definition: "The process is prescribed by this plan or specification."
+  - label: "generically depends on at some time"
+    type: GENERICALLY_DEPENDS_ON_AT_SOME_TIME
+    iri: https://spec.industrialontologies.org/ontology/construct/genericallyDependsOnAtSomeTime
+    domain: *information_entities
+    range: *material_entities
+    definition: "The information entity depends on this material carrier."

@@ -240,6 +240,13 @@ def process_documents(docs, question, messages, llm, model,chat_mode_settings):
     
     try:
         formatted_docs, sources, entitydetails, communities = format_documents(docs, model,chat_mode_settings)
+        if get_value_from_env("ONTOLOGY_GUIDED_EXTRACTION", "false", "bool"):
+            try:
+                from src.ontology_registry import OntologyQueryPlanner, ontology_answering_context, default_adapter
+                plan = OntologyQueryPlanner(default_adapter().builder.resolver).plan(question)
+                formatted_docs = f"{formatted_docs}\n\n{ontology_answering_context(plan)}"
+            except Exception as exc:
+                logging.warning("Ontology query planning unavailable; using standard GraphRAG: %s", exc)
         
         rag_chain = get_rag_chain(llm=llm)
         

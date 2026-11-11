@@ -1,0 +1,678 @@
+# Cabalmar Chemicals - Taxonomy, Ontology, Business Rules
+# Derived ONLY from three source documents. Nothing added from outside them.
+#   O2C = CAB-FIN-O2C-001  Order-to-Cash Process
+#   PLT = CAB-OPS-PLT-001  Plant-Level Production & Fulfillment Process
+#   REV = CAB-FIN-REV-001  Revenue Recognition & Financial Reporting Process
+# Every item carries `src`. Items marked `conflict:` need a human decision.
+
+##############################################################################
+# 1. TAXONOMY - categories of business concepts
+##############################################################################
+taxonomy:
+
+  organization:
+    geography: {values: [United States, Europe], src: [O2C, PLT, REV]}
+    plant_region:
+      US: [US - Southeast, US - Gulf Coast, US - Southwest, US - Northeast, US - Midwest]
+      Europe: [Europe - West, Europe - Central, Europe - North, Europe - South, Europe - East]
+      src: [PLT]
+    departments: [Commercial / Sales, Supply Chain, Plant Operations, Supply Chain / Logistics,
+                  Finance, Finance / Accounting, Procurement / Planning, Quality, Maintenance,
+                  Logistics, Plant Finance, Finance - Americas, Finance - EMEA, Group Finance,
+                  Treasury, Audit]
+    src: [O2C, PLT, REV]
+
+  roles:   # role -> department (escalation-only roles have no department stated)
+    Customer Account Manager: Commercial / Sales
+    Order Management Specialist: Supply Chain
+    Plant Production Coordinator: Plant Operations
+    Logistics & Shipping Manager: Supply Chain / Logistics
+    Credit & Collections Analyst: Finance
+    Revenue Accountant: Finance / Accounting
+    Sales Director: Commercial
+    CFO / VP Finance: Finance
+    Plant Manager: Plant Operations
+    Raw Materials Planner: Procurement / Planning
+    Plant Quality Assurance (QA) Lead: Quality
+    Plant Maintenance Engineer: Maintenance
+    Warehouse & Dispatch Supervisor: Logistics
+    Supply Chain Manager: Supply Chain
+    Plant Finance Controller: Plant Finance
+    Regional Finance Manager (US): Finance - Americas
+    Regional Finance Manager (Europe): Finance - EMEA
+    Group Controller: Group Finance
+    Treasury Manager: Treasury
+    Internal Audit: Audit
+    escalation_only_roles_no_dept_stated: [Credit Manager, Finance Manager, Collections team, CEO,
+                                           VP Operations, VP of Plant Operations, General Counsel,
+                                           Audit Committee, Board]
+    src: [O2C, PLT, REV]
+
+  product:
+    product_lines: [Bromine compounds, Lithium complexes, Catalyst products, Specialty chemicals]
+    plant_focus_descriptions: [Bromine compounds / flame retardants, Lithium compounds / battery materials,
+                               Industrial catalysts / refinery chemicals, Specialty intermediates,
+                               Polymer additives, Bromine derivatives, Lithium processing,
+                               Catalyst production, Specialty chemicals, Agrochemical intermediates]
+    hazard_classification: [High Hazard]   # only value named; "classified as High Hazard" (PLT)
+    src: [O2C, PLT]
+
+  plants:
+    US:
+      - {name: Charlotte Bromine Facility, location: "Charlotte, NC", region: US - Southeast}
+      - {name: Baton Rouge Lithium Complex, location: "Baton Rouge, LA", region: US - Gulf Coast}
+      - {name: Pampa Catalyst Manufacturing, location: "Pampa, TX", region: US - Southwest}
+      - {name: Additional US Facility 1, location: "TBD per site register", region: US - Northeast}
+      - {name: Additional US Facility 2, location: "TBD per site register", region: US - Midwest}
+    Europe:   # all locations "TBD per site register"
+      - {name: European Bromine Plant, region: Europe - West}
+      - {name: European Lithium Facility, region: Europe - Central}
+      - {name: European Catalyst Plant, region: Europe - North}
+      - {name: European Specialty Plant 1, region: Europe - South}
+      - {name: European Specialty Plant 2, region: Europe - East}
+    src: [PLT]
+
+  order:
+    order_type_priority: [Standard, Expedited]
+    order_submission_channel: [EDI, customer portal, email, direct sales engagement]
+    order_status:   # O2C and PLT status vocabulary, in lifecycle order
+      - Order Created
+      - Credit & Pricing Validated
+      - Order Confirmed
+      - Plant Assigned
+      - Raw Materials Confirmed
+      - Production Scheduled
+      - In Production
+      - "Completed - Pending QA Release"
+      - "Released - Ready for Dispatch"
+      - Shipped
+      - Delivered
+    credit_check_outcome: [Pass, Hold, Reject]
+    src: [O2C, PLT]
+
+  discount_tier:
+    tiers:
+      - {tier: Tier 1, range: "0% - 5.00%", authorizer: Customer Account Manager}
+      - {tier: Tier 2, range: "5.01% - 12.00%", authorizer: Sales Director}
+      - {tier: Tier 3, range: "Above 12.00%", authorizer: "CFO / VP Finance"}
+    src: [O2C, REV]
+
+  logistics:
+    freight_mode: [Road, Rail, "Air (Expedited only)", "Sea (European)"]
+    transport_regulation: [ADR (road, Europe), IMDG (sea), IATA DGR (air), DOT (US)]
+    incoterms_named: [DDP, DAP, EXW, FOB]
+    src: [O2C, PLT, REV]
+
+  documents:
+    order_and_delivery: [Order Acknowledgment, Proof of Shipment (PoS), Proof of Delivery (PoD),
+                         Bill of Lading, Air Waybill]
+    shipping_package: [Commercial Invoice, Packing List, Bill of Lading / Air Waybill,
+                       Certificate of Analysis (CoA), Safety Data Sheet (SDS),
+                       Dangerous Goods Declaration, EUR.1 Movement Certificate / Certificate of Origin,
+                       Customs Export Declaration]
+    production_records: [Batch Manufacturing Record (BMR), Electronic Batch Record (EBR),
+                         Non-Conformance (NC) Record, CAPA]
+    purchasing: [Purchase Requisition, Emergency Purchase Requisition (EPR)]
+    finance: [Invoice, Billing Document, Plant Revenue Report, Management Reporting Package,
+              CFO Quarterly Review Package]
+    src: [O2C, PLT, REV]
+
+  quality:
+    qc_result: [Within specification, Minor deviation, Major deviation, Critical failure]
+    batch_release_outcome: [All tests pass, Minor retest required, Rework required, Batch rejected]
+    nc_disposition: [rework, reprocess, reject]
+    in_process_checkpoints_pct: [25, 50, 75]
+    src: [PLT]
+
+  finance:
+    accounting_standard: [ASC 606 (US GAAP, US entities), IFRS 15 (European entities)]
+    currency: [USD (US plants), EUR (European plants)]
+    revenue_type: [Product sales, Supply contracts, Intercompany transfers]
+    revenue_recognition_trigger: [Upon Delivery, Upon Shipment, Over Time]
+    fiscal_dimension: [Fiscal_Year, Fiscal_Quarter (Q1-Q4), Fiscal_Period (12 monthly), Fiscal_Week (52-53)]
+    revenue_measures: [Gross_Amount, Discount_Amount, Discount_Percent, Net_Revenue]
+    five_step_model: [Identify the contract, Identify performance obligations,
+                      Determine transaction price, Allocate transaction price,
+                      Recognize revenue when/as obligation satisfied]
+    accounting_adjustment: [Accrual, Deferral (deferred revenue), Contra-revenue (discounts),
+                            Provision for doubtful accounts, Intercompany revenue elimination,
+                            Intercompany profit in inventory, FX translation adjustment (OCI),
+                            Deferred revenue alignment]
+    payment_terms_examples: [Net 30, Net 60]
+    src: [O2C, REV]
+
+  regulation_and_policy:
+    regulation: [REACH (Europe), EPA standards (US), TSCA (US), GHS/SDS, ASC 606, IFRS 15,
+                 IAS 21, ASC 830, OECD Transfer Pricing Guidelines]
+    internal_policy_docs: [Transfer Pricing Policy (CAB-FIN-TP-001), Records Retention Policy,
+                           FX Risk Management Policy (CAB-FIN-FX-001),
+                           Credit and Collections Policy (CAB-FIN-CRD-001),
+                           Hazardous Materials Shipping Compliance (CAB-LOG-HZM-001),
+                           Batch Manufacturing Record Procedure (CAB-QA-BMR-001),
+                           Non-Conformance and CAPA Procedure (CAB-QA-NC-001),
+                           Preventive Maintenance Scheduling Procedure (CAB-OPS-MNT-001)]
+    src: [O2C, PLT, REV]
+
+  systems: [SAP ERP, "SAP (PP/QM/WM modules)", SAP FI/CO, SAP BPC (Consolidation tool), CRM,
+            Warehouse Management System (WMS), Shipping Portal, Customer portal, Treasury system,
+            Carrier tracking portal]
+  systems_src: [O2C, PLT, REV]
+
+  exception_scenarios: [Customer credit hold, Discount above Tier 3, Production delay (Standard),
+                        Production delay (Expedited), Quality non-conformance,
+                        Shipping incident / damage, Invoice dispute]
+  exception_src: [O2C]
+
+##############################################################################
+# 2. ONTOLOGY - entity types, properties, relationships
+##############################################################################
+ontology:
+
+  entity_types:
+
+    ProcessDocument:        # lets future documents of the same type plug in
+      properties: [document_id, version, effective_date, owner, approved_by, scope]
+      src: [O2C, PLT, REV]
+
+    Customer:
+      properties: [credit_limit, payment_terms, geography, customer_segment]
+      note: credit limit lives in SAP; payment terms in customer master; segment named in REV
+      src: [O2C, REV]
+
+    Contract:
+      properties: [incoterms, discount_terms, expedited_surcharge_terms, revenue_type]
+      src: [O2C, REV]
+
+    Order:   # aka Sales Order
+      properties: [Order_Number, Order_Date, priority, status, Gross_Amount, Discount_Amount,
+                   Discount_Percent, Net_Revenue, required_ship_date, expected_ship_date,
+                   delivery_location, currency, Fiscal_Year, Fiscal_Quarter, Fiscal_Period, Fiscal_Week]
+      src: [O2C, PLT, REV]
+
+    CreditCheck:
+      properties: [outcome]            # Pass | Hold | Reject
+      src: [O2C]
+
+    DiscountApproval:
+      properties: [tier, authorizing_role, documentation_required, approval_trail_in_SAP]
+      src: [O2C, REV]
+
+    Product:
+      properties: [product_line, specification, hazard_classification]
+      src: [O2C, PLT]
+
+    Plant:
+      properties: [name, location, primary_product_focus, region, capacity_utilization]
+      src: [PLT]
+
+    ProductionOrder:
+      properties: [status, batch_size, production_start_target, completion_target, actual_yield,
+                   planned_yield, actual_production_hours, production_cost]
+      src: [PLT]
+
+    Batch:
+      properties: [lot_number, release_outcome]
+      src: [PLT]
+
+    RawMaterial:
+      properties: [inventory_level, in_transit_quantity, supplier_delivery_date]
+      src: [PLT]
+
+    BillOfMaterials: {properties: [], src: [PLT]}
+
+    PurchaseRequisition:
+      properties: [type]        # standard | Emergency (EPR)
+      src: [PLT]
+
+    InterPlantTransfer:
+      properties: [transfer_cost, approval, originating_plant_cost_center]
+      src: [O2C, PLT]
+
+    QualityCheck:
+      properties: [checkpoint_pct, result, test_types]   # purity assay, physical properties, regulatory
+      src: [PLT]
+
+    NonConformance:
+      properties: [detected_at, root_cause_started, disposition, CAPA]
+      src: [PLT]
+
+    CertificateOfAnalysis:
+      properties: [signed_by_QA_Lead]
+      src: [PLT]
+
+    Shipment:
+      properties: [carrier, freight_mode, status, bill_of_lading_date]
+      src: [O2C, PLT]
+
+    ShippingDocument:
+      properties: [document_type]
+      src: [PLT]
+
+    ProofOfShipment: {properties: [], src: [O2C]}
+    ProofOfDelivery: {properties: [], src: [O2C, PLT]}
+
+    Invoice:
+      properties: [payment_terms, currency, days_past_due]
+      src: [O2C]
+
+    RevenueEntry:
+      properties: [recognition_trigger, accounting_standard, discount_tier_tag, authorization_level_tag,
+                   Fiscal_Year, Fiscal_Quarter, Fiscal_Period, Fiscal_Week]
+      src: [O2C, REV]
+
+    ProfitCenter: {properties: [level], note: "plant-level", src: [O2C]}
+
+    Accrual / DeferredRevenue:
+      properties: [order_reference, estimated_value, expected_invoice_date]
+      src: [REV]
+
+    Role:
+      properties: [name, department]
+      src: [O2C, PLT, REV]
+
+    Carrier: {properties: [], note: "approved carrier list per lane", src: [O2C, PLT]}
+
+    System: {properties: [name], src: [O2C, PLT, REV]}
+
+    Regulation: {properties: [name, applicable_region], src: [O2C, PLT, REV]}
+
+    KPI:
+      properties: [name, definition, target]
+      src: [O2C, PLT, REV]
+
+    EscalationPath:
+      properties: [scenario, steps, resolution_SLA]
+      src: [O2C]
+
+    FiscalPeriod:
+      properties: [Fiscal_Year, Fiscal_Quarter, Fiscal_Period, Fiscal_Week]
+      src: [REV]
+
+    Control:
+      properties: [description, frequency, owner]
+      src: [REV]
+
+  relationships:   # (Source)-[TYPE]->(Target)
+    - (Customer)-[SUBMITS]->(Order)
+    - (Customer)-[HAS_CONTRACT]->(Contract)
+    - (Order)-[GOVERNED_BY]->(Contract)
+    - (Order)-[HAS_CREDIT_CHECK]->(CreditCheck)
+    - (Order)-[HAS_DISCOUNT_APPROVAL]->(DiscountApproval)
+    - (DiscountApproval)-[APPROVED_BY]->(Role)
+    - (Order)-[CONTAINS]->(Product)
+    - (Order)-[ASSIGNED_TO_PLANT]->(Plant)
+    - (Plant)-[PRIMARY_PLANT_FOR]->(Product)
+    - (Plant)-[BACKUP_PLANT_FOR]->(Product)
+    - (Order)-[HAS_PRODUCTION_ORDER]->(ProductionOrder)
+    - (ProductionOrder)-[PRODUCED_AT]->(Plant)
+    - (ProductionOrder)-[REQUIRES]->(RawMaterial)
+    - (ProductionOrder)-[USES_BOM]->(BillOfMaterials)
+    - (ProductionOrder)-[PRODUCES]->(Batch)
+    - (Batch)-[HAS_QUALITY_CHECK]->(QualityCheck)
+    - (Batch)-[HAS_COA]->(CertificateOfAnalysis)
+    - (QualityCheck)-[RAISES]->(NonConformance)
+    - (Order)-[REQUIRES_TRANSFER]->(InterPlantTransfer)
+    - (InterPlantTransfer)-[FROM_PLANT]->(Plant)
+    - (InterPlantTransfer)-[TO_PLANT]->(Plant)
+    - (InterPlantTransfer)-[COST_ALLOCATED_TO]->(Plant)
+    - (Order)-[SHIPPED_VIA]->(Shipment)
+    - (Shipment)-[USES_CARRIER]->(Carrier)
+    - (Shipment)-[HAS_DOCUMENT]->(ShippingDocument)
+    - (Shipment)-[EVIDENCED_BY]->(ProofOfShipment)
+    - (Shipment)-[CONFIRMED_BY]->(ProofOfDelivery)
+    - (Order)-[INVOICED_AS]->(Invoice)
+    - (Order)-[RECOGNIZED_AS]->(RevenueEntry)
+    - (RevenueEntry)-[POSTED_TO_PERIOD]->(FiscalPeriod)
+    - (RevenueEntry)-[POSTED_TO]->(ProfitCenter)
+    - (Role)-[PERFORMS_STEP_ON]->(Order)       # with `step` as relationship property
+    - (Order)-[HAS_ESCALATION]->(EscalationPath)
+    - (EscalationPath)-[INVOLVES]->(Role)
+    - (Plant)-[SUBJECT_TO]->(Regulation)
+    - (Shipment)-[SUBJECT_TO]->(Regulation)
+    - (ProcessDocument)-[REFERENCES]->(ProcessDocument)
+    - (ProcessDocument)-[DEFINES]->(KPI)
+    - (ProcessDocument)-[OWNED_BY]->(Role)
+    - (ProcessDocument)-[USES_SYSTEM]->(System)
+    - (Control)-[OWNED_BY]->(Role)
+
+  document_references:   # from the "Related Documents" sections
+    CAB-FIN-O2C-001: [CAB-FIN-REV-001, CAB-OPS-PLT-001, CAB-FIN-CRD-001, CAB-LOG-HZM-001]
+    CAB-OPS-PLT-001: [CAB-FIN-O2C-001, CAB-FIN-REV-001, CAB-QA-BMR-001, CAB-QA-NC-001,
+                      CAB-LOG-HZM-001, CAB-OPS-MNT-001]
+    CAB-FIN-REV-001: [CAB-FIN-O2C-001, CAB-OPS-PLT-001, CAB-FIN-CRD-001, CAB-FIN-TP-001, CAB-FIN-FX-001]
+
+##############################################################################
+# 3. BUSINESS RULES
+##############################################################################
+business_rules:
+
+  discount_authorization:
+    - id: DISC-01
+      rule: Discount up to 5% (0%-5.00%) is authorized by the Customer Account Manager (Tier 1).
+      documentation: CRM discount record
+      src: [O2C, REV]
+    - id: DISC-02
+      rule: Discount 5.01%-12.00% requires Sales Director approval (Tier 2).
+      documentation: Signed approval in SAP workflow
+      src: [O2C, REV]
+    - id: DISC-03
+      rule: Discount above 12.00% requires CFO / VP Finance approval (Tier 3).
+      documentation: Written memo + SAP approval
+      src: [O2C, REV]
+    - id: DISC-04
+      rule: Discounts must be authorized before order confirmation.
+      src: [REV]
+    - id: DISC-05
+      rule: All approvals above Tier 1 must be documented in SAP with an electronic approval workflow trail.
+      src: [O2C]
+    - id: DISC-06
+      rule: Discounts are recorded as Discount_Amount and Discount_Percent on the order.
+      formula: "Discount_Percent = Discount_Amount / Gross_Amount"
+      src: [O2C, REV]
+    - id: DISC-07
+      rule: Discounts are posted as contra-revenue, tagged by discount tier and authorization level for audit trail.
+      src: [O2C, REV]
+    - id: DISC-08
+      rule: Unauthorized discounts detected after posting are escalated to Internal Audit within 24 hours.
+      src: [REV]
+    - id: DISC-09
+      rule: Discretionary discounts beyond contractual terms and tier distribution are reviewed quarterly by the Group Controller.
+      src: [REV]
+    - id: DISC-10
+      rule: Discount above Tier 3 escalation path is Sales Director -> CFO -> CEO, resolution SLA 4 hours.
+      src: [O2C]
+    - id: DISC-11
+      rule: Discount authorization compliance target is 100% of discounts approved per tier.
+      src: [O2C, REV]
+
+  revenue_calculation:
+    - id: CALC-01
+      rule: "Net_Revenue = Gross_Amount - Discount_Amount"
+      src: [O2C, REV]
+    - id: CALC-02
+      rule: Gross_Amount is the list price value of the order before discounts.
+      src: [REV]
+
+  credit:
+    - id: CRED-01
+      rule: If order value (Gross_Amount) exceeds the customer's available credit limit, the order is placed on hold pending credit review or payment of outstanding invoices.
+      src: [O2C]
+    - id: CRED-02
+      rule: "Hold: CAM notified, customer contacted within 1 business day. Reject: order cancelled with written notification to customer. Pass: order proceeds to pricing review."
+      src: [O2C]
+    - id: CRED-03
+      rule: Credit hold escalation CAM -> Credit Manager -> CFO, resolution SLA 24 hours.
+      src: [O2C]
+
+  priority_and_scheduling:
+    - id: PRI-01
+      rule: Orders are tagged Expedited or Standard based on customer request/SLA, product availability and lead times, and surcharge applicability.
+      src: [O2C]
+    - id: PRI-02
+      rule: Expedited orders carry a surcharge per contract terms and are flagged in SAP and escalated to the Plant Production Coordinator.
+      src: [O2C]
+    - id: PRI-03
+      rule: "Production scheduling completed within 4 business hours (Expedited) / 1 business day (Standard) of assignment."
+      src: [O2C, PLT]
+    - id: PRI-04
+      rule: "Production start within 8 business hours (Expedited) / 2 business days (Standard) of assignment."
+      src: [PLT]
+    - id: PRI-05
+      rule: Air freight is available only for Expedited orders; air freight for urgent transatlantic shipments is authorized by the Supply Chain Manager.
+      src: [O2C, PLT]
+    - id: PRI-06
+      rule: Expedited order with primary plant unavailable -> immediate escalation to Plant Manager.
+      src: [PLT]
+    - id: PRI-07
+      rule: Expedited production delay escalation Plant Coordinator -> Plant Manager -> VP Operations, SLA 4 hours. Standard delay Plant Coordinator -> Supply Chain Manager, SLA 48 hours.
+      src: [O2C]
+    - id: PRI-08
+      rule: For Expedited orders the Logistics team gives the Customer Account Manager daily status updates.
+      src: [O2C]
+
+  plant_assignment:
+    - id: PLANT-01
+      rule: Route first to the plant with primary specialization for the product category (primary/backup mapping below).
+      mapping:
+        Bromine Compounds: {primary: Charlotte Bromine Facility (US), backup: European backup facility}
+        Lithium Complexes: {primary: Baton Rouge Lithium Complex (US), backup: Alternate US facility}
+        Catalyst Products: {primary: Pampa Catalyst Manufacturing (US), backup: European catalyst facility}
+        Specialty Chemicals: {primary: Assigned per capacity, backup: Nearest available plant}
+      src: [O2C, PLT]
+    - id: PLANT-02
+      rule: Primary plant available with capacity below 85% -> assign to primary.
+      src: [PLT]
+    - id: PLANT-03
+      rule: Primary plant capacity at or above 85% -> evaluate backup plant capacity.
+      src: [PLT]
+      conflict: "PLT body text says alternate routing when utilization 'exceeds 85%'; the matrix says '>= 85%'. Boundary at exactly 85% is ambiguous."
+    - id: PLANT-04
+      rule: Both primary and backup at capacity -> escalate to Supply Chain Manager.
+      src: [PLT]
+    - id: PLANT-05
+      rule: US customers are served by US plants first; European customers by European plants first.
+      src: [PLT]
+    - id: PLANT-06
+      rule: Cross-region fulfillment requires Supply Chain Manager approval, cost-impact assessment, and additional logistics cost tracking.
+      src: [PLT]
+    - id: PLANT-07
+      rule: Plant assignment also considers geographic proximity and raw-material inventory at the target plant.
+      src: [O2C]
+    - id: PLANT-08
+      rule: Inter-plant transfers must be approved by the Supply Chain Manager and documented in SAP; costs (logistics, handling, yield differentials) are allocated to the originating plant's cost center.
+      src: [O2C, PLT]
+    - id: PLANT-09
+      rule: Supply Chain Manager evaluates alternate plant capacity within 2 hours; Customer Account Manager notifies customer of revised delivery timeline.
+      src: [PLT]
+    - id: PLANT-10
+      rule: Inter-plant activity reviewed monthly by VP of Plant Operations.
+      src: [PLT]
+
+  raw_materials_and_procurement:
+    - id: RM-01
+      rule: All materials available -> proceed to scheduling. Partial -> schedule available portion and raise purchase requisition for shortfall. Critical material unavailable -> alert Plant Production Coordinator; evaluate inter-plant material transfer or emergency procurement.
+      src: [PLT]
+    - id: RM-02
+      rule: Emergency Purchase Requisition approved by Plant Manager for values up to $50,000 USD; by Supply Chain Manager above $50,000 USD.
+      src: [PLT]
+    - id: RM-03
+      rule: Equipment calibration and maintenance records must be current before any batch starts on that equipment; schedule must confirm no downtime conflict with the Plant Maintenance Engineer.
+      src: [PLT]
+
+  quality:
+    - id: QA-01
+      rule: In-process testing at 25%, 50%, 75% of production completion, recorded in the EBR in SAP QM.
+      src: [PLT]
+    - id: QA-02
+      rule: "Within spec -> continue. Minor deviation -> document, adjust, continue under monitoring. Major deviation -> halt, notify QA Lead and Plant Manager. Critical failure -> stop batch, start NC investigation."
+      src: [PLT]
+    - id: QA-03
+      rule: NC documented within 24 hours of detection; root-cause investigation started within 24 hours; root-cause analysis completed within 10 business days.
+      src: [PLT]
+    - id: QA-04
+      rule: Customer Account Manager notifies customer of potential delay within 4 hours of NC detection.
+      src: [PLT]
+    - id: QA-05
+      rule: NC disposition (rework, reprocess, reject) decided by Plant Manager and QA Lead; CAPA documented and tracked.
+      src: [PLT]
+    - id: QA-06
+      rule: "Batch release: all pass -> Released - Ready for Dispatch; minor retest -> retest within 24 hours; rework -> rework and re-test; rejected -> replacement production, notify customer, file NC report."
+      src: [PLT]
+    - id: QA-07
+      rule: High Hazard products require dual authorization (Production Coordinator + QA Lead) for batch release.
+      src: [PLT]
+    - id: QA-08
+      rule: CoA generated in SAP QM, signed electronically by QA Lead, linked to Production Order and attached to the order's shipment documentation.
+      src: [PLT]
+    - id: QA-09
+      rule: Batch manufacturing records completed contemporaneously; no retrospective documentation.
+      src: [PLT]
+    - id: QA-10
+      rule: Regulatory verification at release - REACH (Europe), TSCA (US); in-process checks per REACH (Europe) and EPA standards (US). REACH pre-registration documentation current at all European facilities.
+      src: [O2C, PLT]
+    - id: QA-11
+      rule: Quality non-conformance escalation QA Team -> Plant Manager -> Customer, SLA 8 hours.
+      src: [O2C]
+    - id: QA-12
+      rule: Pick quantity tolerance is +/-2% for bulk products and zero tolerance for packaged products.
+      src: [PLT]
+
+  shipping_and_hazmat:
+    - id: SHIP-01
+      rule: Carrier selected from the approved carrier list per lane; Standard orders use Road/Rail/Sea as cost-optimal.
+      src: [O2C, PLT]
+    - id: SHIP-02
+      rule: All hazardous material shipments must be accompanied by compliant SDS documentation; dangerous goods documentation per IMDG, ADR, IATA as applicable (DOT in US).
+      src: [O2C, PLT]
+    - id: SHIP-03
+      rule: Shipping documentation package must include Commercial Invoice, Packing List, Bill of Lading/Air Waybill, CoA, SDS, Dangerous Goods Declaration (where applicable), EUR.1 or Certificate of Origin (European trade), Customs Export Declaration (cross-border).
+      src: [PLT]
+    - id: SHIP-04
+      rule: Shipping incident/damage escalation Logistics Manager -> Insurance -> Customer, SLA 24 hours.
+      src: [O2C]
+
+  status_transitions:
+    - id: STAT-01
+      rule: "Order Confirmed -> Plant Assigned (Production Order created in SAP) -> Raw Materials Confirmed -> Production Scheduled -> In Production -> In-Process QC -> Completed - Pending QA Release -> Released - Ready for Dispatch -> Shipped -> Delivered."
+      src: [O2C, PLT]
+    - id: STAT-02
+      rule: "In Production is set by the Plant Production Coordinator when production commences; customer receives automated portal notification."
+      src: [O2C, PLT]
+    - id: STAT-03
+      rule: "Shipped is set on handoff to carrier / Bill of Lading issuance; a Proof of Shipment is shared with the customer and Revenue Accountant."
+      src: [O2C, PLT]
+    - id: STAT-04
+      rule: "Delivered is set on receipt of PoD (carrier electronic confirmation or portal acknowledgment for US; per Incoterms for Europe); PoD is archived against the order."
+      src: [O2C, PLT]
+    - id: STAT-05
+      rule: Delivered status triggers the revenue recognition event in Finance.
+      src: [PLT]
+
+  invoicing_and_collections:
+    - id: INV-01
+      rule: Invoice reflects Gross_Amount, Discount_Amount and Net_Revenue; payment terms per customer master; currency USD for US customers, EUR for European customers.
+      src: [O2C]
+    - id: INV-02
+      rule: Payment reminders at 7, 14 and 30 days past due; escalation to Sales Director and Collections team at 45 days past due.
+      src: [O2C]
+    - id: INV-03
+      rule: Invoice dispute escalation Collections Analyst -> CAM -> Finance Manager, SLA 5 business days.
+      src: [O2C]
+    - id: INV-04
+      rule: Accrue revenue for orders Delivered but not yet invoiced, in the correct fiscal period, documented with order reference, estimated value, expected invoice date.
+      src: [REV]
+    - id: INV-05
+      rule: Customer advance payments are recorded as deferred revenue liabilities and released as products are delivered.
+      src: [REV]
+  invoicing_conflict:
+    - conflict: "Invoice timing is described inconsistently. O2C Phase 5 says invoice generated 'upon delivery confirmation'; the O2C flow diagram and PLT say invoicing/billing is triggered at Shipped (O2C says PoS 'triggers billing'; PLT says billing document created at Shipped). Needs a human decision."
+      src: [O2C, PLT]
+
+  revenue_recognition:
+    - id: REVREC-01
+      rule: DDP / DAP standard product sale -> recognize on Delivered (PoD receipt), in the period of delivery.
+      src: [O2C, REV]
+    - id: REVREC-02
+      rule: EXW / FOB standard product sale -> recognize on Shipped (Bill of Lading date), in the period of shipment.
+      src: [O2C, REV]
+    - id: REVREC-03
+      rule: Long-term supply contracts -> recognize over time as delivered per schedule (accrual per delivery schedule).
+      src: [O2C, REV]
+    - id: REVREC-04
+      rule: Intercompany US -> Europe transfer -> recognize upon receipt at the European entity warehouse; eliminated on consolidation; follows Transfer Pricing Policy.
+      src: [O2C, REV]
+    - id: REVREC-05
+      rule: US entities follow ASC 606; European entities follow IFRS 15.
+      src: [O2C, REV]
+    - id: REVREC-06
+      rule: Cut-off control - Revenue Accountant confirms the Incoterms-based trigger before posting near period-end; no revenue may be accelerated ahead of performance obligation completion.
+      src: [REV]
+    - id: REVREC-07
+      rule: Every revenue entry is tagged with Fiscal_Year, Fiscal_Quarter, Fiscal_Period, Fiscal_Week and posted to plant-level profit center, product line and customer segment.
+      src: [O2C, REV]
+
+  period_close:
+    - id: CLOSE-01
+      rule: "Close timeline relative to period end: Day 0 all shipments/deliveries confirmed in SAP; Day +1 revenue cut-off review and accruals (Revenue Accountant); Day +2 discount postings reconciled and plant revenue reconciliation; Day +3 intercompany reconciliation (Group Controller) and FX translation (Treasury Manager); Day +4 regional P&L review; Day +5 consolidation adjustments; Day +6 management P&L distributed; Day +7 CFO close sign-off."
+      src: [REV]
+    - id: CLOSE-02
+      rule: Plant Finance Controllers submit the Plant Revenue Report to the Regional Finance Manager by Day +3.
+      src: [REV]
+    - id: CLOSE-03
+      rule: Quarterly - discount quality review, variable consideration reassessment, allowance for doubtful accounts update; CFO quarterly review package within 10 business days of quarter-end.
+      src: [REV]
+    - id: CLOSE-04
+      rule: Monthly consolidation adjustments - intercompany revenue elimination, intercompany profit in inventory, FX translation adjustment, deferred revenue alignment.
+      src: [REV]
+
+  fx:
+    - id: FX-01
+      rule: US plants use USD (no translation). European plants report in EUR and are translated to USD using the fiscal-period average rate.
+      src: [REV]
+    - id: FX-02
+      rule: EUR AR balances are translated at the period-end closing (spot) rate.
+      src: [REV]
+    - id: FX-03
+      rule: Translation differences are recognized in OCI per IAS 21 / ASC 830.
+      src: [REV]
+
+  audit_and_compliance:
+    - id: AUD-01
+      rule: Revenue restatement above $500,000 USD equivalent must be reported to the Audit Committee within 24 hours of identification.
+      src: [REV]
+    - id: AUD-02
+      rule: Revenue variances above 10% vs prior period/budget are investigated (monthly, Regional Finance Managers).
+      src: [REV]
+    - id: AUD-03
+      rule: Records retention - O2C states minimum 7 years; REV states 7 years (US) and 10 years (EU).
+      src: [O2C, REV]
+      conflict: "O2C gives a single 7-year minimum; REV differentiates US 7 / EU 10. Likely REV is more specific, but needs confirmation."
+    - id: AUD-04
+      rule: Internal Audit conducts quarterly O2C adherence audits (O2C) and a focused Revenue Recognition Controls review twice per year (REV).
+      src: [O2C, REV]
+    - id: AUD-05
+      rule: Intercompany transfer pricing complies with OECD Transfer Pricing Guidelines and local regulations; documentation updated annually.
+      src: [REV]
+    - id: AUD-06
+      rule: Provision for doubtful accounts - O2C says reviewed monthly by Revenue Accountant; REV says updated quarterly by Finance.
+      src: [O2C, REV]
+      conflict: "Different frequency and owner stated in the two documents."
+
+  kpi_targets:
+    O2C:
+      - {kpi: Order Fulfilment Cycle Time, target: "<= 7 days Standard, <= 3 days Expedited (Order_Date to Delivered)"}
+      - {kpi: On-Time Delivery Rate, target: ">= 95%"}
+      - {kpi: Order Accuracy Rate, target: ">= 98%"}
+      - {kpi: Discount Authorization Compliance, target: "100%"}
+      - {kpi: Days Sales Outstanding, target: "<= 35 days"}
+      - {kpi: Revenue Recognition Timeliness, target: "100%"}
+      - {kpi: Expedited Order SLA Compliance, target: ">= 90% meet 3-day delivery"}
+    PLT:
+      - {kpi: Plant Capacity Utilization, target: "70-85% optimal"}
+      - {kpi: First-Pass QC Release Rate, target: ">= 95%"}
+      - {kpi: On-Time Production Completion, target: ">= 97%"}
+      - {kpi: Batch Yield Variance, target: "within +/-3%"}
+      - {kpi: Inter-Plant Transfer Rate, target: "<= 5%"}
+      - {kpi: Non-Conformance Rate, target: "<= 2 per 100 batches"}
+      - {kpi: Expedited Order Production SLA, target: ">= 95% started within 8 hours"}
+      - {kpi: Dispatch Documentation Error Rate, target: "<= 0.5%"}
+    REV:
+      - {kpi: Revenue Recognition Accuracy, target: "100%"}
+      - {kpi: Discount Authorization Compliance, target: "100% with documented approval"}
+      - {kpi: Period Close Timeliness, target: "<= 7 business days"}
+      - {kpi: Intercompany Reconciliation Rate, target: "100%"}
+      - {kpi: Average Discount Percent, target: "monitored vs budget"}
+      - {kpi: Revenue Restatement Rate, target: "zero"}
+      - {kpi: DSO, target: "<= 35 days"}
+      - {kpi: Deferred Revenue Balance Accuracy, target: "100%"}
+    conflict: "Expedited 3-day delivery vs Expedited 'cycle time' appear in two KPI forms in O2C; kept both as stated."
+
+##############################################################################
+# 4. OPEN ITEMS (things the PDFs do not define)
+##############################################################################
+not_defined_in_sources:
+  - Locations of the two additional US plants and all five European plants ("TBD per site register")
+  - Exact identity of the "European backup facility", "Alternate US facility", "European catalyst facility"
+  - Customer segment values
+  - Contract-specific values (surcharge amounts, rebate tiers, payment terms per customer)
+  - Credit limit thresholds beyond "Gross_Amount exceeds available credit limit"

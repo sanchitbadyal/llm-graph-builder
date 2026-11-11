@@ -26,7 +26,8 @@ def merge_relationship_between_chunk_and_entites(graph: Neo4jGraph, graph_docume
         unwind_query = """
                     UNWIND $batch_data AS data
                     MATCH (c:Chunk {id: data.chunk_id})
-                    CALL apoc.merge.node([data.node_type], {id: data.node_id}) YIELD node AS n
+                    MATCH (n {id: data.node_id})
+                    WHERE data.node_type IN labels(n)
                     MERGE (c)-[:HAS_ENTITY]->(n)
                 """
         execute_graph_query(graph,unwind_query, params={"batch_data": batch_data})

@@ -1,5 +1,9 @@
-import json
 import os
+import pytest
+if os.getenv("RUN_NEO4J_INTEGRATION_TESTS", "false").lower() not in {"1", "true", "yes"}:
+    pytest.skip("Neo4j integration tests disabled; set RUN_NEO4J_INTEGRATION_TESTS=true", allow_module_level=True)
+
+import json
 import shutil
 import logging
 import pandas as pd

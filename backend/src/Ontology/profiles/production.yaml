@@ -1,0 +1,121 @@
+profile:
+  id: production-planning-complete
+  ontology_artifact: production-planning
+  description: >-
+    Complete profile generated from ProductionPlanning.rdf; all named classes and properties declared in the RDF artifact are represented here.
+  include_ancestors: true
+  include_compatible_properties: true
+
+groups:
+  ontology_classes:
+    - label: "Agential Capability"
+      iri: https://spec.industrialontologies.org/ontology/construct/AgentialCapability
+      parent: "Capability"
+      definition: "capability that is borne by an agent"
+    - label: "Changeover Process"
+      iri: https://spec.industrialontologies.org/ontology/construct/ChangeoverProcess
+      parent: "Manufacturing Enterprise Process"
+      definition: "planned process that prepares a production resource to produce a different product or perform a different manufacturing operation"
+    - label: "Inspection Plan"
+      iri: https://spec.industrialontologies.org/ontology/construct/InspectionPlan
+      parent: "Plan Specification"
+      definition: "plan specification that prescribes how products are to be inspected, including the required resources and inspection sequence"
+    - label: "Machine"
+      iri: https://spec.industrialontologies.org/ontology/construct/Machine
+      parent: "Material Artifact"
+      definition: "material artifact that uses controlled mechanical, electrical, or fluid power to transform energy or material while performing a process"
+    - label: "Manufacturing Enterprise Process"
+      iri: https://spec.industrialontologies.org/ontology/construct/ManufacturingEnterpriseProcess
+      parent: "Business Process"
+      definition: "business process that consists of at least one manufacturing process"
+    - label: "Manufacturing Operation"
+      iri: https://spec.industrialontologies.org/ontology/construct/ManufacturingOperation
+      parent: "Manufacturing Enterprise Process"
+      definition: "manufacturing enterprise process composed of process steps from the same product production process, with at least one manufacturing resource used in every step"
+    - label: "Material Handling Plan"
+      iri: https://spec.industrialontologies.org/ontology/construct/MaterialHandlingPlan
+      parent: "Plan Specification"
+      definition: "plan specification containing instructions that prescribe the movement of material between production machines"
+    - label: "Material Product Specification"
+      iri: https://spec.industrialontologies.org/ontology/construct/MaterialProductSpecification
+      parent: "Design Specification"
+      definition: "design specification that prescribes a material product"
+    - label: "Operation Specification"
+      iri: https://spec.industrialontologies.org/ontology/construct/OperationSpecification
+      parent: "Action Specification"
+      definition: "action specification that prescribes a manufacturing operation and includes specifications for its process steps"
+    - label: "Operator"
+      iri: https://spec.industrialontologies.org/ontology/construct/Operator
+      parent: "Agent"
+      definition: "agent which has an operator role"
+    - label: "Operator Role"
+      iri: https://spec.industrialontologies.org/ontology/construct/OperatorRole
+      parent: "Agent Role"
+      definition: "role held by an agent when it possesses a skill that enables a capability of one or more pieces of equipment."
+    - label: "Process Plan"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProcessPlan
+      parent: "Plan Specification"
+      definition: "plan specification that prescribes a product production process and includes specifications for its operations or process steps"
+    - label: "Process Step"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProcessStep
+      parent: "Manufacturing Enterprise Process"
+      definition: "manufacturing enterprise process within a manufacturing operation that contains one manufacturing process and no smaller process steps"
+    - label: "Process Step Specification"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProcessStepSpecification
+      parent: "Action Specification"
+      definition: "action specification that prescribes some process step"
+    - label: "Product Inspection Process"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductInspectionProcess
+      parent: "Business Process"
+      definition: "business process that evaluates a product during or after production against specified requirements"
+    - label: "Product Production Process"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductProductionProcess
+      parent: null
+    - label: "Production Machine"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductionMachine
+      parent: "Machine"
+      definition: "machine used as equipment in a manufacturing process"
+    - label: "Production Order"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductionOrder
+      parent: "Objective Specification"
+      definition: "objective specification stating the product and quantity to be produced and any applicable release, completion, or delivery requirements"
+    - label: "Production Plan"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductionPlan
+      parent: "Plan Specification"
+      definition: "plan specification that contains a set of production orders and prescribes how they are to be fulfilled"
+    - label: "Production Tool"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductionTool
+      parent: "Tool"
+      definition: "tool designed to be held, guided or affixed to enable execution of a manufacturing process"
+    - label: "Tool"
+      iri: https://spec.industrialontologies.org/ontology/construct/Tool
+      parent: "Material Artifact"
+      definition: "material artifact designed to be held, guided, or attached to help a person, machine, or mechanism perform a task"
+    - label: "Work-In-Progress Transfer Process"
+      iri: https://spec.industrialontologies.org/ontology/construct/WorkInProgressTransferProcess
+      parent: "Material Location Change Process"
+      definition: "material location change process in which work in progress moves between production machines"
+
+type_sets:
+  capabilities: &capabilities [Capability, Agential Capability]
+  capability_bearers: &capability_bearers [Agent, Operator, Machine, Production Machine, Tool, Production Tool, Piece Of Equipment]
+
+relationships:
+  - label: "capability of"
+    type: CAPABILITY_OF
+    iri: https://spec.industrialontologies.org/ontology/construct/capabilityOf
+    domain: *capabilities
+    range: *capability_bearers
+    definition: "The capability is borne by this agent or piece of equipment."
+  - label: "enabled by"
+    type: ENABLED_BY
+    iri: https://spec.industrialontologies.org/ontology/construct/enabledBy
+    domain: *capabilities
+    range: *capabilities
+    definition: "relation from one capability to another capability such that associated performance of the first capability is made possible by another"
+  - label: "enables"
+    type: ENABLES
+    iri: https://spec.industrialontologies.org/ontology/construct/enables
+    domain: *capabilities
+    range: *capabilities
+    definition: "a capability enables another capability only if realization of the first capability implies realization of the second capability"

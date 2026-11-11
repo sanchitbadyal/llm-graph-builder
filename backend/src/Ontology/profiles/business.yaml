@@ -1,0 +1,663 @@
+profile:
+  id: business-core-selected
+  ontology_artifact: business
+  description: >-
+    Task-specific business-layer context. Only the explicitly selected classes are sent to the LLM; ancestors appear as context only.
+  include_ancestors: true
+  include_compatible_properties: true
+
+groups:
+  things_and_places:
+    - label: "Packaged Unit"
+      iri: http://example.org/ontology/business#PackagedUnit
+      parent: "Product"
+      definition: "A product in a package or container that is ready for storage or shipment."
+    - label: "Warehouse"
+      iri: http://example.org/ontology/business#Warehouse
+      parent: "Facility"
+      definition: "A facility used mainly to store goods."
+    - label: "Location"
+      iri: http://example.org/ontology/business#Location
+      parent: null
+      definition: "A bounded place in space that something can be located at."
+    - label: "Address"
+      iri: http://example.org/ontology/business#Address
+      parent: null
+      definition: "Information that identifies a place for delivery or contact."
+    - label: "Account"
+      iri: http://example.org/ontology/business#Account
+      parent: null
+      definition: "A record that tracks the dealings between the company and one party over time, such as balances and terms."
+    - label: "Ledger Account"
+      iri: http://example.org/ontology/business#LedgerAccount
+      parent: null
+      definition: "A named account in the books where financial postings are collected."
+    - label: "Product Category"
+      iri: http://example.org/ontology/business#ProductCategory
+      parent: null
+      definition: "A named group that products or services are classified into."
+    - label: "Position"
+      iri: http://example.org/ontology/business#Position
+      parent: null
+      definition: "A post in an organization that can be held by a person."
+  parties_and_roles:
+    - label: "Organization"
+      iri: http://example.org/ontology/business#Organization
+      parent: null
+      definition: "A group of people or other organizations that together form a unit acting under a common name, such as a company or an agency."
+    - label: "Organizational Unit"
+      iri: http://example.org/ontology/business#OrganizationalUnit
+      parent: "Organization"
+      definition: "A part of an organization, such as a department, team or plant management group."
+    - label: "Cost Center"
+      iri: http://example.org/ontology/business#CostCenter
+      parent: "Organizational Unit"
+      definition: "An organizational unit to which costs are collected."
+    - label: "Legal Entity"
+      iri: http://example.org/ontology/business#LegalEntity
+      parent: "Organization"
+      definition: "An organization that is recognised in law as able to own assets and sign contracts."
+    - label: "Supplier Role"
+      iri: http://example.org/ontology/business#SupplierRole
+      parent: "Counterparty Role"
+      definition: "A counterparty role held by a party that sells goods or services to the company."
+    - label: "Employee Role"
+      iri: http://example.org/ontology/business#EmployeeRole
+      parent: "Business Role"
+      definition: "A business role held by a person who works for the company."
+    - label: "Approver Role"
+      iri: http://example.org/ontology/business#ApproverRole
+      parent: "Business Role"
+      definition: "A business role that grants the holder authority to accept or reject a request."
+  documents:
+    - label: "Purchase Order"
+      iri: http://example.org/ontology/business#PurchaseOrder
+      parent: "Order"
+      definition: "An order in which the company asks a supplier to supply goods or services."
+    - label: "Quote"
+      iri: http://example.org/ontology/business#Quote
+      parent: "Business Document"
+      definition: "A business document that offers goods or services at a stated price and terms."
+    - label: "Credit Note"
+      iri: http://example.org/ontology/business#CreditNote
+      parent: "Business Document"
+      definition: "A business document that reduces or cancels an amount that was invoiced."
+    - label: "Receipt"
+      iri: http://example.org/ontology/business#Receipt
+      parent: "Business Document"
+      definition: "A business document that confirms that a payment or goods were received."
+    - label: "Delivery Note"
+      iri: http://example.org/ontology/business#DeliveryNote
+      parent: "Business Document"
+      definition: "A business document that lists the goods sent in one delivery."
+    - label: "Specification"
+      iri: http://example.org/ontology/business#Specification
+      parent: "Business Document"
+      definition: "A business document that states the required properties of a product or service."
+    - label: "Certificate"
+      iri: http://example.org/ontology/business#Certificate
+      parent: "Business Document"
+      definition: "A business document in which an authority or the company states that something meets stated requirements."
+    - label: "Accounting Entry"
+      iri: http://example.org/ontology/business#AccountingEntry
+      parent: "Business Document"
+      definition: "A business document that records a financial posting."
+  processes:
+    - label: "Approval"
+      iri: http://example.org/ontology/business#Approval
+      parent: "Business Process"
+      definition: "A business process in which a party with authority accepts or rejects a request."
+    - label: "Assessment"
+      iri: http://example.org/ontology/business#Assessment
+      parent: "Business Process"
+      definition: "A business process in which something is examined or tested and a result or outcome is recorded."
+    - label: "Audit"
+      iri: http://example.org/ontology/business#Audit
+      parent: "Assessment"
+      definition: "An assessment in which records or controls are examined by an independent party."
+    - label: "Billing"
+      iri: http://example.org/ontology/business#Billing
+      parent: "Business Process"
+      definition: "A business process in which a party is asked to pay for goods or services delivered."
+    - label: "Payment"
+      iri: http://example.org/ontology/business#Payment
+      parent: "Business Process"
+      definition: "A business process in which money is transferred from one party to another."
+    - label: "Collection"
+      iri: http://example.org/ontology/business#Collection
+      parent: "Payment"
+      definition: "A payment process in which money owed to the company is received."
+    - label: "Fulfillment"
+      iri: http://example.org/ontology/business#Fulfillment
+      parent: "Business Process"
+      definition: "A business process in which goods or services are prepared and delivered to meet an order."
+    - label: "Delivery"
+      iri: http://example.org/ontology/business#Delivery
+      parent: "Fulfillment"
+      definition: "A fulfillment process in which goods are handed over at the destination."
+    - label: "Transport"
+      iri: http://example.org/ontology/business#Transport
+      parent: "Business Process"
+      definition: "A business process in which goods are moved from one place to another."
+    - label: "Stock Transfer"
+      iri: http://example.org/ontology/business#StockTransfer
+      parent: "Transport"
+      definition: "A transport process in which goods are moved from one facility of the company to another."
+    - label: "Service"
+      iri: http://example.org/ontology/business#Service
+      parent: "Business Process"
+      definition: "A business process in which work is done for a party instead of a material good being handed over. Modeled as a process because a service is performed and not held."
+    - label: "Manufacturing"
+      iri: http://example.org/ontology/business#Manufacturing
+      parent: "Business Process"
+      definition: "A business process in which materials are turned into products."
+    - label: "Procurement"
+      iri: http://example.org/ontology/business#Procurement
+      parent: "Business Process"
+      definition: "A business process in which the company obtains goods or services from suppliers."
+    - label: "Reconciliation"
+      iri: http://example.org/ontology/business#Reconciliation
+      parent: "Business Process"
+      definition: "A business process in which two sets of records are compared and differences are resolved."
+    - label: "Revenue Recognition"
+      iri: http://example.org/ontology/business#RevenueRecognition
+      parent: "Business Process"
+      definition: "A business process in which earned revenue is recorded in the accounts for a period."
+    - label: "Return"
+      iri: http://example.org/ontology/business#Return
+      parent: "Business Process"
+      definition: "A business process in which goods are sent back by the receiving party."
+    - label: "Escalation"
+      iri: http://example.org/ontology/business#Escalation
+      parent: "Business Process"
+      definition: "A business process in which a matter is passed to a higher level of authority."
+    - label: "Procedure"
+      iri: http://example.org/ontology/business#Procedure
+      parent: null
+      definition: "A documented sequence of steps or checks to follow in a given situation."
+  rules_and_risk:
+    - label: "Business Rule"
+      iri: http://example.org/ontology/business#BusinessRule
+      parent: null
+      definition: "A statement that sets a condition or limit for how a business process is carried out."
+    - label: "Policy"
+      iri: http://example.org/ontology/business#Policy
+      parent: null
+      definition: "A statement of intent or principle that guides business decisions."
+    - label: "Risk"
+      iri: http://example.org/ontology/business#Risk
+      parent: null
+      definition: "A tendency for loss or harm to happen, which may or may not be realised."
+    - label: "Milestone"
+      iri: http://example.org/ontology/business#Milestone
+      parent: null
+      definition: "A point in time at which a business process reaches a defined stage."
+  order_to_cash:
+    - label: "Credit Check"
+      iri: http://example.org/ontology/order-to-cash#CreditCheck
+      parent: "Assessment"
+      definition: "A check of a customer's credit on an order, with an outcome of Pass, Hold or Reject."
+    - label: "Discount Approval"
+      iri: http://example.org/ontology/order-to-cash#DiscountApproval
+      parent: "Approval"
+      definition: "An approval of a discount on an order, at a tier that decides which role must authorize it."
+    - label: "Invoice"
+      iri: http://example.org/ontology/order-to-cash#Invoice
+      parent: "Billing"
+      definition: "A bill sent to the customer for an order, with payment terms and currency."
+    - label: "Escalation Path"
+      iri: http://example.org/ontology/order-to-cash#EscalationPath
+      parent: "Procedure"
+      definition: "The steps and roles to follow when an exceptional scenario occurs, with a resolution time target."
+  plant_fulfillment:
+    - label: "Purchase Requisition"
+      iri: http://example.org/ontology/plant-fulfillment#PurchaseRequisition
+      parent: "Business Document"
+      definition: "An internal business document requesting that goods or services be purchased or supplied."
+    - label: "Inter Plant Transfer"
+      iri: http://example.org/ontology/plant-fulfillment#InterPlantTransfer
+      parent: "Transport"
+      definition: "A transport process in which goods are moved from one plant to another to fulfil an order."
+    - label: "Shipment"
+      iri: http://example.org/ontology/plant-fulfillment#Shipment
+      parent: "Transport"
+      definition: "A transport process in which goods are sent to the customer, tracked by carrier and freight mode."
+    - label: "Shipping Document"
+      iri: http://example.org/ontology/plant-fulfillment#ShippingDocument
+      parent: "Business Document"
+      definition: "A business document that accompanies or describes a shipment, such as a bill of lading or packing list."
+    - label: "Proof Of Shipment"
+      iri: http://example.org/ontology/plant-fulfillment#ProofOfShipment
+      parent: "Business Document"
+      definition: "A business document that evidences that a shipment was dispatched or delivered."
+  revenue_recognition:
+    - label: "Revenue Entry"
+      iri: http://example.org/ontology/revenue-recognition#RevenueEntry
+      parent: "Accounting Entry"
+      definition: "An accounting entry that records recognised revenue for an order."
+    - label: "Accrual"
+      iri: http://example.org/ontology/revenue-recognition#Accrual
+      parent: "Accounting Entry"
+      definition: "An accounting entry that records revenue or cost earned but not yet invoiced or paid."
+    - label: "Deferred Revenue"
+      iri: http://example.org/ontology/revenue-recognition#DeferredRevenue
+      parent: "Accounting Entry"
+      definition: "An accounting entry for payment received before the revenue is earned."
+    - label: "Fiscal Period"
+      iri: http://example.org/ontology/revenue-recognition#FiscalPeriod
+      parent: "Business Document"
+      definition: "A business document or record identifying the accounting period an entry is posted to."
+    - label: "Control"
+      iri: http://example.org/ontology/revenue-recognition#Control
+      parent: "Business Rule"
+      definition: "A business rule that prescribes a check to be performed in the revenue or finance process."
+
+  order_to_cash_entities:
+    - label: "Sales Order"
+      iri: http://example.org/ontology/manufacturing#SalesOrder
+      parent: "Business Document"
+      definition: "An order document for the sale and fulfillment of manufactured products."
+    - label: "Customer"
+      iri: http://example.org/ontology/manufacturing#Customer
+      parent: "Business Role"
+      definition: "A customer role held by a party that receives goods or services."
+    - label: "Manufactured Product"
+      iri: http://example.org/ontology/manufacturing#ManufacturedProduct
+      parent: "Product"
+      definition: "A product produced through a manufacturing process."
+    - label: "Plant"
+      iri: http://example.org/ontology/manufacturing#Plant
+      parent: "Facility"
+      definition: "A facility where products are manufactured or stored."
+    - label: "Carrier"
+      iri: http://example.org/ontology/manufacturing#Carrier
+      parent: "Carrier Role"
+      definition: "A carrier role held by a party that transports goods."
+    - label: "Profit Center"
+      iri: http://example.org/ontology/manufacturing#ProfitCenter
+      parent: "Organizational Unit"
+      definition: "An organizational unit used to track revenue and profitability."
+    - label: "Proof Of Delivery"
+      iri: http://example.org/ontology/manufacturing#ProofOfDelivery
+      parent: "Business Document"
+      definition: "A document that evidences delivery of goods to the receiving party."
+    - label: "Sales Contract"
+      iri: http://example.org/ontology/manufacturing#SalesContract
+      parent: "Business Document"
+      definition: "A contract governing the sale of goods or services to a customer."
+
+# Shared lists of entity types. PyYAML expands the *aliases when the file is loaded,
+# so every relationship ends up with an explicit list of entity names.
+entity_properties:
+  - identifier
+  - amount
+  - currency
+  - order_date
+  - delivery_date
+  - status
+  - priority
+  - duration
+  - quantity
+  - unit_of_measure
+  - location
+  - notes
+
+relationship_properties:
+  - effective_date
+  - delivery_date
+  - status
+  - duration
+  - notes
+
+type_sets:
+  documents: &documents [Sales Order, Purchase Order, Quote, Credit Note, Receipt, Delivery Note, Specification, Certificate, Accounting Entry, Purchase Requisition, Shipping Document, Proof Of Shipment, Fiscal Period]
+  processes: &processes [Approval, Assessment, Audit, Billing, Payment, Collection, Fulfillment, Delivery, Transport, Stock Transfer, Service, Manufacturing, Procurement, Reconciliation, Revenue Recognition, Return, Escalation, Credit Check, Discount Approval, Invoice, Inter Plant Transfer, Shipment]
+  documents_or_processes: &documents_or_processes [Sales Order, Purchase Order, Quote, Credit Note, Receipt, Delivery Note, Specification, Certificate, Accounting Entry, Purchase Requisition, Shipping Document, Proof Of Shipment, Fiscal Period, Approval, Assessment, Audit, Billing, Payment, Collection, Fulfillment, Delivery, Transport, Stock Transfer, Service, Manufacturing, Procurement, Reconciliation, Revenue Recognition, Return, Escalation, Credit Check, Discount Approval, Invoice, Inter Plant Transfer, Shipment]
+  assessable: &assessable [Sales Order, Purchase Order, Quote, Credit Note, Receipt, Delivery Note, Specification, Certificate, Accounting Entry, Purchase Requisition, Shipping Document, Proof Of Shipment, Fiscal Period, Approval, Assessment, Audit, Billing, Payment, Collection, Fulfillment, Delivery, Transport, Stock Transfer, Service, Manufacturing, Procurement, Reconciliation, Revenue Recognition, Return, Escalation, Credit Check, Discount Approval, Invoice, Inter Plant Transfer, Shipment, Packaged Unit]
+  compliance_subjects: &compliance_subjects [Sales Order, Purchase Order, Quote, Credit Note, Receipt, Delivery Note, Specification, Certificate, Accounting Entry, Purchase Requisition, Shipping Document, Proof Of Shipment, Fiscal Period, Approval, Assessment, Audit, Billing, Payment, Collection, Fulfillment, Delivery, Transport, Stock Transfer, Service, Manufacturing, Procurement, Reconciliation, Revenue Recognition, Return, Escalation, Credit Check, Discount Approval, Invoice, Inter Plant Transfer, Shipment, Cost Center, Legal Entity, Organization, Organizational Unit]
+  ownable: &ownable [Sales Order, Purchase Order, Quote, Credit Note, Receipt, Delivery Note, Specification, Certificate, Accounting Entry, Purchase Requisition, Shipping Document, Proof Of Shipment, Fiscal Period, Account, Packaged Unit, Warehouse]
+  documents_or_packaged: &documents_or_packaged [Sales Order, Purchase Order, Quote, Credit Note, Receipt, Delivery Note, Specification, Certificate, Accounting Entry, Purchase Requisition, Shipping Document, Proof Of Shipment, Fiscal Period, Packaged Unit]
+  parties: &parties [Cost Center, Legal Entity, Organization, Organizational Unit]
+  parties_or_warehouse: &parties_or_warehouse [Cost Center, Legal Entity, Organization, Organizational Unit, Warehouse]
+  roles: &roles [Approver Role, Employee Role, Supplier Role]
+  rule_or_policy: &rule_or_policy [Business Rule, Policy]
+  sellable: &sellable [Packaged Unit, Service]
+  locations: &locations [Location, Warehouse]
+
+relationships:
+  - label: "account posting of"
+    type: ACCOUNT_POSTING_OF
+    iri: http://example.org/ontology/business#accountPostingOf
+    domain: [Ledger Account]
+    range: [Accounting Entry]
+    definition: "A ledger account collects this accounting entry."
+  - label: "posted to account"
+    type: POSTED_TO_ACCOUNT
+    iri: http://example.org/ontology/business#postedToAccount
+    domain: [Accounting Entry]
+    range: [Ledger Account]
+    definition: "An accounting entry is posted to this ledger account."
+  - label: "has position"
+    type: HAS_POSITION
+    iri: http://example.org/ontology/business#hasPosition
+    domain: [Organization]
+    range: [Position]
+    definition: "An organization has this position."
+  - label: "position in"
+    type: POSITION_IN
+    iri: http://example.org/ontology/business#positionIn
+    domain: [Position]
+    range: [Organization]
+    definition: "A position belongs to this organization."
+  - label: "has sub-unit"
+    type: HAS_SUB_UNIT
+    iri: http://example.org/ontology/business#hasSubUnit
+    domain: [Organization]
+    range: [Organizational Unit]
+    definition: "An organization contains this unit."
+  - label: "sub-unit of"
+    type: SUB_UNIT_OF
+    iri: http://example.org/ontology/business#subUnitOf
+    domain: [Organizational Unit]
+    range: [Organization]
+    definition: "A unit is part of this organization."
+  - label: "approved by"
+    type: APPROVED_BY
+    iri: http://example.org/ontology/business#approvedBy
+    domain: *documents_or_processes
+    range: *roles
+    definition: "The document or process was approved by this role."
+  - label: "authorized by"
+    type: AUTHORIZED_BY
+    iri: http://example.org/ontology/business#authorizedBy
+    domain: *documents_or_processes
+    range: *roles
+    definition: "The document or process was authorized by this role."
+  - label: "requires approval from"
+    type: REQUIRES_APPROVAL_FROM
+    iri: http://example.org/ontology/business#requiresApprovalFrom
+    domain: *documents_or_processes
+    range: [Approver Role]
+    definition: "The document or process needs sign-off from this approver role."
+  - label: "escalates to"
+    type: ESCALATES_TO
+    iri: http://example.org/ontology/business#escalatesTo
+    domain: [Escalation, Procedure, Escalation Path]
+    range: *roles
+    definition: "A matter is passed to this role when escalated."
+  - label: "governed by"
+    type: GOVERNED_BY
+    iri: http://example.org/ontology/business#governedBy
+    domain: *documents_or_processes
+    range: *rule_or_policy
+    definition: "The document or process is subject to this rule or policy."
+  - label: "governs"
+    type: GOVERNS
+    iri: http://example.org/ontology/business#governs
+    domain: *rule_or_policy
+    range: *documents_or_processes
+    definition: "This rule or policy applies to the document or process."
+  - label: "complies with"
+    type: COMPLIES_WITH
+    iri: http://example.org/ontology/business#compliesWith
+    domain: *compliance_subjects
+    range: *rule_or_policy
+    definition: "The entity follows this rule or policy."
+  - label: "references"
+    type: REFERENCES
+    iri: http://example.org/ontology/business#references
+    domain: *documents
+    range: *documents
+    definition: "A document refers to another document."
+  - label: "supersedes"
+    type: SUPERSEDES
+    iri: http://example.org/ontology/business#supersedes
+    domain: *documents
+    range: *documents
+    definition: "A document replaces an older document."
+  - label: "amends"
+    type: AMENDS
+    iri: http://example.org/ontology/business#amends
+    domain: *documents
+    range: *documents
+    definition: "A document changes part of another document."
+  - label: "has bill-to address"
+    type: HAS_BILL_TO_ADDRESS
+    iri: http://example.org/ontology/business#hasBillToAddress
+    domain: *documents
+    range: [Address]
+    definition: "The document is billed to this address."
+  - label: "has ship-to address"
+    type: HAS_SHIP_TO_ADDRESS
+    iri: http://example.org/ontology/business#hasShipToAddress
+    domain: *documents
+    range: [Address]
+    definition: "The document ships to this address."
+  - label: "issued by"
+    type: ISSUED_BY
+    iri: http://example.org/ontology/business#issuedBy
+    domain: *documents
+    range: *parties
+    definition: "The document was issued by this party."
+  - label: "owned by"
+    type: OWNED_BY
+    iri: http://example.org/ontology/business#ownedBy
+    domain: *ownable
+    range: *parties
+    definition: "The item belongs to this party."
+  - label: "placed by"
+    type: PLACED_BY
+    iri: http://example.org/ontology/business#placedBy
+    domain: [Purchase Order]
+    range: *parties
+    definition: "The purchase order was placed by this party."
+  - label: "placed with"
+    type: PLACED_WITH
+    iri: http://example.org/ontology/business#placedWith
+    domain: [Purchase Order]
+    range: *parties
+    definition: "The purchase order was placed with this supplier."
+  - label: "performed at"
+    type: PERFORMED_AT
+    iri: http://example.org/ontology/business#performedAt
+    domain: *processes
+    range: *locations
+    definition: "The process takes place at this location or warehouse."
+  - label: "has participant"
+    type: HAS_PARTICIPANT
+    iri: http://example.org/ontology/business#hasParticipant
+    domain: *processes
+    range: *parties
+    definition: "This party takes part in the process."
+  - label: "performed by"
+    type: PERFORMED_BY
+    iri: http://example.org/ontology/business#performedBy
+    domain: *processes
+    range: *parties
+    definition: "This party carries out the process."
+  - label: "follows"
+    type: FOLLOWS
+    iri: http://example.org/ontology/business#follows
+    domain: *processes
+    range: *processes
+    definition: "The process happens after this earlier process."
+  - label: "triggers"
+    type: TRIGGERS
+    iri: http://example.org/ontology/business#triggers
+    domain: *processes
+    range: *processes
+    definition: "The process causes this next process to start."
+  - label: "has business input"
+    type: HAS_BUSINESS_INPUT
+    iri: http://example.org/ontology/business#hasInput
+    domain: *processes
+    range: *documents_or_packaged
+    definition: "The process uses this document or product as input."
+  - label: "produces"
+    type: PRODUCES
+    iri: http://example.org/ontology/business#produces
+    domain: *processes
+    range: *documents_or_packaged
+    definition: "The process creates this document or product."
+  - label: "step of"
+    type: STEP_OF
+    iri: http://example.org/ontology/business#stepOf
+    domain: *processes
+    range: [Procedure]
+    definition: "The process is a step of this procedure."
+  - label: "has step"
+    type: HAS_STEP
+    iri: http://example.org/ontology/business#hasStep
+    domain: [Procedure]
+    range: *processes
+    definition: "The procedure includes this step."
+  - label: "assessment of"
+    type: ASSESSMENT_OF
+    iri: http://example.org/ontology/business#assessmentOf
+    domain: [Assessment, Audit, Credit Check]
+    range: *assessable
+    definition: "This assessment examines the entity."
+  - label: "has assessment"
+    type: HAS_ASSESSMENT
+    iri: http://example.org/ontology/business#hasAssessment
+    domain: *assessable
+    range: [Assessment, Audit, Credit Check]
+    definition: "The entity has been examined by this assessment."
+  - label: "located at"
+    type: LOCATED_AT
+    iri: http://example.org/ontology/business#locatedAt
+    domain: *parties_or_warehouse
+    range: [Location]
+    definition: "The party or warehouse is at this location."
+  - label: "stored at"
+    type: STORED_AT
+    iri: http://example.org/ontology/business#storedAt
+    domain: [Packaged Unit]
+    range: [Warehouse]
+    definition: "The product is stored in this warehouse."
+  - label: "manufactured at"
+    type: MANUFACTURED_AT
+    iri: http://example.org/ontology/business#manufacturedAt
+    domain: [Packaged Unit]
+    range: [Warehouse]
+    definition: "The product was made at this site."
+  - label: "transferred from"
+    type: TRANSFERRED_FROM
+    iri: http://example.org/ontology/business#transferredFrom
+    domain: [Stock Transfer, Inter Plant Transfer]
+    range: [Warehouse]
+    definition: "Goods leave this warehouse in the transfer."
+  - label: "transferred to"
+    type: TRANSFERRED_TO
+    iri: http://example.org/ontology/business#transferredTo
+    domain: [Stock Transfer, Inter Plant Transfer]
+    range: [Warehouse]
+    definition: "Goods arrive at this warehouse in the transfer."
+  - label: "supplied by"
+    type: SUPPLIED_BY
+    iri: http://example.org/ontology/business#suppliedBy
+    domain: *sellable
+    range: *parties
+    definition: "The product or service is supplied by this party."
+  - label: "supplies"
+    type: SUPPLIES
+    iri: http://example.org/ontology/business#supplies
+    domain: *parties
+    range: *sellable
+    definition: "This party supplies the product or service."
+  - label: "has category"
+    type: HAS_CATEGORY
+    iri: http://example.org/ontology/business#hasCategory
+    domain: *sellable
+    range: [Product Category]
+    definition: "The product or service belongs to this category."
+  - label: "component of"
+    type: COMPONENT_OF
+    iri: http://example.org/ontology/business#componentOf
+    domain: [Packaged Unit]
+    range: [Packaged Unit]
+    definition: "The product is a component of another product."
+  - label: "has business role"
+    type: HAS_BUSINESS_ROLE
+    iri: http://example.org/ontology/business#hasRole
+    domain: *parties
+    range: *roles
+    definition: "The party holds this role."
+  - label: "role of"
+    type: ROLE_OF
+    iri: http://example.org/ontology/business#roleOf
+    domain: *roles
+    range: *parties
+    definition: "The role is held by this party."
+  - label: "buys from"
+    type: BUYS_FROM
+    iri: http://example.org/ontology/business#buysFrom
+    domain: *parties
+    range: *parties
+    definition: "The party purchases from this party."
+  - label: "sells to"
+    type: SELLS_TO
+    iri: http://example.org/ontology/business#sellsTo
+    domain: *parties
+    range: *parties
+    definition: "The party sells to this party."
+  - label: "has credit check"
+    type: HAS_CREDIT_CHECK
+    iri: http://example.org/ontology/order-to-cash#HAS_CREDIT_CHECK
+    domain: [Sales Order]
+    range: [Credit Check]
+    definition: "The sales order was credit-checked."
+  - label: "has discount approval"
+    type: HAS_DISCOUNT_APPROVAL
+    iri: http://example.org/ontology/order-to-cash#HAS_DISCOUNT_APPROVAL
+    domain: [Sales Order]
+    range: [Discount Approval]
+    definition: "A discount on the sales order was approved."
+  - label: "has escalation"
+    type: HAS_ESCALATION
+    iri: http://example.org/ontology/order-to-cash#HAS_ESCALATION
+    domain: [Sales Order]
+    range: [Escalation Path]
+    definition: "The sales order follows this escalation path in an exception."
+  - label: "invoiced as"
+    type: INVOICED_AS
+    iri: http://example.org/ontology/order-to-cash#INVOICED_AS
+    domain: [Sales Order]
+    range: [Invoice]
+    definition: "The sales order was billed through this invoice."
+  - label: "evidenced by"
+    type: EVIDENCED_BY
+    iri: http://example.org/ontology/plant-fulfillment#EVIDENCED_BY
+    domain: [Shipment]
+    range: [Proof Of Shipment]
+    definition: "The shipment is proven by this document."
+  - label: "has document"
+    type: HAS_DOCUMENT
+    iri: http://example.org/ontology/plant-fulfillment#HAS_DOCUMENT
+    domain: [Shipment]
+    range: [Shipping Document]
+    definition: "The shipment has this shipping document."
+  - label: "requires transfer"
+    type: REQUIRES_TRANSFER
+    iri: http://example.org/ontology/plant-fulfillment#REQUIRES_TRANSFER
+    domain: [Sales Order]
+    range: [Inter Plant Transfer]
+    definition: "Fulfilling the order needs this inter-plant transfer."
+  - label: "shipped via"
+    type: SHIPPED_VIA
+    iri: http://example.org/ontology/plant-fulfillment#SHIPPED_VIA
+    domain: [Sales Order]
+    range: [Shipment]
+    definition: "The order was delivered in this shipment."
+  - label: "recognized as"
+    type: RECOGNIZED_AS
+    iri: http://example.org/ontology/revenue-recognition#RECOGNIZED_AS
+    domain: [Sales Order]
+    range: [Revenue Entry]
+    definition: "Revenue for the order is recorded in this entry."
+  - label: "posted to period"
+    type: POSTED_TO_PERIOD
+    iri: http://example.org/ontology/revenue-recognition#POSTED_TO_PERIOD
+    domain: [Revenue Entry]
+    range: [Fiscal Period]
+    definition: "The entry is posted to this fiscal period."

@@ -1,0 +1,451 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://example.org/ontology/manufacturing#"
+     xml:base="http://example.org/ontology/manufacturing"
+     xmlns:mfg="http://example.org/ontology/manufacturing#"
+     xmlns:biz="http://example.org/ontology/business#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:dc="http://purl.org/dc/terms/">
+    <owl:Ontology rdf:about="http://example.org/ontology/manufacturing">
+        <owl:imports rdf:resource="http://example.org/ontology/business"/>
+        <owl:versionInfo>0.1.0 draft</owl:versionInfo>
+        <dc:title>Manufacturing Layer Ontology</dc:title>
+        <dc:created>2026-11-04</dc:created>
+        <dc:modified>2026-11-04</dc:modified>
+        <dc:description xml:lang="en">Manufacturing concepts that specialise the business layer and give the process ontologies their parents: order-to-cash, revenue recognition and plant fulfillment. Holds the manufacturing core (plant, production order, batch, raw material, bill of materials, quality) and the classes that more than one process shares. Replace the example.org namespace with your own before use.</dc:description>
+    </owl:Ontology>
+
+    <!-- ///////////////  Classes  /////////////// -->
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#ProcessDocument">
+        <rdfs:label xml:lang="en">Process Document</rdfs:label>
+        <skos:prefLabel xml:lang="en">Process Document</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#BusinessDocument"/>
+        <skos:definition xml:lang="en">A source process document, such as a standard operating procedure, with its own id, version, owner and scope.</skos:definition>
+        <dc:source>Order-to-Cash; Plant Operations; Revenue Recognition</dc:source>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#Person">
+        <rdfs:label xml:lang="en">Person</rdfs:label>
+        <skos:prefLabel xml:lang="en">Person</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#Person"/>
+        <skos:definition xml:lang="en">An individual named in a document or event report.</skos:definition>
+        <skos:editorialNote xml:lang="en">Taken from event reports rather than from the three process documents.</skos:editorialNote>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#Role">
+        <rdfs:label xml:lang="en">Role</rdfs:label>
+        <skos:prefLabel xml:lang="en">Role</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#BusinessRole"/>
+        <skos:definition xml:lang="en">A job title or function, with its department and aliases.</skos:definition>
+        <dc:source>Order-to-Cash; Plant Operations; Revenue Recognition</dc:source>
+        <skos:editorialNote xml:lang="en">Role titles such as Credit Manager stay as instances of this one class. Make them subclasses only if the ontology should carry them.</skos:editorialNote>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#System">
+        <rdfs:label xml:lang="en">System</rdfs:label>
+        <skos:prefLabel xml:lang="en">System</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#InformationSystem"/>
+        <skos:definition xml:lang="en">A software system that a process uses, such as an ERP system.</skos:definition>
+        <dc:source>Order-to-Cash; Plant Operations; Revenue Recognition</dc:source>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#Regulation">
+        <rdfs:label xml:lang="en">Regulation</rdfs:label>
+        <skos:prefLabel xml:lang="en">Regulation</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#Regulation"/>
+        <skos:definition xml:lang="en">A law or standard that applies to plants or shipments.</skos:definition>
+        <dc:source>Order-to-Cash; Plant Operations; Revenue Recognition</dc:source>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#KPI">
+        <rdfs:label xml:lang="en">KPI</rdfs:label>
+        <skos:prefLabel xml:lang="en">KPI</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#Metric"/>
+        <skos:definition xml:lang="en">A measure of process performance, with a definition and target.</skos:definition>
+        <dc:source>Order-to-Cash; Plant Operations; Revenue Recognition</dc:source>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#Customer">
+        <rdfs:label xml:lang="en">Customer</rdfs:label>
+        <skos:prefLabel xml:lang="en">Customer</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#CustomerRole"/>
+        <skos:definition xml:lang="en">A buyer that submits orders to the manufacturer and has a credit limit, payment terms and geography.</skos:definition>
+        <dc:source>Order-to-Cash; Revenue Recognition</dc:source>
+        <skos:editorialNote xml:lang="en">Kept as a role, not an organization: credit limit and payment terms sit on the customer. If customer company names are also extracted, add an Organization and link it to this role. Parent tightened from CounterpartyRole to CustomerRole, which the business layer now provides.</skos:editorialNote>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#Carrier">
+        <rdfs:label xml:lang="en">Carrier</rdfs:label>
+        <skos:prefLabel xml:lang="en">Carrier</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#CarrierRole"/>
+        <skos:definition xml:lang="en">A company that moves shipments, taken from the approved carrier list per lane.</skos:definition>
+        <dc:source>Order-to-Cash; Plant Operations</dc:source>
+        <skos:editorialNote xml:lang="en">Parent tightened from CounterpartyRole to CarrierRole, which the business layer now provides.</skos:editorialNote>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#SalesContract">
+        <rdfs:label xml:lang="en">Sales Contract</rdfs:label>
+        <skos:prefLabel xml:lang="en">Sales Contract</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#Contract"/>
+        <skos:definition xml:lang="en">An agreement with a customer that sets terms such as incoterms, discount terms and expedited surcharge terms.</skos:definition>
+        <skos:altLabel xml:lang="en">Contract</skos:altLabel>
+        <dc:source>Order-to-Cash; Revenue Recognition</dc:source>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#SalesOrder">
+        <rdfs:label xml:lang="en">Sales Order</rdfs:label>
+        <skos:prefLabel xml:lang="en">Sales Order</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#SalesOrder"/>
+        <skos:definition xml:lang="en">A customer sales order, with dates, priority, amounts, currency, incoterm and status.</skos:definition>
+        <skos:altLabel xml:lang="en">Order</skos:altLabel>
+        <dc:source>Order-to-Cash; Plant Operations; Revenue Recognition</dc:source>
+        <skos:editorialNote xml:lang="en">Modeled as the order document. The handling of the order is a set of processes. Parent tightened from BusinessDocument to SalesOrder.</skos:editorialNote>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#ManufacturedProduct">
+        <rdfs:label xml:lang="en">Manufactured Product</rdfs:label>
+        <skos:prefLabel xml:lang="en">Manufactured Product</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#Product"/>
+        <skos:definition xml:lang="en">A product that the manufacturer sells and makes, with a product line, specification and hazard classification.</skos:definition>
+        <dc:source>Order-to-Cash; Plant Operations</dc:source>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#ProfitCenter">
+        <rdfs:label xml:lang="en">Profit Center</rdfs:label>
+        <skos:prefLabel xml:lang="en">Profit Center</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#OrganizationalUnit"/>
+        <skos:definition xml:lang="en">A plant-level unit that revenue is posted to.</skos:definition>
+        <dc:source>Order-to-Cash; Revenue Recognition</dc:source>
+        <skos:editorialNote xml:lang="en">Held in the manufacturing layer because both order-to-cash and revenue recognition refer to it.</skos:editorialNote>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#Plant">
+        <rdfs:label xml:lang="en">Plant</rdfs:label>
+        <skos:prefLabel xml:lang="en">Plant</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#Facility"/>
+        <skos:definition xml:lang="en">A production facility, with a location, region and primary product focus.</skos:definition>
+        <dc:source>Plant Operations</dc:source>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#ProductionOrder">
+        <rdfs:label xml:lang="en">Production Order</rdfs:label>
+        <skos:prefLabel xml:lang="en">Production Order</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/manufacturing#ManufacturingDocument"/>
+        <skos:definition xml:lang="en">An instruction to make a quantity of product at a plant, with status, batch size, targets and yields.</skos:definition>
+        <dc:source>Plant Operations</dc:source>
+        <skos:editorialNote xml:lang="en">Modeled as the order document. The production itself is a process.</skos:editorialNote>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#Batch">
+        <rdfs:label xml:lang="en">Batch</rdfs:label>
+        <skos:prefLabel xml:lang="en">Batch</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#Batch"/>
+        <skos:definition xml:lang="en">A quantity of product made under one production order, identified by a lot number.</skos:definition>
+        <dc:source>Plant Operations</dc:source>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#RawMaterial">
+        <rdfs:label xml:lang="en">Raw Material</rdfs:label>
+        <skos:prefLabel xml:lang="en">Raw Material</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#RawMaterial"/>
+        <skos:definition xml:lang="en">A material that a production order needs, tracked by inventory level and supplier delivery date.</skos:definition>
+        <dc:source>Plant Operations</dc:source>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#BillOfMaterials">
+        <rdfs:label xml:lang="en">Bill Of Materials</rdfs:label>
+        <skos:prefLabel xml:lang="en">Bill Of Materials</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#BillOfMaterials"/>
+        <skos:definition xml:lang="en">The list of materials that a production order uses.</skos:definition>
+        <dc:source>Plant Operations</dc:source>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#QualityCheck">
+        <rdfs:label xml:lang="en">Quality Check</rdfs:label>
+        <skos:prefLabel xml:lang="en">Quality Check</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#Inspection"/>
+        <skos:definition xml:lang="en">A test of a batch at a checkpoint, with a result.</skos:definition>
+        <dc:source>Plant Operations</dc:source>
+        <skos:editorialNote xml:lang="en">Parent tightened from Assessment to Inspection, which the business layer now provides.</skos:editorialNote>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#NonConformance">
+        <rdfs:label xml:lang="en">Non Conformance</rdfs:label>
+        <skos:prefLabel xml:lang="en">Non Conformance</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#ExceptionRecord"/>
+        <skos:definition xml:lang="en">A record of a quality failure, with its disposition and corrective and preventive action.</skos:definition>
+        <dc:source>Plant Operations</dc:source>
+        <skos:editorialNote xml:lang="en">Modeled as the record. The event that caused it is not a separate type.</skos:editorialNote>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#CertificateOfAnalysis">
+        <rdfs:label xml:lang="en">Certificate Of Analysis</rdfs:label>
+        <skos:prefLabel xml:lang="en">Certificate Of Analysis</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#Certificate"/>
+        <skos:definition xml:lang="en">A document that reports the test results for a batch, signed by the QA lead.</skos:definition>
+        <dc:source>Plant Operations</dc:source>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#ProofOfDelivery">
+        <rdfs:label xml:lang="en">Proof Of Delivery</rdfs:label>
+        <skos:prefLabel xml:lang="en">Proof Of Delivery</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#ProofOfDelivery"/>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/manufacturing#LogisticsDocument"/>
+        <skos:definition xml:lang="en">A document that confirms a shipment was delivered.</skos:definition>
+        <dc:source>Order-to-Cash; Plant Operations</dc:source>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#ManufacturingDocument">
+        <rdfs:label xml:lang="en">Manufacturing Document</rdfs:label>
+        <skos:prefLabel xml:lang="en">Manufacturing Document</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#BusinessDocument"/>
+        <skos:definition xml:lang="en">A controlled document that instructs or supports the making of product.</skos:definition>
+        <skos:editorialNote xml:lang="en">Manufacturing-layer parent. Children: Production Order (here) and Purchase Requisition (plant fulfillment).</skos:editorialNote>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#LogisticsDocument">
+        <rdfs:label xml:lang="en">Logistics Document</rdfs:label>
+        <skos:prefLabel xml:lang="en">Logistics Document</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#BusinessDocument"/>
+        <skos:definition xml:lang="en">A document that supports or evidences the movement of product to a customer or another site.</skos:definition>
+        <skos:editorialNote xml:lang="en">Manufacturing-layer parent. Children: Proof Of Delivery (here), Shipping Document and Proof Of Shipment (plant fulfillment).</skos:editorialNote>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#MaterialMovement">
+        <rdfs:label xml:lang="en">Material Movement</rdfs:label>
+        <skos:prefLabel xml:lang="en">Material Movement</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#Transport"/>
+        <skos:definition xml:lang="en">A movement of material or product between two places, with a carrier or an internal route.</skos:definition>
+        <skos:editorialNote xml:lang="en">Manufacturing-layer parent. Children: Shipment and Inter Plant Transfer (plant fulfillment).</skos:editorialNote>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#ManufacturingAssessment">
+        <rdfs:label xml:lang="en">Manufacturing Assessment</rdfs:label>
+        <skos:prefLabel xml:lang="en">Manufacturing Assessment</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#Assessment"/>
+        <skos:definition xml:lang="en">A check made on an order or its product before the work proceeds, with an outcome.</skos:definition>
+        <skos:editorialNote xml:lang="en">Manufacturing-layer parent. Child: Credit Check (order-to-cash).</skos:editorialNote>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#OrderApproval">
+        <rdfs:label xml:lang="en">Order Approval</rdfs:label>
+        <skos:prefLabel xml:lang="en">Order Approval</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#Approval"/>
+        <skos:definition xml:lang="en">An approval of the commercial terms of a customer order, given by a role with enough authority.</skos:definition>
+        <skos:editorialNote xml:lang="en">Manufacturing-layer parent. Child: Discount Approval (order-to-cash).</skos:editorialNote>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#BillingDocument">
+        <rdfs:label xml:lang="en">Billing Document</rdfs:label>
+        <skos:prefLabel xml:lang="en">Billing Document</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#Invoice"/>
+        <skos:definition xml:lang="en">A document that bills a customer for manufactured goods that were ordered or delivered.</skos:definition>
+        <skos:editorialNote xml:lang="en">Manufacturing-layer parent. Child: Invoice (order-to-cash).</skos:editorialNote>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#ManufacturingProcedure">
+        <rdfs:label xml:lang="en">Manufacturing Procedure</rdfs:label>
+        <skos:prefLabel xml:lang="en">Manufacturing Procedure</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#Procedure"/>
+        <skos:definition xml:lang="en">A defined sequence of steps that a manufacturer follows in a process or in an exception.</skos:definition>
+        <skos:editorialNote xml:lang="en">Manufacturing-layer parent. Child: Escalation Path (order-to-cash).</skos:editorialNote>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#ManufacturingControl">
+        <rdfs:label xml:lang="en">Manufacturing Control</rdfs:label>
+        <skos:prefLabel xml:lang="en">Manufacturing Control</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#Control"/>
+        <skos:definition xml:lang="en">A check that keeps a manufacturing, sales or reporting process within its rules.</skos:definition>
+        <skos:editorialNote xml:lang="en">Manufacturing-layer parent. Child: Control (revenue recognition).</skos:editorialNote>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#ManufacturingAccountingEntry">
+        <rdfs:label xml:lang="en">Manufacturing Accounting Entry</rdfs:label>
+        <skos:prefLabel xml:lang="en">Manufacturing Accounting Entry</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#AccountingEntry"/>
+        <skos:definition xml:lang="en">An accounting entry that records the financial effect of manufacturing and sales activity.</skos:definition>
+        <skos:editorialNote xml:lang="en">Manufacturing-layer parent. Children: Revenue Entry, Accrual and Deferred Revenue (revenue recognition).</skos:editorialNote>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/manufacturing#ReportingPeriod">
+        <rdfs:label xml:lang="en">Reporting Period</rdfs:label>
+        <skos:prefLabel xml:lang="en">Reporting Period</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/business#TimePeriod"/>
+        <skos:definition xml:lang="en">A span of time over which a manufacturer reports its activity.</skos:definition>
+        <skos:editorialNote xml:lang="en">Manufacturing-layer parent. Child: Fiscal Period (revenue recognition).</skos:editorialNote>
+    </owl:Class>
+
+    <!-- ///////////////  Object properties  /////////////// -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#SUBMITS">
+        <rdfs:label xml:lang="en">submits</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#Customer"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#SalesOrder"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#HAS_CONTRACT">
+        <rdfs:label xml:lang="en">has contract</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#Customer"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#SalesContract"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#GOVERNED_BY">
+        <rdfs:label xml:lang="en">governed by</rdfs:label>
+        <rdfs:subPropertyOf rdf:resource="http://example.org/ontology/business#governedBy"/>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#SalesOrder"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#SalesContract"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#CONTAINS">
+        <rdfs:label xml:lang="en">contains</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#SalesOrder"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#ManufacturedProduct"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#ASSIGNED_TO_PLANT">
+        <rdfs:label xml:lang="en">assigned to plant</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#SalesOrder"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#Plant"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#PRIMARY_PLANT_FOR">
+        <rdfs:label xml:lang="en">primary plant for</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#Plant"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#ManufacturedProduct"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#BACKUP_PLANT_FOR">
+        <rdfs:label xml:lang="en">backup plant for</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#Plant"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#ManufacturedProduct"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#HAS_PRODUCTION_ORDER">
+        <rdfs:label xml:lang="en">has production order</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#SalesOrder"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#ProductionOrder"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#PRODUCED_AT">
+        <rdfs:label xml:lang="en">produced at</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#ProductionOrder"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#Plant"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#REQUIRES">
+        <rdfs:label xml:lang="en">requires</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#ProductionOrder"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#RawMaterial"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#USES_BOM">
+        <rdfs:label xml:lang="en">uses bom</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#ProductionOrder"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#BillOfMaterials"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#PRODUCES">
+        <rdfs:label xml:lang="en">produces</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#ProductionOrder"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#Batch"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#HAS_QUALITY_CHECK">
+        <rdfs:label xml:lang="en">has quality check</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#Batch"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#QualityCheck"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#HAS_COA">
+        <rdfs:label xml:lang="en">has coa</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#Batch"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#CertificateOfAnalysis"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#RAISES">
+        <rdfs:label xml:lang="en">raises</rdfs:label>
+        <rdfs:subPropertyOf rdf:resource="http://example.org/ontology/business#produces"/>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#QualityCheck"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#NonConformance"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#HOLDS_ROLE">
+        <rdfs:label xml:lang="en">holds role</rdfs:label>
+        <rdfs:subPropertyOf rdf:resource="http://example.org/ontology/business#hasRole"/>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#Person"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#Role"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#LOGGED">
+        <rdfs:label xml:lang="en">logged</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#Person"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#SalesOrder"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#ASSIGNED_PLANT">
+        <rdfs:label xml:lang="en">assigned plant</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#Person"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#SalesOrder"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#SCHEDULED">
+        <rdfs:label xml:lang="en">scheduled</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#Person"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#ProductionOrder"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#RECORDED">
+        <rdfs:label xml:lang="en">recorded</rdfs:label>
+        <rdfs:subPropertyOf rdf:resource="http://example.org/ontology/business#participantIn"/>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#Person"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#QualityCheck"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#RELEASED">
+        <rdfs:label xml:lang="en">released</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#Person"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#Batch"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#PERFORMS_STEP_ON">
+        <rdfs:label xml:lang="en">performs step on</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#Person"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#SalesOrder"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#REFERENCES">
+        <rdfs:label xml:lang="en">references</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#ProcessDocument"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#ProcessDocument"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#DEFINES">
+        <rdfs:label xml:lang="en">defines</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#ProcessDocument"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#KPI"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#OWNED_BY">
+        <rdfs:label xml:lang="en">owned by</rdfs:label>
+        <rdfs:domain>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://example.org/ontology/manufacturing#ProcessDocument"/>
+                    <rdf:Description rdf:about="http://example.org/ontology/manufacturing#ManufacturingControl"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#Role"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/manufacturing#USES_SYSTEM">
+        <rdfs:label xml:lang="en">uses system</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#ProcessDocument"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#System"/>
+    </owl:ObjectProperty>
+
+</rdf:RDF>

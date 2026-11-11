@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://example.org/ontology/plant-fulfillment#"
+     xml:base="http://example.org/ontology/plant-fulfillment"
+     xmlns:pfl="http://example.org/ontology/plant-fulfillment#"
+     xmlns:biz="http://example.org/ontology/business#"
+     xmlns:mfg="http://example.org/ontology/manufacturing#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:dc="http://purl.org/dc/terms/">
+    <owl:Ontology rdf:about="http://example.org/ontology/plant-fulfillment">
+        <owl:imports rdf:resource="http://example.org/ontology/manufacturing"/>
+        <owl:versionInfo>0.1.0 draft</owl:versionInfo>
+        <dc:title>Plant Fulfillment Ontology</dc:title>
+        <dc:created>2026-11-04</dc:created>
+        <dc:modified>2026-11-04</dc:modified>
+        <dc:description xml:lang="en">Plant fulfillment classes for a manufacturer: purchase requisitions, inter-plant transfers, shipments and shipping documents. Each class has one manufacturing-layer parent, which in turn has a business-layer parent. Replace the example.org namespace with your own before use.</dc:description>
+    </owl:Ontology>
+
+    <!-- ///////////////  Classes  /////////////// -->
+
+    <owl:Class rdf:about="http://example.org/ontology/plant-fulfillment#PurchaseRequisition">
+        <rdfs:label xml:lang="en">Purchase Requisition</rdfs:label>
+        <skos:prefLabel xml:lang="en">Purchase Requisition</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/manufacturing#ManufacturingDocument"/>
+        <skos:definition xml:lang="en">A request to buy materials, either standard or emergency.</skos:definition>
+        <dc:source>Plant Operations</dc:source>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/plant-fulfillment#InterPlantTransfer">
+        <rdfs:label xml:lang="en">Inter Plant Transfer</rdfs:label>
+        <skos:prefLabel xml:lang="en">Inter Plant Transfer</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/manufacturing#MaterialMovement"/>
+        <skos:definition xml:lang="en">A movement of material or product from one plant to another, with a transfer cost and approval.</skos:definition>
+        <dc:source>Order-to-Cash; Plant Operations</dc:source>
+        <skos:editorialNote xml:lang="en">Business-layer StockTransfer is the closest match; MaterialMovement carries it into the manufacturing layer as a transport.</skos:editorialNote>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/plant-fulfillment#Shipment">
+        <rdfs:label xml:lang="en">Shipment</rdfs:label>
+        <skos:prefLabel xml:lang="en">Shipment</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/manufacturing#MaterialMovement"/>
+        <skos:definition xml:lang="en">The movement of an order's goods to the customer by a carrier on a freight mode.</skos:definition>
+        <dc:source>Order-to-Cash; Plant Operations</dc:source>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/plant-fulfillment#ShippingDocument">
+        <rdfs:label xml:lang="en">Shipping Document</rdfs:label>
+        <skos:prefLabel xml:lang="en">Shipping Document</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/manufacturing#LogisticsDocument"/>
+        <skos:definition xml:lang="en">A document that travels with or supports a shipment.</skos:definition>
+        <dc:source>Plant Operations</dc:source>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ontology/plant-fulfillment#ProofOfShipment">
+        <rdfs:label xml:lang="en">Proof Of Shipment</rdfs:label>
+        <skos:prefLabel xml:lang="en">Proof Of Shipment</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://example.org/ontology/manufacturing#LogisticsDocument"/>
+        <skos:definition xml:lang="en">A document that shows a shipment has left.</skos:definition>
+        <dc:source>Order-to-Cash</dc:source>
+    </owl:Class>
+
+    <!-- ///////////////  Object properties  /////////////// -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/plant-fulfillment#REQUIRES_TRANSFER">
+        <rdfs:label xml:lang="en">requires transfer</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#SalesOrder"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/plant-fulfillment#InterPlantTransfer"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/plant-fulfillment#FROM_PLANT">
+        <rdfs:label xml:lang="en">from plant</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/plant-fulfillment#InterPlantTransfer"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#Plant"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/plant-fulfillment#TO_PLANT">
+        <rdfs:label xml:lang="en">to plant</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/plant-fulfillment#InterPlantTransfer"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#Plant"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/plant-fulfillment#COST_ALLOCATED_TO">
+        <rdfs:label xml:lang="en">cost allocated to</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/plant-fulfillment#InterPlantTransfer"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#Plant"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/plant-fulfillment#SHIPPED_VIA">
+        <rdfs:label xml:lang="en">shipped via</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#SalesOrder"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/plant-fulfillment#Shipment"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/plant-fulfillment#USES_CARRIER">
+        <rdfs:label xml:lang="en">uses carrier</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/plant-fulfillment#Shipment"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#Carrier"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/plant-fulfillment#HAS_DOCUMENT">
+        <rdfs:label xml:lang="en">has document</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/plant-fulfillment#Shipment"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/plant-fulfillment#ShippingDocument"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/plant-fulfillment#EVIDENCED_BY">
+        <rdfs:label xml:lang="en">evidenced by</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/plant-fulfillment#Shipment"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/plant-fulfillment#ProofOfShipment"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/plant-fulfillment#CONFIRMED_BY">
+        <rdfs:label xml:lang="en">confirmed by</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/ontology/plant-fulfillment#Shipment"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#ProofOfDelivery"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/plant-fulfillment#BOOKED">
+        <rdfs:label xml:lang="en">booked</rdfs:label>
+        <rdfs:subPropertyOf rdf:resource="http://example.org/ontology/business#participantIn"/>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#Person"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/plant-fulfillment#Shipment"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/plant-fulfillment#AUTHORIZED">
+        <rdfs:label xml:lang="en">authorized</rdfs:label>
+        <rdfs:subPropertyOf rdf:resource="http://example.org/ontology/business#participantIn"/>
+        <rdfs:domain rdf:resource="http://example.org/ontology/manufacturing#Person"/>
+        <rdfs:range rdf:resource="http://example.org/ontology/plant-fulfillment#InterPlantTransfer"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/ontology/plant-fulfillment#SUBJECT_TO">
+        <rdfs:label xml:lang="en">subject to</rdfs:label>
+        <rdfs:domain>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://example.org/ontology/manufacturing#Plant"/>
+                    <rdf:Description rdf:about="http://example.org/ontology/plant-fulfillment#Shipment"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
+        <rdfs:range rdf:resource="http://example.org/ontology/manufacturing#Regulation"/>
+    </owl:ObjectProperty>
+
+</rdf:RDF>

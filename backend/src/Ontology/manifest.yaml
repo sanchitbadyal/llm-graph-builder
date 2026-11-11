@@ -1,0 +1,127 @@
+manifest:
+  id: cabalmar-ontology-catalog
+  version: 0.1.0
+  default_profile: manufacturing
+  status: provisional
+  policy: >-
+    Local artifacts are catalogued by stable ontology IRI and version. External
+    imports are not fetched implicitly in Phase 1.
+
+artifacts:
+  - id: bfo
+    iri: http://purl.obolibrary.org/obo/bfo.owl
+    version: 2020
+    version_iri: http://purl.obolibrary.org/obo/bfo/2020/bfo-core.owl
+    path: foundational ontology.rdf
+    layer: foundation
+    media_type: application/rdf+xml
+    checksum: sha256:265adb7c5e022384d38fe473ccb070b7d6f6fb9b50c4528456fe0276b8c293ef
+
+  - id: business
+    iri: http://example.org/ontology/business
+    version: 0.1.0
+    path: business.owl
+    layer: business-core
+    media_type: application/rdf+xml
+    checksum: sha256:a171e19b4c5935c6088b06ea5cd601f16ad0528922779c8efb2a2776482425e1
+    imports:
+      - http://purl.obolibrary.org/obo/bfo.owl
+
+  - id: manufacturing
+    iri: http://example.org/ontology/manufacturing
+    version: 0.1.0
+    path: manufacturing.owl
+    layer: domain
+    media_type: application/rdf+xml
+    checksum: sha256:e42c5ba966bd58d065f2ef7833f9b961f44ff647692ef14e6f36cb74c9a3498d
+    imports:
+      - http://example.org/ontology/business
+
+  - id: iof-annotation-vocabulary
+    iri: https://spec.industrialontologies.org/ontology/core/meta/AnnotationVocabulary/
+    version: "202603"
+    version_iri: https://spec.industrialontologies.org/ontology/202603/core/meta/AnnotationVocabulary/
+    path: ontologies/iof/AnnotationVocabulary.rdf
+    layer: foundation
+    media_type: application/rdf+xml
+
+  - id: iof-core
+    iri: https://spec.industrialontologies.org/ontology/core/Core/
+    version: "202603"
+    version_iri: https://spec.industrialontologies.org/ontology/202603/core/Core/
+    path: ontologies/iof/Core.rdf
+    layer: foundation
+    media_type: application/rdf+xml
+    imports:
+      - http://purl.obolibrary.org/obo/bfo/2020/bfo-core.owl
+      - https://spec.industrialontologies.org/ontology/202603/core/meta/AnnotationVocabulary/
+
+  - id: production-planning
+    iri: https://spec.industrialontologies.org/ontology/productionplanning/ProductionPlanning/
+    version: "202603"
+    version_iri: https://spec.industrialontologies.org/ontology/202603/productionplanning/ProductionPlanning/
+    path: ProductionPlanning.rdf
+    layer: domain
+    media_type: application/rdf+xml
+    imports:
+      - https://spec.industrialontologies.org/ontology/202603/core/Core/
+
+  - id: maintenance
+    iri: https://spec.industrialontologies.org/ontology/maintenance/Maintenance/
+    version: "202603"
+    version_iri: https://spec.industrialontologies.org/ontology/202603/maintenance/Maintenance/
+    path: Maintenance.rdf
+    layer: domain
+    media_type: application/rdf+xml
+    imports:
+      - https://spec.industrialontologies.org/ontology/202603/core/Core/
+
+  - id: certification
+    iri: https://spec.industrialontologies.org/ontology/certification/Certification/
+    version: "202603"
+    version_iri: https://spec.industrialontologies.org/ontology/202603/certification/Certification/
+    path: ontologies/iof/Certification.rdf
+    layer: domain
+    media_type: application/rdf+xml
+    imports:
+      - https://spec.industrialontologies.org/ontology/202603/core/Core/
+
+  - id: manufacturing-system-organization
+    iri: https://spec.industrialontologies.org/ontology/biopharma/ManufacturingSystemOrganization/
+    version: "202603"
+    version_iri: https://spec.industrialontologies.org/ontology/202603/biopharma/ManufacturingSystemOrganization/
+    path: ManufacturingSystemOrganization.rdf
+    layer: domain
+    media_type: application/rdf+xml
+    imports:
+      - https://spec.industrialontologies.org/ontology/202603/core/Core/
+
+  - id: order-to-cash
+    iri: http://example.org/ontology/order-to-cash
+    version: 0.1.0
+    path: order-to-cash.owl
+    layer: domain
+    media_type: application/rdf+xml
+    checksum: sha256:647077800b4a71e3582fe5afb08d2d2b1e4d8f819c6584e164efcade6bf0d40c
+    imports:
+      - http://example.org/ontology/manufacturing
+
+  - id: plant-fulfillment
+    iri: http://example.org/ontology/plant-fulfillment
+    version: 0.1.0
+    path: plant-fulfillment.owl
+    layer: domain
+    media_type: application/rdf+xml
+    checksum: sha256:588712861b016567e1d787e7e0424e23c73ea276ee2de8772e9a94957c66c3e0
+    imports:
+      - http://example.org/ontology/manufacturing
+
+  - id: revenue-recognition
+    iri: http://example.org/ontology/revenue-recognition
+    version: 0.1.0
+    path: revenue-recognition.owl
+    layer: domain
+    media_type: application/rdf+xml
+    checksum: sha256:845f2564927477e524adcbe427364b9eb625e1a2ab00ede9d9c21caeb39e5193
+    imports:
+      - http://example.org/ontology/manufacturing

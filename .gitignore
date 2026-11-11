@@ -178,3 +178,5 @@ startupfrontend.sh
 /crab
 .mcp.json
 mcp.json
+backend/commands.md
+/logs/

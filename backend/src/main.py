@@ -646,16 +646,105 @@ async def processing_chunks(chunkId_chunkDoc_list,graph,credentials,file_name,mo
   logging.info("Get graph document list from models")
   
   start_entity_extraction = time.time()
-  graph_documents, token_usage =  await get_graph_from_llm(model, chunkId_chunkDoc_list, allowedNodes, allowedRelationship, chunks_to_combine, additional_instructions)
+  extraction_result = await get_graph_from_llm(
+      model, chunkId_chunkDoc_list, allowedNodes, allowedRelationship,
+      chunks_to_combine, additional_instructions, return_envelope=True,
+  )
+  graph_documents, token_usage, extraction_envelope = extraction_result
   end_entity_extraction = time.time()
   elapsed_entity_extraction = end_entity_extraction - start_entity_extraction
   logging.info(f'Time taken to extract enitities from LLM Graph Builder: {elapsed_entity_extraction:.2f} seconds')
   latency_processing_chunk["entity_extraction"] = f'{elapsed_entity_extraction:.2f}'
+
+  ontology_only = True
+  logging.info("RAW LLM OUTPUT: %s graph documents", len(graph_documents))
+  logging.info("Ontology extraction envelope: %s candidate assertions", len(extraction_envelope.assertions))
+  if extraction_envelope.ontology_id:
+      from src.ontology_registry import (
+          default_adapter, filter_graph_documents_by_envelope,
+          validate_envelope, validate_envelope_shacl, validate_graph_document_nodes,
+          resolver_from_neo4j, resolve_envelope, project_entity_metadata, project_relationship_metadata,
+          verify_envelope_evidence,
+          write_extraction_log,
+      )
+      ontology_adapter = default_adapter()
+      repository = ontology_adapter.builder.resolver
+      semantic_validation_enabled = get_value_from_env(
+          "ONTOLOGY_SEMANTIC_VALIDATION", "true", "bool"
+      )
+      if semantic_validation_enabled:
+          validated_envelope, semantic_report = validate_envelope(extraction_envelope, repository)
+          logging.info("Ontology semantic validation: %s", semantic_report.as_dict())
+          extraction_envelope = validated_envelope
+      else:
+          semantic_report = {
+              "enabled": False,
+              "valid": len(extraction_envelope.assertions),
+              "rejected": 0,
+              "quarantined": 0,
+              "total": len(extraction_envelope.assertions),
+              "errors": [],
+          }
+          logging.info("Ontology semantic validation disabled: %s", semantic_report)
+      extraction_envelope, shacl_report = validate_envelope_shacl(extraction_envelope)
+      logging.info("SHACL validation: %s", shacl_report.as_dict())
+      evidence_chunks = {
+          str(item["chunk_id"]): item["chunk_doc"]
+          for item in chunkId_chunkDoc_list
+      }
+      extraction_envelope, evidence_report = verify_envelope_evidence(
+          extraction_envelope,
+          evidence_chunks,
+          require_exact=get_value_from_env("ONTOLOGY_REQUIRE_EXACT_EVIDENCE", "false", "bool"),
+      )
+      logging.info("Ontology evidence verification: %s", evidence_report)
+      write_extraction_log(
+          extraction_envelope, source_name=file_name, stage="raw_after_extraction",
+          report={
+              "semantic": semantic_report.as_dict()
+              if hasattr(semantic_report, "as_dict") else semantic_report,
+              "shacl": shacl_report.as_dict(),
+              "evidence": evidence_report,
+          },
+      )
+      if get_value_from_env("ONTOLOGY_ENTITY_RESOLUTION", "false", "bool"):
+          entity_resolver = resolver_from_neo4j(graph)
+          extraction_envelope, resolution_report = resolve_envelope(extraction_envelope, entity_resolver)
+          logging.info("Ontology entity resolution: %s", resolution_report)
+          logging.info("Ontology duplicate groups: %s", len(entity_resolver.reconciliation_groups()))
+          projected = project_entity_metadata(graph, extraction_envelope)
+          logging.info("Ontology metadata projected to %s entities", projected)
+      if semantic_validation_enabled:
+          node_report = validate_graph_document_nodes(graph_documents, repository)
+          logging.info("Ontology node validation: %s", node_report.as_dict())
+          graph_documents, removed_relationships = filter_graph_documents_by_envelope(
+              graph_documents, extraction_envelope
+          )
+          logging.info("Ontology semantic validation removed %s relationships", removed_relationships)
   
   cleaned_graph_documents = handle_backticks_nodes_relationship_id_type(graph_documents)
+  validation_counts = {"ontology_only": True, "rejected_nodes": [], "rejected_relationships": [],
+                       "duplicate_nodes": [], "duplicate_relationships": [], "business_rule_violations": []}
+  if (
+      validation_counts["rejected_nodes"]
+      or validation_counts["rejected_relationships"]
+      or validation_counts["duplicate_nodes"]
+      or validation_counts["duplicate_relationships"]
+      or validation_counts["business_rule_violations"]
+  ):
+    logging.warning("Business model validation removed invalid LLM output: %s", validation_counts)
+  logging.info("ACCEPTED AFTER ONTOLOGY VALIDATION: %s graph documents", len(cleaned_graph_documents))
+  if extraction_envelope.ontology_id:
+      write_extraction_log(
+          extraction_envelope, source_name=file_name, stage="accepted_after_validation",
+          report=validation_counts,
+      )
   
   start_save_graphDocuments = time.time()
   save_graphDocuments_in_neo4j(graph, cleaned_graph_documents)
+  if extraction_envelope.ontology_id and get_value_from_env("ONTOLOGY_GUIDED_EXTRACTION", "false", "bool"):
+      projected_relationships = project_relationship_metadata(graph, cleaned_graph_documents, extraction_envelope)
+      logging.info("Ontology provenance projected to %s relationships", projected_relationships)
   end_save_graphDocuments = time.time()
   elapsed_save_graphDocuments = end_save_graphDocuments - start_save_graphDocuments
   logging.info(f'Time taken to save graph document in neo4j: {elapsed_save_graphDocuments:.2f} seconds')

@@ -1,0 +1,112 @@
+profile:
+  id: plant-fulfillment-selected
+  ontology_artifact: plant-fulfillment
+  description: >-
+    Plant fulfillment context: purchase requisitions, inter-plant transfers, shipments and shipping documents.
+    Only the explicitly selected classes are sent to the LLM; parents appear as context only.
+  include_ancestors: true
+
+groups:
+  plant_fulfillment:
+    - label: Purchase Requisition
+      iri: http://example.org/ontology/plant-fulfillment#PurchaseRequisition
+      parent: Manufacturing Document
+      maps_to_business: Business Document
+      definition: "A request to buy materials, either standard or emergency."
+    - label: Inter Plant Transfer
+      iri: http://example.org/ontology/plant-fulfillment#InterPlantTransfer
+      parent: Material Movement
+      maps_to_business: Transport
+      definition: "A movement of material or product from one plant to another, with a transfer cost and approval."
+    - label: Shipment
+      iri: http://example.org/ontology/plant-fulfillment#Shipment
+      parent: Material Movement
+      maps_to_business: Transport
+      definition: "The movement of an order's goods to the customer by a carrier on a freight mode."
+    - label: Shipping Document
+      iri: http://example.org/ontology/plant-fulfillment#ShippingDocument
+      parent: Logistics Document
+      maps_to_business: Business Document
+      definition: "A document that travels with or supports a shipment."
+    - label: Proof Of Shipment
+      iri: http://example.org/ontology/plant-fulfillment#ProofOfShipment
+      parent: Logistics Document
+      maps_to_business: Business Document
+      definition: "A document that shows a shipment has left."
+
+relationships:
+  - label: authorized
+    type: AUTHORIZED
+    iri: http://example.org/ontology/plant-fulfillment#AUTHORIZED
+    domain: "Person"
+    range: "Inter Plant Transfer"
+    ends_defined_in_other_files: {Person: manufacturing}
+    sub_property_of: participant in
+  - label: booked
+    type: BOOKED
+    iri: http://example.org/ontology/plant-fulfillment#BOOKED
+    domain: "Person"
+    range: "Shipment"
+    ends_defined_in_other_files: {Person: manufacturing}
+    sub_property_of: participant in
+  - label: confirmed by
+    type: CONFIRMED_BY
+    iri: http://example.org/ontology/plant-fulfillment#CONFIRMED_BY
+    domain: "Shipment"
+    range: "Proof Of Delivery"
+    ends_defined_in_other_files: {Proof Of Delivery: manufacturing}
+  - label: cost allocated to
+    type: COST_ALLOCATED_TO
+    iri: http://example.org/ontology/plant-fulfillment#COST_ALLOCATED_TO
+    domain: "Inter Plant Transfer"
+    range: "Plant"
+    ends_defined_in_other_files: {Plant: manufacturing}
+  - label: evidenced by
+    type: EVIDENCED_BY
+    iri: http://example.org/ontology/plant-fulfillment#EVIDENCED_BY
+    domain: "Shipment"
+    range: "Proof Of Shipment"
+  - label: from plant
+    type: FROM_PLANT
+    iri: http://example.org/ontology/plant-fulfillment#FROM_PLANT
+    domain: "Inter Plant Transfer"
+    range: "Plant"
+    ends_defined_in_other_files: {Plant: manufacturing}
+  - label: has document
+    type: HAS_DOCUMENT
+    iri: http://example.org/ontology/plant-fulfillment#HAS_DOCUMENT
+    domain: "Shipment"
+    range: "Shipping Document"
+  - label: requires transfer
+    type: REQUIRES_TRANSFER
+    iri: http://example.org/ontology/plant-fulfillment#REQUIRES_TRANSFER
+    domain: "Sales Order"
+    range: "Inter Plant Transfer"
+    ends_defined_in_other_files: {Sales Order: manufacturing}
+  - label: shipped via
+    type: SHIPPED_VIA
+    iri: http://example.org/ontology/plant-fulfillment#SHIPPED_VIA
+    domain: "Sales Order"
+    range: "Shipment"
+    ends_defined_in_other_files: {Sales Order: manufacturing}
+  - label: subject to
+    type: SUBJECT_TO
+    iri: http://example.org/ontology/plant-fulfillment#SUBJECT_TO
+    domain: "Plant | Shipment"
+    range: "Regulation"
+    ends_defined_in_other_files: {Plant: manufacturing, Regulation: manufacturing}
+  - label: to plant
+    type: TO_PLANT
+    iri: http://example.org/ontology/plant-fulfillment#TO_PLANT
+    domain: "Inter Plant Transfer"
+    range: "Plant"
+    ends_defined_in_other_files: {Plant: manufacturing}
+  - label: uses carrier
+    type: USES_CARRIER
+    iri: http://example.org/ontology/plant-fulfillment#USES_CARRIER
+    domain: "Shipment"
+    range: "Carrier"
+    ends_defined_in_other_files: {Carrier: manufacturing}
+
+# Relationships declared in other files that involve this file's classes
+related_relationships: []
