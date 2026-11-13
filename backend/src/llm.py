@@ -1,6 +1,7 @@
 import logging
 import os
 import json
+import yaml
 from datetime import datetime, timezone
 from pathlib import Path
 from langchain_core.documents import Document
@@ -273,28 +274,149 @@ def build_transformer_instructions(user_instructions=None, yaml_context=None):
     return instructions
 
 
-def rewrite_inverse_relationships(graph_documents, inverse_relationships):
-    """Normalize extracted inverse predicates to the prompt's canonical form."""
+class _IndentedYamlDumper(yaml.SafeDumper):
+    def increase_indent(self, flow=False, indentless=False):
+        return super().increase_indent(flow, False)
+
+
+def _format_ontology_context_for_log(yaml_context):
+    """Render each concatenated profile document as indented block-style YAML."""
+    profiles = re.split(r"(?m)(?=^# Source profile: )", yaml_context)
+    formatted_profiles = []
+    for profile in profiles:
+        if not profile.strip():
+            continue
+        header, separator, document = profile.partition("\n")
+        if not separator:
+            formatted_profiles.append(profile.rstrip())
+            continue
+        formatted_yaml = yaml.dump(
+            yaml.safe_load(document),
+            Dumper=_IndentedYamlDumper,
+            sort_keys=False,
+            default_flow_style=False,
+            allow_unicode=True,
+            width=100,
+        ).rstrip()
+        formatted_profiles.append(f"{header}\n{formatted_yaml}")
+    return "\n\n---\n\n".join(formatted_profiles)
+
+
+def _append_ontology_text_chunks_log(path, chunks, selection_sample, sample_limit):
+    """Append the exact profile-selection sample and extraction chunks in readable form."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as log_file:
+        log_file.write(f"\n{'=' * 80}\n")
+        log_file.write(f"Ontology text chunks | {datetime.now(timezone.utc).isoformat()}\n")
+        log_file.write(
+            f"Combined chunks: {len(chunks)} | profile-selection sample: "
+            f"{len(selection_sample)} characters (limit {sample_limit})\n"
+        )
+        log_file.write(f"{'=' * 80}\n\n")
+        log_file.write("Text sample sent to profile selection:\n")
+        log_file.write(selection_sample)
+        log_file.write("\n\n")
+        for index, chunk in enumerate(chunks, start=1):
+            chunk_ids = chunk.metadata.get("combined_chunk_ids", [])
+            log_file.write(
+                f"--- Combined chunk {index}/{len(chunks)} "
+                f"| source chunk IDs: {', '.join(map(str, chunk_ids))} "
+                f"| {len(chunk.page_content)} characters ---\n"
+            )
+            log_file.write(chunk.page_content)
+            log_file.write("\n\n")
+
+
+def rewrite_inverse_relationships(graph_documents, inverse_relationships, ontology_profile=None):
+    """Normalize inverse predicates and unambiguous performed-by directions."""
     def normalize(value):
         return " ".join(str(value).replace("_", " ").casefold().split())
 
     inverse_map = {normalize(source): target for source, target in (inverse_relationships or ())}
-    if not inverse_map:
+    if not inverse_map and ontology_profile is None:
         return graph_documents
+
+    labels_by_iri = {
+        iri: label for label, iri in getattr(ontology_profile, "relationship_iri_lookup", ())
+    }
+    performed_by_iri = next(
+        (
+            iri for label, iri in getattr(ontology_profile, "relationship_iri_lookup", ())
+            if normalize(label) == "performed by"
+        ),
+        None,
+    )
+    performed_by_label = labels_by_iri.get(performed_by_iri, "performed by")
+    endpoint_constraints = next(
+        (
+            (domain, range_)
+            for iri, _, domain, range_ in getattr(
+                ontology_profile, "yaml_relationship_constraints", ()
+            )
+            if iri == performed_by_iri
+        ),
+        (None, None),
+    )
+    domain, range_ = endpoint_constraints
+    parents = {
+        normalize(label): tuple(normalize(parent) for parent in class_parents)
+        for label, class_parents in getattr(ontology_profile, "yaml_class_parents", ())
+    }
+
+    def matches_endpoint(node_type, allowed):
+        if not node_type or not allowed:
+            return False
+        pending = [normalize(node_type)]
+        ancestors = set()
+        while pending:
+            current = pending.pop()
+            if current in ancestors:
+                continue
+            ancestors.add(current)
+            pending.extend(parents.get(current, ()))
+        return bool(ancestors.intersection(normalize(item) for item in allowed))
+
+    normalized_inverse_count = 0
+    reversed_performed_by_count = 0
     for document in graph_documents:
         rewritten = []
         for relationship in getattr(document, "relationships", ()) or ():
-            kept = inverse_map.get(normalize(getattr(relationship, "type", "")))
-            if kept is None:
+            relationship_type = normalize(getattr(relationship, "type", ""))
+            canonical_type = inverse_map.get(relationship_type)
+            source = relationship.source
+            target = relationship.target
+            should_flip = canonical_type is not None
+            if should_flip:
+                normalized_inverse_count += 1
+            elif (
+                performed_by_iri is not None
+                and relationship_type == normalize(performed_by_label)
+                and matches_endpoint(getattr(source, "type", ""), range_)
+                and matches_endpoint(getattr(target, "type", ""), domain)
+                and not matches_endpoint(getattr(source, "type", ""), domain)
+                and not matches_endpoint(getattr(target, "type", ""), range_)
+            ):
+                should_flip = True
+                canonical_type = performed_by_label
+                reversed_performed_by_count += 1
+
+            if not should_flip:
                 rewritten.append(relationship)
                 continue
             rewritten.append(Relationship(
-                source=relationship.target,
-                target=relationship.source,
-                type=kept,
+                source=target,
+                target=source,
+                type=canonical_type,
                 properties=getattr(relationship, "properties", None) or {},
             ))
         document.relationships = rewritten
+    if normalized_inverse_count or reversed_performed_by_count:
+        logging.info(
+            "Normalized inverse relationships=%d; reversed performed-by relationships=%d",
+            normalized_inverse_count,
+            reversed_performed_by_count,
+        )
     return graph_documents
 
 async def get_graph_from_llm(model, chunkId_chunkDoc_list, allowedNodes, allowedRelationship, chunks_to_combine, additional_instructions=None, return_envelope=False):
@@ -312,7 +434,18 @@ async def get_graph_from_llm(model, chunkId_chunkDoc_list, allowedNodes, allowed
                from src.ontology_registry.profile_selector import select_profiles
                sample_limit = int(get_value_from_env("ONTOLOGY_PROFILE_SELECTION_MAX_CHARS", "24000"))
                document_sample = "\n\n".join(doc.page_content for doc in combined_chunk_document_list)
-               selection = await select_profiles(llm, document_sample[:sample_limit])
+               selection_sample = document_sample[:sample_limit]
+               selection = await select_profiles(llm, selection_sample)
+               chunks_log = Path(os.getenv(
+                   "ONTOLOGY_LLM_TEXT_CHUNKS_LOG",
+                   str(Path(__file__).resolve().parents[2] / "logs" / "ontology-llm-text-chunks.log"),
+               ))
+               _append_ontology_text_chunks_log(
+                   chunks_log,
+                   combined_chunk_document_list,
+                   selection_sample,
+                   sample_limit,
+               )
                manifest = os.getenv(
                    "ONTOLOGY_MANIFEST_PATH",
                    os.path.join(os.path.dirname(__file__), "Ontology", "manifest.yaml"),
@@ -352,8 +485,10 @@ async def get_graph_from_llm(model, chunkId_chunkDoc_list, allowedNodes, allowed
                            item if isinstance(item, str) else item[1]
                            for item in ontology_profile.allowed_relationships
                        )),
-                       "yaml_context": ontology_profile.yaml_context,
-                   }, ensure_ascii=False, indent=2) + "\n\n")
+                   }, ensure_ascii=False, indent=2) + "\n")
+                   log_file.write("yaml_context:\n")
+                   log_file.write(_format_ontology_context_for_log(ontology_profile.yaml_context))
+                   log_file.write("\n\n")
            else:
                ontology_profile = default_profile()
            logging.info("Ontology-guided extraction enabled")
@@ -422,7 +557,7 @@ async def get_graph_from_llm(model, chunkId_chunkDoc_list, allowedNodes, allowed
            ontology_profile.yaml_context,
        )
        graph_document_list = rewrite_inverse_relationships(
-           graph_document_list, ontology_profile.inverse_relationships
+           graph_document_list, ontology_profile.inverse_relationships, ontology_profile
        )
        logging.info(f"Generated {len(graph_document_list)} graph documents")
        if return_envelope:

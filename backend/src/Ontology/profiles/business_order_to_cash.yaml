@@ -1,0 +1,130 @@
+profile:
+  id: business-order-to-cash
+  ontology_artifact: business
+  description: >-
+    Customer sales and order-to-cash workflows.
+  include_ancestors: true
+  include_compatible_properties: true
+
+groups:
+  documents:
+    - label: "Quote"
+      iri: http://example.org/ontology/business#Quote
+      parent: "Business Document"
+      definition: "A business document that offers goods or services at a stated price and terms."
+    - label: "Credit Note"
+      iri: http://example.org/ontology/business#CreditNote
+      parent: "Business Document"
+      definition: "A business document that reduces or cancels an amount that was invoiced."
+  processes:
+    - label: "Billing"
+      iri: http://example.org/ontology/business#Billing
+      parent: "Business Process"
+      definition: "A business process in which a party is asked to pay for goods or services delivered."
+    - label: "Payment"
+      iri: http://example.org/ontology/business#Payment
+      parent: "Business Process"
+      definition: "A business process in which money is transferred from one party to another."
+    - label: "Collection"
+      iri: http://example.org/ontology/business#Collection
+      parent: "Payment"
+      definition: "A payment process in which money owed to the company is received."
+    - label: "Fulfillment"
+      iri: http://example.org/ontology/business#Fulfillment
+      parent: "Business Process"
+      definition: "A business process in which goods or services are prepared and delivered to meet an order."
+    - label: "Service"
+      iri: http://example.org/ontology/business#Service
+      parent: "Business Process"
+      definition: "A business process in which work is done for a party instead of a material good being handed over. Modeled as a process because a service is performed and not held."
+    - label: "Return"
+      iri: http://example.org/ontology/business#Return
+      parent: "Business Process"
+      definition: "A business process in which goods are sent back by the receiving party."
+    - label: "Escalation"
+      iri: http://example.org/ontology/business#Escalation
+      parent: "Business Process"
+      definition: "A business process in which a matter is passed to a higher level of authority."
+  order_to_cash:
+    - label: "Credit Check"
+      iri: http://example.org/ontology/order-to-cash#CreditCheck
+      parent: "Assessment"
+      definition: "A check of a customer's credit on an order, with an outcome of Pass, Hold or Reject."
+    - label: "Discount Approval"
+      iri: http://example.org/ontology/order-to-cash#DiscountApproval
+      parent: "Approval"
+      definition: "An approval of a discount on an order, at a tier that decides which role must authorize it."
+    - label: "Invoice"
+      iri: http://example.org/ontology/order-to-cash#Invoice
+      parent: "Billing"
+      definition: "A bill sent to the customer for an order, with payment terms and currency."
+    - label: "Escalation Path"
+      iri: http://example.org/ontology/order-to-cash#EscalationPath
+      parent: "Procedure"
+      definition: "The steps and roles to follow when an exceptional scenario occurs, with a resolution time target."
+  order_to_cash_entities:
+    - label: "Sales Order"
+      iri: http://example.org/ontology/manufacturing#SalesOrder
+      parent: "Business Document"
+      definition: "An order document for the sale and fulfillment of manufactured products."
+    - label: "Customer"
+      iri: http://example.org/ontology/manufacturing#Customer
+      parent: "Business Role"
+      definition: "A customer role held by a party that receives goods or services."
+    - label: "Sales Contract"
+      iri: http://example.org/ontology/manufacturing#SalesContract
+      parent: "Business Document"
+      definition: "A contract governing the sale of goods or services to a customer."
+
+type_sets:
+  documents: &documents [Sales Order, Sales Contract, Purchase Order, Quote, Credit Note, Receipt, Delivery Note, Specification, Certificate, Accounting Entry, Purchase Requisition, Shipping Document, Proof Of Shipment, Proof Of Delivery, Fiscal Period, Invoice, Revenue Entry, Accrual, Deferred Revenue]
+
+relationships:
+  - label: "has bill-to address"
+    type: HAS_BILL_TO_ADDRESS
+    iri: http://example.org/ontology/business#hasBillToAddress
+    domain: *documents
+    range: [Address]
+    definition: "The document is billed to this address."
+  - label: "orders product"
+    type: ORDERS_PRODUCT
+    iri: http://example.org/ontology/order-to-cash#ORDERS_PRODUCT
+    domain: [Sales Order, Quote, Sales Contract]
+    range: [Manufactured Product]
+    definition: "The document covers this product."
+  - label: "governed by contract"
+    type: GOVERNED_BY_CONTRACT
+    iri: http://example.org/ontology/order-to-cash#GOVERNED_BY_CONTRACT
+    domain: [Sales Order]
+    range: [Sales Contract]
+    definition: "The sales order is placed under this sales contract."
+  - label: "has customer"
+    type: HAS_CUSTOMER
+    iri: http://example.org/ontology/order-to-cash#HAS_CUSTOMER
+    domain: [Sales Order, Sales Contract, Invoice]
+    range: [Customer]
+    definition: "The order, contract or invoice is for this customer."
+  - label: "has escalation"
+    type: HAS_ESCALATION
+    iri: http://example.org/ontology/order-to-cash#HAS_ESCALATION
+    domain: [Sales Order]
+    range: [Escalation Path]
+    definition: "The sales order follows this escalation path in an exception."
+  - label: "has discount approval"
+    type: HAS_DISCOUNT_APPROVAL
+    iri: http://example.org/ontology/order-to-cash#HAS_DISCOUNT_APPROVAL
+    domain: [Sales Order]
+    range: [Discount Approval]
+    definition: "A discount on the sales order was approved."
+  - label: "has credit check"
+    type: HAS_CREDIT_CHECK
+    iri: http://example.org/ontology/order-to-cash#HAS_CREDIT_CHECK
+    domain: [Sales Order]
+    range: [Credit Check]
+    definition: "The sales order was credit-checked."
+  - label: "invoiced as"
+    type: INVOICED_AS
+    iri: http://example.org/ontology/order-to-cash#INVOICED_AS
+    domain: [Sales Order]
+    range: [Invoice]
+    definition: "The sales order was billed through this invoice."

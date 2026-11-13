@@ -661,20 +661,28 @@ async def processing_chunks(chunkId_chunkDoc_list,graph,credentials,file_name,mo
   logging.info("Ontology extraction envelope: %s candidate assertions", len(extraction_envelope.assertions))
   if extraction_envelope.ontology_id:
       from src.ontology_registry import (
-          default_adapter, filter_graph_documents_by_envelope,
-          validate_envelope, validate_envelope_shacl, validate_graph_document_nodes,
+          OntologyExtractionAdapter, filter_graph_documents_by_envelope,
+          validate_envelope_yaml, validate_envelope_shacl, validate_graph_document_nodes_yaml,
           resolver_from_neo4j, resolve_envelope, project_entity_metadata, project_relationship_metadata,
           verify_envelope_evidence,
           write_extraction_log,
       )
-      ontology_adapter = default_adapter()
-      repository = ontology_adapter.builder.resolver
       semantic_validation_enabled = get_value_from_env(
           "ONTOLOGY_SEMANTIC_VALIDATION", "true", "bool"
       )
       if semantic_validation_enabled:
-          validated_envelope, semantic_report = validate_envelope(extraction_envelope, repository)
-          logging.info("Ontology semantic validation: %s", semantic_report.as_dict())
+          manifest = os.getenv(
+              "ONTOLOGY_MANIFEST_PATH",
+              os.path.join(os.path.dirname(__file__), "Ontology", "manifest.yaml"),
+          )
+          yaml_profile = OntologyExtractionAdapter.build_selected(
+              manifest,
+              extraction_envelope.ontology_id.split(",") if extraction_envelope.ontology_id else (),
+          )
+          validated_envelope, semantic_report = validate_envelope_yaml(
+              extraction_envelope, yaml_profile
+          )
+          logging.info("YAML semantic validation: %s", semantic_report.as_dict())
           extraction_envelope = validated_envelope
       else:
           semantic_report = {
@@ -685,7 +693,7 @@ async def processing_chunks(chunkId_chunkDoc_list,graph,credentials,file_name,mo
               "total": len(extraction_envelope.assertions),
               "errors": [],
           }
-          logging.info("Ontology semantic validation disabled: %s", semantic_report)
+          logging.info("YAML semantic validation disabled: %s", semantic_report)
       extraction_envelope, shacl_report = validate_envelope_shacl(extraction_envelope)
       logging.info("SHACL validation: %s", shacl_report.as_dict())
       evidence_chunks = {
@@ -703,6 +711,7 @@ async def processing_chunks(chunkId_chunkDoc_list,graph,credentials,file_name,mo
           report={
               "semantic": semantic_report.as_dict()
               if hasattr(semantic_report, "as_dict") else semantic_report,
+              "semantic_source": "yaml",
               "shacl": shacl_report.as_dict(),
               "evidence": evidence_report,
           },
@@ -715,8 +724,8 @@ async def processing_chunks(chunkId_chunkDoc_list,graph,credentials,file_name,mo
           projected = project_entity_metadata(graph, extraction_envelope)
           logging.info("Ontology metadata projected to %s entities", projected)
       if semantic_validation_enabled:
-          node_report = validate_graph_document_nodes(graph_documents, repository)
-          logging.info("Ontology node validation: %s", node_report.as_dict())
+          node_report = validate_graph_document_nodes_yaml(graph_documents, yaml_profile)
+          logging.info("YAML node validation: %s", node_report.as_dict())
           graph_documents, removed_relationships = filter_graph_documents_by_envelope(
               graph_documents, extraction_envelope
           )

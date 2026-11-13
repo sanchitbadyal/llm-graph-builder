@@ -1,0 +1,142 @@
+profile:
+  id: sensor-selected
+  ontology_artifact: sensor
+  description: >-
+    IOF Sensor module context for sensors, detecting devices, transducers, observers, observation and sensing processes, their functions and roles, and design specifications. Only the explicitly selected classes are sent to the LLM; ancestors appear as context only.
+  include_ancestors: true
+  include_compatible_properties: true
+
+groups:
+  devices_and_agents:
+    - label: "Sensor"
+      iri: https://spec.industrialontologies.org/ontology/construct/Sensor
+      parent: "Material Entity"
+      definition: "A material entity that responds to changes in its environment."
+    - label: "Detecting Device"
+      iri: https://spec.industrialontologies.org/ontology/construct/DetectingDevice
+      parent: "Material Artifact"
+      definition: "A device or instrument designed to detect the presence of a particular object or substance and to emit a signal in response."
+    - label: "Transducer"
+      iri: https://spec.industrialontologies.org/ontology/construct/Transducer
+      parent: "Material Entity"
+      definition: "A material entity when it is used for transforming energy between two different forms."
+    - label: "Observer"
+      iri: https://spec.industrialontologies.org/ontology/construct/Observer
+      parent: "Agent"
+      definition: "An agent that has an observer role."
+  processes_and_functions:
+    - label: "Observing Process"
+      iri: https://spec.industrialontologies.org/ontology/construct/ObservingProcess
+      parent: "Planned Process"
+      definition: "A planned process executed by an observer which may produce an observation."
+    - label: "Detecting Process"
+      iri: https://spec.industrialontologies.org/ontology/construct/DetectingProcess
+      parent: "Observing Process"
+      definition: "A process that discovers or determines the existence, presence, or fact of some entity."
+    - label: "Sensing Process"
+      iri: https://spec.industrialontologies.org/ontology/construct/SensingProcess
+      parent: "Observing Process"
+      definition: "A process to detect especially in response to a stimulus."
+    - label: "Sensor Measurement Process"
+      iri: https://spec.industrialontologies.org/ontology/construct/SensorMeasurementProcess
+      parent: "Measurement Process"
+      definition: "Measurement of the value of an attribute of a sensor."
+    - label: "Detecting Function"
+      iri: https://spec.industrialontologies.org/ontology/construct/DetectingFunction
+      parent: "Function"
+      definition: "The function that provides information by detecting."
+    - label: "Sensing Function"
+      iri: https://spec.industrialontologies.org/ontology/construct/SensingFunction
+      parent: "Function"
+      definition: "The function of reacting to the environment."
+  roles:
+    - label: "Sensor Role"
+      iri: https://spec.industrialontologies.org/ontology/construct/SensorRole
+      parent: "Role"
+      definition: "A role held by an entity that responds to changes in its environment."
+    - label: "Detector Role"
+      iri: https://spec.industrialontologies.org/ontology/construct/DetectorRole
+      parent: "Role"
+      definition: "A role held by an entity that is designed to detect the presence of a particular object or substance and to emit a signal in response."
+    - label: "Transducer Role"
+      iri: https://spec.industrialontologies.org/ontology/construct/TransducerRole
+      parent: "Role"
+      definition: "A role held by an entity that transforms energy between two different forms."
+    - label: "Observer Role"
+      iri: https://spec.industrialontologies.org/ontology/construct/ObserverRole
+      parent: "Agent Role"
+      definition: "An agent role held by a person, organized group of agents, or engineered system when it perceives or notices an entity and distinguishes that entity from other entities in its environment."
+  information_and_specifications:
+    - label: "Observation"
+      iri: https://spec.industrialontologies.org/ontology/construct/Observation
+      parent: "Information Content Entity"
+      definition: "An information content entity that represents a remark, statement, or comment based on something one has seen, heard, or noticed by an observer."
+    - label: "Sensor Specification"
+      iri: https://spec.industrialontologies.org/ontology/construct/SensorSpecification
+      parent: "Design Specification"
+      definition: "A design specification that prescribes a sensor."
+    - label: "Detector Specification"
+      iri: https://spec.industrialontologies.org/ontology/construct/DetectorSpecification
+      parent: "Design Specification"
+      definition: "A design specification that prescribes a detector."
+    - label: "Transducer Specification"
+      iri: https://spec.industrialontologies.org/ontology/construct/TransducerSpecification
+      parent: "Design Specification"
+      definition: "A design specification that prescribes a transducer."
+
+type_sets:
+  entity_participants: &entity_participants [Sensor, Detecting Device, Transducer, Observer]
+  process_types: &process_types [Observing Process, Detecting Process, Sensing Process, Sensor Measurement Process]
+  function_types: &function_types [Detecting Function, Sensing Function]
+  roles: &roles [Sensor Role, Detector Role, Transducer Role, Observer Role]
+  specifications: &specifications [Sensor Specification, Detector Specification, Transducer Specification]
+
+relationships:
+  - label: "has role"
+    type: HAS_ROLE
+    iri: https://spec.industrialontologies.org/ontology/construct/hasRole
+    domain: *entity_participants
+    range: *roles
+    definition: "The thing holds this role."
+  - label: "has function"
+    type: HAS_FUNCTION
+    iri: https://spec.industrialontologies.org/ontology/construct/hasFunction
+    domain: *entity_participants
+    range: *function_types
+    definition: "The thing bears this function."
+  - label: "function of"
+    type: FUNCTION_OF
+    iri: https://spec.industrialontologies.org/ontology/construct/functionOf
+    domain: *function_types
+    range: *entity_participants
+    definition: "The function inheres in this thing."
+  - label: "has specified output"
+    type: HAS_SPECIFIED_OUTPUT
+    iri: https://spec.industrialontologies.org/ontology/construct/hasSpecifiedOutput
+    domain: *process_types
+    range: ["Observation"]
+    definition: "The process produces this observation as its specified output."
+  - label: "is output of"
+    type: IS_OUTPUT_OF
+    iri: https://spec.industrialontologies.org/ontology/construct/isOutputOf
+    domain: ["Observation"]
+    range: *process_types
+    definition: "The observation is an output of this process."
+  - label: "has participant at some time"
+    type: HAS_PARTICIPANT_AT_SOME_TIME
+    iri: http://purl.obolibrary.org/obo/BFO_0000057
+    domain: *process_types
+    range: *entity_participants
+    definition: "The process has this thing as a participant."
+  - label: "prescribed by"
+    type: PRESCRIBED_BY
+    iri: https://spec.industrialontologies.org/ontology/construct/prescribedBy
+    domain: *entity_participants
+    range: *specifications
+    definition: "The thing is prescribed by this design specification."
+  - label: "prescribes"
+    type: PRESCRIBES
+    iri: https://spec.industrialontologies.org/ontology/construct/prescribes
+    domain: *specifications
+    range: *entity_participants
+    definition: "The design specification prescribes this thing."

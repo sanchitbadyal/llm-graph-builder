@@ -180,3 +180,7 @@ startupfrontend.sh
 mcp.json
 backend/commands.md
 /logs/
+graphify-out/cache/ast/v0.9.97-s29-g7154a062ba57/0bbeb6fd5ef299d926adc6f9e81e23cf5ac0fe442dc4b8504a071ed856c8e5a1.json
+graphify-out/
+docs/backend/ontology_registry.adoc
+backend/src/Ontology/oldprofiles/order_2_cash

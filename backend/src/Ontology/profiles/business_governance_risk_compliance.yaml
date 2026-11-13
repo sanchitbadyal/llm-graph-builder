@@ -1,0 +1,136 @@
+profile:
+  id: business-governance-risk-compliance
+  ontology_artifact: business
+  description: >-
+    Business rules, policies, controls, risks, approvals, and compliance.
+  include_ancestors: true
+  include_compatible_properties: true
+
+groups:
+  documents:
+    - label: "Certificate"
+      iri: http://example.org/ontology/business#Certificate
+      parent: "Business Document"
+      definition: "A business document in which an authority or the company states that something meets stated requirements."
+  processes:
+    - label: "Approval"
+      iri: http://example.org/ontology/business#Approval
+      parent: "Business Process"
+      definition: "A business process in which a party with authority accepts or rejects a request."
+    - label: "Assessment"
+      iri: http://example.org/ontology/business#Assessment
+      parent: "Business Process"
+      definition: "A business process in which something is examined or tested and a result or outcome is recorded."
+    - label: "Audit"
+      iri: http://example.org/ontology/business#Audit
+      parent: "Assessment"
+      definition: "An assessment in which records or controls are examined by an independent party."
+    - label: "Procedure"
+      iri: http://example.org/ontology/business#Procedure
+      parent: null
+      definition: "A documented sequence of steps or checks to follow in a given situation."
+  rules_and_risk:
+    - label: "Business Rule"
+      iri: http://example.org/ontology/business#BusinessRule
+      parent: null
+      definition: "A statement that sets a condition or limit for how a business process is carried out."
+    - label: "Policy"
+      iri: http://example.org/ontology/business#Policy
+      parent: null
+      definition: "A statement of intent or principle that guides business decisions."
+    - label: "Risk"
+      iri: http://example.org/ontology/business#Risk
+      parent: null
+      definition: "A tendency for loss or harm to happen, which may or may not be realised."
+    - label: "Milestone"
+      iri: http://example.org/ontology/business#Milestone
+      parent: null
+      definition: "A point in time at which a business process reaches a defined stage."
+  revenue_recognition:
+    - label: "Control"
+      iri: http://example.org/ontology/revenue-recognition#Control
+      parent: "Business Rule"
+      definition: "A business rule that prescribes a check to be performed in the revenue or finance process."
+
+
+type_sets:
+  documents: &documents [Sales Order, Sales Contract, Purchase Order, Quote, Credit Note, Receipt, Delivery Note, Specification, Certificate, Accounting Entry, Purchase Requisition, Shipping Document, Proof Of Shipment, Proof Of Delivery, Fiscal Period, Invoice, Revenue Entry, Accrual, Deferred Revenue]
+  documents_or_processes: &documents_or_processes [Sales Order, Sales Contract, Purchase Order, Quote, Credit Note, Receipt, Delivery Note, Specification, Certificate, Accounting Entry, Purchase Requisition, Shipping Document, Proof Of Shipment, Proof Of Delivery, Fiscal Period, Approval, Assessment, Audit, Billing, Payment, Collection, Fulfillment, Delivery, Transport, Stock Transfer, Service, Manufacturing, Procurement, Reconciliation, Revenue Recognition, Return, Escalation, Credit Check, Discount Approval, Invoice, Inter Plant Transfer, Shipment, Revenue Entry, Accrual, Deferred Revenue]
+  assessable: &assessable [Sales Order, Sales Contract, Purchase Order, Quote, Credit Note, Receipt, Delivery Note, Specification, Certificate, Accounting Entry, Purchase Requisition, Shipping Document, Proof Of Shipment, Proof Of Delivery, Fiscal Period, Approval, Assessment, Audit, Billing, Payment, Collection, Fulfillment, Delivery, Transport, Stock Transfer, Service, Manufacturing, Procurement, Reconciliation, Revenue Recognition, Return, Escalation, Credit Check, Discount Approval, Invoice, Inter Plant Transfer, Shipment, Packaged Unit, Manufactured Product]
+  compliance_subjects: &compliance_subjects [Sales Order, Sales Contract, Purchase Order, Quote, Credit Note, Receipt, Delivery Note, Specification, Certificate, Accounting Entry, Purchase Requisition, Shipping Document, Proof Of Shipment, Proof Of Delivery, Fiscal Period, Approval, Assessment, Audit, Billing, Payment, Collection, Fulfillment, Delivery, Transport, Stock Transfer, Service, Manufacturing, Procurement, Reconciliation, Revenue Recognition, Return, Escalation, Credit Check, Discount Approval, Invoice, Inter Plant Transfer, Shipment, Cost Center, Legal Entity, Organization, Organizational Unit, Profit Center]
+  roles: &roles [Approver Role, Employee Role, Supplier Role]
+  rule_or_policy: &rule_or_policy [Business Rule, Policy, Control]
+
+relationships:
+  - label: "escalates to"
+    type: ESCALATES_TO
+    iri: http://example.org/ontology/business#escalatesTo
+    domain: [Escalation, Procedure, Escalation Path]
+    range: *roles
+    definition: "A matter is passed to this role when escalated."
+  - label: "supersedes"
+    type: SUPERSEDES
+    iri: http://example.org/ontology/business#supersedes
+    domain: *documents
+    range: *documents
+    definition: "A document replaces an older document."
+  - label: "complies with"
+    type: COMPLIES_WITH
+    iri: http://example.org/ontology/business#compliesWith
+    domain: *compliance_subjects
+    range: *rule_or_policy
+    definition: "The entity follows this rule or policy."
+  - label: "authorized by"
+    type: AUTHORIZED_BY
+    iri: http://example.org/ontology/business#authorizedBy
+    domain: *documents_or_processes
+    range: *roles
+    definition: "The document or process was authorized by this role."
+  - label: "requires approval from"
+    type: REQUIRES_APPROVAL_FROM
+    iri: http://example.org/ontology/business#requiresApprovalFrom
+    domain: *documents_or_processes
+    range: [Approver Role]
+    definition: "The document or process needs sign-off from this approver role."
+  - label: "governs"
+    type: GOVERNS
+    iri: http://example.org/ontology/business#governs
+    domain: *rule_or_policy
+    range: *documents_or_processes
+    definition: "This rule or policy applies to the document or process."
+  - label: "governed by"
+    type: GOVERNED_BY
+    iri: http://example.org/ontology/business#governedBy
+    domain: *documents_or_processes
+    range: *rule_or_policy
+    definition: "The document or process is subject to this rule or policy."
+  - label: "has assessment"
+    type: HAS_ASSESSMENT
+    iri: http://example.org/ontology/business#hasAssessment
+    domain: *assessable
+    range: [Assessment, Audit, Credit Check]
+    definition: "The entity has been examined by this assessment."
+  - label: "amends"
+    type: AMENDS
+    iri: http://example.org/ontology/business#amends
+    domain: *documents
+    range: *documents
+    definition: "A document changes part of another document."
+  - label: "references"
+    type: REFERENCES
+    iri: http://example.org/ontology/business#references
+    domain: *documents
+    range: *documents
+    definition: "A document refers to another document."
+  - label: "approved by"
+    type: APPROVED_BY
+    iri: http://example.org/ontology/business#approvedBy
+    domain: *documents_or_processes
+    range: *roles
+    definition: "The document or process was approved by this role."
+  - label: "assessment of"
+    type: ASSESSMENT_OF
+    iri: http://example.org/ontology/business#assessmentOf
+    domain: [Assessment, Audit, Credit Check]
+    range: *assessable
+    definition: "This assessment examines the entity."

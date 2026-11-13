@@ -1,0 +1,58 @@
+profile:
+  id: business-procurement-supplier-management
+  ontology_artifact: business
+  description: >-
+    Purchasing, procurement, and supplier management.
+  include_ancestors: true
+  include_compatible_properties: true
+
+groups:
+  documents:
+    - label: "Purchase Order"
+      iri: http://example.org/ontology/business#PurchaseOrder
+      parent: "Order"
+      definition: "An order in which the company asks a supplier to supply goods or services."
+    - label: "Receipt"
+      iri: http://example.org/ontology/business#Receipt
+      parent: "Business Document"
+      definition: "A business document that confirms that a payment or goods were received."
+  processes:
+    - label: "Procurement"
+      iri: http://example.org/ontology/business#Procurement
+      parent: "Business Process"
+      definition: "A business process in which the company obtains goods or services from suppliers."
+  plant_fulfillment:
+    - label: "Purchase Requisition"
+      iri: http://example.org/ontology/plant-fulfillment#PurchaseRequisition
+      parent: "Business Document"
+      definition: "An internal business document requesting that goods or services be purchased or supplied."
+
+type_sets:
+  parties: &parties [Cost Center, Legal Entity, Organization, Organizational Unit, Profit Center]
+  sellable: &sellable [Packaged Unit, Manufactured Product, Service]
+
+relationships:
+  - label: "supplied by"
+    type: SUPPLIED_BY
+    iri: http://example.org/ontology/business#suppliedBy
+    domain: *sellable
+    range: *parties
+    definition: "The product or service is supplied by this party."
+  - label: "placed with"
+    type: PLACED_WITH
+    iri: http://example.org/ontology/business#placedWith
+    domain: [Purchase Order]
+    range: *parties
+    definition: "The purchase order was placed with this supplier."
+  - label: "placed by"
+    type: PLACED_BY
+    iri: http://example.org/ontology/business#placedBy
+    domain: [Purchase Order]
+    range: *parties
+    definition: "The purchase order was placed by this party."
+  - label: "supplies"
+    type: SUPPLIES
+    iri: http://example.org/ontology/business#supplies
+    domain: *parties
+    range: *sellable
+    definition: "This party supplies the product or service."

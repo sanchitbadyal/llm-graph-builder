@@ -13,7 +13,14 @@ from .adapter import OntologyExtractionAdapter, OntologyExtractionProfile, defau
 from .provenance import EvidenceProvenance, chunk_hash
 from .envelope import ExtractionAssertion, OntologyExtractionEnvelope
 from .graph_document import filter_graph_documents_by_envelope, graph_documents_to_envelope
-from .validation import NodeValidationReport, SemanticValidationReport, validate_envelope, validate_graph_document_nodes
+from .validation import (
+    NodeValidationReport,
+    SemanticValidationReport,
+    validate_envelope,
+    validate_envelope_yaml,
+    validate_graph_document_nodes,
+    validate_graph_document_nodes_yaml,
+)
 from .shacl import ShaclValidationReport, assertion_graph, validate_envelope_shacl
 from .entity_resolution import (EntityCandidate, EntityResolution, EntityResolver, ReconciliationGroup,
                                 normalize_mention, project_entity_metadata, project_relationship_metadata,
@@ -52,8 +59,10 @@ __all__ = [
     "filter_graph_documents_by_envelope",
     "SemanticValidationReport",
     "validate_envelope",
+    "validate_envelope_yaml",
     "NodeValidationReport",
     "validate_graph_document_nodes",
+    "validate_graph_document_nodes_yaml",
     "ShaclValidationReport",
     "assertion_graph",
     "validate_envelope_shacl",

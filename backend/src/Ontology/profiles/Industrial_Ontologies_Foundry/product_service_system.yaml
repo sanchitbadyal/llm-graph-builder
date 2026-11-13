@@ -1,0 +1,162 @@
+profile:
+  id: product-service-system-complete
+  ontology_artifact: productservicesystem
+  description: >-
+    Complete profile generated from ProductServiceSystem.rdf;
+    all named classes and object properties declared in the RDF
+    artifact are represented here.
+  include_ancestors: true
+  include_compatible_properties: true
+
+groups:
+  ontology_classes:
+
+    - label: "Business Model"
+      iri: https://spec.industrialontologies.org/ontology/construct/BusinessModel
+      parent: "Plan Specification"
+      definition: "plan specification to fulfill objectives of a business organization"
+
+    - label: "Commercial Service Realizable Entity"
+      iri: https://spec.industrialontologies.org/ontology/construct/CommercialServiceRealizableEntity
+      parent: "Realizable Entity"
+      definition: "realizable entity that concretizes a commercial service specification which is about a product and that is realized in a commercial service"
+
+    - label: "Consumable Resource Role"
+      iri: https://spec.industrialontologies.org/ontology/construct/ConsumableResourceRole
+      parent: "Material Resource Role"
+      definition: "role that is borne by a material entity, when that entity is intended to be consumed/transformed in a planned process and the quantity of the resource is reduced after use"
+
+    - label: "Facility"
+      iri: https://spec.industrialontologies.org/ontology/construct/Facility
+
+    - label: "Manufacturing Resource Role"
+      iri: https://spec.industrialontologies.org/ontology/construct/ManufacturingResourceRole
+      parent: "Role"
+      definition: "role that inheres in an independent continuant where that continuant bears a disposition that, if realized, is realized in a manufacturing process"
+
+    - label: "Non-Consumable Resource Role"
+      iri: https://spec.industrialontologies.org/ontology/construct/NonConsumableResourceRole
+      parent: "Material Resource Role"
+      definition: "role that is borne by a material entity, when that entity is intended to be used but quantity is not reduced in a planned process"
+
+    - label: "Product Design Specification"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductDesignSpecification
+      parent: "Design Specification"
+      definition: "design specification that is a set of characteristics essential for a type of material products and that have to be jointly taken into account to prescribe the material product"
+
+    - label: "Product Family"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductFamily
+      parent: "Collection"
+      definition: "group of related goods produced by the same company under the same business organization"
+
+    - label: "Product Family Specification"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductFamilySpecification
+      parent: "Information Content Entity"
+      definition: "specification that is a set of characteristics essential to group material products based on design and / or production processes and / or value proposition of the business organization"
+
+    - label: "Product Provider"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductProvider
+      parent: "Supplier"
+      definition: "person or organization which has a product provider role"
+
+    - label: "Product Provider Role"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductProviderRole
+      parent: "Supplier Role"
+      definition: "supplier role held by a person or business organization that both produces and sells a product, or only sells it"
+
+    - label: "Product Quality"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductQuality
+      parent: "Quality"
+      definition: "quality that describes an aspect, or attribute, related to the product"
+
+    - label: "Product Requirement Specification"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductRequirementSpecification
+      parent: "Requirement Specification"
+      definition: "requirement specification that prescribes a material product"
+
+    - label: "Product Service System"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductServiceSystem
+      parent: "Engineered System"
+      definition: "engineered system that aims to satisfy a need of the market (e.g. to be sold in order to provide profit and support customers by covering their needs), and jointly fulfil customer’s needs and it must include some material product and commercial service specification, and agents or group of agents and may include infrastructure (software or hardware)"
+
+    - label: "Product Service System Business Customer"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductServiceSystemBusinessCustomer
+      parent: "Business Organization"
+      definition: "business organization that buys and uses the PSS and related products and services"
+
+    - label: "Product Service System Business Process"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductServiceSystemBusinessProcess
+      parent: "Business Process"
+      definition: "business process in which PSS is developed, implemented, distributed and used"
+
+    - label: "Product Service System Consumer Role"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductServiceSystemConsumerRole
+      parent: "Customer Role"
+      definition: "customer role held by a person or business organization when it receives and consumes a product service system"
+
+    - label: "Product Service System Indicator"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductServiceSystemIndicator
+      parent: "Measurement Information Content Entity"
+      definition: "measurement information content entity used to measure/evaluate any aspect within the scope of PSS, namely a process, a PSS, a product, a service, etc."
+
+    - label: "Product Service System Provider"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductServiceSystemProvider
+      parent: "Supplier"
+      definition: "supplier that bears a product service system provider role"
+
+    - label: "Product Service System Provider Role"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductServiceSystemProviderRole
+      parent: "Supplier Role"
+      definition: "supplier role held by a person or business organization that offers product service system(s) and owns intellectual property rights (IPR) on the commercial service specification"
+
+    - label: "Product Service System Quality"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductServiceSystemQuality
+      parent: "Quality"
+      definition: "quality that describes an aspect or attribute related to the PSS"
+
+    - label: "Product Service System Requirement Specification"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductServiceSystemRequirementSpecification
+      parent: "Requirement Specification"
+      definition: "requirement specification that prescribes a product service system"
+
+    - label: "Product Service System Resource Role"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductServiceSystemResourceRole
+      parent: "Role"
+      definition: "role held by a material resource that is a means (source) that can be used for the design, development, offer or delivery of a PSS"
+
+    - label: "Product Service System Supplier Organization"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductServiceSystemSupplierOrganization
+      parent: "Business Organization"
+      definition: "business organization that both produces and sells something (product, service, PSS), or only sells it"
+
+    - label: "Product Variant Set"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductVariantSet
+      parent: "Collection"
+      definition: "subset of goods that belongs to a product family, based on design and / or production processes and / or value proposition of the business organization"
+
+    - label: "Product Variant Set Specification"
+      iri: https://spec.industrialontologies.org/ontology/construct/ProductVariantSetSpecification
+      parent: "Information Content Entity"
+      definition: "specification that is a set of characteristics essential to group a subset of material products that belongs to a Product Family, based on design and / or production processes and / or value proposition of the business organization"
+
+    - label: "Service Requirement Specification"
+      iri: https://spec.industrialontologies.org/ontology/construct/ServiceRequirementSpecification
+      parent: "Requirement Specification"
+      definition: "requirement specification that prescribes a commercial service"
+
+    - label: "Service Specification"
+      iri: https://spec.industrialontologies.org/ontology/construct/ServiceSpecification
+      parent: "Design Specification"
+      definition: "design specification that is a set of characteristics essential for a commercial service and that have to be jointly taken into account to prescribe the commercial service"
+
+
+relationships:
+
+  - label: "owns"
+    type: OWNS
+    iri: https://spec.industrialontologies.org/ontology/construct/owns
+
+  - label: "is part of"
+    type: IS_PART_OF
+    iri: https://www.omg.org/spec/Commons/Collections/isPartOf
+    definition: "relates something to another thing that it is some component or portion of, regardless of how that whole-part relationship is manifested"

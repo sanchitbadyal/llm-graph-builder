@@ -10,26 +10,26 @@ The counts below refer to class and relationship entries declared in each
 profile's YAML. A particular extraction uses the profiles selected for that
 run, rather than necessarily using every profile.
 
-## `business.yaml`
+## Business profiles
 
-**Role:** Business operations, organizational structure, and commercial
-transactions.
+`business.yaml` is the always-loaded **Business Common** profile. It provides
+shared organizations, organizational units, roles, positions, locations, and
+general business relationships. It declares 11 classes and 20 relationships.
+The following business profiles are optional and selected according to the
+document:
 
-Its classes cover:
+| Profile file | Focus | Classes | Relationships |
+|---|---|---:|---:|
+| `business_order_to_cash.yaml` | Customer sales, orders, contracts, credit checks, discounts, billing, and invoices | 16 | 8 |
+| `business_procurement_supplier_management.yaml` | Purchase orders and requisitions, receiving, procurement, and suppliers | 4 | 4 |
+| `business_fulfillment_logistics.yaml` | Fulfillment, shipments, delivery, transfers, plants, and shipping documents | 11 | 10 |
+| `business_revenue_accounting.yaml` | Accounts, accounting entries, revenue recognition, accruals, and periods | 10 | 5 |
+| `business_governance_risk_compliance.yaml` | Policies, rules, risks, controls, approvals, assessments, and compliance | 10 | 12 |
+| `business_products_inventory.yaml` | Products, product categories, specifications, manufacturing, and inventory | 5 | 4 |
 
-- Organizations, organizational units, locations, warehouses, and business
-  roles.
-- Business documents and transactions, including sales and purchase orders,
-  contracts, quotes, and receipts.
-- Order fulfillment, manufacturing in a business context, shipping, delivery,
-  and inventory transfers.
-- Invoicing, payments, accounting, revenue recognition, and financial periods.
-- Approvals, credit checks, discount approvals, policies, risks, and controls.
-
-Representative classes include `Sales Order`, `Customer`, `Plant`, `Shipment`,
-`Invoice`, `Revenue Recognition`, `Credit Check`, and `Discount Approval`.
-The profile declares 67 classes and 56 relationships, connecting parties,
-documents, locations, fulfillment, approvals, and accounting concepts.
+Across Business Common and all six optional profiles, the original 67 business
+classes and 63 relationships are each declared once. Domain-specific profile
+selection limits which specialized vocabulary is sent to the extractor.
 
 ## `core.yaml`
 
@@ -101,10 +101,10 @@ prescription by plans or specifications.
 
 ## How the profiles fit together
 
-`core.yaml` provides broad building blocks. `business.yaml` describes
-organizational and commercial workflows. `production.yaml`,
+`core.yaml` and Business Common are always loaded. The six optional business
+profiles add commercial and operational detail as needed. `production.yaml`,
 `maintenance.yaml`, and `certification.yaml` add focused domain vocabulary,
 while `manufacturing_system_organiztion.yaml` describes the structure and
-resources of a manufacturing environment. These profiles can refer to
-foundational classes from one another; the selected profiles determine which
+resources of a manufacturing environment. Profiles can refer to foundational
+classes from one another; the selected profiles determine which specialized
 domain vocabulary is available as extraction context for a run.

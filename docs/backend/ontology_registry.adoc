@@ -153,7 +153,19 @@ Connects the ontology context to LangChain's graph transformer without replacing
 * `allowed_relationships` — exact endpoint tuples plus YAML-selected relationship names for inherited or unresolved endpoint rules;
 * `prompt_context` — class and relationship definitions, domain/range guidance, and safety instructions from the selected YAML profiles.
 
-The adapter reads the profile files under `backend/src/Ontology/profiles/` to select prompt context. It does not derive that allowlist from OWL/RDF. The OWL semantic resolver remains available separately for validation and query planning.
+The adapter reads the profile files under `backend/src/Ontology/profiles/` to select prompt context and retains the selected YAML class hierarchy and relationship endpoint constraints for validation. The OWL semantic resolver remains available separately for ontology and query utilities.
+
+Document-driven selection always includes `business.yaml` (Business Common)
+and `core.yaml`. Six optional business profiles provide order-to-cash,
+procurement, fulfillment/logistics, revenue/accounting, governance/risk/
+compliance, and products/inventory vocabulary. The four other domain profiles
+for production, maintenance, certification, and manufacturing-system
+organization are also independently selectable.
+
+When resolving relationship endpoints, the adapter uses the class labels
+available from the selected profiles. Endpoint lists are narrowed to selected
+classes, so an optional profile's relationships do not expose endpoints from
+unselected profiles.
 
 The default adapter uses:
 
@@ -219,18 +231,20 @@ Bridges LangChain `GraphDocument` output to the ontology envelope.
 
 === `validation.py`
 
-Performs deterministic semantic validation.
+Performs deterministic validation against the selected YAML profiles.
 
-`validate_envelope()` checks:
+`validate_envelope_yaml()` checks:
 
-* subject class exists;
-* predicate exists;
-* object class exists;
-* domain/range compatibility holds.
+* subject and object classes are declared in the selected YAML profiles;
+* the relationship is declared and available in those profiles;
+* subject and object classes satisfy the relationship's YAML domain and range,
+  including declared YAML class-parent hierarchies.
 
 Unknown terms and incompatible relationships are rejected. Missing object class information is quarantined because entity resolution may recover it later.
 
-`validate_graph_document_nodes()` validates graph-document node classes and removes unknown ontology classes. Full ontology-IRI property keys are checked, while legacy application/YAML properties are preserved for compatibility.
+`validate_graph_document_nodes_yaml()` validates graph-document node classes against the selected YAML classes and removes unknown classes. This extraction validation path does not require the OWL ontology to define YAML terms.
+
+The existing OWL-backed `validate_envelope()` and `validate_graph_document_nodes()` functions remain available for callers that explicitly need OWL/RDF validation.
 
 === `shacl.py`
 
@@ -240,7 +254,7 @@ Validates envelope assertions against SHACL shapes using RDFLib and pySHACL.
 
 `validate_envelope_shacl()` loads the default shape file at `backend/src/Ontology/shapes/phase8.ttl`, validates each assertion, and marks nonconforming assertions as quarantined.
 
-SHACL validates instance shape and evidence requirements. It does not replace OWL semantic resolution or Cabalmar business-rule validation.
+SHACL validates instance shape and evidence requirements. It does not replace YAML domain/range validation, evidence verification, or Cabalmar business-rule validation.
 
 === `evidence.py`
 
@@ -288,7 +302,7 @@ Provides lightweight ontology-aware query expansion.
 
 === `authority.py`
 
-Defines the OWL/YAML authority boundary. YAML profiles select the classes and relationships included in extraction prompts and provide their definitions and domain/range guidance. OWL/RDF remains the semantic validation authority for class/property identity, hierarchy, and relationship compatibility.
+Defines the OWL/YAML authority boundary. YAML profiles select the classes and relationships included in extraction prompts and provide their definitions, hierarchy, and domain/range constraints for extraction validation. OWL/RDF remains available as a separate ontology authority for other resolver and query functions.
 
 The module also assigns YAML authority over business rules, KPIs, conflicts, and source mappings.
 

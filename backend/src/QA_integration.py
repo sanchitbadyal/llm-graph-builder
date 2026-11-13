@@ -9,9 +9,10 @@ from typing import Any
 from dotenv import load_dotenv
 
 from langchain_neo4j import Neo4jVector, Neo4jChatMessageHistory, GraphCypherQAChain
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_neo4j.chains.graph_qa.cypher import CYPHER_GENERATION_PROMPT
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnableBranch
+from langchain_core.runnables import RunnableBranch, RunnableLambda
 from langchain_classic.retrievers import ContextualCompressionRetriever
 from langchain_classic.retrievers.document_compressors import EmbeddingsFilter, DocumentCompressorPipeline
 from langchain_text_splitters import TokenTextSplitter
@@ -34,6 +35,7 @@ from src.shared.constants import (
     CHAT_SYSTEM_TEMPLATE, CHAT_DOCUMENT_LIMIT, DEFAULT_DOCUMENT_LIMIT, CHAT_ENTITY_VECTOR_MODE,
     CHAT_GLOBAL_VECTOR_FULLTEXT_MODE, CHAT_SEARCH_KWARG_SCORE_THRESHOLD,CHAT_MODE_CONFIG_MAP, CHAT_DEFAULT_MODE, CHAT_GRAPH_MODE,CHAT_EMBEDDING_FILTER_SCORE_THRESHOLD, CHAT_DOC_SPLIT_SIZE, QUESTION_TRANSFORM_TEMPLATE
 )
+from src.cypher_utils import quote_cypher_relationship_types
 load_dotenv()
 
 class CustomCallback(BaseCallbackHandler):
@@ -568,52 +570,54 @@ def summarize_and_log(history, stored_messages, llm, graph=None):
         return False
       
 def create_graph_chain(model, graph):
-    try:
-        logging.info(f"Graph QA Chain using LLM model: {model}")
+    logging.info(f"Graph QA Chain using LLM model: {model}")
 
-        cypher_llm,model_name, _ = get_llm(model)
-        qa_llm,model_name, _ = get_llm(model)
-        graph_chain = GraphCypherQAChain.from_llm(
-            cypher_llm=cypher_llm,
-            qa_llm=qa_llm,
-            validate_cypher= True,
-            graph=graph,
-            # verbose=True, 
-            allow_dangerous_requests=True,
-            return_intermediate_steps = True,
-            top_k=3
-        )
+    cypher_llm, model_name, _ = get_llm(model)
+    qa_llm, model_name, _ = get_llm(model)
+    cypher_prompt = PromptTemplate.from_template(
+        CYPHER_GENERATION_PROMPT.template
+        + "\nQuote any relationship type containing characters other than "
+        "letters, digits, or underscores with Cypher backticks."
+    )
+    graph_chain = GraphCypherQAChain.from_llm(
+        cypher_llm=cypher_llm,
+        qa_llm=qa_llm,
+        cypher_prompt=cypher_prompt,
+        validate_cypher=True,
+        graph=graph,
+        allow_dangerous_requests=True,
+        return_intermediate_steps=True,
+        top_k=3,
+    )
+    graph_chain.cypher_generation_chain = (
+        graph_chain.cypher_generation_chain
+        | RunnableLambda(quote_cypher_relationship_types)
+    )
 
-        logging.info("GraphCypherQAChain instance created successfully.")
-        return graph_chain,qa_llm,model_name
-
-    except Exception as e:
-        logging.error(f"An error occurred while creating the GraphCypherQAChain instance. : {e}") 
+    logging.info("GraphCypherQAChain instance created successfully.")
+    return graph_chain, qa_llm, model_name
 
 def get_graph_response(graph_chain, question):
-    try:
-        cypher_res = graph_chain.invoke({"query": question})
-        
-        response = cypher_res.get("result")
-        cypher_query = ""
-        context = []
+    cypher_res = graph_chain.invoke({"query": question})
 
-        for step in cypher_res.get("intermediate_steps", []):
-            if "query" in step:
-                cypher_string = step["query"]
-                cypher_query = cypher_string.replace("cypher\n", "").replace("\n", " ").strip() 
-            elif "context" in step:
-                context = step["context"]
-        return {
-            "response": response,
-            "cypher_query": cypher_query,
-            "context": context
-        }
-    
-    except Exception as e:
-        logging.error(f"An error occurred while getting the graph response : {e}")
+    response = cypher_res.get("result")
+    cypher_query = ""
+    context = []
+
+    for step in cypher_res.get("intermediate_steps", []):
+        if "query" in step:
+            cypher_string = step["query"]
+            cypher_query = cypher_string.replace("cypher\n", "").replace("\n", " ").strip()
+        elif "context" in step:
+            context = step["context"]
+    return {
+        "response": response,
+        "cypher_query": cypher_query,
+        "context": context
+    }
 
 def process_graph_response(model, graph, question, messages, history, session_id=None):
+    model_version = None
     try:
         graph_chain, qa_llm, model_version = create_graph_chain(model, graph)
         
@@ -651,7 +655,7 @@ def process_graph_response(model, graph, question, messages, history, session_id
         logging.exception(f"Error processing graph response at {datetime.now()}: {str(e)}")
         return {
             "session_id": "",  
-            "message": "Something went wrong",
+            "message": "Graph query failed. See response details for the underlying error.",
             "info": {
                 "model": model_version or "N/A",
                 "cypher_query": "",

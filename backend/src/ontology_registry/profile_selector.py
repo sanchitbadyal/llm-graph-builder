@@ -24,7 +24,7 @@ async def select_profiles(llm, document_text: str) -> ProfileSelection:
     prompt = f"""Choose the optional ontology profiles relevant to this document.
 Return only profile IDs from the catalog. Select multiple profiles when needed.
 Do not select a profile merely because a word appears once. Return an empty list
-when no specialized profile is appropriate; business and iof-core are automatic.
+when no specialized profile is appropriate; business-common and iof-core are automatic.
 
     Always-loaded profile context:
 {default_notes}

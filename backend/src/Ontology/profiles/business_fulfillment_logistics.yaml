@@ -1,0 +1,123 @@
+profile:
+  id: business-fulfillment-logistics
+  ontology_artifact: business
+  description: >-
+    Fulfillment, shipping, delivery, and logistics.
+  include_ancestors: true
+  include_compatible_properties: true
+
+groups:
+  documents:
+    - label: "Delivery Note"
+      iri: http://example.org/ontology/business#DeliveryNote
+      parent: "Business Document"
+      definition: "A business document that lists the goods sent in one delivery."
+  processes:
+    - label: "Delivery"
+      iri: http://example.org/ontology/business#Delivery
+      parent: "Fulfillment"
+      definition: "A fulfillment process in which goods are handed over at the destination."
+    - label: "Transport"
+      iri: http://example.org/ontology/business#Transport
+      parent: "Business Process"
+      definition: "A business process in which goods are moved from one place to another."
+    - label: "Stock Transfer"
+      iri: http://example.org/ontology/business#StockTransfer
+      parent: "Transport"
+      definition: "A transport process in which goods are moved from one facility of the company to another."
+  plant_fulfillment:
+    - label: "Inter Plant Transfer"
+      iri: http://example.org/ontology/plant-fulfillment#InterPlantTransfer
+      parent: "Transport"
+      definition: "A transport process in which goods are moved from one plant to another to fulfil an order."
+    - label: "Shipment"
+      iri: http://example.org/ontology/plant-fulfillment#Shipment
+      parent: "Transport"
+      definition: "A transport process in which goods are sent to the customer, tracked by carrier and freight mode."
+    - label: "Shipping Document"
+      iri: http://example.org/ontology/plant-fulfillment#ShippingDocument
+      parent: "Business Document"
+      definition: "A business document that accompanies or describes a shipment, such as a bill of lading or packing list."
+    - label: "Proof Of Shipment"
+      iri: http://example.org/ontology/plant-fulfillment#ProofOfShipment
+      parent: "Business Document"
+      definition: "A business document that evidences that a shipment was dispatched or delivered."
+  order_to_cash_entities:
+    - label: "Plant"
+      iri: http://example.org/ontology/manufacturing#Plant
+      parent: "Facility"
+      definition: "A facility where products are manufactured or stored."
+    - label: "Carrier"
+      iri: http://example.org/ontology/manufacturing#Carrier
+      parent: "Carrier Role"
+      definition: "A carrier role held by a party that transports goods."
+    - label: "Proof Of Delivery"
+      iri: http://example.org/ontology/manufacturing#ProofOfDelivery
+      parent: "Business Document"
+      definition: "A document that evidences delivery of goods to the receiving party."
+
+type_sets:
+  documents: &documents [Sales Order, Sales Contract, Purchase Order, Quote, Credit Note, Receipt, Delivery Note, Specification, Certificate, Accounting Entry, Purchase Requisition, Shipping Document, Proof Of Shipment, Proof Of Delivery, Fiscal Period, Invoice, Revenue Entry, Accrual, Deferred Revenue]
+  facilities: &facilities [Warehouse, Plant]
+
+relationships:
+  - label: "transferred from"
+    type: TRANSFERRED_FROM
+    iri: http://example.org/ontology/business#transferredFrom
+    domain: [Stock Transfer, Inter Plant Transfer]
+    range: *facilities
+    definition: "Goods leave this warehouse in the transfer."
+  - label: "transferred to"
+    type: TRANSFERRED_TO
+    iri: http://example.org/ontology/business#transferredTo
+    domain: [Stock Transfer, Inter Plant Transfer]
+    range: *facilities
+    definition: "Goods arrive at this warehouse in the transfer."
+  - label: "fulfilled from"
+    type: FULFILLED_FROM
+    iri: http://example.org/ontology/plant-fulfillment#FULFILLED_FROM
+    domain: [Sales Order, Shipment]
+    range: [Plant]
+    definition: "The order is supplied or the shipment leaves from this plant."
+  - label: "has document"
+    type: HAS_DOCUMENT
+    iri: http://example.org/ontology/plant-fulfillment#HAS_DOCUMENT
+    domain: [Shipment]
+    range: [Shipping Document]
+    definition: "The shipment has this shipping document."
+  - label: "requires transfer"
+    type: REQUIRES_TRANSFER
+    iri: http://example.org/ontology/plant-fulfillment#REQUIRES_TRANSFER
+    domain: [Sales Order]
+    range: [Inter Plant Transfer]
+    definition: "Fulfilling the order needs this inter-plant transfer."
+  - label: "carried by"
+    type: CARRIED_BY
+    iri: http://example.org/ontology/plant-fulfillment#CARRIED_BY
+    domain: [Shipment]
+    range: [Carrier]
+    definition: "The shipment is transported by this carrier."
+  - label: "shipped via"
+    type: SHIPPED_VIA
+    iri: http://example.org/ontology/plant-fulfillment#SHIPPED_VIA
+    domain: [Sales Order]
+    range: [Shipment]
+    definition: "The order was delivered in this shipment."
+  - label: "evidenced by"
+    type: EVIDENCED_BY
+    iri: http://example.org/ontology/plant-fulfillment#EVIDENCED_BY
+    domain: [Shipment, Delivery]
+    range: [Proof Of Shipment, Proof Of Delivery]
+    definition: "The shipment is proven by this document."
+  - label: "has ship-to address"
+    type: HAS_SHIP_TO_ADDRESS
+    iri: http://example.org/ontology/business#hasShipToAddress
+    domain: *documents
+    range: [Address]
+    definition: "The document ships to this address."
+  - label: "has proof of delivery"
+    type: HAS_PROOF_OF_DELIVERY
+    iri: http://example.org/ontology/plant-fulfillment#HAS_PROOF_OF_DELIVERY
+    domain: [Sales Order]
+    range: [Proof Of Delivery]
+    definition: "Delivery of the order is evidenced by this document."

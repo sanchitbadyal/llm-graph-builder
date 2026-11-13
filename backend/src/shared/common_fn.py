@@ -295,6 +295,18 @@ def save_graphDocuments_in_neo4j(graph: Neo4jGraph, graph_document_list: List[Gr
    raise RuntimeError("Query execution failed after multiple retries due to deadlock.")
            
 def handle_backticks_nodes_relationship_id_type(graph_document_list:List[GraphDocument]):
+  def normalize_neo4j_type(value: str, *, uppercase: bool = False) -> str:
+    """Return a stable Neo4j-safe label or relationship type.
+
+    Neo4j identifiers used as labels/relationship types should not contain
+    punctuation such as hyphens.  Keep the existing spelling semantics while
+    converting separators to underscores, e.g. ``HAS_SUB-UNIT`` becomes
+    ``HAS_SUB_UNIT``.
+    """
+    value = re.sub(r"[^0-9A-Za-z_]+", "_", value.strip())
+    value = re.sub(r"_+", "_", value).strip("_")
+    return value.upper() if uppercase else value
+
   for graph_document in graph_document_list:
     # Clean node id and types
     cleaned_nodes = []
@@ -302,7 +314,7 @@ def handle_backticks_nodes_relationship_id_type(graph_document_list:List[GraphDo
       node_type = str(node.type).strip() if node.type is not None else ""
       node_id = str(node.id).strip() if node.id is not None else ""
       if node_type and node_id:
-        node.type = node_type.replace('`', '')
+        node.type = normalize_neo4j_type(node_type.replace('`', ''))
         node.id = node_id
         cleaned_nodes.append(node)
     # Clean relationship id types and source/target node id and types
@@ -317,12 +329,12 @@ def handle_backticks_nodes_relationship_id_type(graph_document_list:List[GraphDo
       tgt_type = str(getattr(tgt, "type", "")).strip() if tgt is not None else ""
       tgt_id = str(getattr(tgt, "id", "")).strip() if tgt is not None else ""
       if rel_type and src_id and src_type and tgt_id and tgt_type:
-        rel.type = rel_type.replace('`', '')
+        rel.type = normalize_neo4j_type(rel_type.replace('`', ''), uppercase=True)
         if src is not None:
-          src.type = src_type.replace('`', '')
+          src.type = normalize_neo4j_type(src_type.replace('`', ''))
           src.id = src_id.replace('`', '')
         if tgt is not None:
-          tgt.type = tgt_type.replace('`', '')
+          tgt.type = normalize_neo4j_type(tgt_type.replace('`', ''))
           tgt.id = tgt_id
         cleaned_relationships.append(rel)
     graph_document.relationships = cleaned_relationships

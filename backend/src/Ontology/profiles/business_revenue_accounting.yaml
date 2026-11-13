@@ -1,0 +1,89 @@
+profile:
+  id: business-revenue-accounting
+  ontology_artifact: business
+  description: >-
+    Accounting, revenue recognition, and financial periods.
+  include_ancestors: true
+  include_compatible_properties: true
+
+groups:
+  things_and_places:
+    - label: "Account"
+      iri: http://example.org/ontology/business#Account
+      parent: null
+      definition: "A record that tracks the dealings between the company and one party over time, such as balances and terms."
+    - label: "Ledger Account"
+      iri: http://example.org/ontology/business#LedgerAccount
+      parent: null
+      definition: "A named account in the books where financial postings are collected."
+  documents:
+    - label: "Accounting Entry"
+      iri: http://example.org/ontology/business#AccountingEntry
+      parent: "Business Document"
+      definition: "A business document that records a financial posting."
+  processes:
+    - label: "Reconciliation"
+      iri: http://example.org/ontology/business#Reconciliation
+      parent: "Business Process"
+      definition: "A business process in which two sets of records are compared and differences are resolved."
+    - label: "Revenue Recognition"
+      iri: http://example.org/ontology/business#RevenueRecognition
+      parent: "Business Process"
+      definition: "A business process in which earned revenue is recorded in the accounts for a period."
+  revenue_recognition:
+    - label: "Revenue Entry"
+      iri: http://example.org/ontology/revenue-recognition#RevenueEntry
+      parent: "Accounting Entry"
+      definition: "An accounting entry that records recognised revenue for an order."
+    - label: "Accrual"
+      iri: http://example.org/ontology/revenue-recognition#Accrual
+      parent: "Accounting Entry"
+      definition: "An accounting entry that records revenue or cost earned but not yet invoiced or paid."
+    - label: "Deferred Revenue"
+      iri: http://example.org/ontology/revenue-recognition#DeferredRevenue
+      parent: "Accounting Entry"
+      definition: "An accounting entry for payment received before the revenue is earned."
+    - label: "Fiscal Period"
+      iri: http://example.org/ontology/revenue-recognition#FiscalPeriod
+      parent: "Business Document"
+      definition: "A business document or record identifying the accounting period an entry is posted to."
+  order_to_cash_entities:
+    - label: "Profit Center"
+      iri: http://example.org/ontology/manufacturing#ProfitCenter
+      parent: "Organizational Unit"
+      definition: "An organizational unit used to track revenue and profitability."
+
+type_sets:
+  accounting_entries: &accounting_entries [Accounting Entry, Revenue Entry, Accrual, Deferred Revenue]
+
+relationships:
+  - label: "posted to account"
+    type: POSTED_TO_ACCOUNT
+    iri: http://example.org/ontology/business#postedToAccount
+    domain: *accounting_entries
+    range: [Ledger Account]
+    definition: "An accounting entry is posted to this ledger account."
+  - label: "recognized as"
+    type: RECOGNIZED_AS
+    iri: http://example.org/ontology/revenue-recognition#RECOGNIZED_AS
+    domain: [Sales Order]
+    range: [Revenue Entry]
+    definition: "Revenue for the order is recorded in this entry."
+  - label: "account posting of"
+    type: ACCOUNT_POSTING_OF
+    iri: http://example.org/ontology/business#accountPostingOf
+    domain: [Ledger Account]
+    range: *accounting_entries
+    definition: "A ledger account collects this accounting entry."
+  - label: "attributed to profit center"
+    type: ATTRIBUTED_TO_PROFIT_CENTER
+    iri: http://example.org/ontology/revenue-recognition#ATTRIBUTED_TO_PROFIT_CENTER
+    domain: [Sales Order, Revenue Entry, Invoice]
+    range: [Profit Center]
+    definition: "The revenue or order is tracked in this profit center."
+  - label: "posted to period"
+    type: POSTED_TO_PERIOD
+    iri: http://example.org/ontology/revenue-recognition#POSTED_TO_PERIOD
+    domain: [Revenue Entry]
+    range: [Fiscal Period]
+    definition: "The entry is posted to this fiscal period."

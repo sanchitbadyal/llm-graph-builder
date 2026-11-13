@@ -1,0 +1,64 @@
+profile:
+  id: business-products-inventory
+  ontology_artifact: business
+  description: >-
+    Products, product categories, specifications, manufacturing, and inventory.
+  include_ancestors: true
+  include_compatible_properties: true
+
+groups:
+  things_and_places:
+    - label: "Packaged Unit"
+      iri: http://example.org/ontology/business#PackagedUnit
+      parent: "Product"
+      definition: "A product in a package or container that is ready for storage or shipment."
+    - label: "Product Category"
+      iri: http://example.org/ontology/business#ProductCategory
+      parent: null
+      definition: "A named group that products or services are classified into."
+  documents:
+    - label: "Specification"
+      iri: http://example.org/ontology/business#Specification
+      parent: "Business Document"
+      definition: "A business document that states the required properties of a product or service."
+  processes:
+    - label: "Manufacturing"
+      iri: http://example.org/ontology/business#Manufacturing
+      parent: "Business Process"
+      definition: "A business process in which materials are turned into products."
+  order_to_cash_entities:
+    - label: "Manufactured Product"
+      iri: http://example.org/ontology/manufacturing#ManufacturedProduct
+      parent: "Product"
+      definition: "A product produced through a manufacturing process."
+
+type_sets:
+  goods: &goods [Packaged Unit, Manufactured Product]
+  facilities: &facilities [Warehouse, Plant]
+  sellable: &sellable [Packaged Unit, Manufactured Product, Service]
+
+relationships:
+  - label: "manufactured at"
+    type: MANUFACTURED_AT
+    iri: http://example.org/ontology/business#manufacturedAt
+    domain: *goods
+    range: *facilities
+    definition: "The product was made at this site."
+  - label: "stored at"
+    type: STORED_AT
+    iri: http://example.org/ontology/business#storedAt
+    domain: *goods
+    range: *facilities
+    definition: "The product is stored in this warehouse."
+  - label: "has category"
+    type: HAS_CATEGORY
+    iri: http://example.org/ontology/business#hasCategory
+    domain: *sellable
+    range: [Product Category]
+    definition: "The product or service belongs to this category."
+  - label: "component of"
+    type: COMPONENT_OF
+    iri: http://example.org/ontology/business#componentOf
+    domain: *goods
+    range: *goods
+    definition: "The product is a component of another product."

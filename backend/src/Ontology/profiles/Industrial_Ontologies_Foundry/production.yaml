@@ -2,7 +2,7 @@ profile:
   id: production-planning-complete
   ontology_artifact: production-planning
   description: >-
-    Complete profile generated from ProductionPlanning.rdf; all named classes and properties declared in the RDF artifact are represented here.
+    Complete profile generated from ProductionPlanning.rdf, with a project-specific Non-Conformance Record extension.
   include_ancestors: true
   include_compatible_properties: true
 
@@ -40,6 +40,10 @@ groups:
       iri: https://spec.industrialontologies.org/ontology/construct/MaterialProductSpecification
       parent: "Design Specification"
       definition: "design specification that prescribes a material product"
+    - label: "Non-Conformance Record"
+      iri: http://example.org/ontology/production#NonConformanceRecord
+      parent: "Information Content Entity"
+      definition: "A record documenting a deviation from a specified requirement."
     - label: "Operation Specification"
       iri: https://spec.industrialontologies.org/ontology/construct/OperationSpecification
       parent: "Action Specification"

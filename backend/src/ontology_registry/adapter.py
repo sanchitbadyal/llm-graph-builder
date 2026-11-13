@@ -23,15 +23,62 @@ class _ExpandedYamlDumper(yaml.SafeDumper):
 
 
 YAML_PROFILE_FILES = {
-    "business-core-selected": ("business.yaml",),
-    "core-selected": ("core.yaml",),
-    "production-planning-complete": ("production.yaml",),
-    "maintenance-complete": ("maintenance.yaml",),
-    "certification-complete": ("certification.yaml",),
-    "manufacturing-system-organization-complete": ("manufacturing_system_organiztion.yaml",),
+    "business-common": ("business.yaml",),
+    "core-selected": ("Industrial_Ontologies_Foundry/core.yaml",),
+    "business-order-to-cash": ("business_order_to_cash.yaml",),
+    "business-procurement-supplier-management": ("business_procurement_supplier_management.yaml",),
+    "business-fulfillment-logistics": ("business_fulfillment_logistics.yaml",),
+    "business-revenue-accounting": ("business_revenue_accounting.yaml",),
+    "business-governance-risk-compliance": ("business_governance_risk_compliance.yaml",),
+    "business-products-inventory": ("business_products_inventory.yaml",),
+    "production-planning-complete": ("Industrial_Ontologies_Foundry/production.yaml",),
+    "maintenance-complete": ("Industrial_Ontologies_Foundry/maintenance.yaml",),
+    "certification-complete": ("Industrial_Ontologies_Foundry/certification.yaml",),
+    "manufacturing-system-organization-complete": ("Industrial_Ontologies_Foundry/manufacturing_system_organiztion.yaml",),
+    "product-service-system-complete": ("Industrial_Ontologies_Foundry/product_service_system.yaml",),
+    "sensor-selected": ("Industrial_Ontologies_Foundry/sensor.yaml",),
 }
 
 PROFILE_DESCRIPTIONS = {
+    "business-order-to-cash": (
+        "Select ONLY for the seller-side process of taking and billing customer orders: sales orders "
+        "or contracts, quotes, customer credit checks, discount approvals, invoices, billing, or "
+        "payment collection. Do NOT select for purchasing from suppliers, shipment or warehouse "
+        "operations, or revenue accounting unless those are also substantive parts of the document. "
+        "The word 'order' alone is not a reason to select it."
+    ),
+    "business-procurement-supplier-management": (
+        "Select ONLY for the buyer-side process of requesting, sourcing, or purchasing goods or "
+        "services from suppliers: purchase requisitions or purchase orders, procurement activities, "
+        "supplier terms, and purchase receipt. Do NOT select for customer sales orders, outbound "
+        "shipments, or general supplier mentions that are not part of a purchasing workflow."
+    ),
+    "business-fulfillment-logistics": (
+        "Select ONLY when the document describes preparing, moving, shipping, or handing over goods: "
+        "shipments, deliveries, carriers, shipping documents, proof of shipment or delivery, or "
+        "plant-to-plant and warehouse transfers. Do NOT select for production planning or execution, "
+        "facility layout, or inventory/product descriptions without a goods-movement workflow."
+    ),
+    "business-revenue-accounting": (
+        "Select ONLY when the document describes recording, recognizing, or allocating financial "
+        "amounts: accounting or revenue entries, accruals, deferred revenue, fiscal periods, ledger "
+        "accounts, or profit centers. Do NOT select for routine invoice issuance, payment collection, "
+        "or purchase orders unless accounting treatment or revenue recognition is also in scope."
+    ),
+    "business-governance-risk-compliance": (
+        "Select ONLY when governance, risk, or compliance is a substantive subject: business policies "
+        "or rules, internal controls, identified risks, compliance obligations, formal assessments, "
+        "or audits of processes or controls. Do NOT select for a routine transaction approval "
+        "(including a discount approval), a credit check, or certification against an external "
+        "standard unless governance or control requirements are also described."
+    ),
+    "business-products-inventory": (
+        "Select ONLY for product identity, specification, categorization, packaging, inventory, "
+        "storage status, or product composition (components). Do NOT select for production schedules, "
+        "manufacturing operations, or process execution; use the production-planning profile for "
+        "those. Do NOT select for shipment and delivery workflows or facility layout unless product "
+        "or inventory information is also substantive."
+    ),
     "production-planning-complete": (
         "Select ONLY when the document describes how production is planned and executed: "
         "production plans and production orders (what to make and how much), process plans, "
@@ -61,16 +108,26 @@ PROFILE_DESCRIPTIONS = {
         "Do NOT select for departments, cost centers, legal entities or reporting lines; "
         "those are in the business profile."
     ),
+    "product-service-system-complete": (
+        "Select ONLY when the document describes a product-service system: its products, "
+        "commercial services, providers, customers, requirements, specifications, resources, "
+        "product families, variants, or PSS business processes."
+    ),
+    "sensor-selected": (
+        "Select ONLY when the document describes sensors or measurement instrumentation, including "
+        "detecting devices, transducers, observers, observations, sensing processes, sensor roles, "
+        "or sensor specifications."
+    ),
 }
 
 
-ALWAYS_LOADED = ["business-core-selected", "core-selected"]
+ALWAYS_LOADED = ["business-common", "core-selected"]
 
 DEFAULT_PROFILE_NOTES = {
-    "business-core-selected": (
-        "Always loaded. Organizations, units, cost centers, positions, roles, documents, "
-        "order-to-cash, plant fulfillment, revenue recognition, approvals, accounting, "
-        "business rules and policies."
+    "business-common": (
+        "Always loaded. Shared business context: organizations, organizational units, cost centers, "
+        "legal entities, roles, positions, locations, and general business relationships. Select an "
+        "optional business profile for the document's specialized business workflow."
     ),
     "core-selected": (
         "Always loaded. Generic industrial concepts: agents, material artifacts, equipment, "
@@ -89,6 +146,7 @@ INVERSE_RELATIONSHIP_PAIRS = {
     "governs": "governed by",
     "step of": "has step",
     "assessment of": "has assessment",
+    "performs": "performed by",
     "role of": "has business role",
     "sells to": "buys from",
     "supplies": "supplied by",
@@ -105,7 +163,9 @@ def _yaml_entries(profile: dict, key: str) -> Iterable[tuple[str, dict]]:
 
 
 def _relation_endpoints(
-    expression: object, classes_by_label: dict[str, str],
+    expression: object,
+    classes_by_label: dict[str, str],
+    known_class_labels: set[str],
 ) -> tuple[str, ...] | None:
     if expression is None:
         return None
@@ -117,11 +177,31 @@ def _relation_endpoints(
         value = re.sub(r";\s*plus\s+", "|", value, flags=re.IGNORECASE)
         parts = re.split(r"\s+or\s+|\s*\|\s*|\s*,\s*", value, flags=re.IGNORECASE)
         for part in filter(None, (item.strip() for item in parts)):
-            label = classes_by_label.get(_label_key(part))
-            if label is None:
-                return ()
-            endpoints.add(label)
+            key = _label_key(part)
+            label = classes_by_label.get(key)
+            if label is not None:
+                endpoints.add(label)
+            elif key not in known_class_labels:
+                return None
     return tuple(sorted(endpoints)) if endpoints else ()
+
+
+def _filter_prompt_endpoints(
+    value: object, selected_class_labels: set[str], known_class_labels: set[str]
+) -> tuple[object, bool]:
+    if isinstance(value, list):
+        filtered = [
+            item
+            for item in value
+            if not isinstance(item, str)
+            or _label_key(item) not in known_class_labels
+            or _label_key(item) in selected_class_labels
+        ]
+        return filtered, bool(value) and not filtered
+    if isinstance(value, str):
+        key = _label_key(value)
+        return value, key in known_class_labels and key not in selected_class_labels
+    return value, False
 
 
 def _has_group_rule(expression: object) -> bool:
@@ -147,15 +227,19 @@ class OntologyExtractionProfile:
     class_iri_lookup: tuple[tuple[str, str], ...] = ()
     relationship_iri_lookup: tuple[tuple[str, str], ...] = ()
     inverse_relationships: tuple[tuple[str, str], ...] = ()
+    yaml_class_parents: tuple[tuple[str, tuple[str, ...]], ...] = ()
+    yaml_relationship_constraints: tuple[
+        tuple[str, str, tuple[str, ...] | None, tuple[str, ...] | None], ...
+    ] = ()
 
 
 class OntologyExtractionAdapter:
-    """Build LLM context from curated YAML profiles and retain OWL validation access."""
+    """Build LLM context and semantic validation constraints from YAML profiles."""
 
     def __init__(
         self,
         manifest_path: str | Path,
-        root_id: str = "business-core-selected",
+        root_id: str = "business-common",
         selected_class_labels=None,
         profile_files: Iterable[str | Path] | None = None,
     ):
@@ -174,6 +258,7 @@ class OntologyExtractionAdapter:
             except KeyError as exc:
                 raise ValueError(f"No YAML ontology profile configured for root '{root_id}'") from exc
         profile_dir = manifest_path.resolve().parent / "profiles"
+        self.profile_dir = profile_dir
         self.profile_paths = tuple(
             path if (path := Path(profile)).is_absolute() else profile_dir / path
             for profile in profile_files
@@ -195,10 +280,27 @@ class OntologyExtractionAdapter:
         root_id = root_id or self.root_id
         class_payloads: dict[str, dict] = {}
         classes_by_label: dict[str, str] = {}
+        known_class_labels: set[str] = set()
+        profile_dir = self.profile_dir
+        configured_files = dict.fromkeys(
+            profile_file
+            for profile_files in YAML_PROFILE_FILES.values()
+            for profile_file in profile_files
+        )
+        for profile_file in configured_files:
+            profile_path = profile_dir / profile_file
+            configured_profile = yaml.safe_load(profile_path.read_text(encoding="utf-8"))
+            if not isinstance(configured_profile, dict):
+                raise ValueError(f"YAML ontology profile must be a mapping: {profile_path}")
+            known_class_labels.update(
+                _label_key(str(entry["label"]))
+                for _, entry in _yaml_entries(configured_profile, "class")
+            )
         property_payloads: dict[str, dict] = {}
         inherited_property_iris: set[str] = set()
         descriptions: list[str] = []
         yaml_documents: list[str] = []
+        yaml_prompt_profiles: list[tuple[Path, dict]] = []
         unoptimized_yaml_documents: list[str] = []
         class_iri_lookup: dict[str, str] = {}
         relationship_iri_lookup: dict[str, str] = {}
@@ -237,15 +339,7 @@ class OntologyExtractionAdapter:
                         if str(relation.get("label", "")) not in INVERSE_RELATIONSHIP_PAIRS
                     ]
             profile_for_prompt.pop("type_sets", None)
-            expanded_yaml = yaml.dump(
-                profile_for_prompt,
-                Dumper=_ExpandedYamlDumper,
-                sort_keys=False,
-                default_flow_style=None,
-                width=10000,
-                allow_unicode=True,
-            )
-            yaml_documents.append(f"# Source profile: {path.name}\n{expanded_yaml.rstrip()}")
+            yaml_prompt_profiles.append((path, profile_for_prompt))
             profile_metadata = profile.get("profile", {})
             node_properties.update(str(item) for item in profile.get("entity_properties", []) or [])
             relationship_properties.update(str(item) for item in profile.get("relationship_properties", []) or [])
@@ -295,8 +389,16 @@ class OntologyExtractionAdapter:
                         "iri": iri,
                         "label": str(relation["label"]),
                         "labels": [str(relation["label"])],
-                        "domain": [str(domain)] if domain is not None else [],
-                        "range": [str(range_)] if range_ is not None else [],
+                        "domain": (
+                            [str(item) for item in domain]
+                            if isinstance(domain, list)
+                            else [str(domain)] if domain is not None else []
+                        ),
+                        "range": (
+                            [str(item) for item in range_]
+                            if isinstance(range_, list)
+                            else [str(range_)] if range_ is not None else []
+                        ),
                         "inverses": list(relation.get("inverses", []) or []),
                         "layer": artifact_id,
                     }
@@ -314,6 +416,35 @@ class OntologyExtractionAdapter:
             if missing:
                 raise KeyError(f"Selected classes are not defined by the YAML profiles: {missing}")
 
+        selected_class_label_keys = set(classes_by_label)
+        for path, profile_for_prompt in yaml_prompt_profiles:
+            for key in ("relationships", "inherited_relationships"):
+                filtered_relationships = []
+                for relation in profile_for_prompt.get(key, []) or []:
+                    endpoints = {}
+                    unavailable = False
+                    for endpoint in ("domain", "range"):
+                        endpoints[endpoint], endpoint_unavailable = _filter_prompt_endpoints(
+                            relation.get(endpoint),
+                            selected_class_label_keys,
+                            known_class_labels,
+                        )
+                        unavailable = unavailable or endpoint_unavailable
+                    if not unavailable:
+                        relation.update(endpoints)
+                        filtered_relationships.append(relation)
+                if key in profile_for_prompt:
+                    profile_for_prompt[key] = filtered_relationships
+            expanded_yaml = yaml.dump(
+                profile_for_prompt,
+                Dumper=_ExpandedYamlDumper,
+                sort_keys=False,
+                default_flow_style=None,
+                width=10000,
+                allow_unicode=True,
+            )
+            yaml_documents.append(f"# Source profile: {path.name}\n{expanded_yaml.rstrip()}")
+
         classes = tuple(sorted(class_payloads.values(), key=lambda item: item["iri"]))
         properties = tuple(sorted(property_payloads.values(), key=lambda item: item["iri"]))
         nodes = tuple(sorted({item["label"] for item in classes}, key=str.casefold))
@@ -327,8 +458,14 @@ class OntologyExtractionAdapter:
             ):
                 group_rule_relationships.add(prop["label"])
                 continue
-            domains = _relation_endpoints(prop["domain"], classes_by_label)
-            ranges = _relation_endpoints(prop["range"], classes_by_label)
+            domains = _relation_endpoints(
+                prop["domain"], classes_by_label, known_class_labels
+            )
+            ranges = _relation_endpoints(
+                prop["range"], classes_by_label, known_class_labels
+            )
+            if domains == () or ranges == ():
+                continue
             if not domains or not ranges:
                 group_rule_relationships.add(prop["label"])
                 continue
@@ -359,6 +496,22 @@ class OntologyExtractionAdapter:
             class_iri_lookup=tuple(sorted(class_iri_lookup.items())),
             relationship_iri_lookup=tuple(sorted(relationship_iri_lookup.items())),
             inverse_relationships=tuple(sorted(INVERSE_RELATIONSHIP_PAIRS.items())),
+            yaml_class_parents=tuple(sorted(
+                (
+                    str(item["label"]),
+                    tuple(str(parent) for parent in item.get("parents", ()) if parent),
+                )
+                for item in class_payloads.values()
+            )),
+            yaml_relationship_constraints=tuple(sorted(
+                (
+                    str(item["iri"]),
+                    str(item["label"]),
+                    _relation_endpoints(item["domain"], classes_by_label, known_class_labels),
+                    _relation_endpoints(item["range"], classes_by_label, known_class_labels),
+                )
+                for item in properties
+            )),
         )
         if max_prompt_chars is not None and len(result.yaml_context) > max_prompt_chars:
             raise ValueError(
@@ -400,6 +553,8 @@ class OntologyExtractionAdapter:
             class_iri_lookup=profile.class_iri_lookup,
             relationship_iri_lookup=profile.relationship_iri_lookup,
             inverse_relationships=profile.inverse_relationships,
+            yaml_class_parents=profile.yaml_class_parents,
+            yaml_relationship_constraints=profile.yaml_relationship_constraints,
         )
 
 
