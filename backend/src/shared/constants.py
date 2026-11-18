@@ -30,15 +30,17 @@ CALL {{
   UNWIND selectedChunks AS c
   OPTIONAL MATCH entities = (c:Chunk)-[:HAS_ENTITY]->(e)
   OPTIONAL MATCH entityRels = (e)--(e2:!Chunk) 
-  WHERE exists {{
+  WHERE e2:__OntologyClass OR exists {{
     (e2)<-[:HAS_ENTITY]-(other) WHERE other IN selectedChunks
   }}
-  RETURN entities, entityRels, collect(DISTINCT e) AS entity
+  OPTIONAL MATCH ontologyPaths = (e)-[:INSTANCE_OF]->(:__OntologyClass)-[:SUBCLASS_OF*1..]->(:__OntologyClass)
+  RETURN entities, entityRels, ontologyPaths, collect(DISTINCT e) AS entity
 }}
 
 WITH docs, chunks, chunkRels, 
      collect(entities) AS entities, 
      collect(entityRels) AS entityRels, 
+     collect(ontologyPaths) AS ontologyPaths,
      entity
 
 WITH *
@@ -52,7 +54,7 @@ CALL {{
          collect(parentcommunity) AS parentCommunities
 }}
 
-WITH apoc.coll.flatten(docs + chunks + chunkRels + entities + entityRels + communities + parentCommunities, true) AS paths
+WITH apoc.coll.flatten(docs + chunks + chunkRels + entities + entityRels + ontologyPaths + communities + parentCommunities, true) AS paths
 
 // Distinct nodes and relationships
 CALL {{

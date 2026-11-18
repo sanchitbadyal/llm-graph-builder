@@ -6,112 +6,675 @@ profile:
   include_ancestors: true
   include_compatible_properties: true
 
-groups:
-  ontology_classes:
-    - label: "Degraded State"
-      iri: https://spec.industrialontologies.org/ontology/construct/DegradedState
-      parent: "Maintenance State"
-      definition: "state of reduced ability to perform as required but with acceptable reduced performance"
-    - label: "Disposition To Exhibit Undesirable Behavior"
-      iri: https://spec.industrialontologies.org/ontology/construct/DispositionToExhibitUndesirableBehavior
-      parent: "Undesirable Disposition"
-      definition: "disposition of an item that would not be expected under normal operating conditions"
-    - label: "Disposition To Fail"
-      iri: https://spec.industrialontologies.org/ontology/construct/DispositionToFail
-      parent: "Undesirable Disposition"
-      definition: "disposition of an item to undergo a failure process"
-    - label: "Failed State"
-      iri: https://spec.industrialontologies.org/ontology/construct/FailedState
-      parent: "Maintenance State"
-      definition: "state of an item being unable to perform a required function due to a failure event"
-    - label: "Failure Effect"
-      iri: https://spec.industrialontologies.org/ontology/construct/FailureEffect
-      parent: "Process"
-      definition: "process that is the consequence of failure, within or beyond the boundary of the failed item"
-    - label: "Failure Event"
-      iri: https://spec.industrialontologies.org/ontology/construct/FailureEvent
-      parent: "Event"
-      definition: "event that causes an item to lose its ability to perform a required function"
-    - label: "Failure Mode Code"
-      iri: https://spec.industrialontologies.org/ontology/construct/FailureModeCode
-      parent: "Information Content Entity"
-      definition: "information content entity that describes an undesirable disposition"
-    - label: "Failure Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/FailureProcess
-      parent: "Process"
-      definition: "process that changes some quality of an item causing the item to become degraded or failed"
-    - label: "Functioning Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/FunctioningProcess
-      parent: "Process"
-      definition: "process in which an item performs its function"
-    - label: "Maintenance Activity"
-      iri: https://spec.industrialontologies.org/ontology/construct/MaintenanceActivity
-      parent: "Maintenance Process"
-      definition: "maintenance process that is a single task to retain or restore the function of a maintainable material item"
-    - label: "Maintenance Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/MaintenanceProcess
-      parent: "Planned Process"
-      definition: "process to do with retaining or restoring the function of a maintainable material item under a maintenance strategy"
-    - label: "Maintenance State"
-      iri: https://spec.industrialontologies.org/ontology/construct/MaintenanceState
-      parent: "Material State"
-      definition: "stasis that holds during a temporal interval when the realizable functions and capabilities of the participating item, or the grade of realization of those functions and capabilities, remain unchanged"
-    - label: "Maintenance Strategy"
-      iri: https://spec.industrialontologies.org/ontology/construct/MaintenanceStrategy
-      parent: "Plan Specification"
-      definition: "maintenance (method/ approach/ actions) to enable (the/an) asset to achieve (management's/ desired) objectives"
-    - label: "Maintenance Work Order Record"
-      iri: https://spec.industrialontologies.org/ontology/construct/MaintenanceWorkOrderRecord
-      parent: "Information Content Entity"
-      definition: "information content entity that describes a maintenance process"
-    - label: "Operating State"
-      iri: https://spec.industrialontologies.org/ontology/construct/OperatingState
-      parent: "Maintenance State"
-      definition: "state of an item being able to perform a required function"
-    - label: "Qualification Specification"
-      iri: https://spec.industrialontologies.org/ontology/construct/QualificationSpecification
-      parent: "Requirement Specification"
-      definition: "requirement specification that identifies the need for a person to have an assessed skill for a specific task"
-    - label: "Qualified Maintenance Person"
-      iri: https://spec.industrialontologies.org/ontology/construct/QualifiedMaintenancePerson
-      parent: "Person"
-      definition: "person who is qualified to perform a specified maintenance activity"
-    - label: "Required Function"
-      iri: https://spec.industrialontologies.org/ontology/construct/RequiredFunction
-      parent: "Function"
-      definition: "function of a maintainable material item which is considered necessary to fulfil a process requirement"
-    - label: "Supporting Maintenance Activity"
-      iri: https://spec.industrialontologies.org/ontology/construct/SupportingMaintenanceActivity
-      parent: "Planned Process"
-      definition: "single action in support of the execution of a maintenance process"
-    - label: "Undesirable Disposition"
-      iri: https://spec.industrialontologies.org/ontology/construct/UndesireableDisposition
-      parent: "Disposition"
-      definition: "disposition of an item to undergo a process that leads to undesirable outcomes"
 
-# Shared lists of entity types. PyYAML expands the *aliases when the file is loaded,
-# so every relationship ends up with an explicit list of entity names.
-type_sets:
-  maintainable_items: &maintainable_items [Piece Of Equipment, Machine, Production Machine, Tool, Production Tool, Material Artifact, Engineered System, Equipment Module]
-  maintenance_states: &maintenance_states [Maintenance State, Operating State, Degraded State, Failed State]
-  maintenance_events: &maintenance_events [Failure Event, Failure Process, Failure Effect, Functioning Process, Maintenance Process, Maintenance Activity, Supporting Maintenance Activity]
+entities:
+  - label: Degraded State
+    iri: "https://spec.industrialontologies.org/ontology/construct/DegradedState"
+    parent_class: Maintenance State
+    definition: >
+      state of reduced ability to perform as required but with acceptable
+      reduced performance
+    examples:
+      - having a small crack, having a partial blockage, having an oscillating reading
+    classification_conditions:
+      - The entity must be a Maintenance State.
+      - It cannot also be an Operating State or a Failed State.
+    logical_definition: >
+      DegradedState(x) → MaintenanceState(x)
+
+
+  - label: Disposition To Exhibit Undesirable Behavior
+    iri: "https://spec.industrialontologies.org/ontology/construct/DispositionToExhibitUndesirableBehavior"
+    parent_class: Undesirable Disposition
+    definition: >
+      disposition of an item that would not be expected under normal
+      operating conditions
+    examples:
+      - overspeed, excessive noise
+    classification_conditions:
+      - The entity must be an Undesirable Disposition.
+      - It cannot be realized in a Failure Process.
+    logical_definition: >
+      LA1: DispositionToExhibitUndesirableBehavior(x) → UndesirableDisposition(x);
+      LA2: ∀p (DispositionToExhibitUndesirableBehavior(d) ∧ Process(p) ∧
+      realizes(p, d) → ¬FailureProcess(p))
+
+
+  - label: Disposition To Fail
+    iri: "https://spec.industrialontologies.org/ontology/construct/DispositionToFail"
+    parent_class: Undesirable Disposition
+    definition: >
+      disposition of an item to undergo a failure process
+    examples:
+      - disposition to explode, disposition to fracture, disposition to seize
+    classification_conditions:
+      - The entity must be an Undesirable Disposition.
+      - It must be realized in some Failure Process.
+    logical_definition: >
+      DispositionToFail(x) → UndesirableDisposition(x) ∧ ∃y
+      (FailureProcess(y) ∧ hasRealization(x, y))
+
+
+  - label: Failed State
+    iri: "https://spec.industrialontologies.org/ontology/construct/FailedState"
+    parent_class: Maintenance State
+    definition: >
+      state of an item being unable to perform a required function due to a
+      failure event
+    examples:
+      - is broken in two, is burst, is failing to turn on
+    classification_conditions:
+      - The entity must be a Maintenance State.
+      - It must have some Maintainable Material Item as a participant at all times.
+      - It must be initiated by some Failure Event.
+      - It must be preceded by some Degraded State or Operating State that has the same Maintainable Material Item as a participant at all times.
+      - No other Degraded State or Operating State of that item can occur between that preceding state and this one.
+      - It cannot also be an Operating State or a Degraded State.
+    logical_definition: >
+      FailedState(o1) ↔ MaintenanceState(o1) ∧ ∃i
+      (MaintainableMaterialItem(i) ∧ hasParticipantAtAllTimes(o1, i) ∧ ∃e
+      (FailureEvent(e) ∧ initiates(e, o1)) ∧ ∃o2
+      ((DegradedState(o2) ∨ OperatingState(o2)) ∧
+      hasParticipantAtAllTimes(o2, i) ∧ precedes(o2, o1)) ∧ ¬∃o3
+      ((DegradedState(o3) ∨ OperatingState(o3)) ∧
+      hasParticipantAtAllTimes(o3, i) ∧ precedes(o2, o3) ∧
+      precedes(o3, o1)))
+
+
+  - label: Failure Effect
+    iri: "https://spec.industrialontologies.org/ontology/construct/FailureEffect"
+    parent_class: Process
+    definition: >
+      process that is the consequence of failure, within or beyond the
+      boundary of the failed item
+    examples:
+      - leaking pipe, erratic operation, equipment does not run
+    classification_conditions:
+      - The entity must be a Process.
+      - It must be preceded by some Failure Event or Failure Process.
+    logical_definition: >
+      FailureEffect(x) → Process(x) ∧ ∃f
+      ((FailureEvent(f) ∨ FailureProcess(f)) ∧ precededBy(x, f))
+    explanatory_note: >
+      Failure effect does not make any commitments to what types of
+      BFO:process can or cannot be considered effects of (functional)
+      failure. Therefore, failure effect can classify any BFO:process (part
+      or whole), indicating that the process is considered the result of a
+      failure for the purposes of maintenance.
+
+
+  - label: Failure Event
+    iri: "https://spec.industrialontologies.org/ontology/construct/FailureEvent"
+    parent_class: Event
+    definition: >
+      event that causes an item to lose its ability to perform a required
+      function
+    synonyms:
+      - failure
+    examples:
+      - explosion, seizure, loss of power, loss of control
+    classification_conditions:
+      - The entity must be an Event.
+      - It must initiate some Failed State.
+      - It must have some Maintainable Material Item as a participant at all times.
+      - That Maintainable Material Item must have some Required Function.
+      - Some Functioning Process that realizes that Required Function must precede it.
+      - No later Functioning Process realizing that function can occur between that Functioning Process and this event.
+    logical_definition: >
+      FailureEvent(e) ↔ Event(e) ∧ ∃o (FailedState(o) ∧ initiates(e, o)) ∧
+      ∃i,f,p1 (MaintainableMaterialItem(i) ∧ hasParticipantAtAllTimes(e, i)
+      ∧ RequiredFunction(f) ∧ hasFunction(i, f) ∧ FunctioningProcess(p1) ∧
+      realizes(p1, f) ∧ precedes(p1, e) ∧ ¬∃p2 (FunctioningProcess(p2) ∧
+      realizes(p2, f) ∧ precedes(p1, p2) ∧ precedes(p2, e)))
+    explanatory_note: >
+      the event can be the loss of the primary function or a combination of
+      functions
+
+
+  - label: Failure Mode Code
+    iri: "https://spec.industrialontologies.org/ontology/construct/FailureModeCode"
+    parent_class: Information Content Entity
+    definition: >
+      information content entity that describes an undesirable disposition
+    examples:
+      - '"high output", "leaking", "vibrating"'
+    classification_conditions:
+      - The entity must be an Information Content Entity.
+      - It must describe some Undesirable Disposition.
+    logical_definition: >
+      FailureModeCode(x) → InformationContentEntity(x) ∧ ∃y
+      (UndesirableDisposition(y) ∧ describes(x, y))
+
+
+  - label: Failure Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/FailureProcess"
+    parent_class: Process
+    definition: >
+      process that changes some quality of an item causing the item to
+      become degraded or failed
+    synonyms:
+      - functional failure
+    examples:
+      - short circuiting process, deformation process, corrosion process
+    classification_conditions:
+      - The entity must be a Process.
+      - It must realize some Disposition To Fail.
+    logical_definition: >
+      FailureProcess(x) ↔ Process(x) ∧ ∃y
+      (DispositionToFail(y) ∧ realizes(x, y))
+
+
+  - label: Functioning Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/FunctioningProcess"
+    parent_class: Process
+    definition: >
+      process in which an item performs its function
+    examples:
+      - sensing process, controlling process, transforming process
+    classification_conditions:
+      - The entity must be a Process.
+      - It must realize some Function.
+    logical_definition: >
+      FunctioningProcess(x) ↔ Process(x) ∧ ∃y
+      (Function(y) ∧ realizes(x, y))
+
+
+  - label: Maintenance Activity
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaintenanceActivity"
+    parent_class: Maintenance Process
+    definition: >
+      maintenance process that is a single task to retain or restore the
+      function of a maintainable material item
+    examples:
+      - replace activity, repair activity, inspect activity
+    classification_conditions:
+      - The entity must be a Maintenance Process.
+    logical_definition: >
+      MaintenanceActivity(x) → MaintenanceProcess(x)
+
+
+  - label: Maintenance Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaintenanceProcess"
+    parent_class: Planned Process
+    definition: >
+      process to do with retaining or restoring the function of a
+      maintainable material item under a maintenance strategy
+    examples:
+      - process of replacing a pump, process of calibrating a sensor
+    classification_conditions:
+      - The process must be a Planned Process.
+      - It must be prescribed by some Maintenance Strategy.
+      - It must have some Maintainable Material Item as a participant at all times.
+      - It must have some Maintainable Material Item as an input.
+      - A Planned Process that is prescribed by some Maintenance Strategy is a Maintenance Process.
+    logical_definition: >
+      LA1: PlannedProcess(p) ∧ ∃x (MaintenanceStrategy(x) ∧ prescribes(x, p))
+      → MaintenanceProcess(p);
+      LA2: MaintenanceProcess(p) → ∃x (MaintenanceStrategy(x) ∧
+      prescribes(x, p));
+      LA3: MaintenanceProcess(p) → ∃x (MaintainableMaterialItem(x) ∧
+      hasParticipantAtAllTimes(p, x) ∧ hasInput(p, x))
+
+
+  - label: Maintenance State
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaintenanceState"
+    parent_class: Material State
+    definition: >
+      stasis that holds during a temporal interval when the realizable
+      functions and capabilities of the participating item, or the grade of
+      realization of those functions and capabilities, remain unchanged
+    examples:
+      - is broken in two, is running at desired speed
+    classification_conditions:
+      - The entity must be a Material State.
+      - It must be exactly an Operating State, a Degraded State or a Failed State.
+    logical_definition: >
+      MaintenanceState(x) ↔ OperatingState(x) ∨ DegradedState(x) ∨
+      FailedState(x)
+
+
+  - label: Maintenance Strategy
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaintenanceStrategy"
+    parent_class: Plan Specification
+    definition: >
+      maintenance (method/ approach/ actions) to enable (the/an) asset to
+      achieve (management's/ desired) objectives
+    examples:
+      - specification of a corrective strategy for maintaining a pump (or pumps) of a plant
+    classification_conditions:
+      - The entity must be a Plan Specification.
+      - A Plan Specification that prescribes some Maintenance Process is a Maintenance Strategy.
+    logical_definition: >
+      PlanSpecification(x) ∧ ∃p (MaintenanceProcess(p) ∧ prescribes(x, p))
+      → MaintenanceStrategy(x)
+
+
+  - label: Maintenance Work Order Record
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaintenanceWorkOrderRecord"
+    parent_class: Information Content Entity
+    definition: >
+      information content entity that describes a maintenance process
+    synonyms:
+      - MWO
+      - maintenance work order
+    examples:
+      - a record in a (computerised) maintenance management system that contains fields for due and actual date of the maintenance, a description of the maintenance task, actual and budget costs and other fields
+    classification_conditions:
+      - The entity must be an Information Content Entity.
+      - It must describe some Maintenance Process.
+      - It must be an input of that same Maintenance Process.
+    logical_definition: >
+      MaintenanceWorkOrderRecord(x) ↔ InformationContentEntity(x) ∧ ∃y
+      (MaintenanceProcess(y) ∧ describes(x, y) ∧ isInputOf(x, y))
+    explanatory_note: >
+      the record has a number of commonly used fields including dates, task
+      description, task codes, costs. This definition remains provisional
+      because it assumes that a work order must involve a 'maintenance
+      process'. In the current definition, a work order cannot be made up of
+      purely 'supporting maintenance activity' tasks.
+
+
+  - label: Operating State
+    iri: "https://spec.industrialontologies.org/ontology/construct/OperatingState"
+    parent_class: Maintenance State
+    definition: >
+      state of an item being able to perform a required function
+    examples:
+      - running at desired speed, producing required power, pumping desired volume
+    classification_conditions:
+      - The entity must be a Maintenance State.
+      - It cannot also be a Degraded State or a Failed State.
+    logical_definition: >
+      OperatingState(x) → MaintenanceState(x)
+    explanatory_note: >
+      In defining the state of an item as being able to perform a required
+      function, we are assuming that the external resources, if required,
+      are provided. Note that in an operating state the item may be
+      functional (so in the operating state) and not currently operating
+      (performing in the functioning process).
+
+
+  - label: Qualification Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/QualificationSpecification"
+    parent_class: Requirement Specification
+    definition: >
+      requirement specification that identifies the need for a person to
+      have an assessed skill for a specific task
+    examples:
+      - electrical trade qualification, welding qualification, registered engineer
+    classification_conditions:
+      - The entity must be a Requirement Specification.
+    logical_definition: >
+      QualificationSpecification(x) → RequirementSpecification(x)
+
+
+  - label: Qualified Maintenance Person
+    iri: "https://spec.industrialontologies.org/ontology/construct/QualifiedMaintenancePerson"
+    parent_class: Person
+    definition: >
+      person who is qualified to perform a specified maintenance activity
+    examples:
+      - electrician, fitter, mechanic
+    classification_conditions:
+      - The entity must be a Person.
+      - It must participate in some Maintenance Activity at some time.
+      - It must satisfy some Qualification Specification that prescribes that Maintenance Activity.
+    logical_definition: >
+      QualifiedMaintenancePerson(x) ↔ Person(x) ∧ ∃y
+      (MaintenanceActivity(y) ∧ participatesInAtSomeTime(x, y) ∧ ∃z
+      (QualificationSpecification(z) ∧ prescribedBy(y, z) ∧
+      satisfiesRequirement(x, z)))
+    explanatory_note: >
+      Qualified person on its own is not particularly useful unless
+      reasoning is constrained to only the individuals of interest at some
+      time. Specific subtypes of qualified person are necessary to
+      determine if specific qualification types are satisfied. Still, care
+      must be taken when reasoning over temporal information as, if the
+      criteria are met at some time, the classification will hold.
+
+
+  - label: Required Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/RequiredFunction"
+    parent_class: Function
+    definition: >
+      function of a maintainable material item which is considered
+      necessary to fulfil a process requirement
+    synonyms:
+      - primary function
+    examples:
+      - to sense, to store, to process information, to control
+    classification_conditions:
+      - The entity must be a Function.
+      - It must be the function of some Maintainable Material Item.
+      - It must participate in some Functioning Process.
+    logical_definition: >
+      RequiredFunction(x) ↔ Function(x) ∧ ∃y,z
+      (MaintainableMaterialItem(y) ∧ FunctioningProcess(z) ∧
+      participatesInAtSomeTime(y, z) ∧ functionOf(x, y))
+    explanatory_note: >
+      the function can be a combination of functions
+
+
+  - label: Supporting Maintenance Activity
+    iri: "https://spec.industrialontologies.org/ontology/construct/SupportingMaintenanceActivity"
+    parent_class: Planned Process
+    definition: >
+      single action in support of the execution of a maintenance process
+    examples:
+      - activities that do not change the state of the asset but are done by maintenance personnel such as reporting activity, isolate activity, move activity, training activity
+    classification_conditions:
+      - The process must be a Planned Process.
+    logical_definition: >
+      SupportingMaintenanceActivity(x) → PlannedProcess(x)
+
+
+  - label: Undesirable Disposition
+    iri: "https://spec.industrialontologies.org/ontology/construct/UndesireableDisposition"
+    parent_class: Disposition
+    definition: >
+      disposition of an item to undergo a process that leads to undesirable
+      outcomes
+    synonyms:
+      - failure mode
+    examples:
+      - disposition to leak, disposition to overheat, disposition to vibrate
+    classification_conditions:
+      - The entity must be a Disposition.
+      - It must be exactly a Disposition To Fail or a Disposition To Exhibit Undesirable Behavior.
+    logical_definition: >
+      UndesirableDisposition(x) ↔ DispositionToFail(x) ∨
+      DispositionToExhibitUndesirableBehavior(x)
+    explanatory_note: >
+      There are two subclasses, disposition to fail and disposition to
+      exhibit undesirable behavior. We need to distinguish between the
+      disposition to leak which is realised in a leaking process (regarded
+      as a failure) and the disposition to overheat realised in a heating
+      process (which, in this example, is not a failure process). We assert
+      that disposition to exhibit undesirable behavior is the disposition of
+      an item that would not be expected under normal operating conditions
+      but may occur such as vibration or overheating.
+
 
 relationships:
-  - label: "has maintenance state"
-    type: HAS_MAINTENANCE_STATE
-    iri: https://spec.industrialontologies.org/ontology/construct/hasMaintenanceState
-    domain: *maintainable_items
-    range: *maintenance_states
-    definition: "inverse of 'stateOf'"
-  - label: "initiates"
-    type: INITIATES
-    iri: https://spec.industrialontologies.org/ontology/construct/initiates
-    domain: *maintenance_events
-    range: *maintenance_events
-    definition: "comes before an event or process in time and results in beginning or creation of the event or process"
-  - label: "maintenance state of"
-    type: MAINTENANCE_STATE_OF
-    iri: https://spec.industrialontologies.org/ontology/construct/maintenanceStateOf
-    domain: *maintenance_states
-    range: *maintainable_items
-    definition: "relation that describes the maintenance state of a maintainable item"
+
+  - label: Has Maintenance State
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasMaintenanceState"
+    definition: >
+      relationship from a maintainable material item to a maintenance state
+      that it has; inverse of maintenance state of
+    domain:
+      - Maintainable Material Item
+    range:
+      - Maintenance State
+    inverse: Maintenance State Of
+    extraction_constraints:
+      - Subject must be a Maintainable Material Item.
+      - Object must be a Maintenance State.
+      - The relationship direction is Maintainable Material Item → Maintenance State.
+
+
+  - label: Maintenance State Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/maintenanceStateOf"
+    definition: >
+      relation that describes the maintenance state of a maintainable item
+    domain:
+      - Maintenance State
+    range:
+      - Maintainable Material Item
+    inverse: Has Maintenance State
+    extraction_constraints:
+      - Subject must be a Maintenance State.
+      - Object must be a Maintainable Material Item.
+      - The relationship direction is Maintenance State → Maintainable Material Item.
+
+
+  - label: Initiates
+    iri: "https://spec.industrialontologies.org/ontology/construct/initiates"
+    definition: >
+      comes before an event or process in time and results in beginning or
+      creation of the event or process
+    domain:
+      - Occurrent
+    range:
+      - Process
+      - Event
+    inverse: Initiated By
+    extraction_constraints:
+      - Subject must be an Occurrent.
+      - Object must be a Process or an Event.
+      - A Failure Event initiates a Failed State.
+      - The relationship direction is Initiator → Initiated Occurrent.
+
+
+  - label: Preceded By
+    iri: "http://purl.obolibrary.org/obo/BFO_0000062"
+    definition: >
+      relationship from a process or state to one that occurs before it
+    domain:
+      - Failed State
+      - Failure Effect
+    range:
+      - Degraded State
+      - Operating State
+      - Failure Event
+      - Failure Process
+    inverse: Precedes
+    extraction_constraints:
+      - Failed State must be preceded by a Degraded State or Operating State.
+      - Failure Effect must be preceded by a Failure Event or Failure Process.
+      - The relationship direction is Later → Earlier.
+
+
+  - label: Precedes
+    iri: "http://purl.obolibrary.org/obo/BFO_0000063"
+    definition: >
+      relationship from a process or state to one that occurs after it
+    domain:
+      - Degraded State
+      - Operating State
+      - Functioning Process
+      - Failure Event
+      - Failure Process
+    range:
+      - Failed State
+      - Failure Event
+      - Failure Effect
+    inverse: Preceded By
+    extraction_constraints:
+      - A Degraded State or Operating State can precede a Failed State.
+      - A Functioning Process can precede a Failure Event.
+      - A Failure Event or Failure Process can precede a Failure Effect.
+      - The relationship direction is Earlier → Later.
+
+
+  - label: Has Participant At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000167"
+    definition: >
+      relationship from a process or state to an entity that participates in
+      it at all times
+    domain:
+      - Failed State
+      - Failure Event
+      - Maintenance Process
+    range:
+      - Maintainable Material Item
+    extraction_constraints:
+      - Failed State must have a Maintainable Material Item as a participant.
+      - Failure Event must have a Maintainable Material Item as a participant.
+      - Maintenance Process must have a Maintainable Material Item as a participant.
+      - The relationship direction is Process or State → Participant.
+
+
+  - label: Participates In
+    iri: "http://purl.obolibrary.org/obo/BFO_0000056"
+    definition: >
+      relationship from an entity to a process in which it participates
+    domain:
+      - Person
+      - Maintainable Material Item
+      - Required Function
+    range:
+      - Maintenance Activity
+      - Functioning Process
+    inverse: Has Participant
+    extraction_constraints:
+      - Qualified Maintenance Person must participate in a Maintenance Activity.
+      - Maintainable Material Item that has a Required Function participates in a Functioning Process.
+      - Required Function participates in a Functioning Process.
+      - The relationship direction is Participant → Process.
+
+
+  - label: Realized In
+    iri: "http://purl.obolibrary.org/obo/BFO_0000054"
+    definition: >
+      relationship from a disposition or function to the process in which it
+      is realized
+    domain:
+      - Disposition To Fail
+      - Disposition To Exhibit Undesirable Behavior
+    range:
+      - Failure Process
+    inverse: Realizes
+    extraction_constraints:
+      - Disposition To Fail must be realized in some Failure Process.
+      - Disposition To Exhibit Undesirable Behavior cannot be realized in a Failure Process.
+      - The relationship direction is Disposition → Process.
+
+
+  - label: Realizes
+    iri: "http://purl.obolibrary.org/obo/BFO_0000055"
+    definition: >
+      relationship from a process to a disposition or function that it
+      realizes
+    domain:
+      - Failure Process
+      - Functioning Process
+    range:
+      - Disposition To Fail
+      - Function
+    inverse: Realized In
+    extraction_constraints:
+      - Failure Process must realize a Disposition To Fail.
+      - Functioning Process must realize a Function.
+      - The relationship direction is Process → Disposition or Function.
+
+
+  - label: Describes
+    iri: "https://spec.industrialontologies.org/ontology/construct/describes"
+    definition: >
+      relationship from an information content entity to the entity it
+      describes
+    domain:
+      - Failure Mode Code
+      - Maintenance Work Order Record
+    range:
+      - Undesirable Disposition
+      - Maintenance Process
+    extraction_constraints:
+      - Failure Mode Code must describe an Undesirable Disposition.
+      - Maintenance Work Order Record must describe a Maintenance Process.
+      - The relationship direction is Information Content Entity → Described Entity.
+
+
+  - label: Has Input
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasInput"
+    definition: >
+      relationship from a process to an entity that is an input of it
+    domain:
+      - Maintenance Process
+    range:
+      - Maintainable Material Item
+    inverse: Is Input Of
+    extraction_constraints:
+      - Maintenance Process must have a Maintainable Material Item as an input.
+      - The relationship direction is Process → Input.
+
+
+  - label: Is Input Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/isInputOf"
+    definition: >
+      relationship from an input to the process that it is an input of
+    domain:
+      - Maintenance Work Order Record
+    range:
+      - Maintenance Process
+    inverse: Has Input
+    extraction_constraints:
+      - Maintenance Work Order Record must be an input of the Maintenance Process it describes.
+      - The relationship direction is Input → Process.
+
+
+  - label: Prescribed By
+    iri: "https://spec.industrialontologies.org/ontology/construct/prescribedBy"
+    definition: >
+      relationship from a process to the specification that prescribes it
+    domain:
+      - Maintenance Process
+      - Maintenance Activity
+    range:
+      - Maintenance Strategy
+      - Qualification Specification
+    inverse: Prescribes
+    extraction_constraints:
+      - Maintenance Process must be prescribed by a Maintenance Strategy.
+      - Maintenance Activity can be prescribed by a Qualification Specification.
+      - The relationship direction is Process → Specification.
+
+
+  - label: Prescribes
+    iri: "https://spec.industrialontologies.org/ontology/construct/prescribes"
+    definition: >
+      relationship from a specification to the process it prescribes
+    domain:
+      - Maintenance Strategy
+      - Qualification Specification
+    range:
+      - Maintenance Process
+      - Maintenance Activity
+    inverse: Prescribed By
+    extraction_constraints:
+      - Maintenance Strategy must prescribe a Maintenance Process.
+      - Qualification Specification must prescribe a Maintenance Activity.
+      - The relationship direction is Specification → Process.
+
+
+  - label: Satisfies Requirement
+    iri: "https://spec.industrialontologies.org/ontology/construct/satisfiesRequirement"
+    definition: >
+      relationship from an entity to a requirement specification that it
+      satisfies
+    domain:
+      - Qualified Maintenance Person
+    range:
+      - Qualification Specification
+    extraction_constraints:
+      - Qualified Maintenance Person must satisfy a Qualification Specification that prescribes a Maintenance Activity.
+      - The relationship direction is Person → Qualification Specification.
+
+
+  - label: Has Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasFunction"
+    definition: >
+      relationship from an entity to a function that it bears
+    domain:
+      - Maintainable Material Item
+    range:
+      - Required Function
+    inverse: Function Of
+    extraction_constraints:
+      - Maintainable Material Item can have a Required Function.
+      - The relationship direction is Function Bearer → Function.
+
+
+  - label: Function Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/functionOf"
+    definition: >
+      relationship from a function to the entity in which it inheres
+    domain:
+      - Required Function
+    range:
+      - Maintainable Material Item
+    inverse: Has Function
+    extraction_constraints:
+      - Required Function must be the function of a Maintainable Material Item.
+      - The relationship direction is Function → Function Bearer.

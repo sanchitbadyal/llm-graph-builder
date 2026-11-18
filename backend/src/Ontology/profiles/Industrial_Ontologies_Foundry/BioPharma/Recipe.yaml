@@ -1,0 +1,858 @@
+imports:
+- iri: https://spec.industrialontologies.org/ontology/202603/biopharma/ManufacturingSystemOrganization/
+  label: Manufacturing System Organization
+  note: Imported ontology; referenced classes and properties are defined there, not redeclared in this
+    module.
+- iri: https://spec.industrialontologies.org/ontology/202603/biopharma/ReferenceOntologyCandidates/
+  label: Reference Ontology Candidates
+  note: Imported ontology; referenced classes and properties are defined there, not redeclared in this
+    module.
+- iri: https://spec.industrialontologies.org/ontology/202603/core/Core/
+  label: IOF Core
+  note: Imported ontology; referenced classes and properties are defined there, not redeclared in this
+    module.
+profile:
+  id: recipe-ontology-complete
+  ontology_artifact: Recipe
+  ontology_iri: https://spec.industrialontologies.org/ontology/biopharma/Recipe/
+  version_iri: https://spec.industrialontologies.org/ontology/202603/biopharma/Recipe/
+  title: Recipe Ontology
+  description: This module contains terms and relations for describing the hierarchical and temporally
+    sequenced operations and actions which comprise the recipe. Module contents also describe the evolution
+    and maturation of the recipe over time as it is transformed from a general recipe (not specific to
+    a site) to a specific instance recipe associated with a batch.
+  include_ancestors: true
+  include_compatible_properties: true
+entities:
+- label: batch run
+  iri: https://spec.industrialontologies.org/ontology/construct/BatchRun
+  parent_class: Manufacturing Process
+  alternative_labels:
+  - batch process
+  - batch run process
+  definition: manufacturing process that leads to the production of finite quantities of material by subjecting
+    quantities of input materials to an ordered set of processing activities over a finite period of time
+    using one or more pieces of equipment
+  examples:
+  - A single 2,000-liter fed-batch CHO culture carried out according to a production recipe, starting
+    with inoculation and ending with harvest on Day 14; A single batch run of the PVC resin production
+    process carried out according to a defined recipe, resulting in the production of Granular PVC Grade
+    PQ5.
+  classification_conditions:
+  - if x is a 'batch run', then x is a 'manufacturing process', x 'has participant at some time' some
+    'piece of equipment', and x is 'prescribed by' some 'recipe'
+  logical_definition: BatchRun(x) → ManufacturingProcess(x) ∧ ∃y (hasParticipantAtSomeTime(x, y) ∧ PieceOfEquipment(y))
+    ∧ ∃z (prescribedBy(x, z) ∧ Recipe(z))
+  is_primitive: true
+  primitive_rationale: This term is expected to remain primitive due to the lack of sufficient ontological
+    constructs for representing both finite material quantities and the ordered execution of process steps.
+  adapted_from:
+  - ISA-88 Part 1
+- label: batch run identification
+  iri: https://spec.industrialontologies.org/ontology/construct/BatchRunIdentification
+  parent_class: Identifier
+  alternative_labels:
+  - batch run identifier
+  definition: identifier for a batch run
+  examples:
+  - The identifier "BR-2025-07-001" designates a batch run of monoclonal antibody production in July 2025;
+    The identifier "MFG-BCH-0815" designates a GMP manufacturing batch run for a recombinant protein on
+    August 15th; The identifier "CellRun_Alpha_003" designates a batch run for CHO cell culture during
+    upstream process development; The identifier "BATCH-0921-Pilot" designates a pilot-scale batch run
+    of a gene therapy vector formulation executed in September 2021
+  classification_conditions:
+  - every instance of a 'batch run identification' is exactly an instance of an 'identifier' that 'designates'
+    some 'batch run'
+  logical_definition: BatchRunIdentification(x) ↔ Identifier(x) ∧ ∃b(BatchRun(b) ∧ designates(x, b))
+  counterexamples:
+  - The identifier "Lot-57B" designates the output material (lot) produced during a batch run, not the
+    batch run itself. This example fails the definition because the identifier refers to a material product
+    (e.g., a lot of vials or bulk drug substance), not to the process instance (the batch run) that generated
+    it.
+- label: control recipe
+  iri: https://spec.industrialontologies.org/ontology/construct/ControlRecipe
+  parent_class: recipe
+  definition: recipe that prescribes particular pieces of equipment and specific lots or inventoried materials
+    to be used in some batch runs
+  examples:
+  - 'Control recipe ‘CR-PVC-20250623-01’, derived from the ‘MR-PVC-SUSP-HOU-Cell2-V3’ Master Recipe that
+    employs the ‘Granular PVC Grade PQ5 production procedure Houston’ Recipe Procedure, which comprises
+    the following sequence of Unit Procedures: ‘Vinyl chloride monomer polymerization unit procedure’,
+    ‘Water Separation unit procedure’, and ‘Drying unit procedure’. This recipe procedure is to be carried
+    out in the following equipment units of the ‘Granular PVC production cell 001’ Process Cell: Reactor
+    JR-102; Centrifuge C-301; VCM Recovery Unit VRU-1; Deionized water tank WTK-101; Low pressure steam
+    supply system; Chilled Water Circuit; and Spray Dryer SD-02. This Recipe Procedure will transform
+    2220 lb. of the ‘Vinyl Chloride Monomer’ raw material into 985 kg of ‘Granular PVC Grade PQ5’ product,
+    employing the following Consumables: Deionized Water (1060 Gallons), Suspension Agent Polyvinyl Alcohol
+    (CAS No.9002-89-5), by Wacker Chemie AG (11.5 lb.), Benzoyl Peroxide Initiator (CAS No. 94-36-0),
+    by Akzo Nobel (2.25 lb.), Sodium Bicarbonate (CAS No. 144-55-8), by Church & Dwight Co (1.18 lb.).'
+  classification_conditions:
+  - 'LA1: if x is a ''control recipe'', then x is a ''recipe'' and ''has continuant part at all times''
+    some ''identifier'' that ''designates'' some ''piece of equipment'''
+  - 'LA2: if x is a ''recipe'' that ''is concretized by at some time'' some ''batch run'', then x is a
+    ''control recipe'''
+  logical_definition: 'LA1: ControlRecipe(x) → Recipe(x) ∧ ∃y∃z (hasContinuantPartAtAllTimes(x, y) ∧ Identifier(y)
+    ∧ designates(y, z) ∧ PieceOfEquipment(z))
+
+    LA2: Recipe(x) ∧ ∃y (isConcretizedByAtSomeTime(x, y) ∧ BatchRun(y)) → ControlRecipe(x)'
+  explanatory_note: A control recipe may be derived from a master recipe. However, this is not always
+    the case such as in a process development. In that scenario a control recipe is created before a master
+    recipe.
+  usage_note: '1) Only control recipes are executed (bfo: concretized by) a batch run. Other recipe types
+    serve only to prescribe the process at various levels of abstraction. They themselves are not executed
+    (concretized by) the batch run. Therefore, if a recipe is concretized in a batch run, this is a sufficient
+    condition to classify it as a control recipe.
+
+    2) A control recipe explicitly specifies the actual equipment used in the batch run, including the
+    unique identifiers of that equipment. In contrast, other types of recipes typically define only the
+    required capabilities or categories of equipment (e.g., “a mixing vessel” or “a bioreactor class”).
+    This is formally expressed using the axiom ''has continuant part at all times'' some (identifier and
+    (designates some ''piece of equipment'')). Users should include an identifier as a continuant part
+    of the control recipe, where the identifier designates a specific individual piece of equipment (a
+    particular equipment instance), not merely an equipment type (class).'
+  is_primitive: true
+  primitive_rationale: There are currently insufficient constructs to create a set of mutually necessary
+    and sufficient conditions.
+  adapted_from:
+  - https://www.plcacademy.com/isa-88-s88-batch-control-explained/
+- label: general recipe
+  iri: https://spec.industrialontologies.org/ontology/construct/GeneralRecipe
+  parent_class: recipe
+  definition: recipe that is independent of equipment and physical site
+  examples:
+  - 'General Recipe ‘GR-PVC-SUSP-V1’, which employs the Recipe Process ‘PVC granular resin production
+    process’ that comprises the following sequence of process stages ‘Vinyl chloride monomer polymerization
+    stage’, ‘Water Separation stage’, and ‘Drying stage’, to transform the raw material Vinyl Chloride
+    Monomer (1000 kg) into ~980 kg of PVC granular resin, employing the following Consumables: Deionized
+    Water (4000 L), Suspension Agent (e.g., Polyvinyl Alcohol/ Methylcellulose/Hydroxypropyl Methylcellulose
+    5 kg), Benzoyl Peroxide (1 kg), Buffer (e.g., Sodium Bicarbonate/Sodium Carbonate - 0.5 kg).'
+  classification_conditions:
+  - if x is a 'general recipe', then x is a 'recipe' and x does not 'prescribe planned process location'
+    some 'physical site'
+  logical_definition: GeneralRecipe(x) → Recipe(x) ∧ ¬∃y (prescribesPlannedProcessLocation(x, y) ∧ PhysicalSite(y))
+  is_primitive: true
+  primitive_rationale: This term is expected to remain primitive, as expressing its independence from
+    equipment or physical site would require the use of negation, which is generally avoided in ontological
+    definitions.
+  adapted_from:
+  - https://www.plcacademy.com/isa-88-s88-batch-control-explained/
+- label: master recipe
+  iri: https://spec.industrialontologies.org/ontology/construct/MasterRecipe
+  parent_class: recipe
+  definition: recipe that prescribes some equipment families, types, or sets of alternative pieces of
+    equipment or process cell information that specifies the composition of equipment families, types,
+    or sets of alternative pieces of equipment and types of materials or cataloged items
+  examples:
+  - 'Master Recipe ‘MR-PVC-SUSP-HOU-Cell2-V3’ that employs the ‘Granular PVC Grade PQ5 production procedure
+    Houston’ Recipe Procedure, which comprises the following sequence of Unit Procedures: ‘Vinyl chloride
+    monomer polymerization unit procedure’, ‘Water Separation unit procedure’, and ‘Drying unit procedure’.
+    This recipe procedure can be carried out in the ‘Granular PVC production cell 001’ Process Cell, composed
+    of: a) Reactors JR-101/JR-102/JR-103/JR-104 (Stainless steel, 1,000-gallon, rated 100 psia, mechanical
+    agitator, with temperature and pressure control systems, nitrogen purge system, pressure relief system
+    with a Rupture disc); b) Centrifuges C-301/C-302 (Basket type, 600 lb. batch); c) VCM Recovery Unit
+    VRU-1/VRU-2; d) Deionized water tanks WTK-101/WTK-103; e) Low pressure steam supply system; f) Chilled
+    Water Circuit; g) Spray Dryers SD-02/SD-04. This Recipe Procedure will transform 2220 lb. of the ‘Vinyl
+    Chloride Monomer’ raw material into 985 kg of ‘Granular PVC Grade PQ5’ product, employing the following
+    Consumables: Deionized Water (1060 Gallons), Suspension Agent Polyvinyl Alcohol (CAS No.9002-89-5),
+    by Wacker Chemie AG (11.5 lb.), Benzoyl Peroxide Initiator (CAS No. 94-36-0), by Akzo Nobel (2.25
+    lb.), Sodium Bicarbonate (CAS No. 144-55-8), by Church & Dwight Co (1.18 lb.).'
+  classification_conditions:
+  - if x is a 'master recipe' then x is a 'recipe'
+  logical_definition: MasterRecipe(x) → Recipe(x)
+  explanatory_note: A master recipe may still specify multiple choices of equipment while the control
+    recipe specifies the exact piece of equipment to be used in a particular batch run.
+  is_primitive: true
+  primitive_rationale: There are insufficient constructs currently available to axiomatically capture
+    all the possible entities that a master recipe may prescribe
+  adapted_from:
+  - https://www.plcacademy.com/isa-88-s88-batch-control-explained/
+- label: recipe
+  iri: https://spec.industrialontologies.org/ontology/construct/Recipe
+  parent_class: Plan Specification
+  definition: plan specification that prescribes some batch runs for a specific product or process intermediate
+  examples:
+  - control recipe;general recipe;master recipe; site recipe
+  classification_conditions:
+  - if x is a 'plan specification' that 'prescribes' some 'batch run' and 'has continuant part at all
+    times' some 'recipe procedure' or 'recipe process' then x is a 'recipe'
+  logical_definition: PlanSpecification(x) ∧ ∃y (prescribes(x, y) ∧ BatchRun(y)) ∧ ∃z ((RecipeProcedure(z)
+    ∨ RecipeProcess(z)) ∧ hasContinuantPartAtAllTimes(x, z)) → Recipe(x)
+  explanatory_note: 'A recipe contains an essential and comprehensive set of information required to uniquely
+    define the manufacturing requirements for a specific product or process intermediate. This information
+    typically includes: Product identification and version, List of raw materials and their quantities,
+    Equipment requirements, Process parameters (e.g., temperatures, pressures, speeds), Step-by-step production
+    instructions, Quality control specifications, Safety precautions, Packaging and labeling instructions.'
+  is_primitive: true
+  primitive_rationale: There are currently insufficient constructs available to create a set of necessary
+    and sufficient conditions. In particular recipe structural elements like the header are missing
+  adapted_from:
+  - https://www.plcacademy.com/isa-88-s88-batch-control-explained/
+- label: recipe creation process
+  iri: https://spec.industrialontologies.org/ontology/construct/RecipeCreationProcess
+  parent_class: Planned Process
+  definition: planned process in which some agent creates a recipe
+  examples:
+  - 'A member of the ‘Polymer Process Development Team’ of the ‘StarChemicals’ company, creates the ‘GR-PVC-SUSP-V1’
+    General Recipe, which employs the Recipe Process ‘PVC granular resin production process’ that comprises
+    the following sequence of process stages ‘Vinyl chloride monomer polymerization stage’, ‘Water Separation
+    stage’, and ‘Drying stage’, to transform the Vinyl Chloride Monomer (1000 kg) raw material into ~980
+    kg of PVC granular resin product, employing the following Consumables: Deionized Water (4000 L), Suspension
+    Agent (e.g., Polyvinyl Alcohol/ Methylcellulose/Hydroxypropyl Methylcellulose 5 kg), Benzoyl Peroxide
+    (1 kg), Buffer (e.g., Sodium Bicarbonate/Sodium Carbonate - 0.5 kg).'
+  classification_conditions:
+  - every instance of 'recipe creation process' is defined as exactly an instance of 'planned process'
+    that 'has participant at some time' some 'agent', and 'has specified output' some 'recipe'.
+  logical_definition: RecipeCreationProcess(x) ↔ PlannedProcess(x) ∧ ∃a(Agent(a) ∧ hasParticipantAtSomeTime(x,
+    a)) ∧ ∃r(Recipe(r) ∧ hasSpecifiedOutput(x, r))
+  explanatory_note: A recipe creation process may proceed de novo, based on domain knowledge of the product
+    or process, without reuse of existing recipe structures. Alternatively, it may involve the reuse or
+    adaptation of one or more existing recipes, or of their process or procedural elements, in which case
+    it is classified as a recipe derivation process.
+  adapted_from:
+  - ISA-88 Part 1
+- label: recipe derivation process
+  iri: https://spec.industrialontologies.org/ontology/construct/RecipeDerivationProcess
+  parent_class: recipe creation process
+  definition: recipe creation process in which a new recipe is created based on one or more existing recipes,
+    recipe process elements, or recipe procedural elements
+  examples:
+  - 'A member of the ‘Houston Process Engineering Department’, of the ‘StarChemicals Americas’ company,
+    derives the ‘SR-PVC-SUSP-HOU-V5’ Site Recipe from the ‘GR-PVC-SUSP-V1’ General Recipe. It employs
+    the Recipe Process ‘PVC granular resin production process Houston’, which comprises the following
+    sequence of process stages ‘Vinyl chloride monomer polymerization stage’, ‘Water Separation stage’,
+    and ‘Spray Drying stage’, to transform the Vinyl Chloride Monomer (2200 lb) raw material into ~980
+    kg of PVC granular resin product, employing the following Consumables: Deionized Water (1057 Gallons),
+    Suspension Agent Polyvinyl Alcohol (CAS No.9002-89-5), by Wacker Chemie AG (11 lbs or target value),
+    Benzoyl Peroxide Initiator (CAS No. 94-36-0), by Akzo Nobel (2.2 lbs or target value), Sodium Bicarbonate
+    (CAS No. 144-55-8), by Church & Dwight Co (1.1 lbs. or target value).'
+  classification_conditions:
+  - every instance of 'recipe derivation process' is defined as exactly an instance of 'recipe creation
+    process' that 'has input' some 'recipe', 'recipe procedural element', or 'recipe process element'
+  logical_definition: RecipeDerivationProcess(x) ↔ RecipeCreationProcess(x) ∧ ∃i((Recipe(i) ∨ RecipeProceduralElement(i)
+    ∨ RecipeProcessElement(i)) ∧ hasInput(x, i))
+  explanatory_note: This process involves reusing, adapting, or recombining parts of existing recipe structures
+    to generate a new recipe that may reflect different production contexts, equipment capabilities, regulatory
+    constraints, or product variations. Derivation may occur at the level of entire recipes or at the
+    level of subcomponents such as recipe procedures, unit procedures, or process stages.
+  adapted_from:
+  - ISA-88 Part 1
+- label: recipe element creation process
+  iri: https://spec.industrialontologies.org/ontology/construct/RecipeElementCreationProcess
+  parent_class: Planned Process
+  definition: planned process in which some agent creates a recipe process element or recipe procedural
+    element
+  examples:
+  - 'A member of the ‘Polymer Process Development Team’ of the ‘StarChemicals’ company, creates the ‘Vinyl
+    chloride monomer polymerization stage’ process stage. It comprises the following sequence of process
+    operations: ‘Setup process operation’, followed by a ‘Charge water, additives and monomer process
+    operation’, followed by a ‘Polymerization process operation’, finishing with a ‘Post-polymerization
+    process operation’.'
+  classification_conditions:
+  - every instance of a 'recipe element creation process' is exactly an instance of a 'planned process'
+    that 'has participant at some time' some 'agent' and 'has specified output' some 'recipe procedural
+    element' or 'recipe process element'
+  logical_definition: RecipeElementCreationProcess(x) ↔ PlannedProcess(x) ∧ ∃a(Agent(a) ∧ hasParticipantAtSomeTime(x,a))
+    ∧ ∃o((RecipeProceduralElement(o) ∨ RecipeProcessElement(o)) ∧ hasSpecifiedOutput(x,o))
+  adapted_from:
+  - ISA-88 Part 1
+- label: recipe element derivation process
+  iri: https://spec.industrialontologies.org/ontology/construct/RecipeElementDerivationProcess
+  parent_class: recipe element creation process
+  definition: recipe element creation process in which either a new recipe procedural element is created
+    based on one or more existing recipe procedural elements or recipe process elements, or in which a
+    new recipe process element is created based on one or more recipe process elements
+  examples:
+  - 'A member of the ‘Houston Process Engineering Department’, of the ‘StarChemicals Americas’ company,
+    derives the ‘Vinyl chloride monomer polymerization Unit Procedure’, from the ‘Vinyl chloride monomer
+    polymerization stage’ process stage. This Unit Procedure, which can take place in any of these Jacketed
+    Reactors JR-101/JR-102/JR-103/JR-104, comprises the following sequence of recipe operations: ‘Setup
+    process operation’, followed by a ‘Charge water, additives and monomer process operation’, followed
+    by a ‘Polymerization process operation’, finishing with a ‘Post-polymerization process operation’.'
+  classification_conditions:
+  - every instance of 'recipe element derivation process' is exactly a 'recipe element creation process'
+    that either has input some 'recipe procedural element' or 'recipe process element' and has specified
+    output some 'recipe procedural element', or has input some 'recipe process element' and has specified
+    output some 'recipe process element'
+  logical_definition: "RecipeElementDerivationProcess(x) ↔ RecipeElementCreationProcess(x) ∧ \n((∃i((RecipeProceduralElement(i)\
+    \ ∨ RecipeProcessElement(i)) ∧ hasInput(x,i)) ∧ ∃o(RecipeProceduralElement(o) ∧ hasSpecifiedOutput(x,o)))\
+    \ ∨ \n (∃i(RecipeProcessElement(i) ∧ hasInput(x,i)) ∧ ∃o(RecipeProcessElement(o) ∧ hasSpecifiedOutput(x,o))))"
+  usage_note: The two branches of the equivalent class axiom for recipe element derivation process reflect
+    different possibilities for how recipe elements can be derived. One allows for the creation of a 'recipe
+    procedural element' from either a 'recipe process element' or another 'recipe procedural element',
+    while the other focuses specifically on the creation of one 'recipe process element' from another.
+    This supports modeling different derivation scenarios across recipe abstraction layers.
+  adapted_from:
+  - ISA-88 Part 1
+- label: recipe operation
+  iri: https://spec.industrialontologies.org/ontology/construct/RecipeOperation
+  parent_class: recipe procedural element
+  alternative_labels:
+  - unit operation
+  definition: recipe procedural element that has a partially ordered set of recipe phases as its part
+    and that prescribes one or more alternative physical units with compatible capabilities
+  examples:
+  - 'A ''Setup operation'', which is part of a ''Vinyl chloride monomer polymerization unit procedure'',
+    and that can take place in jacketed reactor JR-101/JR-102/JR-103, has the following set of recipe
+    phases: ''Inspect reactor cleaning conditions phase'', ''Test agitation system phase'', ''Calibrate
+    temperature control system phase'', ''Test pressure relief system phase'', and ''Prepare Nitrogen
+    purge system phase''.'
+  classification_conditions:
+  - if x is a 'recipe operation', then x is a 'recipe procedural element', x 'has continuant part at some
+    time' only entities that are not a 'recipe procedure' or 'recipe unit procedure', and x 'has proper
+    continuant part at some time' only entities that are not a 'recipe operation'
+  - every instance of 'recipe operation' is exactly a 'recipe procedural element' that 'has continuant
+    part at all times' some 'recipe phase' is 'continuant part of at all times' some 'recipe unit procedure',
+    and 'has continuant part at all times' some 'information content entity' that either 'denotes' a 'physical
+    unit' or 'prescribes' either the 'physical unit' or a 'manufacturing capability' that is a 'capability
+    of' a 'physical unit'
+  logical_definition: 'RecipeOperation(x) ↔ RecipeProceduralElement(x) ∧ ∃p(RecipePhase(p) ∧ hasContinuantPartAtAllTimes(x,
+    p)) ∧ ∃u(RecipeUnitProcedure(u) ∧ continuantPartOfAtAllTimes(x, u)) ∧ ∃z(PhysicalUnit(z) ∧ (∃y(InformationContentEntity(y)
+    ∧ hasContinuantPartAtAllTimes(x, y) ∧ (denotes(y, z) ∨ ∃c(ManufacturingCapability(c) ∧ capabilityOf(c,
+    z) ∧ prescribes(y, c)) ∨ prescribes(y, z)))))
+
+    RecipeOperation(x) → RecipeProceduralElement(x) ∧ ∀y (hasContinuantPartAtSomeTime(x, y) → ¬(RecipeProcedure(y)
+    ∨ RecipeUnitProcedure(y))) ∧ ∀z (hasProperContinuantPartAtSomeTime(x, z) → ¬RecipeOperation(z))'
+  explanatory_note: '1) From ISA-88 (1995) Part 1 Section 3, a procedural element defining an independent
+    processing activity consisting of the algorithm necessary for the initiation, organization, and control
+    of phases.
+
+    2) From ISA-88 (2010) Part 1 Section 5.1, an operation is an ordered set of phases that defines a
+    major processing sequence that takes the material being processed from one state to another, usually
+    involving a chemical, physical, biological change'
+- label: recipe phase
+  iri: https://spec.industrialontologies.org/ontology/construct/RecipePhase
+  parent_class: recipe procedural element
+  definition: recipe procedural element that has no other recipe procedural element as its proper part
+    and that prescribes one or more alternative physical units or equipment modules with compatible capabilities
+  examples:
+  - ‘Calibrate temperature control system’, ‘Feed fresh media’, ‘Test pressure relief system’, ‘Sample
+    bioreaction mixture’.
+  classification_conditions:
+  - if x is a 'recipe phase', then x is a 'recipe procedural element', x 'has continuant part at some
+    time' only entities that are not a 'recipe operation', 'recipe procedure', or 'recipe unit procedure',
+    and x 'has proper continuant part at some time' only entities that are not a 'recipe procedural element'
+  logical_definition: RecipePhase(x) → RecipeProceduralElement(x) ∧ ∀y (hasContinuantPartAtSomeTime(x,
+    y) → ¬(RecipeOperation(y) ∨ RecipeProcedure(y) ∨ RecipeUnitProcedure(y))) ∧ ∀z (hasProperContinuantPartAtSomeTime(x,
+    z) → ¬RecipeProceduralElement(z))
+  explanatory_note: '1) ISA 88 Part 1 Section 3: The lowest level of procedural element in the procedural
+    control model.
+
+    2) ISA 88 Part 1 Section 5: The smallest element of procedural control that can accomplish a process-oriented
+    task is a phase. A phase may be subdivided into smaller parts.
+
+    3) Specifics about how phase may be subdivided can be found in other standards like MTP which contains
+    a lot equipment and action specific information.
+
+    According to ISA88 a recipe phase points to an equipment phase. This interaction will be explored
+    in the future.'
+  is_primitive: true
+  primitive_rationale: This term is expected to remain primitive, as expressing that it has no other procedural
+    elements as parts requires the use of negation, which is generally avoided in ontological definitions.
+  adapted_from:
+  - ISA-88 Part 1
+- label: recipe procedural element
+  iri: https://spec.industrialontologies.org/ontology/construct/RecipeProceduralElement
+  parent_class: Plan Specification
+  definition: plan specification that prescribes some planned process that is part of a batch run and
+    is equipment specific or manufacturing capability specific
+  examples:
+  - recipe operation; recipe phase; recipe procedure; recipe unit procedure
+  classification_conditions:
+  - if x is a 'recipe procedural element', then x is a 'plan specification', x is not a continuant part
+    at any time of a 'general recipe', 'recipe process element', or 'site recipe', and x 'prescribes'
+    some 'planned process' that is an 'occurrent part of' some 'batch run'
+  logical_definition: RecipeProceduralElement(x) → PlanSpecification(x) ∧ ∀y(continuantPartOfAtSomeTime(x,
+    y) → ¬(GeneralRecipe(y) ∨ RecipeProcessElement(y) ∨ SiteRecipe(y))) ∧ ∃z (prescribes(x, z) ∧ PlannedProcess(z)
+    ∧ ∃w (occurrentPartOf(z, w) ∧ BatchRun(w)))
+  explanatory_note: '1) From ISA-88 (1995) part 1 section 3, a building block for procedural control that
+    is defined by the procedural control model.
+
+    2) From ISA-88 (2010) part 1 section 5, a procedural element is any part of a recipe or control strategy
+    that defines a set of activities or actions, potentially including decision logic, which guides the
+    execution of a manufacturing process.'
+  usage_note: "1) A recipe procedural element must not be included in general recipes, site recipes, or\
+    \ recipe process elements, as it is intended to represent equipment-specific or manufacturing capability-specific\
+    \ instructions. This restriction is formally captured by the axiom: 'continuant part of at some time'\
+    \ only (not ('general recipe' or 'recipe process element' or 'site recipe')). \n2) While a recipe\
+    \ procedural element may be included in one or more control recipes or master recipes, there is no\
+    \ axiomatic requirement for such inclusion, allowing for flexible reuse and recombination across different\
+    \ contexts. When associating a recipe procedural element with a control or master recipe, the 'continuant\
+    \ part of at some time' relation (or an appropriate subproperty) should be used."
+  is_primitive: true
+  primitive_rationale: This term is expected to remain primitive, as it is challenging to define a set
+    of OWL-compatible necessary and sufficient conditions that in all cases reliably distinguish a recipe
+    procedural element from a recipe process element.
+- label: recipe procedure
+  iri: https://spec.industrialontologies.org/ontology/construct/RecipeProcedure
+  parent_class: recipe procedural element
+  definition: recipe procedural element that has a partially ordered set of recipe unit procedures as
+    its part and that prescribes one or more alternative process cells with compatible capabilities
+  examples:
+  - 'A ‘PVC granular resin production recipe procedure’, which comprises the following unit procedures:
+    a ‘Vinyl chloride monomer polymerization unit procedure’, a ‘Water Separation unit procedure’, and
+    a ‘Drying unit procedure’. This recipe procedure can be carried out in Process Cell ‘Granular PVC
+    production cell 001’, composed of a) Reactor JR-101/JR-102/JR-103/JR-104 (Stainless steel, 1,000-gallon,
+    rated 100 psia, mechanical agitator, with temperature and pressure control systems, nitrogen purge
+    system, pressure relief system with a Rupture disc); b) Centrifuge C-301/C-302 (Basket type, 600 lb.
+    batch); c) VCM Recovery Unit VRU-1/VRU-2; d) Deionized water tank WTK-101/WTK-103; e) Low pressure
+    steam supply system; f) Chilled Water Circuit, g) Spray Dryer SD-02/SD-04.'
+  classification_conditions:
+  - if x is a 'recipe procedure', then x is a 'recipe procedural element', and x 'has proper continuant
+    part at some time' only entities that are not a 'recipe procedure'
+  - every instance of a 'recipe procedure' is a 'recipe procedural element' that 'has continuant part
+    at all times' some 'recipe unit procedure' and 'has continuant part at all times' some 'information
+    content entity' that either 'denotes' a 'process cell' or 'prescribes' a 'process cell' or a 'manufacturing
+    capability' that is the 'capability of' a 'process cell'
+  logical_definition: 'RecipeProcedure(x) ↔ RecipeProceduralElement(x) ∧ ∃c,y,z (ProcessCell(c) ∧ InformationContentEntity(y)
+    ∧ (denotes(y,c) ∨ (prescribes(y,c) ∨ ∃m(prescribes(y,m) ∧ ManufacturingCapability(m) ∧ capabilityOf(m,c))))
+    ∧ hasContinuantPartAtAllTimes(x,y) ∧ RecipeUnitProcedure(z) ∧ hasContinuantPartAtAllTimes(x,z))
+
+    RecipeProcedure(x) → RecipeProceduralElement(x) ∧ ∀y (hasProperContinuantPartAtSomeTime(x, y) → ¬RecipeProcedure(y))'
+  explanatory_note: '1) ISA-88 Part 1 Section 3: The part of a recipe that defines the strategy for producing
+    a batch.
+
+    2) ISA-88 Part 1 Section 5: The procedure is the highest level in the hierarchy and defines the strategy
+    for carrying out a major processing action such as making a batch. It is defined in terms of an ordered
+    set of unit procedures.'
+  adapted_from:
+  - ISA-88 Part 1
+- label: recipe process
+  iri: https://spec.industrialontologies.org/ontology/construct/RecipeProcess
+  parent_class: recipe process element
+  definition: recipe process element that has a partially ordered set of recipe process stages as its
+    part
+  examples:
+  - A ‘PVC granular resin production process’, which comprises a ‘Vinyl chloride monomer polymerization
+    stage’, a ‘Water Separation stage’, and a ‘Drying stage’
+  classification_conditions:
+  - if x is a 'recipe process', then x is a 'recipe process element', x 'has continuant part at all times'
+    some 'recipe process stage', and x 'has proper continuant part at some time' only entities that are
+    not a 'recipe process'
+  logical_definition: RecipeProcess(x) → RecipeProcessElement(x) ∧ ∃y (hasContinuantPartAtAllTimes(x,
+    y) ∧ RecipeProcessStage(y)) ∧ ∀z (hasProperContinuantPartAtSomeTime(x, z) → ¬RecipeProcess(z))
+  explanatory_note: The definition given in ISA-88 Part 1 Sections 3 and 4 — "a sequence of chemical,
+    physical, or biological activities for the conversion, transport, or storage of material or energy"
+    — more accurately corresponds to the planned process that the recipe process prescribes. IOF follows
+    the BFO distinction between plans and processes; accordingly, the natural language definition provided
+    here focuses on the recipe structure — specifically, the partial ordering of its constituent elements.
+    This reflects the recipe as a plan specification rather than describing the execution it prescribes.
+    The ISA definition has been retained here for reference and traceability to the source specification.
+  is_primitive: true
+  primitive_rationale: There are currently insufficient constructs to represent a partially ordered set.
+  adapted_from:
+  - ISA-88 Part 1
+- label: recipe process action
+  iri: https://spec.industrialontologies.org/ontology/construct/RecipeProcessAction
+  parent_class: recipe process element
+  definition: recipe process element that has no other recipe process element as its proper part
+  examples:
+  - ‘Calibrate temperature control system’, ‘Feed fresh media’, ‘Test pressure relief system’, ‘Sample
+    bioreaction mixture’
+  classification_conditions:
+  - if x is a 'recipe process action', then x is a 'recipe process element', x 'has continuant part at
+    some time' only entities that are not a 'recipe process', 'recipe process operation', or 'recipe process
+    stage', and x 'has proper continuant part at all times' only entities that are not a 'recipe process
+    action'
+  logical_definition: RecipeProcessAction(x) → RecipeProcessElement(x) ∧ ∀y (hasContinuantPartAtSomeTime(x,
+    y) → ¬(RecipeProcess(y) ∨ RecipeProcessOperation(y) ∨ RecipeProcessStage(y))) ∧ ∀z (hasProperContinuantPartAtAllTimes(x,
+    z) → ¬RecipeProcessAction(z))
+  explanatory_note: 'ISA 88 Part 1 Section 3 and 4: Minor processing activities that are combined to make
+    up a process operation.'
+  is_primitive: true
+  primitive_rationale: This term is expected to remain primitive, as expressing that it has no other recipe
+    process elements as parts requires the use of negation, which is generally avoided in ontological
+    definitions.
+- label: recipe process element
+  iri: https://spec.industrialontologies.org/ontology/construct/RecipeProcessElement
+  parent_class: Plan Specification
+  definition: plan specification that prescribes some planned process that is part of a batch run and
+    is equipment independent
+  examples:
+  - recipe process, recipe process action, recipe process operation, recipe process stage
+  classification_conditions:
+  - if x is a 'recipe process element', then x is a 'plan specification', x is not a continuant part at
+    any time of a 'control recipe', 'master recipe', or 'recipe procedural element', and x 'prescribes'
+    some 'planned process' that is an 'occurrent part of' some 'batch run'
+  logical_definition: RecipeProcessElement(x) → PlanSpecification(x) ∧ ¬∃y (continuantPartOfAtSomeTime(x,
+    y) ∧ (ControlRecipe(y) ∨ MasterRecipe(y) ∨ RecipeProceduralElement(y))) ∧ ∃z∃w (prescribes(x, z) ∧
+    PlannedProcess(z) ∧ occurrentPartOf(z, w) ∧ BatchRun(w))
+  usage_note: '1) A recipe process element must not be included in control recipes or master recipes or
+    recipe procedural elements, as it is intended to represent equipment-independent instructions. This
+    restriction is formally captured by the axiom: ''continuant part of at some time'' only (not (''control
+    recipe'' or ''master recipe'' or ''recipe procedural element'')).
+
+    2) While a recipe process element may be included in one or more general recipes, site recipes, or
+    other recipe process elements, there is no requirement for such inclusion, allowing for its reuse
+    and composition in varying contexts. When associating a recipe process element with a higher-level
+    recipe, the ''continuant part of at some time'' relation (or an appropriate subproperty) should be
+    used.'
+  is_primitive: true
+  primitive_rationale: This term is expected to remain primitive, as it is challenging to define a set
+    of OWL-compatible necessary and sufficient conditions that in all cases reliably distinguish a recipe
+    process element from a recipe procedural element.
+  adapted_from:
+  - ISA-88 Part 1
+- label: recipe process operation
+  iri: https://spec.industrialontologies.org/ontology/construct/RecipeProcessOperation
+  parent_class: recipe process element
+  definition: recipe process element that has a partially ordered set of recipe process actions as its
+    part
+  examples:
+  - 'A ‘Setup process operation’, which is part of a ‘Vinyl chloride monomer polymerization stage’, has
+    the following set of recipe process actions: ‘Inspect reactor cleaning conditions’, ‘Test agitation
+    system’, ‘Calibrate temperature control system’, ‘Test pressure relief system’, and ‘Prepare Nitrogen
+    purge system’.'
+  classification_conditions:
+  - if x is a 'recipe process operation', then x is a 'recipe process element', x 'has continuant part
+    at all times' some 'recipe process action', x 'has continuant part at some time' only entities that
+    are not a 'recipe process' or 'recipe process stage', and x 'has proper continuant part at some time'
+    only entities that are not a 'recipe process operation'
+  logical_definition: RecipeProcessOperation(x) → RecipeProcessElement(x) ∧ ∃y (hasContinuantPartAtAllTimes(x,
+    y) ∧ RecipeProcessAction(y)) ∧ ∀z (hasContinuantPartAtSomeTime(x, z) → ¬(RecipeProcess(z) ∨ RecipeProcessStage(z)))
+    ∧ ∀w (hasProperContinuantPartAtSomeTime(x, w) → ¬RecipeProcessOperation(w))
+  explanatory_note: '1) ISA Part 1 Section 3: A major processing activity that usually results in a chemical
+    or physical change in the material being processed and that is defined without consideration of the
+    actual target equipment configuration.
+
+    2) ISA Part 1 Section 4: Process operations represent major processing activities. A process operation
+    usually results in a chemical or physical change in the material being processed.'
+  is_primitive: true
+  primitive_rationale: There are currently insufficient constructs to represent a partially ordered set.
+  adapted_from:
+  - ISA-88 Part 1
+- label: recipe process stage
+  iri: https://spec.industrialontologies.org/ontology/construct/RecipeProcessStage
+  parent_class: recipe process element
+  definition: recipe process element that has a partially ordered set of recipe process operations as
+    its part
+  examples:
+  - A ‘Vinyl chloride monomer polymerization stage’, which comprises a ‘Setup process operation’, followed
+    by a ‘Charge water, additives and monomer process operation’, followed by a ‘Polymerization process
+    operation’, finishing with a ‘Post-polymerization process operation’.
+  classification_conditions:
+  - if x is a 'recipe process stage', then x is a 'recipe process element', x 'has continuant part at
+    all times' some 'recipe process operation', x 'has continuant part at some time' only entities that
+    are not a 'recipe process', and x 'has proper continuant part at some time' only entities that are
+    not a 'recipe process stage'
+  logical_definition: RecipeProcessStage(x) → RecipeProcessElement(x) ∧ ∃y (hasContinuantPartAtAllTimes(x,
+    y) ∧ RecipeProcessOperation(y)) ∧ ∀z (hasContinuantPartAtSomeTime(x, z) → ¬RecipeProcess(z)) ∧ ∀w
+    (hasProperContinuantPartAtSomeTime(x, w) → ¬RecipeProcessStage(w))
+  explanatory_note: '1) ISA-88 Part 1 Section 3: A part of a process that usually operates independently
+    from other process stages and usually results in a planned sequence of chemical or physical changes
+    in the material being processed.
+
+    2) ISA-88 Part 1 Section 4: The process consists of one or more process stages which are organized
+    as an ordered set, which can be serial, parallel, or both. A process stage is a part of a process
+    that usually operates independently from other process stages. It usually results in a planned sequence
+    of chemical or physical changes in the material being processed'
+  is_primitive: true
+  primitive_rationale: There are currently insufficient constructs to represent a partially ordered set.
+  adapted_from:
+  - ISA-88 Part 1
+- label: recipe unit procedure
+  iri: https://spec.industrialontologies.org/ontology/construct/RecipeUnitProcedure
+  parent_class: recipe procedural element
+  definition: recipe procedural element that has a partially ordered set of recipe operations as its part
+    and that prescribes one or more alternative physical units with compatible capabilities
+  examples:
+  - 'A ‘Vinyl chloride monomer polymerization unit procedure’, which comprises the following recipe operations:
+    ‘Setup operation’, followed by ‘Charge water, additives and monomer operation’, followed by a ‘Polymerization
+    operation’, followed by a ‘Post-polymerization operation’. This unit procedure can be carried out
+    in any of the Reactors JR-101/JR-102/JR-103/JR-104 (Stainless steel, 1,000-gallon, rated 100 psia,
+    mechanical agitator, with temperature and pressure control systems, nitrogen purge system, pressure
+    relief system with a Rupture disc)'
+  classification_conditions:
+  - if x is a 'recipe unit procedure', then x is a 'recipe procedural element', x 'has continuant part
+    at some time' only entities that are not a 'recipe procedure', and x 'has proper continuant part at
+    some time' only entities that are not a 'recipe unit procedure'
+  - every instance of 'recipe unit procedure' is exactly a 'recipe procedural element' that 'has continuant
+    part at all times' some 'recipe operation', and 'has continuant part at all times' some 'information
+    content entity' that either 'denotes' a 'physical unit' or 'prescribes' either a 'physical unit' or
+    a 'manufacturing capability' that is a 'capability of' a 'physical unit'
+  logical_definition: 'RecipeUnitProcedure(x) ↔ RecipeProceduralElement(x) ∧ ∃o(RecipeOperation(o) ∧ hasContinuantPartAtAllTimes(x,
+    o)) ∧ ∃z(PhysicalUnit(z) ∧ ∃y(InformationContentEntity(y) ∧ hasContinuantPartAtAllTimes(x, y) ∧ (denotes(y,
+    z) ∨ prescribes(y, z) ∨ ∃c(ManufacturingCapability(c) ∧ capabilityOf(c, z) ∧ prescribes(y, c)))))
+
+    RecipeUnitProcedure(x) → RecipeProceduralElement(x) ∧ ∀y (hasContinuantPartAtSomeTime(x, y) → ¬RecipeProcedure(y))
+    ∧ ∀z (hasProperContinuantPartAtSomeTime(x, z) → ¬RecipeUnitProcedure(z))'
+  explanatory_note: '1) From ISA-88 Part 1 Section 3: A strategy for carrying out a contiguous process
+    within a unit, consisting of contiguous operations and the algorithm necessary for the initiation,
+    organization, and control of those operations.
+
+    2) From ISA-88 Part 1 Section 5: A unit procedure consists of an ordered set of operations that causes
+    a contiguous production sequence to take place within a unit.'
+  adapted_from:
+  - ISA-88 Part 1
+- label: site recipe
+  iri: https://spec.industrialontologies.org/ontology/construct/SiteRecipe
+  parent_class: recipe
+  definition: recipe that is physical site specific but equipment independent
+  examples:
+  - 'Site Recipe ‘SR-PVC-SUSP-HOU-V5’, which employs the ‘PVC granular resin production process Houston’
+    Recipe Process that comprises the following sequence of Process stages ‘Vinyl chloride monomer polymerization
+    stage’, ‘Water Separation stage’, and ‘Spray Drying stage’, to transform the Vinyl Chloride Monomer
+    (2200 lb. or target value) raw material into ~980 kg of PVC granular resin product, employing the
+    following Consumables: Deionized Water (1057 Gallons or target value), Suspension Agent Polyvinyl
+    Alcohol (CAS No.9002-89-5), by Wacker Chemie AG (11 lb. or target value), Benzoyl Peroxide Initiator
+    (CAS No. 94-36-0), by Akzo Nobel (2.2 lb. or target value), Sodium Bicarbonate (CAS No. 144-55-8),
+    by Church & Dwight Co (1.1 lb. or target value).'
+  classification_conditions:
+  - 'LA1: if x is a ''site recipe'', then x is a ''recipe'' and x ''prescribes planned process location''
+    some ''physical site'''
+  - 'LA2: if x is a ''recipe'' that ''has continuant part at all times'' some ''recipe process element''
+    and ''prescribes planned process location'' some ''physical site'', then x is a ''site recipe'''
+  logical_definition: 'LA1:SiteRecipe(x) → Recipe(x) ∧ ∃y (prescribesPlannedProcessLocation(x, y) ∧ PhysicalSite(y))
+
+    LA2: Recipe(x) ∧ ∃y (hasContinuantPartAtAllTimes(x, y) ∧ RecipeProcessElement(y)) ∧ ∃z (prescribesPlannedProcessLocation(x,
+    z) ∧ PhysicalSite(z)) → SiteRecipe(x)'
+  explanatory_note: Site recipes may be derived from general recipes recognizing site specific constraints,
+    such as language and available raw materials.
+  is_primitive: true
+  primitive_rationale: This term is expected to remain primitive because, although a set of sufficient
+    conditions can be defined (e.g., the inclusion of recipe process elements), these conditions are not
+    universally necessary, as not all site recipes consistently include such elements
+  adapted_from:
+  - https://www.plcacademy.com/isa-88-s88-batch-control-explained/
+relationships:
+- label: Has Participant At Some Time
+  iri: http://purl.obolibrary.org/obo/BFO_0000057
+  domain:
+  - batch run
+  - recipe creation process
+  - recipe element creation process
+  range:
+  - Piece Of Equipment
+  - Agent
+  extraction_constraints:
+  - batch run is constrained by this relationship to Piece Of Equipment, Agent.
+  - recipe creation process is constrained by this relationship to Piece Of Equipment, Agent.
+  - recipe element creation process is constrained by this relationship to Piece Of Equipment, Agent.
+- label: Has Continuant Part At All Times
+  iri: http://purl.obolibrary.org/obo/BFO_0000110
+  domain:
+  - control recipe
+  - recipe operation
+  - recipe procedure
+  - recipe process
+  - recipe process operation
+  - recipe process stage
+  - recipe unit procedure
+  range:
+  - Identifier
+  - Information Content Entity
+  - recipe phase
+  - recipe unit procedure
+  - recipe process stage
+  - recipe process action
+  - recipe process operation
+  - recipe operation
+  extraction_constraints:
+  - control recipe is constrained by this relationship to Identifier, Information Content Entity, recipe
+    phase, recipe unit procedure, recipe process stage, recipe process action, recipe process operation,
+    recipe operation.
+  - recipe operation is constrained by this relationship to Identifier, Information Content Entity, recipe
+    phase, recipe unit procedure, recipe process stage, recipe process action, recipe process operation,
+    recipe operation.
+  - recipe procedure is constrained by this relationship to Identifier, Information Content Entity, recipe
+    phase, recipe unit procedure, recipe process stage, recipe process action, recipe process operation,
+    recipe operation.
+  - recipe process is constrained by this relationship to Identifier, Information Content Entity, recipe
+    phase, recipe unit procedure, recipe process stage, recipe process action, recipe process operation,
+    recipe operation.
+  - recipe process operation is constrained by this relationship to Identifier, Information Content Entity,
+    recipe phase, recipe unit procedure, recipe process stage, recipe process action, recipe process operation,
+    recipe operation.
+  - recipe process stage is constrained by this relationship to Identifier, Information Content Entity,
+    recipe phase, recipe unit procedure, recipe process stage, recipe process action, recipe process operation,
+    recipe operation.
+  - recipe unit procedure is constrained by this relationship to Identifier, Information Content Entity,
+    recipe phase, recipe unit procedure, recipe process stage, recipe process action, recipe process operation,
+    recipe operation.
+- label: Has Occurrent Part
+  iri: http://purl.obolibrary.org/obo/BFO_0000111
+  domain:
+  - recipe process action
+  extraction_constraints:
+  - recipe process action is subject to restrictions on this relationship in the RDF axioms.
+- label: Occurrent Part Of
+  iri: http://purl.obolibrary.org/obo/BFO_0000132
+  domain:
+  - recipe procedural element
+  - recipe process element
+  range:
+  - batch run
+  extraction_constraints:
+  - recipe procedural element is constrained by this relationship to batch run.
+  - recipe process element is constrained by this relationship to batch run.
+- label: Has Proper Continuant Part At Some Time
+  iri: http://purl.obolibrary.org/obo/BFO_0000174
+  domain:
+  - recipe operation
+  - recipe phase
+  - recipe procedure
+  - recipe process
+  - recipe process operation
+  - recipe process stage
+  - recipe unit procedure
+  extraction_constraints:
+  - recipe operation is subject to restrictions on this relationship in the RDF axioms.
+  - recipe phase is subject to restrictions on this relationship in the RDF axioms.
+  - recipe procedure is subject to restrictions on this relationship in the RDF axioms.
+  - recipe process is subject to restrictions on this relationship in the RDF axioms.
+  - recipe process operation is subject to restrictions on this relationship in the RDF axioms.
+  - recipe process stage is subject to restrictions on this relationship in the RDF axioms.
+  - recipe unit procedure is subject to restrictions on this relationship in the RDF axioms.
+- label: Continuant Part Of At Some Time
+  iri: http://purl.obolibrary.org/obo/BFO_0000176
+  domain:
+  - recipe procedural element
+  - recipe process element
+  extraction_constraints:
+  - recipe procedural element is subject to restrictions on this relationship in the RDF axioms.
+  - recipe process element is subject to restrictions on this relationship in the RDF axioms.
+- label: Has Proper Continuant Part At Some Time
+  iri: http://purl.obolibrary.org/obo/BFO_0000177
+  domain:
+  - recipe operation
+  - recipe unit procedure
+  range:
+  - recipe unit procedure
+  - recipe procedure
+  extraction_constraints:
+  - recipe operation is constrained by this relationship to recipe unit procedure, recipe procedure.
+  - recipe unit procedure is constrained by this relationship to recipe unit procedure, recipe procedure.
+- label: Proper Continuant Part Of At Some Time
+  iri: http://purl.obolibrary.org/obo/BFO_0000178
+  domain:
+  - recipe operation
+  - recipe phase
+  - recipe process action
+  - recipe process operation
+  - recipe process stage
+  - recipe unit procedure
+  extraction_constraints:
+  - recipe operation is subject to restrictions on this relationship in the RDF axioms.
+  - recipe phase is subject to restrictions on this relationship in the RDF axioms.
+  - recipe process action is subject to restrictions on this relationship in the RDF axioms.
+  - recipe process operation is subject to restrictions on this relationship in the RDF axioms.
+  - recipe process stage is subject to restrictions on this relationship in the RDF axioms.
+  - recipe unit procedure is subject to restrictions on this relationship in the RDF axioms.
+- label: Capability Of
+  iri: https://spec.industrialontologies.org/ontology/construct/capabilityOf
+  domain:
+  - recipe operation
+  - recipe procedure
+  - recipe unit procedure
+  range:
+  - Physical Unit
+  - Process Cell
+  extraction_constraints:
+  - recipe operation is constrained by this relationship to Physical Unit, Process Cell.
+  - recipe procedure is constrained by this relationship to Physical Unit, Process Cell.
+  - recipe unit procedure is constrained by this relationship to Physical Unit, Process Cell.
+- label: Denotes
+  iri: https://spec.industrialontologies.org/ontology/construct/denotes
+  domain:
+  - recipe operation
+  - recipe procedure
+  - recipe unit procedure
+  range:
+  - Physical Unit
+  - Process Cell
+  extraction_constraints:
+  - recipe operation is constrained by this relationship to Physical Unit, Process Cell.
+  - recipe procedure is constrained by this relationship to Physical Unit, Process Cell.
+  - recipe unit procedure is constrained by this relationship to Physical Unit, Process Cell.
+- label: Designates
+  iri: https://spec.industrialontologies.org/ontology/construct/designates
+  domain:
+  - batch run identification
+  - control recipe
+  range:
+  - batch run
+  - Piece Of Equipment
+  extraction_constraints:
+  - batch run identification is constrained by this relationship to batch run, Piece Of Equipment.
+  - control recipe is constrained by this relationship to batch run, Piece Of Equipment.
+- label: Has Input
+  iri: https://spec.industrialontologies.org/ontology/construct/hasInput
+  domain:
+  - recipe derivation process
+  - recipe element derivation process
+  range:
+  - recipe or recipe procedural element or recipe process element
+  - recipe process element
+  - recipe procedural element or recipe process element
+  extraction_constraints:
+  - recipe derivation process is constrained by this relationship to recipe or recipe procedural element
+    or recipe process element, recipe process element, recipe procedural element or recipe process element.
+  - recipe element derivation process is constrained by this relationship to recipe or recipe procedural
+    element or recipe process element, recipe process element, recipe procedural element or recipe process
+    element.
+- label: Has Specified Output
+  iri: https://spec.industrialontologies.org/ontology/construct/hasSpecifiedOutput
+  domain:
+  - recipe creation process
+  - recipe element creation process
+  - recipe element derivation process
+  range:
+  - recipe
+  - recipe procedural element or recipe process element
+  - recipe process element
+  - recipe procedural element
+  extraction_constraints:
+  - recipe creation process is constrained by this relationship to recipe, recipe procedural element or
+    recipe process element, recipe process element, recipe procedural element.
+  - recipe element creation process is constrained by this relationship to recipe, recipe procedural element
+    or recipe process element, recipe process element, recipe procedural element.
+  - recipe element derivation process is constrained by this relationship to recipe, recipe procedural
+    element or recipe process element, recipe process element, recipe procedural element.
+- label: Prescribed By
+  iri: https://spec.industrialontologies.org/ontology/construct/prescribedBy
+  domain:
+  - batch run
+  range:
+  - recipe
+  extraction_constraints:
+  - batch run is constrained by this relationship to recipe.
+- label: Prescribed To Precede
+  iri: https://spec.industrialontologies.org/ontology/construct/prescribedToPrecede
+  domain:
+  - Plan Specification
+  range:
+  - Plan Specification
+  extraction_constraints:
+  - Plan Specification is constrained by this relationship to Plan Specification.
+- label: Prescribes
+  iri: https://spec.industrialontologies.org/ontology/construct/prescribes
+  domain:
+  - recipe operation
+  - recipe procedural element
+  - recipe procedure
+  - recipe process element
+  - recipe unit procedure
+  range:
+  - Physical Unit
+  - Planned Process
+  - Process Cell
+  extraction_constraints:
+  - recipe operation is constrained by this relationship to Physical Unit, Planned Process, Process Cell.
+  - recipe procedural element is constrained by this relationship to Physical Unit, Planned Process, Process
+    Cell.
+  - recipe procedure is constrained by this relationship to Physical Unit, Planned Process, Process Cell.
+  - recipe process element is constrained by this relationship to Physical Unit, Planned Process, Process
+    Cell.
+  - recipe unit procedure is constrained by this relationship to Physical Unit, Planned Process, Process
+    Cell.
+- label: Prescribes Planned Process Location
+  iri: https://spec.industrialontologies.org/ontology/construct/prescribesPlannedProcessLocation
+  domain:
+  - general recipe
+  - site recipe
+  - Plan Specification
+  range:
+  - Site
+  - Material Entity
+  extraction_constraints:
+  - Plan Specification may prescribe a planned process location that is either a Site or a Material Entity,
+    as expressed by the RDF range union.

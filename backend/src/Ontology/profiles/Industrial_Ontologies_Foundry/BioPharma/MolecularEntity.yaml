@@ -1,0 +1,1959 @@
+profile:
+  id: molecular-entity-complete
+  ontology_artifact: molecularentity
+  description: >-
+    Complete profile generated from the BMIC Molecular Entity Ontology RDF; all named classes declared in the RDF artifact are represented here. The module contains terms and relations for representing selected molecular entities in biopharmaceutical manufacturing, including molecular entity populations, molecular entity roles, chemical residues and moieties, biological sequences, proteins, glycans, glycoproteins, and glycosylation- and glycation-related residues. Many terms are adapted from ChEBI.
+  include_ancestors: true
+  include_compatible_properties: true
+
+
+imports:
+- iri: https://spec.industrialontologies.org/ontology/core/Core/
+  label: IOF Core
+  note: Imported ontology; referenced classes and properties are defined there, not redeclared in this module.
+
+
+entities:
+  - label: Acid-Base Indicator Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/AcidBaseIndicatorRole"
+    parent_class: Molecular Color Indicator Role
+    definition: >
+      molecular color indicator role held by a molecular entity when it is used or planned to be used so that its color indicates the pH range of a material entity
+    examples:
+      - Phenol red bearing an acid-base indicator role when its color indicates the pH range of cell culture medium
+      - Bromothymol blue bearing an acid-base indicator role when its color change indicates a shift from acidic to neutral or basic pH
+      - Methyl orange bearing an acid-base indicator role during an acid-base titration
+      - Phenolphthalein bearing an acid-base indicator role when its color change indicates the endpoint of a titration
+    classification_conditions:
+      - The entity must be a Molecular Color Indicator Role.
+    logical_definition: >
+      AcidBaseIndicatorRole(x) → MolecularColorIndicatorRole(x)
+    explanatory_note: >
+      Acid-base indicators are typically weak acids or weak bases whose conjugate forms differ in color over a characteristic pH transition range. In titration applications, the indicator is selected so that its color change occurs at or near the equivalence point. In cell culture or process contexts, an acid-base indicator may be used to provide a visual indication that the medium, buffer, or solution has shifted into a different pH range.
+
+
+  - label: Acidic Charge Variant Population
+    iri: "https://spec.industrialontologies.org/ontology/construct/AcidicChargeVariantPopulation"
+    parent_class: Protein Charge Variant Population
+    definition: >
+      protein charge variant population classified by a protein acidic charge variant classifier
+    examples:
+      - deamidated monoclonal antibody population
+      - sialylated antibody glycoform-enriched population
+      - acidic peak population detected by cation-exchange chromatography
+      - lower-pI protein population detected by capillary isoelectric focusing
+    classification_conditions:
+      - The entity must be a Protein Charge Variant Population.
+      - It must be classified by some Protein Acidic Charge Variant Classifier.
+    logical_definition: >
+      AcidicChargeVariantPopulation(x) ↔ ProteinChargeVariantPopulation(x) ∧ ∃c(ProteinAcidicChargeVariantClassifier(c) ∧ classifiedBy(x, c))
+
+
+  - label: Amino Acid
+    iri: "https://spec.industrialontologies.org/ontology/construct/AminoAcid"
+    parent_class: Organic Molecular Entity
+    definition: >
+      organic molecular entity that contains a carboxyl group and one or more amino groups
+    examples:
+      - Alanine
+      - Glycine
+      - Lysine
+      - Glutamic acid
+    classification_conditions:
+      - The entity must be an Organic Molecular Entity.
+    logical_definition: >
+      AminoAcid(x) → OrganicMolecularEntity(x)
+
+
+  - label: Amino Acid Residue
+    iri: "https://spec.industrialontologies.org/ontology/construct/AminoAcidResidue"
+    parent_class: Chemical Moiety
+    definition: >
+      chemical moiety that is a proper part of a peptide or protein and that is the remaining portion of an amino acid resulting from peptide-bond formation
+    examples:
+      - Alanine residue in a peptide
+      - Glycine residue in a synthetic peptide
+      - Lysine residue in a monoclonal antibody heavy chain
+      - Cysteine residue participating in a disulfide bond in a protein
+      - Serine residue in a phosphorylated protein
+    classification_conditions:
+      - The entity must be a Chemical Moiety.
+      - It must be a proper continuant part of at all times of some Peptide or Protein.
+    logical_definition: >
+      AminoAcidResidue(x) → ChemicalMoiety(x) ∧ ∃y (properContinuantPartOfAtAllTimes(x, y) ∧ (Peptide(y) ∨ Protein(y)))
+    explanatory_note: >
+      During peptide-bond formation, each amino acid loses the atoms corresponding to one molecule of water. The remaining portion constitutes the amino-acid residue within the polypeptide chain.
+
+
+  - label: Amino Acid Sequence
+    iri: "https://spec.industrialontologies.org/ontology/construct/AminoAcidSequence"
+    parent_class: Biological Sequence
+    definition: >
+      biological sequence that is the ordered pattern of amino-acid residues that constitute a particular continuous peptide or protein molecule
+    synonyms:
+      - peptide sequence
+      - primary structure sequence
+    examples:
+      - The amino acid sequence of a monoclonal antibody heavy chain
+      - The amino acid sequence of a monoclonal antibody light chain
+      - The amino acid sequence of a recombinant enzyme
+      - The amino acid sequence of a synthetic peptide
+      - The amino acid sequence of a peptide impurity detected during product characterization
+    classification_conditions:
+      - The entity must be a Biological Sequence.
+      - It must generically depend at some time only on some Peptide or Protein.
+      - It must be disjoint from Nucleotide Sequence.
+    logical_definition: >
+      AminoAcidSequence(x) → BiologicalSequence(x) ∧ ∀y (genericallyDependsOnAtSomeTime(x, y) → (Peptide(y) ∨ Protein(y)))
+
+
+  - label: Anion
+    iri: "https://spec.industrialontologies.org/ontology/construct/Anion"
+    parent_class: Ion
+    definition: >
+      ion that is a monoatomic or polyatomic species having one or more elementary charges of the electron
+    examples:
+      - Sulfate ion (SO₄²⁻)
+      - Nitrate ion (NO₃⁻)
+      - Acetate ion (CH₃COO⁻)
+    classification_conditions:
+      - The entity must be an Ion.
+      - It must be disjoint from Cation.
+    logical_definition: >
+      Anion(x) → Ion(x)
+
+
+  - label: Antibody
+    iri: "https://spec.industrialontologies.org/ontology/construct/Antibody"
+    parent_class: Protein
+    definition: >
+      protein that has the function to selectively bind some antigen
+    examples:
+      - A monoclonal antibody that binds a therapeutic target antigen
+      - An IgG antibody that binds a viral surface protein
+      - A recombinant antibody that binds a cell-surface receptor
+      - A neutralizing antibody that binds an antigen and blocks its biological activity
+      - An antibody used as a capture reagent in an immunoassay
+    classification_conditions:
+      - The entity must be a Protein.
+    logical_definition: >
+      Antibody(x) → Protein(x)
+
+
+  - label: Antimicrobial Agent Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/AntimicrobialAgentRole"
+    parent_class: Molecular Entity Role
+    definition: >
+      role held by a molecular entity when it is used or planned to be used to kill, inactivate, or inhibit the growth, proliferation, or replication of microorganisms or viruses
+    examples:
+      - role held by Gentamicin added to cell culture media to prevent bacterial contamination
+      - role held by Benzalkonium chloride included in formulations as a preservative
+    classification_conditions:
+      - The entity must be a Molecular Entity Role.
+    logical_definition: >
+      AntimicrobialAgentRole(x) → MolecularEntityRole(x)
+
+
+  - label: Antioxidant Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/AntioxidantRole"
+    parent_class: Molecular Entity Role
+    definition: >
+      role held by a molecular entity when it is used or planned to be used to counteract oxidation or inhibit reactions initiated by dioxygen molecule, peroxides, or other oxidizing species
+    examples:
+      - role held by ascorbic acid (vitamin C) added to media or formulations to prevent oxidation of sensitive components
+      - role held by α-Tocopherol (vitamin E) used to inhibit lipid peroxidation and maintain stability of cell culture supplements or product formulations
+    classification_conditions:
+      - The entity must be a Molecular Entity Role.
+    logical_definition: >
+      AntioxidantRole(x) → MolecularEntityRole(x)
+    explanatory_note: >
+      Some molecules have antioxidant activity because of their chemical structure. In manufacturing contexts, this role is typically asserted when that activity is intentionally used, for example when a compound is added to a medium, buffer, or formulation to protect materials, nutrients, or products from oxidation during processing or storage. Antioxidant agents may be used to maintain the stability of media components, extend product shelf life, or prevent loss of potency during storage. The role may be realized through mechanisms such as scavenging reactive oxygen species, reducing oxidized molecules, chelating pro-oxidant metal ions, or inhibiting reactions initiated by dioxygen molecule or peroxides.
+
+
+  - label: Basic Charge Variant Population
+    iri: "https://spec.industrialontologies.org/ontology/construct/BasicChargeVariantPopulation"
+    parent_class: Protein Charge Variant Population
+    definition: >
+      protein charge variant population classified by a protein basic charge variant classifier
+    examples:
+      - C-terminal lysine-containing monoclonal antibody population
+      - an amidated protein population
+      - a basic peak population detected by cation-exchange chromatography
+      - higher-pI protein population detected by capillary isoelectric focusing
+    classification_conditions:
+      - The entity must be a Protein Charge Variant Population.
+      - It must be classified by some Protein Basic Charge Variant Classifier.
+    logical_definition: >
+      BasicChargeVariantPopulation(x) ↔ ProteinChargeVariantPopulation(x) ∧ ∃c(ProteinBasicChargeVariantClassifier(c) ∧ classifiedBy(x, c))
+
+
+  - label: Biantennary Complex N-Glycan Moiety
+    iri: "https://spec.industrialontologies.org/ontology/construct/BiantennaryComplexNGlycanMoiety"
+    parent_class: Core Pentasaccharide N-Glycan Moiety
+    definition: >
+      core pentasaccharide N-glycan moiety that has N-acetylglucosamine residues attached to both the α-3 and α-6 mannose branches and contains no mannose residues beyond those in the conserved core
+    examples:
+      - G0F biantennary complex N-glycan moiety in a monoclonal antibody Fc glycan
+      - G1F biantennary complex N-glycan moiety with one terminal galactose residue
+      - G2F biantennary complex N-glycan moiety with two terminal galactose residues
+      - Sialylated biantennary complex N-glycan moiety on a recombinant glycoprotein
+    classification_conditions:
+      - The entity must be a Core Pentasaccharide N-Glycan Moiety.
+    logical_definition: >
+      BiantennaryComplexNGlycanMoiety(x) → CorePentasaccharideNGlycanMoiety(x)
+
+
+  - label: Biological Sequence
+    iri: "https://spec.industrialontologies.org/ontology/construct/BiologicalSequence"
+    parent_class: Generically Dependent Continuant
+    definition: >
+      generically dependent continuant that is the ordered pattern of residues that constitute a particular continuous DNA, RNA, peptide, or protein molecule
+    examples:
+      - The nucleotide sequence of a plasmid DNA molecule
+      - The nucleotide sequence of an mRNA transcript
+      - The amino acid sequence of a monoclonal antibody heavy chain
+      - The amino acid sequence of a synthetic peptide
+      - The RNA sequence of a viral genome segment
+      - The DNA sequence of a gene coding region
+    classification_conditions:
+      - The entity must be a Generically Dependent Continuant.
+      - It must generically depend at some time only on some Deoxyribonucleic Acid, Peptide, Protein, or Ribonucleic Acid.
+    logical_definition: >
+      BiologicalSequence(x) → GenericallyDependentContinuant(x) ∧ ∀y (genericallyDependsOnAtSomeTime(x, y) → (DeoxyribonucleicAcid(y) ∨ Peptide(y) ∨ Protein(y) ∨ RibonucleicAcid(y)))
+
+
+  - label: Biological Sequence Variant
+    iri: "https://spec.industrialontologies.org/ontology/construct/BiologicalSequenceVariant"
+    parent_class: Organic Molecular Entity
+    definition: >
+      DNA or RNA or protein or peptide classified by a biological sequence variant classifier
+    examples:
+      - recombinant protein molecule with an amino acid substitution detected by peptide mapping
+      - truncated monoclonal antibody heavy-chain molecule detected in a drug substance lot
+    classification_conditions:
+      - The entity must be a Deoxyribonucleic Acid, Ribonucleic Acid, Peptide, or Protein.
+      - It must be classified by some Biological Sequence Variant Classifier.
+    logical_definition: >
+      BiologicalSequenceVariant(x) ↔ (DeoxyribonucleicAcid(x) ∨ RibonucleicAcid(x) ∨ Peptide(x) ∨ Protein(x)) ∧ ∃r(BiologicalSequenceVariantClassifier(r) ∧ classifiedBy(x, r))
+
+
+  - label: Biological Sequence Variant Classifier
+    iri: "https://spec.industrialontologies.org/ontology/construct/BiologicalSequenceVariantClassifier"
+    parent_class: Classifier
+    definition: >
+      classifier that classifies a DNA molecule, RNA molecule, peptide, or protein which has a biological sequence that differs from a specified reference biological sequence by one or more substitutions, insertions, deletions, truncations, or extensions
+    examples:
+      - a classifier grounded in a specified BRCA1 reference sequence that classifies a BRCA1 DNA molecule containing the c.68_69delAG deletion as a biological sequence variant
+      - a classifier grounded in a specified monoclonal-antibody heavy-chain reference sequence that classifies a heavy-chain molecule containing an amino-acid substitution as a biological sequence variant
+      - a classifier grounded in the intended full-length protein sequence that classifies a truncated heavy-chain molecule as a biological sequence variant
+      - a classifier grounded in a specified RNA reference sequence that classifies an RNA molecule containing an insertion as a biological sequence variant
+      - a classifier grounded in a specified peptide reference sequence that classifies a clipped peptide as a biological sequence variant
+    classification_conditions:
+      - The entity must be a Classifier.
+      - It must be about some Biological Sequence.
+      - It must classify some Deoxyribonucleic Acid, Ribonucleic Acid, Peptide, or Protein.
+    logical_definition: >
+      BiologicalSequenceVariantClassifier(x) → Classifier(x) ∧ ∃s(BiologicalSequence(s) ∧ isAbout(x, s)) ∧ ∃m((DeoxyribonucleicAcid(m) ∨ RibonucleicAcid(m) ∨ Peptide(m) ∨ Protein(m)) ∧ classifies(x, m))
+    explanatory_note: >
+      A biological sequence variant classifier is grounded in comparison with a specified reference biological sequence. Classification by such a classifier indicates that the classified molecular entity is treated as a sequence variant relative to that reference sequence. It does not imply that the molecular entity is intrinsically a variant independently of the selected reference. Different classifiers may classify the same molecular entity differently when they are grounded in different reference sequences or comparison criteria.
+
+
+  - label: Carbohydrate
+    iri: "https://spec.industrialontologies.org/ontology/construct/Carbohydrate"
+    parent_class: Organic Molecular Entity
+    definition: >
+      organic molecular entity that is a polyhydroxy aldehyde, polyhydroxy ketone, derivative of such an entity, or condensation product of such entities
+    examples:
+      - Glucose
+      - Sucrose
+      - Fructose
+      - Lactose
+      - Mannose
+    classification_conditions:
+      - The entity must be an Organic Molecular Entity.
+    logical_definition: >
+      Carbohydrate(x) → OrganicMolecularEntity(x)
+    explanatory_note: >
+      Carbohydrates include simple sugars (monosaccharides) such as glucose and fructose, and compounds formed by their condensation, such as disaccharides, oligosaccharides, and polysaccharides. They can also occur in reduced (alditols) or oxidized (acids, aldehydes, ketones) forms, or as modified derivatives in which one or more hydroxy groups are replaced or substituted. Carbohydrates serve as energy sources, structural materials, and signaling molecules in living organisms.
+
+
+  - label: Cation
+    iri: "https://spec.industrialontologies.org/ontology/construct/Cation"
+    parent_class: Ion
+    definition: >
+      ion that is a monoatomic or polyatomic species having one or more elementary charges of the proton
+    examples:
+      - Potassium ion (K⁺)
+      - Calcium ion (Ca²⁺)
+      - Ammonium ion (NH₄⁺)
+    classification_conditions:
+      - The entity must be an Ion.
+    logical_definition: >
+      Cation(x) → Ion(x)
+
+
+  - label: Charge Variant Classifier
+    iri: "https://spec.industrialontologies.org/ontology/construct/ChargeVariantClassifier"
+    parent_class: Classifier
+    definition: >
+      classifier that classifies a population of material entities according to charge-related analytical properties relative to a reference material entity
+    examples:
+      - classifier that classifies a group of monoclonal antibody molecules detected as an acidic peak in cation-exchange chromatography as a charge variant relative to a reference monoclonal antibody molecule
+      - a classifier that classifies a group of recombinant protein molecules detected as a basic peak by imaged capillary isoelectric focusing as a charge variant relative to a reference recombinant protein molecule
+      - a classifier that classifies a group of antibody-drug conjugate molecules according to charge-related analytical properties under a product-specific charge variant method
+      - a classifier that classifies a group of lipid nanoparticles according to surface-charge-related analytical properties relative to a reference lipid nanoparticle
+    classification_conditions:
+      - The entity must be a Classifier.
+      - It must be about some Design Specification that prescribes some Material Entity.
+      - It must classify some Object Aggregate.
+    logical_definition: >
+      ChargeVariantClassifier(x) → Classifier(x) ∧ ∃s (DesignSpecification(s) ∧ isAbout(x, s) ∧ ∃r (MaterialEntity(r) ∧ prescribes(s, r))) ∧ ∃g (ObjectAggregate(g) ∧ classifies(x, g))
+    explanatory_note: >
+      A charge variant classifier is a broad parent for classifiers that group material entities by charge-related analytical properties. It is intended to support different material domains, including molecular products and particle-based products. More specific subclasses should be used when the charge-related terminology, analytical methods, or reference comparisons are domain-specific, such as protein charge variants, molecular charge variants, or lipid nanoparticle surface-charge variants. The reference material entity is the material entity prescribed by the relevant design specification as the basis for comparison.
+
+
+  - label: Chelating Agent Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/ChelatingAgentRole"
+    parent_class: Molecular Entity Role
+    definition: >
+      role held by a molecular entity when it is used or planned to be used to bind a metal ion through two or more coordination sites
+    examples:
+      - Role held by ethylenediaminetetraacetic acid (EDTA) acting as a chelating agent in buffers to remove trace metal ions
+      - ethyleneglycol-bis(beta-aminoethylether)-N,N,N',N'-tetraacetic acid (EGTA) bearing a selective calcium chelating agent role in calcium-sensitive assays
+      - citric acid bearing a chelating agent role and regulating the presence of iron in culture media
+      - nitrilotriacetate groups immobilized on an affinity resin and bearing a chelating agent role during metal-ion coordination
+    counter_examples:
+      - Histidine added as a buffering component rather than for chelation
+      - citrate added to adjust pH or provide a carbon source rather than to bind metals
+      - magnesium ions acting as cofactors
+    classification_conditions:
+      - The entity must be a Molecular Entity Role.
+    logical_definition: >
+      ChelatingAgentRole(x) → MolecularEntityRole(x)
+    explanatory_note: >
+      1) The environment may be a solution, resin, gel, or other medium in which a metal ion can form coordination bonds. 2) Chelating agents are used for different purposes, such as preventing metal-catalyzed degradation, removing or masking trace metals, maintaining metal ion availability, or supporting analytical and purification steps where metal ions or metal ion bound biomolecules are captured, removed, or released.
+
+
+  - label: Chemical Moiety
+    iri: "https://spec.industrialontologies.org/ontology/construct/ChemicalMoiety"
+    parent_class: Material Entity
+    definition: >
+      material entity consisting of a linked collection of atoms or a single atom and that is a proper continuant part of a molecular entity
+    examples:
+      - Fc N-glycan
+      - Phosphate group on serine
+      - Ubiquitin moiety
+      - PEG chain on therapeutic protein
+      - Carboxylate group
+      - Methyl group
+    counter_examples:
+      - Free-standing molecules (e.g., methane, water)
+      - Unbound ions or radicals not attached to a larger entity
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - It must be a proper continuant part of at all times of some Molecular Entity.
+    logical_definition: >
+      ChemicalMoiety(x) → MaterialEntity(x) ∧ ∃y (properContinuantPartOfAtAllTimes(x, y) ∧ MolecularEntity(y))
+
+  - label: "Complex Afucosylated N-Glycan Moiety"
+    iri: "https://spec.industrialontologies.org/ontology/construct/ComplexAFucosylatedNGlycanMoiety"
+    parent_class: "Biantennary Complex N-Glycan Moiety"
+    definition: >
+      biantennary complex N-glycan moiety that has no fucose residues as parts
+    examples:
+      - "G0 biantennary complex N-glycan moiety with no fucose residue"
+      - "G1 biantennary complex N-glycan moiety with no fucose residue"
+      - "G2 biantennary complex N-glycan moiety with no fucose residue."
+    classification_conditions:
+      - "The entity must be a Biantennary Complex N-Glycan Moiety."
+      - "Equivalent-class condition: it is not something that has as proper continuant part at all times some Fucose Residue."
+      - "It must be disjoint from Complex Fucosylated N-Glycan Moiety."
+    logical_definition: >
+      ComplexAFucosylatedNGlycanMoiety(x) ↔ BiantennaryComplexNGlycanMoiety(x) ∧ ¬∃y (hasProperContinuantPartAtAllTimes(x, y) ∧ FucoseResidue(y))
+
+
+  - label: "Complex Agalactosylated N-Glycan Moiety"
+    iri: "https://spec.industrialontologies.org/ontology/construct/ComplexAGalactosylatedNGlycanMoiety"
+    parent_class: "Biantennary Complex N-Glycan Moiety"
+    definition: >
+      biantennary complex N-glycan moiety that has no galactose residues as parts
+    examples:
+      - "G0 biantennary complex N-glycan moiety with no galactose residues"
+      - "G0F biantennary complex N-glycan moiety with core fucose but no galactose residues"
+      - "Agalactosylated Fc N-glycan moiety detected in monoclonal antibody glycan profiling."
+    classification_conditions:
+      - "The entity must be a Biantennary Complex N-Glycan Moiety."
+      - "Equivalent-class condition: it is not something that has as proper continuant part at all times some Galactose Residue."
+      - "It must be disjoint from Complex Galactosylated N-Glycan Moiety."
+    logical_definition: >
+      ComplexAGalactosylatedNGlycanMoiety(x) ↔ BiantennaryComplexNGlycanMoiety(x) ∧ ¬∃y (hasProperContinuantPartAtAllTimes(x, y) ∧ GalactoseResidue(y))
+
+
+  - label: "Complex Asialylated N-Glycan Moiety"
+    iri: "https://spec.industrialontologies.org/ontology/construct/ComplexASialylatedNGlycanMoiety"
+    parent_class: "Biantennary Complex N-Glycan Moiety"
+    definition: >
+      biantennary complex N-glycan moiety that has no sialic acid residues as parts
+    examples:
+      - "G0 biantennary complex N-glycan moiety with no sialic acid residues"
+      - "G1F biantennary complex N-glycan moiety with no sialic acid residues"
+      - "Asialylated Fc N-glycan moiety detected during monoclonal antibody glycan profiling."
+    classification_conditions:
+      - "The entity must be a Biantennary Complex N-Glycan Moiety."
+      - "Equivalent-class condition: it is not something that has as proper continuant part at all times some Sialic Acid Residue."
+      - "It must be disjoint from Complex Sialylated N-Glycan Moiety."
+    logical_definition: >
+      ComplexASialylatedNGlycanMoiety(x) ↔ BiantennaryComplexNGlycanMoiety(x) ∧ ¬∃y (hasProperContinuantPartAtAllTimes(x, y) ∧ SialicAcidResidue(y))
+
+
+  - label: "Complex Fucosylated N-Glycan Moiety"
+    iri: "https://spec.industrialontologies.org/ontology/construct/ComplexFucosylatedNGlycanMoiety"
+    parent_class: "Biantennary Complex N-Glycan Moiety"
+    definition: >
+      biantennary complex N-glycan moiety that has as part one or more fucose residues
+    examples:
+      - "G0F biantennary complex N-glycan moiety with a core fucose residue"
+      - "G1F biantennary complex N-glycan moiety with one galactose residue and one fucose residue"
+      - "G2F biantennary complex N-glycan moiety with two galactose residues and one fucose residue"
+    classification_conditions:
+      - "The entity must be a Biantennary Complex N-Glycan Moiety."
+      - "Equivalent-class condition: it has as proper continuant part at all times some Fucose Residue."
+    logical_definition: >
+      ComplexFucosylatedNGlycanMoiety(x) ↔ BiantennaryComplexNGlycanMoiety(x) ∧ ∃y (hasProperContinuantPartAtAllTimes(x, y) ∧ FucoseResidue(y))
+
+
+  - label: "Complex Galactosylated N-Glycan Moiety"
+    iri: "https://spec.industrialontologies.org/ontology/construct/ComplexGalactosylatedNGlycanMoiety"
+    parent_class: "Biantennary Complex N-Glycan Moiety"
+    definition: >
+      biantennary complex N-glycan moiety that has as part one or more galactose residues
+    examples:
+      - "G1F biantennary complex N-glycan moiety with one galactose residue"
+      - "G2F biantennary complex N-glycan moiety with two galactose residues"
+      - "G1 biantennary complex N-glycan moiety with one galactose residue and no fucose residue"
+      - "Galactosylated Fc N-glycan moiety detected during monoclonal antibody glycan profiling"
+    classification_conditions:
+      - "The entity must be a Biantennary Complex N-Glycan Moiety."
+      - "Equivalent-class condition: it has as proper continuant part at all times some Galactose Residue."
+    logical_definition: >
+      ComplexGalactosylatedNGlycanMoiety(x) ↔ BiantennaryComplexNGlycanMoiety(x) ∧ ∃y (hasProperContinuantPartAtAllTimes(x, y) ∧ GalactoseResidue(y))
+    explanatory_note: >
+      In biopharmaceutical analysis, ‘galactosylation’ commonly refers to the presence of galactose residues on the antennae of complex biantennary N-glycans. Complex biantennary glycans have two N-acetylglucosamine–initiated antennae that can receive galactose, and galactosylation levels are routinely reported through the relative abundance of mono-galactosylated (G1) and di-galactosylated (G2) complex species. Hybrid glycans may carry a galactose residue on a GlcNAc-extended arm, but they are not typically categorized as G1/G2 complex species and are usually not included in percent galactosylation calculations for complex Fc glycan profiles. High-mannose glycans do not contain complex-type antennae and are not treated as galactosylated complex N-glycans. Accordingly, this class applies to complex N-glycan moieties that contain one or more galactose residues
+
+
+  - label: "Complex N-Glycolylneuraminic Acid Containing N-Glycan Moiety"
+    iri: "https://spec.industrialontologies.org/ontology/construct/ComplexNGlycolylneuraminicAcidContainingNGlycanMoiety"
+    parent_class: "Complex Sialylated N-Glycan Moiety"
+    definition: >
+      complex sialylated N-glycan moiety that has as part one or more N-glycolylneuraminic acid (NGNA) residues
+    synonyms:
+      - "complex NGNA containing N-glycan moiety"
+    examples:
+      - "Complex sialylated N-glycan moiety containing a terminal N-glycolylneuraminic acid residue"
+      - "NGNA-containing complex N-glycan moiety detected during glycan profiling of a recombinant glycoprotein"
+      - "Biantennary complex N-glycan moiety with one branch terminating in an N-glycolylneuraminic acid residue."
+    classification_conditions:
+      - "The entity must be a Complex Sialylated N-Glycan Moiety."
+      - "Equivalent-class condition: it has as proper continuant part at all times some N-Glycolylneuraminic Acid Residue."
+    logical_definition: >
+      ComplexNGlycolylneuraminicAcidContainingNGlycanMoiety(x) ↔ ComplexSialylatedNGlycanMoiety(x) ∧ ∃y (hasProperContinuantPartAtAllTimes(x, y) ∧ NGlycolylneuraminicAcidResidue(y))
+
+
+  - label: "Complex Sialylated N-Glycan Moiety"
+    iri: "https://spec.industrialontologies.org/ontology/construct/ComplexSialylatedNGlycanMoiety"
+    parent_class: "Biantennary Complex N-Glycan Moiety"
+    definition: >
+      biantennary complex N-glycan moiety that has as part one or more sialic acid residues
+    examples:
+      - "Sialylated biantennary complex N-glycan moiety with one terminal sialic acid residue"
+      - "Disialylated biantennary complex N-glycan moiety with two terminal sialic acid residues"
+    classification_conditions:
+      - "The entity must be a Biantennary Complex N-Glycan Moiety."
+      - "Equivalent-class condition: it has as proper continuant part at all times some Sialic Acid Residue."
+    logical_definition: >
+      ComplexSialylatedNGlycanMoiety(x) ↔ BiantennaryComplexNGlycanMoiety(x) ∧ ∃y (hasProperContinuantPartAtAllTimes(x, y) ∧ SialicAcidResidue(y))
+
+
+  - label: "Core Pentasaccharide N-Glycan Moiety"
+    iri: "https://spec.industrialontologies.org/ontology/construct/CorePentasaccharideNGlycanMoiety"
+    parent_class: "N-Glycan Moiety"
+    definition: >
+      N-glycan moiety that contains the core pentasaccharide Man₃GlcNAc₂, consisting of a di-N-acetyl-chitobiose unit extended by a branched mannose trisaccharide
+    examples:
+      - "Core pentasaccharide N-glycan moiety in a monoclonal antibody Fc N-glycan"
+      - "Core Man₃GlcNAc₂ moiety shared by G0F, G1F, and G2F Fc glycoforms"
+      - "Core pentasaccharide N-glycan moiety in a high-mannose glycan on a recombinant glycoprotein."
+    classification_conditions:
+      - "The entity must be a N-Glycan Moiety."
+      - "It must be such that it is a proper continuant part of at all times some N4-Glycosyl-L-Asparagine."
+    logical_definition: >
+      CorePentasaccharideNGlycanMoiety(x) → NGlycanMoiety(x) ∧ ∃y (properContinuantPartOfAtAllTimes(x, y) ∧ N4GlycosylLAsparagine(y))
+    explanatory_note: >
+      1) This class represents the canonical core structure of N-glycan moieties commonly encountered in biopharmaceutical glycoproteins, including monoclonal antibodies and other recombinant proteins. These moieties share the conserved chitobiose core and branched mannose structure that define common N-glycan families, including high-mannose, hybrid, and complex glycoforms routinely monitored in industry analytics. This structural pattern underlies standard glycan annotations such as G0F, G1F, G2F, and high-mannose species. 2) In canonical eukaryotic protein N-glycosylation, core pentasaccharide N-glycan moieties are attached to L-asparagine residues. This is reflected in the necessary condition that this moiety is a proper continuant part of some N4-glycosyl-L-asparagine.
+
+
+  - label: "Deamidated Residue"
+    iri: "https://spec.industrialontologies.org/ontology/construct/DeamidatedResidue"
+    parent_class: "Modified Amino Acid Residue"
+    definition: >
+      modified amino acid residue in which a carboxamide group has been converted to a carboxyl group, involving a net gain of oxygen and loss of nitrogen and hydrogen
+    examples:
+      - "Deamidated asparagine residue in a monoclonal antibody"
+      - "Deamidated glutamine residue in a recombinant protein"
+      - "Aspartate-like residue formed by deamidation of an asparagine residue within a peptide"
+      - "Glutamate-like residue formed by deamidation of a glutamine residue within a protein."
+    classification_conditions:
+      - "The entity must be a Modified Amino Acid Residue."
+    logical_definition: >
+      DeamidatedResidue(x) → ModifiedAminoAcidResidue(x)
+    explanatory_note: >
+      This modification corresponds to deamidation of an amino acid residue such as asparagine or glutamine. The reaction converts the side-chain amide to a carboxyl group, typically yielding aspartate or glutamate within the peptide.
+
+
+  - label: "Deoxyribonucleic Acid"
+    iri: "https://spec.industrialontologies.org/ontology/construct/DeoxyribonucleicAcid"
+    parent_class: "Nucleic Acid"
+    definition: >
+      nucleic acid that is composed of nucleotides containing deoxyribose
+    synonyms:
+      - "DNA"
+    examples:
+      - "Plasmid DNA used as a vector in recombinant protein expression"
+      - "Host cell DNA detected as a process-related impurity in a drug substance sample"
+      - "Genomic DNA extracted from a production cell line"
+      - "DNA primer used in a PCR assay"
+      - "Residual DNA fragment measured during biologics process clearance testing"
+    classification_conditions:
+      - "The entity must be a Nucleic Acid."
+    logical_definition: >
+      DeoxyribonucleicAcid(x) → NucleicAcid(x)
+
+
+  - label: "Dioxygen Molecule"
+    iri: "https://spec.industrialontologies.org/ontology/construct/DioxygenMolecule"
+    parent_class: "Inorganic Molecular Entity"
+    definition: >
+      inorganic molecular entity consisting of two oxygen atoms covalently bonded to each other
+    examples:
+      - "dissolved oxygen in cell culture medium"
+      - "oxygen present in the headspace of a culture vessel"
+      - "oxygen transferred from the gas phase into the liquid phase of a bioreactor"
+      - "oxygen consumed by aerobic cells during cultivation"
+    classification_conditions:
+      - "The entity must be an Inorganic Molecular Entity."
+    logical_definition: >
+      DioxygenMolecule(x) → InorganicMolecularEntity(x)
+    explanatory_note: >
+      Dioxygen Molecule is the molecular form O₂. In common laboratory, bioprocess, and manufacturing usage, it is often referred to simply as oxygen, for example when discussing dissolved oxygen, oxygen sparging, or oxygen transfer.
+
+
+  - label: "Endotoxin"
+    iri: "https://spec.industrialontologies.org/ontology/construct/Endotoxin"
+    parent_class: "Molecular Toxin"
+    definition: >
+      lipopolysaccharide with an endotoxin role
+    examples:
+      - "Lipopolysaccharide impurity from Gram-negative bacterial material in a buffer sample"
+      - "Lipopolysaccharide detected in a purification pool"
+      - "Lipopolysaccharide associated with a single-use component rinse or extract sample"
+    classification_conditions:
+      - "The entity must be a Molecular Toxin."
+      - "Equivalent-class condition: it has role some Endotoxin Role."
+    logical_definition: >
+      Endotoxin(x) ↔ Lipopolysaccharide(x) ∧ ∃r (hasRole(x, r) ∧ EndotoxinRole(r))
+    explanatory_note: >
+      See the expanded definition under the corresponding role class.
+
+
+  - label: "Endotoxin Role"
+    iri: "https://spec.industrialontologies.org/ontology/construct/EndotoxinRole"
+    parent_class: "Molecular Toxin Role"
+    definition: >
+      molecular toxin role held by a lipopolysaccharide (LPS) that originates from Gram-negative bacterial cellular material
+    examples:
+      - "Lipopolysaccharide from Gram-negative bacterial contamination bearing an endotoxin role in a buffer sample"
+      - "Lipopolysaccharide impurity bearing an endotoxin role in a purification pool"
+      - "Lipopolysaccharide residue bearing an endotoxin role on a single-use component extractable or rinse sample"
+      - "Lipopolysaccharide impurity bearing an endotoxin role in a final drug substance sample."
+    classification_conditions:
+      - "The entity must be a Molecular Toxin Role."
+      - "It must be such that it is role of some Lipopolysaccharide."
+    logical_definition: >
+      EndotoxinRole(x) → MolecularToxinRole(x) ∧ ∃y (roleOf(x, y) ∧ Lipopolysaccharide(y))
+    explanatory_note: >
+      1) This role excludes protein exotoxins, viral agents, inorganic poisons, non-microbial pyrogens, ions, and non-viable particulate matter that is not lipopolysaccharide-derived. 2) In biologics manufacturing, the endotoxin role identifies lipopolysaccharide impurities originating from Gram-negative bacteria that must be quantified and limited in material samples, single-use parts, buffers, purification pools, in-process holds, or final product samples based on pyrogen-safety acceptance thresholds. Endotoxin control is assessed through corresponding sample-level measurable attributes, such as endotoxin load or endotoxin content, and supports contamination risk mitigation, process comparability, in-process hold and filtration decisions, and product release decisions.
+
+
+  - label: "Enzyme Activator Role"
+    iri: "https://spec.industrialontologies.org/ontology/construct/EnzymeActivatorRole"
+    parent_class: "Enzyme Regulator Role"
+    definition: >
+      role held by a molecular entity when it increases the catalytic activity of an enzyme without covalently modifying the enzyme
+    examples:
+      - "Enzyme activator role held by magnesium ions that enhance the activity of DNA and RNA polymerases"
+      - "Enzyme activator role held by chloride ions that activate salivary amylase"
+      - "Enzyme activator role held by potassium ions that increase pyruvate kinase activity"
+      - "Enzyme activator role held by calcium ions that promote protease and phospholipase activation"
+    classification_conditions:
+      - "The entity must be an Enzyme Regulator Role."
+      - "It must be disjoint from Enzyme Inhibitor Role."
+    logical_definition: >
+      EnzymeActivatorRole(x) → EnzymeRegulatorRole(x)
+
+
+  - label: "Enzyme Cofactor Role"
+    iri: "https://spec.industrialontologies.org/ontology/construct/EnzymeCofactorRole"
+    parent_class: "Molecular Entity Role"
+    definition: >
+      role held by a molecular entity that is realized in an enzymatic reaction through enabling the catalytic activity of a particular enzyme
+    examples:
+      - "Role held by magnesium ions stabilizing ATP in kinase reactions"
+      - "Role held by zinc ions required for the catalytic activity of alcohol dehydrogenase"
+      - "Role held by flavin adenine dinucleotide (FAD) acting as an electron carrier in redox enzymes"
+      - "Role held by a heme group supporting oxidation reactions within cytochrome oxidase"
+    classification_conditions:
+      - "The entity must be a Molecular Entity Role."
+    logical_definition: >
+      EnzymeCofactorRole(x) → MolecularEntityRole(x)
+
+
+  - label: "Enzyme Inhibitor Role"
+    iri: "https://spec.industrialontologies.org/ontology/construct/EnzymeInhibitorRole"
+    parent_class: "Enzyme Regulator Role"
+    definition: >
+      role held by a molecular entity that is realized in an enzyme catalyzed reaction through decreasing or preventing the catalytic activity of the enzyme
+    examples:
+      - "Inhibitor role held by aprotinin when added to cell culture media to inhibit serine proteases and prevent product degradation"
+      - "Role held by sodium fluoride when inhibiting enolase in glycolytic pathways"
+      - "Inhibitor role held by cyanide when binding to cytochrome oxidase and blocking electron transport"
+    classification_conditions:
+      - "The entity must be an Enzyme Regulator Role."
+    logical_definition: >
+      EnzymeInhibitorRole(x) → EnzymeRegulatorRole(x)
+
+
+  - label: "Enzyme Regulator Role"
+    iri: "https://spec.industrialontologies.org/ontology/construct/EnzymeRegulatorRole"
+    parent_class: "Molecular Activity Regulator Role"
+    definition: >
+      role held by a molecular entity when it binds to an enzyme and modulates its catalytic activity
+    examples:
+      - "ATP bearing an enzyme regulator role when it allosterically inhibits phosphofructokinase"
+      - "A small-molecule bearing a competitive inhibitor role when binding to an enzyme active site"
+      - "Calcium ion bearing an enzyme regulator role when it non-covalently activates a calcium-dependent enzyme"
+      - "Role held by an allosteric activator that increases enzyme catalytic activity by stabilizing an active conformation"
+    classification_conditions:
+      - "The entity must be a Molecular Activity Regulator Role."
+    logical_definition: >
+      EnzymeRegulatorRole(x) → MolecularActivityRegulatorRole(x)
+
+
+  - label: "Fucose Residue"
+    iri: "https://spec.industrialontologies.org/ontology/construct/FucoseResidue"
+    parent_class: "Monosaccharide Residue"
+    definition: >
+      monosaccharide residue that is the remaining portion of fucose after formation of a glycosidic bond
+    examples:
+      - "Fucose residue attached to the core N-acetylglucosamine of an N-linked glycan"
+      - "Fucose residue in a core-fucosylated monoclonal antibody Fc glycan"
+      - "Fucose residue in a Lewis-type glycan epitope."
+    classification_conditions:
+      - "The entity must be a Monosaccharide Residue."
+      - "It must be disjoint from Galactose Residue."
+      - "It must be disjoint from Sialic Acid Residue."
+    logical_definition: >
+      FucoseResidue(x) → MonosaccharideResidue(x)
+
+
+  - label: "Galactose Residue"
+    iri: "https://spec.industrialontologies.org/ontology/construct/GalactoseResidue"
+    parent_class: "Monosaccharide Residue"
+    definition: >
+      monosaccharide residue that is the remaining portion of galactose after formation of a glycosidic bond
+    examples:
+      - "Galactose residue in a complex N-linked glycan"
+      - "Galactose residue attached to N-acetylglucosamine in a monoclonal antibody Fc glycan"
+      - "Terminal galactose residue in a biantennary glycan."
+    classification_conditions:
+      - "The entity must be a Monosaccharide Residue."
+      - "It must be disjoint from Fucose Residue."
+      - "It must be disjoint from Sialic Acid Residue."
+    logical_definition: >
+      GalactoseResidue(x) → MonosaccharideResidue(x)
+
+
+  - label: "Glycated Residue"
+    iri: "https://spec.industrialontologies.org/ontology/construct/GlycatedResidue"
+    parent_class: "Glycoconjugated Residue"
+    definition: >
+      glycoconjugated residue that is formed by non-enzymatic covalent attachment of a reducing sugar to an amino group of an amino acid residue, producing a Schiff-base or Amadori-type ketosamine adduct
+    examples:
+      - "Glycated lysine residue in a monoclonal antibody formed by non-enzymatic reaction of the lysine side-chain amino group with glucose"
+      - "N-terminal glycated residue in a recombinant protein formed by non-enzymatic reaction of the N-terminal amino group with a reducing sugar"
+    classification_conditions:
+      - "The entity must be a Glycoconjugated Residue."
+    logical_definition: >
+      GlycatedResidue(x) → GlycoconjugatedResidue(x)
+
+
+  - label: "Glycoconjugated Residue"
+    iri: "https://spec.industrialontologies.org/ontology/construct/GlycoconjugatedResidue"
+    parent_class: "Modified Amino Acid Residue"
+    definition: >
+      modified amino acid residue that has a covalently attached carbohydrate or carbohydrate-derived group, formed either through enzymatic glycosidic bond formation or through non-enzymatic glycation involving a Schiff-base or Amadori-type ketosamine adduct
+    examples:
+      - "N-glycosylated asparagine residue in a monoclonal antibody"
+      - "O-glycosylated serine residue in a glycoprotein"
+      - "O-glycosylated threonine residue in a mucin-like domain"
+      - "Glycated lysine residue in a protein"
+      - "Amadori-modified lysine residue formed by non-enzymatic glycation."
+    classification_conditions:
+      - "The entity must be a Modified Amino Acid Residue."
+    logical_definition: >
+      GlycoconjugatedResidue(x) → ModifiedAminoAcidResidue(x)
+
+
+  - label: "Glycoprotein"
+    iri: "https://spec.industrialontologies.org/ontology/construct/Glycoprotein"
+    parent_class: "Protein"
+    definition: >
+      protein that includes at least one glycosylated residue
+    examples:
+      - "Monoclonal antibody with an N-glycosylated asparagine residue in its Fc region"
+      - "Recombinant erythropoietin containing N-glycosylated and O-glycosylated residues"
+      - "Fc-fusion protein containing an N-glycosylated residue"
+      - "Viral envelope protein containing glycosylated residues"
+      - "Host cell glycoprotein detected as a process-related impurity."
+    classification_conditions:
+      - "The entity must be a Protein."
+      - "Equivalent-class condition: it has as proper continuant part at all times some Glycosylated Residue."
+    logical_definition: >
+      Glycoprotein(x) ↔ Protein(x) ∧ ∃y (hasProperContinuantPartAtAllTimes(x, y) ∧ GlycosylatedResidue(y))
+
+
+  - label: "Glycosylated Residue"
+    iri: "https://spec.industrialontologies.org/ontology/construct/GlycosylatedResidue"
+    parent_class: "Glycoconjugated Residue"
+    definition: >
+      glycoconjugated residue that results from replacement of a hydrogen atom with a carbohydrate-like group through formation of a glycosidic bond
+    examples:
+      - "N-glycosylated asparagine residue in a monoclonal antibody Fc region"
+      - "O-glycosylated serine residue in a glycoprotein"
+      - "O-glycosylated threonine residue in a mucin-like domain"
+      - "Glycosylated asparagine residue carrying an N-linked glycan produced through enzymatic glycosylation."
+    classification_conditions:
+      - "The entity must be a Glycoconjugated Residue."
+    logical_definition: >
+      GlycosylatedResidue(x) → GlycoconjugatedResidue(x)
+    explanatory_note: >
+      This class differs from glycation-derived glycoconjugated residues because the carbohydrate group is attached through an enzymatically formed glycosidic bond. In biopharmaceutical proteins, glycosylated residues commonly arise through regulated enzymatic glycosylation pathways, such as N-linked glycosylation of asparagine or O-linked glycosylation of serine or threonine. For many secreted mammalian proteins, these pathways occur through the endoplasmic reticulum and Golgi apparatus. In contrast, glycated residues arise through non-enzymatic reactions during manufacturing, formulation, or storage, such as reactions with reducing sugars that form Schiff-base or Amadori-type ketosamine adducts.
+
+
+  - label: "Growth Factor"
+    iri: "https://spec.industrialontologies.org/ontology/construct/GrowthFactor"
+    parent_class: "Organic Molecular Entity"
+    definition: >
+      protein or peptide with a growth factor role
+    examples:
+      - "Vascular endothelial growth factor (VEGF) promoting endothelial proliferation"
+      - "Insulin-like growth factor 1 (IGF-1) enhancing recombinant protein production in mammalian cells"
+    classification_conditions:
+      - "The entity must be an Organic Molecular Entity."
+      - "Equivalent-class condition: it has role some Growth Factor Role."
+    logical_definition: >
+      GrowthFactor(x) ↔ (Peptide(x) ∨ Protein(x)) ∧ ∃r (hasRole(x, r) ∧ GrowthFactorRole(r))
+    explanatory_note: >
+      See the expanded definition under the corresponding role class.
+
+
+  - label: "Growth Factor Role"
+    iri: "https://spec.industrialontologies.org/ontology/construct/GrowthFactorRole"
+    parent_class: "Molecular Messenger Role"
+    definition: >
+      role held by a peptide or protein that is realized in receptor-mediated signaling processes that stimulate cellular growth, proliferation, survival, or differentiation
+    examples:
+      - "Role held by vascular endothelial growth factor (VEGF) that promotes endothelial proliferation"
+      - "Role held by insulin-like growth factor 1 (IGF-1) that enhances recombinant protein production in mammalian cells"
+    classification_conditions:
+      - "The entity must be a Molecular Messenger Role."
+      - "It must be such that it is role of some Peptide or Protein."
+    logical_definition: >
+      GrowthFactorRole(x) → MolecularMessengerRole(x) ∧ ∃y (roleOf(x, y) ∧ (Peptide(y) ∨ Protein(y)))
+    explanatory_note: >
+      In culture media and biomanufacturing formulations, this role is typically asserted when a protein or peptide is intentionally added to support cell proliferation, maintain viability, promote differentiation, or enhance productivity.
+
+
+  - label: "Heterodimeric Antibody"
+    iri: "https://spec.industrialontologies.org/ontology/construct/HeterodimericAntibody"
+    parent_class: "Antibody"
+    definition: >
+      antibody consisting of two heavy chains and two light chains in which the two heavy chains differ in amino acid sequence, the two light chains differ in amino acid sequence, or both
+    examples:
+      - "Bispecific IgG-like antibody with two different heavy chains"
+      - "Heterodimeric monoclonal antibody engineered with knob-into-hole heavy-chain pairing"
+      - "Antibody containing one heavy chain specific for antigen A and another heavy chain specific for antigen B."
+    classification_conditions:
+      - "The entity must be an Antibody."
+    logical_definition: >
+      HeterodimericAntibody(x) → Antibody(x)
+
+
+  - label: "High Mannose N-Glycan Moiety"
+    iri: "https://spec.industrialontologies.org/ontology/construct/HighMannoseNGlycanMoiety"
+    parent_class: "Core Pentasaccharide N-Glycan Moiety"
+    definition: >
+      core pentasaccharide N-glycan moiety whose branches are extended only by mannose residues and whose total mannose count is commonly between five and nine
+    examples:
+      - "Man5 N-glycan moiety detected on a monoclonal antibody Fc glycan"
+      - "Man8 N-glycan moiety on a recombinant glycoprotein"
+      - "High mannose N-glycan moiety observed as an elevated Man5 species during glycan profiling"
+      - "Oligomannose N-glycan moiety containing terminal mannose residues without complex-type antenna extensions."
+    classification_conditions:
+      - "The entity must be a Core Pentasaccharide N-Glycan Moiety."
+    logical_definition: >
+      HighMannoseNGlycanMoiety(x) → CorePentasaccharideNGlycanMoiety(x)
+
+
+  - label: "Homodimeric Antibody"
+    iri: "https://spec.industrialontologies.org/ontology/construct/HomodimericAntibody"
+    parent_class: "Antibody"
+    definition: >
+      antibody consisting of two heavy chains and two light chains in which the two heavy chains have the same amino acid sequence and the two light chains have the same amino acid sequence
+    examples:
+      - "Conventional monoclonal IgG antibody with two identical heavy chains and two identical light chains"
+      - "IgG1 monoclonal antibody produced from a single antibody clone"
+      - "Homodimeric Fc-containing antibody with matched heavy-chain pairing"
+      - "Standard monospecific therapeutic antibody with two equivalent antigen-binding arms."
+    classification_conditions:
+      - "The entity must be an Antibody."
+    logical_definition: >
+      HomodimericAntibody(x) → Antibody(x)
+
+
+  - label: "Hormone"
+    iri: "https://spec.industrialontologies.org/ontology/construct/Hormone"
+    parent_class: "Organic Molecular Entity"
+    definition: >
+      organic molecular entity with a hormone role
+    examples:
+      - "Insulin acting as a regulator of glucose metabolism and anabolic activity"
+      - "Hydrocortisone included in formulations to maintain epithelial cell differentiation and reduce stress responses"
+      - "Triiodothyronine (T₃) supplemented to stimulate protein synthesis and enhance metabolic activity"
+      - "Estradiol incorporated to regulate gene expression in hormone-responsive production cell lines"
+    classification_conditions:
+      - "The entity must be an Organic Molecular Entity."
+      - "Equivalent-class condition: it has role some Hormone Role."
+    logical_definition: >
+      Hormone(x) ↔ OrganicMolecularEntity(x) ∧ ∃r (hasRole(x, r) ∧ HormoneRole(r))
+    explanatory_note: >
+      See the expanded definition under the corresponding role class.
+
+
+  - label: "Hormone Role"
+    iri: "https://spec.industrialontologies.org/ontology/construct/HormoneRole"
+    parent_class: "Molecular Messenger Role"
+    definition: >
+      role held by an organic molecular entity that is realized in receptor-mediated signaling or regulatory processes that modulate the activity, metabolism, growth, or differentiation of cells or tissues
+    examples:
+      - "Hormone role held by insulin when acting as a regulator of glucose metabolism and anabolic activity"
+      - "Hormone role held by hydrocortisone when included in formulations to maintain epithelial cell differentiation and reduce stress responses"
+      - "Hormone role held by a triiodothyronine (T₃) supplement to stimulate protein synthesis and enhance metabolic activity"
+      - "Hormone role held by estradiol when incorporated to regulate gene expression in hormone-responsive production cell lines"
+    classification_conditions:
+      - "The entity must be a Molecular Messenger Role."
+      - "It must be such that it is role of some Organic Molecular Entity."
+    logical_definition: >
+      HormoneRole(x) → MolecularMessengerRole(x) ∧ ∃y (roleOf(x, y) ∧ OrganicMolecularEntity(y))
+    explanatory_note: >
+      1) Some molecules naturally act as hormones in living systems by binding to receptors and influencing cell metabolism, growth, differentiation, or gene expression. In formulation and culture contexts, this role is typically asserted when that activity is intentionally used, for example when a compound is added to a medium, buffer, or formulation to promote cell proliferation, maintain differentiation, or regulate metabolic balance. 2) Although hormones were originally understood as endogenous substances synthesized by specialized cells or glands and transported to target sites, the term may also include semi-synthetic or fully synthetic compounds that mimic, replace, or modify natural hormonal activity
+
+
+  - label: "Hybrid N-Glycan Moiety"
+    iri: "https://spec.industrialontologies.org/ontology/construct/HybridNGlycanMoiety"
+    parent_class: "Core Pentasaccharide N-Glycan Moiety"
+    definition: >
+      core pentasaccharide N-glycan moiety that contains both unsubstituted terminal mannose residues and at least one mannose residue substituted by an N-acetylglucosamine unit
+    examples:
+      - "Hybrid N-glycan moiety on a recombinant glycoprotein with one arm retaining terminal mannose residues and another arm extended with N-acetylglucosamine"
+      - "Hybrid N-glycan moiety detected during glycan profiling of a therapeutic glycoprotein"
+      - "Hybrid N-glycan moiety in which one branch has high-mannose character while another branch has complex-type extension."
+    classification_conditions:
+      - "The entity must be a Core Pentasaccharide N-Glycan Moiety."
+    logical_definition: >
+      HybridNGlycanMoiety(x) → CorePentasaccharideNGlycanMoiety(x)
+
+
+  - label: "Inorganic Molecular Entity"
+    iri: "https://spec.industrialontologies.org/ontology/construct/InorganicMolecularEntity"
+    parent_class: "Molecular Entity"
+    definition: >
+      molecular entity that contains no carbon
+    examples:
+      - "Water (H₂O)"
+      - "Ammonia (NH₃)"
+      - "Nitric oxide (NO)"
+    classification_conditions:
+      - "The entity must be a Molecular Entity."
+    logical_definition: >
+      InorganicMolecularEntity(x) → MolecularEntity(x)
+    explanatory_note: >
+      This class follows the ChEBI-style distinction between inorganic and organic molecular entities.
+
+
+  - label: "Ion"
+    iri: "https://spec.industrialontologies.org/ontology/construct/Ion"
+    parent_class: "Molecular Entity"
+    definition: >
+      molecular entity having a net electric charge
+    examples:
+      - "Hydrogen ion (H⁺)"
+      - "Chloride ion (Cl⁻)"
+      - "Sodium ion (Na⁺)"
+      - "Ammonium ion (NH₄⁺)"
+    classification_conditions:
+      - "The entity must be a Molecular Entity."
+      - "It must be disjoint from Salt."
+    logical_definition: >
+      Ion(x) → MolecularEntity(x)
+
+
+  - label: "Lipid"
+    iri: "https://spec.industrialontologies.org/ontology/construct/Lipid"
+    parent_class: "Organic Molecular Entity"
+    definition: >
+      organic molecular entity belonging to a structurally diverse class of hydrophobic or amphipathic entities that includes fats, oils, waxes, phospholipids, steroids, and related entities
+    examples:
+      - "Phosphatidylcholine"
+      - "Cholesterol"
+      - "Triglyceride"
+      - "Sphingomyelin"
+    classification_conditions:
+      - "The entity must be an Organic Molecular Entity."
+    logical_definition: >
+      Lipid(x) → OrganicMolecularEntity(x)
+
+
+  - label: "Lipid Precursor Role"
+    iri: "https://spec.industrialontologies.org/ontology/construct/LipidPrecursorRole"
+    parent_class: "Molecular Entity Role"
+    definition: >
+      role of a molecular entity that provides carbon or functional groups required for the biosynthetic formation of complex lipids such as fatty acids, phospholipids, or sterols
+    examples:
+      - "Role held by ethanolamine serving as a precursor for phosphatidylethanolamine synthesis in mammalian cells"
+      - "Role held by choline functioning as a precursor for phosphatidylcholine"
+    classification_conditions:
+      - "The entity must be a Molecular Entity Role."
+    logical_definition: >
+      LipidPrecursorRole(x) → MolecularEntityRole(x)
+    explanatory_note: >
+      Lipid precursors are molecular entities that serve as starting materials or metabolic inputs for lipid biosynthesis. Their availability can influence the rate and composition of lipid formation, affecting membrane structure, energy storage, and signaling balance. In cell culture and biomanufacturing, sufficient lipid precursor supply supports membrane biogenesis, cell growth, and product secretion.
+
+
+  - label: "Lipopolysaccharide"
+    iri: "https://spec.industrialontologies.org/ontology/construct/Lipopolysaccharide"
+    parent_class: "Organic Molecular Entity"
+    definition: >
+      organic molecular entity that consists of lipid A covalently linked to a core oligosaccharide and, where present, an O-antigen polysaccharide
+    examples:
+      - "Lipopolysaccharide from Escherichia coli detected as an endotoxin-related impurity in a process sample"
+      - "E. coli O111:B4 lipopolysaccharide used as a reference or challenge material in endotoxin-related testing"
+      - "Salmonella enterica lipopolysaccharide used as a representative Gram-negative bacterial LPS"
+    classification_conditions:
+      - "The entity must be an Organic Molecular Entity."
+    logical_definition: >
+      Lipopolysaccharide(x) → OrganicMolecularEntity(x)
+
+
+  - label: "Main Charge Variant Population"
+    iri: "https://spec.industrialontologies.org/ontology/construct/MainChargeVariantPopulation"
+    parent_class: "Protein Charge Variant Population"
+    definition: >
+      protein charge variant population classified by a protein main charge variant classifier
+    examples:
+      - "main monoclonal antibody peak population in cation-exchange chromatography"
+      - "protein population with pI comparable to the reference protein form in capillary isoelectric focusing"
+    classification_conditions:
+      - "The entity must be a Protein Charge Variant Population."
+      - "Equivalent-class condition: it is classified by some Protein Main Charge Variant Classifier."
+    logical_definition: >
+      MainChargeVariantPopulation(x) ↔ ProteinChargeVariantPopulation(x) ∧ ∃c(ProteinMainChargeVariantClassifier(c) ∧ classifiedBy(x, c))
+
+
+  - label: "Mannose Residue"
+    iri: "https://spec.industrialontologies.org/ontology/construct/MannoseResidue"
+    parent_class: "Monosaccharide Residue"
+    definition: >
+      monosaccharide residue that is the remaining portion of mannose after formation of a glycosidic bond
+    examples:
+      - "Mannose residue in the core structure of an N-linked glycan"
+      - "Mannose residue in a high-mannose glycan on a recombinant glycoprotein"
+      - "Terminal mannose residue in an oligomannose-type N-glycan."
+    classification_conditions:
+      - "The entity must be a Monosaccharide Residue."
+    logical_definition: >
+      MannoseResidue(x) → MonosaccharideResidue(x)
+
+
+  - label: "Modified Amino Acid Residue"
+    iri: "https://spec.industrialontologies.org/ontology/construct/ModifiedAminoAcidResidue"
+    parent_class: "Amino Acid Residue"
+    definition: >
+      amino acid residue that has undergone covalent modification of side-chain or backbone atoms while remaining part of an intact peptide or protein
+    examples:
+      - "Oxidized methionine residue in a monoclonal antibody"
+      - "Deamidated asparagine residue in a protein"
+      - "Phosphorylated serine residue in a peptide"
+      - "Glycated lysine residue in a protein"
+      - "Alkylated cysteine residue in a peptide."
+    classification_conditions:
+      - "The entity must be an Amino Acid Residue."
+    logical_definition: >
+      ModifiedAminoAcidResidue(x) → AminoAcidResidue(x)
+    explanatory_note: >
+      This class includes amino acid residues that have undergone a covalent change such as oxidation, reduction, alkylation, acylation, or other modification to their side-chain or backbone atoms while remaining part of an intact peptide or protein. The class does not include moieties that result from cleavage of the peptide backbone or from replacement of the original amino acid at that position
+
+
+  - label: "Molecular Activity Regulator Role"
+    iri: "https://spec.industrialontologies.org/ontology/construct/MolecularActivityRegulatorRole"
+    parent_class: "Molecular Entity Role"
+    definition: >
+      role held by a molecular entity when it modulates the activity of another molecular entity
+    examples:
+      - "Allosteric inhibitor role held by a small molecule that reduces enzyme activity through non-covalent binding"
+      - "Competitive inhibitor role held by a molecule that competes with a substrate for an enzyme active site"
+      - "Receptor antagonist role held by a molecule that blocks receptor activation"
+      - "Enzyme activator role held by a molecule that stabilizes an active enzyme conformation."
+    classification_conditions:
+      - "The entity must be a Molecular Entity Role."
+    logical_definition: >
+      MolecularActivityRegulatorRole(x) → MolecularEntityRole(x)
+
+
+  - label: "Molecular Color Indicator Role"
+    iri: "https://spec.industrialontologies.org/ontology/construct/MolecularColorIndicatorRole"
+    parent_class: "Molecular Visual Indicator Role"
+    definition: >
+      molecular visual indicator role held by a molecular entity when it is used or planned to be used so that a change in its color indicates the presence, amount, or condition of a particular material entity or quality
+    examples:
+      - "Phenol red bearing a molecular color indicator role when its color change indicates pH in cell culture medium"
+      - "Bromothymol blue bearing a molecular color indicator role when its color change indicates acidity or alkalinity"
+      - "Resazurin bearing a molecular color indicator role when its color change indicates cellular metabolic activity"
+      - "Iodine bearing a molecular color indicator role when color formation indicates the presence of starch."
+    classification_conditions:
+      - "The entity must be a Molecular Visual Indicator Role."
+    logical_definition: >
+      MolecularColorIndicatorRole(x) → MolecularVisualIndicatorRole(x)
+
+
+  - label: "Molecular Entity"
+    iri: "https://spec.industrialontologies.org/ontology/construct/MolecularEntity"
+    parent_class: "Material Entity"
+    definition: >
+      material entity that is a constitutionally or isotopically distinct atom, molecule, ion, ion pair, radical, radical ion, complex, conformer, or other chemically distinguishable entity
+    examples:
+      - "ion"
+      - "salt"
+      - "amino acid"
+      - "protein"
+      - "antibody"
+    classification_conditions:
+      - "The entity must be a Material Entity."
+    logical_definition: >
+      MolecularEntity(x) → MaterialEntity(x)
+
+
+  - label: "Molecular Entity Population"
+    iri: "https://spec.industrialontologies.org/ontology/construct/MolecularEntityPopulation"
+    parent_class: "Object Aggregate"
+    definition: >
+      object aggregate that has one or more molecular entities as member parts and has only molecular entities as member parts
+    examples:
+      - "A population of monoclonal antibody molecules in a drug substance sample"
+      - "A population of host cell protein molecules in a process intermediate"
+      - "A population of product-related protein variant molecules in a recombinant protein batch"
+      - "A population of released N-glycan molecules in a glycan profiling sample"
+      - "A population of residual host cell DNA molecules in a drug substance sample"
+      - "A population of peptide molecules generated during peptide mapping."
+    classification_conditions:
+      - "The entity must be an Object Aggregate."
+      - "Equivalent-class condition: it has as member part at some time some Molecular Entity."
+      - "Equivalent-class condition: it has as member part at some time only Molecular Entity."
+    logical_definition: >
+      MolecularEntityPopulation(x) ↔ ObjectAggregate(x) ∧ ∃y (hasMemberPartAtSomeTime(x, y) ∧ MolecularEntity(y)) ∧ ∀z (hasMemberPartAtSomeTime(x, z) → MolecularEntity(z))
+
+
+  - label: "Molecular Entity Role"
+    iri: "https://spec.industrialontologies.org/ontology/construct/MolecularEntityRole"
+    parent_class: "Role"
+    definition: >
+      role of a molecular entity that reflects a chemical or biochemical behavior it may exhibit under specified conditions
+    examples:
+      - "Role held by ethylenediaminetetraacetic acid (EDTA) acting as a chelating agent in buffers to remove trace metal ions"
+      - "Role held by vitamin C acting as an antioxidant in media or formulations to prevent oxidation of sensitive components"
+    classification_conditions:
+      - "The entity must be a Role."
+      - "It must be such that it is role of some Molecular Entity."
+    logical_definition: >
+      MolecularEntityRole(x) → Role(x) ∧ ∃y (roleOf(x, y) ∧ MolecularEntity(y))
+    explanatory_note: >
+      This role represents context-dependent behaviors of molecules, such as binding, catalysis, inhibition, or signaling. The specified conditions may include factors such as sufficient concentration, presence of a binding partner, enzyme, receptor, substrate, cofactor, or competing molecule, as well as relevant pH, temperature, solvent, compartment, or process environment. The same molecular entity may bear different molecular entity roles in different chemical or biological contexts. This class corresponds to the use of “role” in ChEBI and is used to describe realizable molecular behaviors in chemical or biological environments.
+
+
+  - label: "Molecular Indicator Role"
+    iri: "https://spec.industrialontologies.org/ontology/construct/MolecularIndicatorRole"
+    parent_class: "Molecular Entity Role"
+    definition: >
+      role held by a molecular entity when it is used or planned to be used so that an observable change in that molecular entity indicates the presence, amount, or condition of a particular material entity or quality
+    examples:
+      - "Phenol red bearing a molecular indicator role when its color change indicates pH in cell culture medium"
+      - "Fluorescein-labeled molecule bearing a molecular indicator role when its fluorescence indicates binding or localization"
+      - "Resazurin bearing a molecular indicator role when its reduction indicates cellular metabolic activity"
+      - "pH indicator dye bearing a molecular indicator role when its color change indicates acidity or alkalinity"
+      - "Redox indicator molecule bearing a molecular indicator role when its color change indicates oxidation-reduction state."
+    classification_conditions:
+      - "The entity must be a Molecular Entity Role."
+    logical_definition: >
+      MolecularIndicatorRole(x) → MolecularEntityRole(x)
+    explanatory_note: >
+      The observable change is often visual (e.g., color change), but may also be a non-visual detectable signal (e.g., change in absorbance, change in electrical signal, or change in emitted or absorbed radiation)
+
+
+  - label: "Molecular Messenger Role"
+    iri: "https://spec.industrialontologies.org/ontology/construct/MolecularMessengerRole"
+    parent_class: "Molecular Entity Role"
+    definition: >
+      role held by a molecular entity that participates in transmitting biological signals between or within cells, tissues, or organs to support coordination of biological processes
+    examples:
+      - "Molecular messenger role held by insulin when added to cell culture medium to promote glucose uptake and anabolic metabolism"
+      - "Molecular messenger role held by epidermal growth factor (EGF) when added to serum-free media to stimulate cell proliferation"
+    classification_conditions:
+      - "The entity must be a Molecular Entity Role."
+    logical_definition: >
+      MolecularMessengerRole(x) → MolecularEntityRole(x)
+
+
+  - label: "Molecular Toxin"
+    iri: "https://spec.industrialontologies.org/ontology/construct/MolecularToxin"
+    parent_class: "Molecular Entity"
+    definition: >
+      molecular entity with a molecular toxin role
+    examples:
+      - "A mycotoxin molecule that has a toxin role"
+      - "A bacterial lipopolysaccharide molecule that has a toxin role"
+      - "A cytotoxic small molecule that has a toxin role under a specified exposure condition"
+    classification_conditions:
+      - "The entity must be a Molecular Entity."
+      - "Equivalent-class condition: it has role some Molecular Toxin Role."
+    logical_definition: >
+      MolecularToxin(x) ↔ MolecularEntity(x) ∧ ∃r (hasRole(x, r) ∧ MolecularToxinRole(r))
+    explanatory_note: >
+      See the expanded definition under the corresponding role class.
+
+
+  - label: "Molecular Toxin Role"
+    iri: "https://spec.industrialontologies.org/ontology/construct/MolecularToxinRole"
+    parent_class: "Molecular Entity Role"
+    definition: >
+      molecular entity role held by a molecular entity in a biological exposure setting in which its chemical or biochemical activity is treated as capable of causing damage or dysfunction to a cell or organism
+    examples:
+      - "Lipopolysaccharide molecule bearing a toxin role when present as a process-related impurity that can trigger harmful biological responses"
+      - "Lipid A moiety bearing a toxin role in a context where it induces inflammatory activity"
+      - "A mycotoxin molecule bearing a toxin role when contaminating a raw material"
+    classification_conditions:
+      - "The entity must be a Molecular Entity Role."
+    logical_definition: >
+      MolecularToxinRole(x) → MolecularEntityRole(x)
+    explanatory_note: >
+      1) A molecular entity bearing a toxin role is distinguished by its capacity to cause damage or dysfunction when introduced or absorbed in sufficient quantity. This may include: (i) malfunction of cells; (ii) damage to the extracellular matrix; or (iii) cell damage to a degree that can lead to cell loss or cell death. 2) An entity bearing a molecular toxin role has a corresponding toxic disposition. This disposition is not modeled in the current version of the ontology and will be reconsidered in the future.
+
+
+  - label: "Molecular Visual Indicator Role"
+    iri: "https://spec.industrialontologies.org/ontology/construct/MolecularVisualIndicatorRole"
+    parent_class: "Molecular Indicator Role"
+    definition: >
+      molecular indicator role held by a molecular entity when it is used or planned to be used so that a visible change in that molecular entity indicates the presence, amount, or condition of a particular material entity or quality
+    examples:
+      - "Phenol red bearing a molecular visual indicator role when its color change indicates pH in cell culture medium"
+      - "Bromothymol blue bearing a molecular visual indicator role when its color change indicates acidity or alkalinity"
+      - "Fluorescein bearing a molecular visual indicator role when its fluorescence indicates the presence or localization of a labeled material entity"
+    classification_conditions:
+      - "The entity must be a Molecular Indicator Role."
+    logical_definition: >
+      MolecularVisualIndicatorRole(x) → MolecularIndicatorRole(x)
+
+
+  - label: "Monosaccharide"
+    iri: "https://spec.industrialontologies.org/ontology/construct/Monosaccharide"
+    parent_class: "Carbohydrate"
+    definition: >
+      carbohydrate that consists of a single polyhydroxy aldehyde or polyhydroxy ketone unit with three or more carbon atoms and is not glycosidically linked to another carbohydrate unit
+    examples:
+      - "glucose"
+      - "fructose"
+      - "galactose"
+    classification_conditions:
+      - "The entity must be a Carbohydrate."
+    logical_definition: >
+      Monosaccharide(x) → Carbohydrate(x)
+
+
+  - label: "Monosaccharide Residue"
+    iri: "https://spec.industrialontologies.org/ontology/construct/MonosaccharideResidue"
+    parent_class: "Chemical Moiety"
+    definition: >
+      chemical moiety that is a proper part of an oligosaccharide, polysaccharide, or glycoconjugate and that is the remaining portion of a monosaccharide after formation of a glycosidic bond
+    examples:
+      - "Glucose residue in a cellulose chain"
+      - "Mannose residue in an N-linked glycan"
+      - "Galactose residue in an oligosaccharide"
+      - "N-acetylglucosamine residue in a glycoprotein glycan"
+      - "Sialic acid residue in a complex N-glycan."
+    classification_conditions:
+      - "The entity must be a Chemical Moiety."
+    logical_definition: >
+      MonosaccharideResidue(x) → ChemicalMoiety(x)
+
+
+  - label: "N4-Glycosyl-L-Asparagine"
+    iri: "https://spec.industrialontologies.org/ontology/construct/N4GlycosylLAsparagine"
+    parent_class: "N-Glycosylated Residue"
+    definition: >
+      N-glycosylated residue in which a glycan is covalently attached to the side-chain nitrogen of an L-asparagine residue
+    synonyms:
+      - "N-Glycosyl-L-asparagine"
+    examples:
+      - "N4-glycosyl-L-asparagine residue in the Fc region of a monoclonal antibody"
+      - "N4-glycosyl-L-asparagine residue carrying a complex N-linked glycan in a recombinant glycoprotein"
+    classification_conditions:
+      - "The entity must be a N-Glycosylated Residue."
+    logical_definition: >
+      N4GlycosylLAsparagine(x) → NGlycosylatedResidue(x)
+    explanatory_note: >
+      The term “N4-glycosyl-L-asparagine” follows the classical IUPAC atom-numbering scheme, in which the side-chain amide nitrogen of L-asparagine is designated as N4. This nitrogen is the site of N-linked glycosylation.
+
+
+  - label: "N-Glycan Moiety"
+    iri: "https://spec.industrialontologies.org/ontology/construct/NGlycanMoiety"
+    parent_class: "Chemical Moiety"
+    definition: >
+      chemical moiety that is the remaining portion of a glycan resulting from its covalent attachment to the side-chain nitrogen of an asparagine or arginine residue
+    examples:
+      - "N-glycan moiety attached to an asparagine residue in a monoclonal antibody Fc glycan"
+      - "N-linked glycan moiety attached to an asparagine residue in a recombinant glycoprotein"
+    classification_conditions:
+      - "The entity must be a Chemical Moiety."
+    logical_definition: >
+      NGlycanMoiety(x) → ChemicalMoiety(x)
+
+
+  - label: "N-Glycolylneuraminic Acid Residue"
+    iri: "https://spec.industrialontologies.org/ontology/construct/NGlycolylneuraminicAcidResidue"
+    parent_class: "Sialic Acid Residue"
+    definition: >
+      sialic acid residue that is the remaining portion of N-glycolylneuraminic acid after formation of a glycosidic bond
+    synonyms:
+      - "NGNA residue"
+    examples:
+      - "N-glycolylneuraminic acid residue at the terminal position of a glycoprotein glycan"
+      - "N-glycolylneuraminic acid residue attached to galactose in a sialylated N-linked glycan"
+    classification_conditions:
+      - "The entity must be a Sialic Acid Residue."
+    logical_definition: >
+      NGlycolylneuraminicAcidResidue(x) → SialicAcidResidue(x)
+
+
+  - label: "N-Glycosylated Residue"
+    iri: "https://spec.industrialontologies.org/ontology/construct/NGlycosylatedResidue"
+    parent_class: "Glycosylated Residue"
+    definition: >
+      glycosylated residue in which a carbohydrate or carbohydrate-derived group is attached to a nitrogen atom through formation of an N-glycosidic bond
+    examples:
+      - "N-glycosylated asparagine residue in the Fc region of a monoclonal antibody"
+      - "Asparagine residue carrying an N-linked glycan in a recombinant glycoprotein"
+      - "N-glycosylated asparagine residue within an N-X-S/T consensus sequon of a therapeutic protein"
+    classification_conditions:
+      - "The entity must be a Glycosylated Residue."
+      - "Equivalent-class condition: it has as proper continuant part at all times some N-Glycan Moiety."
+    logical_definition: >
+      NGlycosylatedResidue(x) ↔ GlycosylatedResidue(x) ∧ ∃y (hasProperContinuantPartAtAllTimes(x, y) ∧ NGlycanMoiety(y))
+    explanatory_note: >
+      This class includes amino acid residues, most commonly asparagine, that have a covalently attached carbohydrate group through an N-glycosidic linkage. In biopharmaceutical proteins, N-glycosylation is typically generated by enzymatic glycosylation pathways involving the endoplasmic reticulum and Golgi apparatus and yields N-linked glycans with characteristic core structures.
+
+
+  - label: "Non-Proteinogenic Amino Acid"
+    iri: "https://spec.industrialontologies.org/ontology/construct/NonProteinogenicAminoAcid"
+    parent_class: "Amino Acid"
+    definition: >
+      amino acid that is not normally incorporated into polypeptide chains by ribosomal translation
+    examples:
+      - "Ornithine"
+      - "Citrulline"
+      - "β-alanine"
+      - "4-hydroxyproline"
+    classification_conditions:
+      - "The entity must be an Amino Acid."
+    logical_definition: >
+      NonProteinogenicAminoAcid(x) → AminoAcid(x)
+
+
+  - label: "Nucleic Acid"
+    iri: "https://spec.industrialontologies.org/ontology/construct/NucleicAcid"
+    parent_class: "Organic Molecular Entity"
+    definition: >
+      organic molecular entity composed of two or more nucleotides linked by phosphodiester bonds
+    examples:
+      - "DNA"
+      - "RNA"
+    classification_conditions:
+      - "The entity must be an Organic Molecular Entity."
+    logical_definition: >
+      NucleicAcid(x) → OrganicMolecularEntity(x)
+
+
+  - label: "Nucleoside"
+    iri: "https://spec.industrialontologies.org/ontology/construct/Nucleoside"
+    parent_class: "Organic Molecular Entity"
+    definition: >
+      organic molecular entity that consists of a nucleobase linked through a nitrogen atom to a sugar such as ribose or deoxyribose
+    examples:
+      - "Adenosine"
+      - "Cytidine"
+      - "Guanosine"
+      - "Uridine"
+    classification_conditions:
+      - "The entity must be an Organic Molecular Entity."
+    logical_definition: >
+      Nucleoside(x) → OrganicMolecularEntity(x)
+    explanatory_note: >
+      The nucleobase is typically adenine, guanine, cytosine, thymine, uracil, or xanthine. The sugar component is usually ribose or deoxyribose, forming an N-glycosidic bond.
+
+
+  - label: "Nucleotide"
+    iri: "https://spec.industrialontologies.org/ontology/construct/Nucleotide"
+    parent_class: "Organic Molecular Entity"
+    definition: >
+      organic molecular entity that consists of a nucleoside having one or more phosphate groups attached to its sugar moiety
+    examples:
+      - "Adenosine triphosphate (ATP)"
+      - "Guanosine monophosphate (GMP)"
+      - "Cytidine triphosphate (CTP)"
+    classification_conditions:
+      - "The entity must be an Organic Molecular Entity."
+    logical_definition: >
+      Nucleotide(x) → OrganicMolecularEntity(x)
+    explanatory_note: >
+      A nucleotide includes three structural components: a nitrogen-containing base, a pentose sugar (ribose or deoxyribose), and one or more phosphate groups linked to the sugar, typically at the 5′ position.
+
+
+  - label: "Nucleotide Sequence"
+    iri: "https://spec.industrialontologies.org/ontology/construct/NucleotideSequence"
+    parent_class: "Biological Sequence"
+    definition: >
+      biological sequence that is the ordered pattern of nucleotide residues that constitute a particular continuous DNA or RNA molecule
+    examples:
+      - "The nucleotide sequence of a plasmid DNA molecule"
+      - "The nucleotide sequence of an mRNA transcript"
+      - "The nucleotide sequence of a viral RNA genome segment"
+      - "The nucleotide sequence of a gene coding region"
+      - "The nucleotide sequence of an RNA guide molecule"
+      - "The nucleotide sequence of a DNA primer."
+    classification_conditions:
+      - "The entity must be a Biological Sequence."
+      - "It must be such that it generically depends at some time only Deoxyribonucleic Acid or Ribonucleic Acid."
+    logical_definition: >
+      NucleotideSequence(x) → BiologicalSequence(x) ∧ ∀y (genericallyDependsOnAtSomeTime(x, y) → (DeoxyribonucleicAcid(y) ∨ RibonucleicAcid(y)))
+
+
+  - label: "O-Glycan Moiety"
+    iri: "https://spec.industrialontologies.org/ontology/construct/OGlycanMoiety"
+    parent_class: "Chemical Moiety"
+    definition: >
+      chemical moiety that is the remaining portion of a glycan resulting from its covalent attachment to the side-chain hydroxyl oxygen of a serine, threonine, hydroxylysine, or hydroxyproline residue
+    examples:
+      - "O-glycan moiety attached to a serine residue in a glycoprotein"
+      - "O-glycan moiety attached to a threonine residue in a mucin-like domain"
+      - "O-linked glycan moiety attached to hydroxylysine in a collagen-like protein"
+    classification_conditions:
+      - "The entity must be a Chemical Moiety."
+    logical_definition: >
+      OGlycanMoiety(x) → ChemicalMoiety(x)
+
+
+  - label: "O-Glycosylated Residue"
+    iri: "https://spec.industrialontologies.org/ontology/construct/OGlycosylatedResidue"
+    parent_class: "Glycosylated Residue"
+    definition: >
+      glycosylated residue in which a carbohydrate or carbohydrate-derived group is attached to an oxygen atom through formation of an O-glycosidic bond
+    examples:
+      - "O-glycosylated serine residue in a glycoprotein"
+      - "O-glycosylated threonine residue in a mucin-like domain"
+      - "Serine residue carrying an O-linked glycan in a recombinant therapeutic protein"
+      - "Threonine residue carrying an O-linked glycan introduced through enzymatic glycosylation"
+    classification_conditions:
+      - "The entity must be a Glycosylated Residue."
+      - "Equivalent-class condition: it has as proper continuant part at all times some O-Glycan Moiety."
+    logical_definition: >
+      OGlycosylatedResidue(x) ↔ GlycosylatedResidue(x) ∧ ∃y (hasProperContinuantPartAtAllTimes(x, y) ∧ OGlycanMoiety(y))
+    explanatory_note: >
+      This class includes amino acid residues, most commonly serine and threonine, that have a covalently attached carbohydrate group through an O-glycosidic linkage. O-glycosylation may occur on hydroxyl-containing residues and should be distinguished from N-glycosylation, where the glycan is attached through a nitrogen atom, and from glycation, where sugar attachment arises through non-enzymatic reaction with amino groups.
+
+
+  - label: "Organic Molecular Entity"
+    iri: "https://spec.industrialontologies.org/ontology/construct/OrganicMolecularEntity"
+    parent_class: "Molecular Entity"
+    definition: >
+      molecular entity that contains carbon
+    examples:
+      - "Ethanol"
+      - "Acetic acid"
+      - "Glucose"
+      - "Lactic acid"
+      - "Albumin"
+      - "Estradiol"
+    classification_conditions:
+      - "The entity must be a Molecular Entity."
+    logical_definition: >
+      OrganicMolecularEntity(x) → MolecularEntity(x)
+    explanatory_note: >
+      This class follows the ChEBI-style distinction between inorganic and organic molecular entities.
+
+
+  - label: "Oxidized Residue"
+    iri: "https://spec.industrialontologies.org/ontology/construct/OxidizedResidue"
+    parent_class: "Modified Amino Acid Residue"
+    definition: >
+      modified amino acid residue that results from covalent changes involving loss of hydrogen atoms or addition of oxygen atoms to the residue
+    examples:
+      - "Oxidized methionine residue in a monoclonal antibody"
+      - "Oxidized tryptophan residue in a recombinant protein"
+      - "Oxidized cysteine residue formed during protein handling or storage"
+      - "Methionine sulfoxide residue formed by oxidation of a methionine residue."
+    classification_conditions:
+      - "The entity must be a Modified Amino Acid Residue."
+    logical_definition: >
+      OxidizedResidue(x) → ModifiedAminoAcidResidue(x)
+
+
+  - label: "Peptide"
+    iri: "https://spec.industrialontologies.org/ontology/construct/Peptide"
+    parent_class: "Organic Molecular Entity"
+    definition: >
+      organic molecular entity consisting of two or more amino acid residues linked by peptide bonds
+    examples:
+      - "Glutathione"
+      - "Oxytocin"
+      - "Bradykinin"
+      - "Angiotensin II"
+    classification_conditions:
+      - "The entity must be an Organic Molecular Entity."
+    logical_definition: >
+      Peptide(x) → OrganicMolecularEntity(x)
+    explanatory_note: >
+      A peptide is formed through condensation reactions between amino acids, producing amide linkages known as peptide bonds. After peptide-bond formation, the peptide contains amino acid residues rather than free amino acid molecules as parts. The term generally refers to molecules composed of α-amino acid residues, but may also include peptides containing residues derived from other amino acid types.
+
+
+  - label: "Polyamine"
+    iri: "https://spec.industrialontologies.org/ontology/construct/Polyamine"
+    parent_class: "Organic Molecular Entity"
+    definition: >
+      organic molecular entity that contains two or more amino groups
+    examples:
+      - "Putrescine"
+      - "Spermidine"
+      - "Spermine"
+    classification_conditions:
+      - "The entity must be an Organic Molecular Entity."
+    logical_definition: >
+      Polyamine(x) → OrganicMolecularEntity(x)
+
+
+  - label: "Polypeptide"
+    iri: "https://spec.industrialontologies.org/ontology/construct/Polypeptide"
+    parent_class: "Peptide"
+    definition: >
+      peptide containing ten or more amino acid residues
+    examples:
+      - "Casein"
+      - "Collagen fragment"
+      - "Insulin chain A"
+      - "β-lactoglobulin"
+    classification_conditions:
+      - "The entity must be a Peptide."
+    logical_definition: >
+      Polypeptide(x) → Peptide(x)
+
+
+  - label: "Polysaccharide"
+    iri: "https://spec.industrialontologies.org/ontology/construct/Polysaccharide"
+    parent_class: "Carbohydrate"
+    definition: >
+      carbohydrate consisting of large numbers of monosaccharide residues linked glycosidically
+    examples:
+      - "cellulose"
+      - "glycogen"
+      - "dextran"
+      - "levan"
+    classification_conditions:
+      - "The entity must be a Carbohydrate."
+    logical_definition: >
+      Polysaccharide(x) → Carbohydrate(x)
+    explanatory_note: >
+      This term is commonly used only for those containing more than ten monosaccharide residues.
+
+
+  - label: "Protein"
+    iri: "https://spec.industrialontologies.org/ontology/construct/Protein"
+    parent_class: "Organic Molecular Entity"
+    definition: >
+      organic molecular entity that consists of one or more polypeptide chains of sufficient length or molecular mass to be distinguished from peptides
+    examples:
+      - "Albumin"
+      - "Monoclonal antibody (IgG)"
+      - "Recombinant human growth hormone"
+    classification_conditions:
+      - "The entity must be an Organic Molecular Entity."
+      - "It must be such that it has as continuant part at all times some Polypeptide."
+    logical_definition: >
+      Protein(x) → OrganicMolecularEntity(x) ∧ ∃p (hasContinuantPartAtAllTimes(x, p) ∧ Polypeptide(p))
+    explanatory_note: >
+      1) From FDA Definition of the Term “Biological Product” : “protein” means any alpha amino acid polymer with a specific, defined sequence that is greater than 40 amino acids in size. 2) Per IUPAC, proteins are naturally occurring or synthetic polypeptides with molecular weights greater than about 10,000, while the boundary is acknowledged to be imprecise. 3) The expression “sufficient length or molecular mass” is used to capture the fact that the protein–peptide boundary is not fixed by a single universally accepted criterion. The FDA criterion provides a regulatory threshold based on amino acid count, while the IUPAC criterion reflects a broader chemical convention based on molecular weight. 4) Ribosomal synthesis is not included as a necessary condition in the definition because it describes one way in which many naturally occurring proteins are produced, rather than what the molecular entity is. Since both FDA and IUPAC definitions allow classification based on the structure and composition of the polymer, and IUPAC explicitly includes synthetic polypeptides, requiring ribosomal synthesis would make the class too narrow. Ribosomally synthesized proteins can therefore be represented as a more specific subclass where the production history is relevant.
+
+
+  - label: "Protein Acidic Charge Variant Classifier"
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProteinAcidicChargeVariantClassifier"
+    parent_class: "Protein Charge Variant Classifier"
+    definition: >
+      protein charge variant classifier that classifies a molecular entity population composed of proteins or protein fragments as differing from a reference protein form by having a lower isoelectric point or lower net electric charge under the relevant analytical conditions
+    examples:
+      - "a classifier that classifies a deamidated monoclonal antibody population as an acidic charge variant"
+      - "a classifier that classifies a sialylated antibody glycoform-enriched population as an acidic charge variant"
+      - "a classifier that classifies an acidic peak population detected by cation-exchange chromatography"
+      - "a classifier that classifies a lower-pI protein population detected by capillary isoelectric focusing"
+    classification_conditions:
+      - "The entity must be a Protein Charge Variant Classifier."
+    logical_definition: >
+      ProteinAcidicChargeVariantClassifier(x) → ProteinChargeVariantClassifier(x)
+    explanatory_note: >
+      The term acidic is used in the conventional charge-variant sense, typically reflecting lower isoelectric point, lower net electric charge, or corresponding behavior in methods such as ion-exchange chromatography or capillary isoelectric focusing.
+
+
+  - label: "Protein Aggregate"
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProteinAggregate"
+    parent_class: "Organic Molecular Entity"
+    definition: >
+      organic molecular entity that consists of two or more protein molecules or protein fragments associated through non-covalent interactions, covalent bonds other than peptide bonds, or both
+    examples:
+      - "Soluble antibody HMW clusters observed by SEC"
+      - "freeze-stress induced protein dimers tethered by disulfides"
+    counter_examples:
+      - "mAb monomer"
+      - "ribosome"
+      - "nucleosome"
+    classification_conditions:
+      - "The entity must be an Organic Molecular Entity."
+      - "It must be such that it has as proper continuant part at all times some Protein or Protein Fragment."
+    logical_definition: >
+      ProteinAggregate(x) → OrganicMolecularEntity(x) ∧ ∃y∃z((Protein(y) ∨ ProteinFragment(y)) ∧ (Protein(z) ∨ ProteinFragment(z)) ∧ y ≠ z ∧ hasProperContinuantPartAtAllTimes(x,y) ∧ hasProperContinuantPartAtAllTimes(x,z))
+    explanatory_note: >
+      1) Aggregates can form through diverse mechanisms including non-covalent self-association, misfolding, interfacial, environmental, or mechanical stresses, or via covalent links that are not peptide bonds. 2) The class includes assemblies formed from any mixture of folded, partially folded, misfolded, or unfolded proteins. 3) Aggregates may appear intracellularly or extracellularly. 4) The term is neutral with respect to function, or lack thereof, and solubility, which are modeled separately when relevant. 5) The term includes molecular-scale and supramolecular protein assemblies, including heterogeneous, non-stoichiometric, or reversibly associated high-molecular-weight species. Proteinaceous particles, inclusion bodies, bulk precipitates, and other larger material aggregates are not instances of this class.
+
+
+  - label: "Protein Basic Charge Variant Classifier"
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProteinBasicChargeVariantClassifier"
+    parent_class: "Protein Charge Variant Classifier"
+    definition: >
+      protein charge variant classifier that classifies a molecular entity population composed of proteins or protein fragments as differing from a reference protein form by having a higher isoelectric point or higher net electric charge under the relevant analytical conditions
+    examples:
+      - "classifier that classifies a C-terminal lysine-containing monoclonal antibody population as a basic charge variant"
+      - "a classifier that classifies an amidated protein population as a basic charge variant"
+      - "a classifier that classifies a basic peak population detected by cation-exchange chromatography"
+      - "a classifier that classifies a higher-pI protein population detected by capillary isoelectric focusing"
+    classification_conditions:
+      - "The entity must be a Protein Charge Variant Classifier."
+    logical_definition: >
+      ProteinBasicChargeVariantClassifier(x) → ProteinChargeVariantClassifier(x)
+    explanatory_note: >
+      The term basic is used in the conventional charge-variant sense, typically reflecting higher isoelectric point, higher net electric charge, or corresponding behavior in methods such as ion-exchange chromatography or capillary isoelectric focusing. It does not mean that the classified population acts as an alkalizing (basifying) agent.
+
+
+  - label: "Protein Charge Variant Classifier"
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProteinChargeVariantClassifier"
+    parent_class: "Charge Variant Classifier"
+    definition: >
+      charge variant classifier that classifies a molecular entity population composed of proteins or protein fragments according to charge-related analytical behavior relative to a reference protein form
+    examples:
+      - "a classifier that classifies the acidic peak population of a monoclonal antibody in cation-exchange chromatography as a protein charge variant"
+      - "a classifier that classifies a basic peak population of a recombinant protein by imaged capillary isoelectric focusing"
+      - "a classifier that classifies deamidated antibody-related molecular populations as acidic charge variants under a product-specific charge variant method"
+    classification_conditions:
+      - "The entity must be a Charge Variant Classifier."
+      - "It must be such that it classifies some Molecular Entity Population that has as member part at some time only Protein or Protein Fragment."
+      - "It must be such that it is about some Design Specification that prescribes some Protein."
+    logical_definition: >
+      ProteinChargeVariantClassifier(x) → ChargeVariantClassifier(x) ∧ ∃s(DesignSpecification(s) ∧ isAbout(x,s) ∧ ∃r(Protein(r) ∧ prescribes(s,r))) ∧ ∃p(MolecularEntityPopulation(p) ∧ classifies(x,p) ∧ ∃m((Protein(m) ∨ ProteinFragment(m)) ∧ hasMemberPartAtSomeTime(p,m)) ∧ ∀n(hasMemberPartAtSomeTime(p,n) → (Protein(n) ∨ ProteinFragment(n))))
+    explanatory_note: >
+      A protein charge variant classifier classifies populations of protein or protein-fragment molecules by charge-related analytical behavior, such as net electric charge, isoelectric point, ion-exchange retention behavior, capillary isoelectric focusing behavior, or electrophoretic mobility. The classified population may contain multiple molecular forms grouped together by the analytical method, rather than one structurally uniform molecular species. The reference protein form is specified by the relevant design specification.
+
+
+  - label: "Protein Charge Variant Population"
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProteinChargeVariantPopulation"
+    parent_class: "Molecular Entity Population"
+    definition: >
+      molecular entity population classified by a protein charge variant classifier
+    examples:
+      - "acidic peak population of a monoclonal antibody"
+      - "a basic peak population of a recombinant protein"
+    classification_conditions:
+      - "The entity must be a Molecular Entity Population."
+      - "It must be such that it has as member part at some time only Protein or Protein Fragment."
+      - "Equivalent-class condition: it is classified by some Protein Charge Variant Classifier."
+    logical_definition: >
+      ProteinChargeVariantPopulation(x) ↔ MolecularEntityPopulation(x) ∧ ∃c(ProteinChargeVariantClassifier(c) ∧ classifiedBy(x, c))
+    logical_axiom: >
+      ProteinChargeVariantPopulation(x) → ∀m(hasMemberPartAtSomeTime(x,m) → (Protein(m) ∨ ProteinFragment(m)))
+
+
+  - label: "Protein Fragment"
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProteinFragment"
+    parent_class: "Organic Molecular Entity"
+    definition: >
+      peptide or protein that was a proper part of a protein molecule and resulted from cleavage of one or more peptide bonds within that protein
+    examples:
+      - "Fab fragment generated by cleavage of an antibody"
+      - "Fc fragment generated by cleavage of an antibody"
+      - "Peptide fragment generated during proteolytic digestion for peptide mapping"
+      - "Clipped monoclonal antibody fragment detected during product characterization"
+      - "Protein fragment formed during storage-related degradation"
+      - "Host cell protein fragment detected as a process-related impurity"
+    classification_conditions:
+      - "The entity must be an Organic Molecular Entity."
+      - "It must be a Peptide or Protein."
+    logical_definition: >
+      ProteinFragment(x) → Peptide(x) ∨ Protein(x)
+    explanatory_note: >
+      1) The phrase ‘was a proper part of a protein’ indicates that the fragment existed as part of a larger protein molecule before cleavage. After the bond-breaking event, it may persist as an independent molecular entity. 2) Protein fragments may be generated by spontaneous, chemically induced, environmentally induced, mechanically associated, or enzyme-mediated peptide-bond cleavage. Examples include hydrolysis under stress conditions, fragmentation during storage or processing, and proteolytic cleavage.
+
+
+  - label: "Protein High Molecular Weight Population"
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProteinHighMolecularWeightPopulation"
+    parent_class: "Protein Size Variant Population"
+    definition: >
+      protein size variant population classified by a protein high molecular weight variant classifier
+    examples:
+      - "high-molecular-weight species peak"
+      - "antibody dimer and oligomer populations detected during aggregate analysis"
+      - "soluble protein aggregate material observed as high-molecular-weight species relative to the monomer peak"
+    classification_conditions:
+      - "The entity must be a Protein Size Variant Population."
+      - "It must be such that it has as member part at some time only Protein or Protein Aggregate."
+      - "Equivalent-class condition: it is classified by some Protein High Molecular Weight Variant Classifier."
+    logical_definition: >
+      ProteinHighMolecularWeightPopulation(x) ↔ ProteinSizeVariantPopulation(x) ∧ ∃c(ProteinHighMolecularWeightVariantClassifier(c) ∧ classifiedBy(x, c))
+    logical_axiom: >
+      ProteinHighMolecularWeightPopulation(x) → ∀m(hasMemberPartAtSomeTime(x,m) → (Protein(m) ∨ ProteinAggregate(m)))
+
+
+  - label: "Protein High Molecular Weight Variant Classifier"
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProteinHighMolecularWeightVariantClassifier"
+    parent_class: "Protein Size Variant Classifier"
+    definition: >
+      protein size variant classifier that classifies a molecular entity population composed of proteins or protein aggregates as having greater molecular size or molecular weight than a reference protein form
+    examples:
+      - "a classifier that classifies the population corresponding to a high-molecular-weight species peak in a monoclonal antibody size exclusion chromatography-high performance liquid chromatography (SEC-HPLC) assay"
+      - "a classifier that classifies antibody dimer and oligomer populations detected during aggregate analysis"
+      - "a classifier that classifies soluble protein aggregate material observed as high-molecular-weight species relative to the monomer peak"
+      - "a classifier that classifies covalent or non-covalent antibody aggregate populations detected in a drug substance lot"
+    classification_conditions:
+      - "The entity must be a Protein Size Variant Classifier."
+      - "It must be such that it classifies some Molecular Entity Population that has as member part at some time only Protein or Protein Aggregate."
+      - "It must be disjoint from Protein Low Molecular Weight Variant Classifier."
+    logical_definition: >
+      ProteinHighMolecularWeightVariantClassifier(x) → ProteinSizeVariantClassifier(x) ∧ ∃p (MolecularEntityPopulation(p) ∧ classifies(x, p) ∧ ∃m ((Protein(m) ∨ ProteinAggregate(m)) ∧ hasMemberPartAtSomeTime(p, m)) ∧ ∀m (hasMemberPartAtSomeTime(p, m) → (Protein(m) ∨ ProteinAggregate(m))))
+    explanatory_note: >
+      A protein high molecular weight variant classifier classifies protein-related molecular populations whose molecular size or molecular weight is greater than the reference protein form under the relevant analytical method. The classified population may include aggregates, dimers, oligomers, covalently linked forms, non-covalent associated forms, or other high-molecular-weight product-related material.
+
+
+  - label: "Protein Low Molecular Weight Population"
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProteinLowMolecularWeightPopulation"
+    parent_class: "Protein Size Variant Population"
+    definition: >
+      protein size variant population classified by a protein low molecular weight variant classifier
+    examples:
+      - "low-molecular-weight species peak"
+      - "clipped antibody fragment populations detected by Capillary Electrophoresis-Sodium Dodecyl Sulfate (CE-SDS)"
+      - "protein fragments formed during stability testing"
+    classification_conditions:
+      - "The entity must be a Protein Size Variant Population."
+      - "It must be such that it has as member part at some time only Protein or Protein Fragment."
+      - "Equivalent-class condition: it is classified by some Protein Low Molecular Weight Variant Classifier."
+    logical_definition: >
+      ProteinLowMolecularWeightPopulation(x) ↔ ProteinSizeVariantPopulation(x) ∧ ∃c(ProteinLowMolecularWeightVariantClassifier(c) ∧ classifiedBy(x, c))
+    logical_axiom: >
+      ProteinLowMolecularWeightPopulation(x) → ∀m(hasMemberPartAtSomeTime(x,m) → (Protein(m) ∨ ProteinFragment(m)))
+
+
+  - label: "Protein Low Molecular Weight Variant Classifier"
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProteinLowMolecularWeightVariantClassifier"
+    parent_class: "Protein Size Variant Classifier"
+    definition: >
+      protein size variant classifier that classifies a molecular entity population composed of proteins or protein fragments as having lower molecular size or molecular weight than a reference protein form
+    examples:
+      - "a classifier that classifies the population corresponding to a low-molecular-weight species peak in a monoclonal antibody size exclusion chromatography-high performance liquid chromatography (SEC-HPLC) assay"
+      - "a classifier that classifies clipped antibody fragment populations detected by Capillary Electrophoresis-Sodium Dodecyl Sulfate (CE-SDS)"
+      - "a classifier that classifies protein fragments formed during stability testing as low-molecular-weight species"
+      - "a classifier that classifies a half-antibody population as lower molecular weight than the reference antibody form"
+    classification_conditions:
+      - "The entity must be a Protein Size Variant Classifier."
+      - "It must be such that it classifies some Molecular Entity Population that has as member part at some time only Protein or Protein Fragment."
+    logical_definition: >
+      ProteinLowMolecularWeightVariantClassifier(x) → ProteinSizeVariantClassifier(x) ∧ ∃p (MolecularEntityPopulation(p) ∧ classifies(x, p) ∧ ∃m ((Protein(m) ∨ ProteinFragment(m)) ∧ hasMemberPartAtSomeTime(p, m)) ∧ ∀m (hasMemberPartAtSomeTime(p, m) → (Protein(m) ∨ ProteinFragment(m))))
+    explanatory_note: >
+      A protein low molecular weight variant classifier classifies protein-related molecular populations whose molecular size or molecular weight is lower than the reference protein form under the relevant analytical method. The classified population may include fragments, clipped forms, truncated forms, partially degraded chains, light-chain or heavy-chain fragments, half-antibody species, or other low-molecular-weight product-related material.
+
+
+  - label: "Protein Main Charge Variant Classifier"
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProteinMainChargeVariantClassifier"
+    parent_class: "Protein Charge Variant Classifier"
+    definition: >
+      protein charge variant classifier that classifies a molecular entity population composed of proteins or protein fragments as having charge-related analytical behavior comparable to the reference protein form under the relevant analytical conditions
+    examples:
+      - "a classifier that classifies the main monoclonal antibody peak population in cation-exchange chromatography"
+      - "a classifier that classifies the protein population with pI comparable to the reference protein form in capillary isoelectric focusing"
+      - "a classifier that classifies the main electrophoretic band population under a product-specific charge variant method"
+    classification_conditions:
+      - "The entity must be a Protein Charge Variant Classifier."
+    logical_definition: >
+      ProteinMainChargeVariantClassifier(x) → ProteinChargeVariantClassifier(x)
+    explanatory_note: >
+      A main charge variant classifier classifies the protein or protein-fragment population whose charge-related analytical behavior is comparable to the reference protein form specified by the relevant product or design specification. In many charge-variant methods, this population corresponds to the main analytical peak, band, or region. The term main does not imply that the classified population is chemically homogeneous, nor does it imply that all non-main charge variants are impurities.
+
+
+  - label: "Protein Size Variant Classifier"
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProteinSizeVariantClassifier"
+    parent_class: "Size Variant Classifier"
+    definition: >
+      size variant classifier that classifies a molecular entity population composed of proteins, protein fragments, or protein aggregates according to molecular size or molecular weight relative to a reference protein form
+    examples:
+      - "a classifier that classifies a monoclonal antibody aggregate population as a protein size variant by size-exclusion chromatography"
+      - "a classifier that classifies a clipped antibody fragment population as a protein size variant by CE-SDS"
+      - "a classifier that classifies a low-molecular-weight fragment population relative to the reference protein form"
+      - "a classifier that classifies a high-molecular-weight oligomer population relative to the reference protein form"
+    classification_conditions:
+      - "The entity must be a Size Variant Classifier."
+      - "It must be such that it classifies some Molecular Entity Population that has as member part at some time only Protein, Protein Aggregate, or Protein Fragment."
+      - "It must be such that it is about some Design Specification that prescribes some Protein."
+    logical_definition: >
+      ProteinSizeVariantClassifier(x) → SizeVariantClassifier(x) ∧ ∃s (DesignSpecification(s) ∧ isAbout(x, s) ∧ ∃r (Protein(r) ∧ prescribes(s, r))) ∧ ∃p (MolecularEntityPopulation(p) ∧ classifies(x, p) ∧ ∃m ((Protein(m) ∨ ProteinFragment(m) ∨ ProteinAggregate(m)) ∧ hasMemberPartAtSomeTime(p, m)) ∧ ∀m (hasMemberPartAtSomeTime(p, m) → (Protein(m) ∨ ProteinFragment(m) ∨ ProteinAggregate(m))))
+
+
+  - label: "Protein Size Variant Population"
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProteinSizeVariantPopulation"
+    parent_class: "Molecular Entity Population"
+    definition: >
+      molecular entity population classified by a protein size variant classifier
+    examples:
+      - "monoclonal antibody aggregate population"
+      - "clipped antibody fragment population"
+    classification_conditions:
+      - "The entity must be a Molecular Entity Population."
+      - "It must be such that it has as member part at some time only Protein, Protein Aggregate, or Protein Fragment."
+      - "Equivalent-class condition: it is classified by some Protein Size Variant Classifier."
+    logical_definition: >
+      ProteinSizeVariantPopulation(x) ↔ MolecularEntityPopulation(x) ∧ ∃c(ProteinSizeVariantClassifier(c) ∧ classifiedBy(x, c))
+    logical_axiom: >
+      ProteinSizeVariantPopulation(x) → ∀m(hasMemberPartAtSomeTime(x,m) → (Protein(m) ∨ ProteinFragment(m) ∨ ProteinAggregate(m)))
+
+
+  - label: "Proteinogenic Amino Acid"
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProteinogenicAminoAcid"
+    parent_class: "Amino Acid"
+    definition: >
+      amino acid that is normally incorporated into polypeptide chains by ribosomal translation
+    examples:
+      - "Glycine"
+      - "L-alanine"
+      - "L-lysine"
+      - "L-methionine"
+      - "L-serine"
+      - "L-tryptophan"
+      - "L-glutamic acid"
+      - "L-cysteine."
+    classification_conditions:
+      - "The entity must be an Amino Acid."
+    logical_definition: >
+      ProteinogenicAminoAcid(x) → AminoAcid(x)
+
+
+  - label: "Ribonucleic Acid"
+    iri: "https://spec.industrialontologies.org/ontology/construct/RibonucleicAcid"
+    parent_class: "Nucleic Acid"
+    definition: >
+      nucleic acid that is composed of nucleotide units containing ribose
+    synonyms:
+      - "RNA"
+    examples:
+      - "mRNA transcript used as an expression intermediate"
+      - "Guide RNA used in a gene-editing process"
+      - "Ribosomal RNA present as part of a ribosome"
+      - "Transfer RNA involved in translation"
+      - "Viral RNA detected in a process or analytical sample"
+      - "RNA molecule measured during gene-expression analysis."
+    classification_conditions:
+      - "The entity must be a Nucleic Acid."
+    logical_definition: >
+      RibonucleicAcid(x) → NucleicAcid(x)
+
+
+  - label: "Ribonucleoside"
+    iri: "https://spec.industrialontologies.org/ontology/construct/Ribonucleoside"
+    parent_class: "Nucleoside"
+    definition: >
+      nucleoside where the sugar component is D-ribose
+    examples:
+      - "Adenosine molecule"
+      - "Guanosine molecule"
+      - "Cytidine molecule"
+      - "Uridine molecule."
+    classification_conditions:
+      - "The entity must be a Nucleoside."
+    logical_definition: >
+      Ribonucleoside(x) → Nucleoside(x)
+
+
+  - label: "Salt"
+    iri: "https://spec.industrialontologies.org/ontology/construct/Salt"
+    parent_class: "Molecular Entity"
+    definition: >
+      molecular entity that is an assembly of cations and anions
+    examples:
+      - "sodium chloride"
+      - "sodium monophosphate"
+      - "potassium acetate"
+    classification_conditions:
+      - "The entity must be a Molecular Entity."
+      - "It must be such that it has as continuant part at all times some Anion."
+      - "It must be such that it has as continuant part at all times some Cation."
+    logical_definition: >
+      Salt(x) → MolecularEntity(x) ∧ ∃a (hasContinuantPartAtAllTimes(x, a) ∧ Anion(a)) ∧ ∃c (hasContinuantPartAtAllTimes(x, c) ∧ Cation(c))
+
+
+  - label: "Sialic Acid Residue"
+    iri: "https://spec.industrialontologies.org/ontology/construct/SialicAcidResidue"
+    parent_class: "Monosaccharide Residue"
+    definition: >
+      monosaccharide residue that is the remaining portion of sialic acid after formation of a glycosidic bond
+    examples:
+      - "Sialic acid residue at the terminal position of a complex N-linked glycan"
+      - "Sialic acid residue attached to a galactose residue in a glycoprotein glycan"
+      - "N-acetylneuraminic acid residue in a sialylated monoclonal antibody glycan."
+    classification_conditions:
+      - "The entity must be a Monosaccharide Residue."
+      - "It must be disjoint from Fucose Residue."
+      - "It must be disjoint from Galactose Residue."
+    logical_definition: >
+      SialicAcidResidue(x) → MonosaccharideResidue(x)
+
+
+  - label: "Size Variant Classifier"
+    iri: "https://spec.industrialontologies.org/ontology/construct/SizeVariantClassifier"
+    parent_class: "Classifier"
+    definition: >
+      classifier that classifies a population of material entities according to size-related analytical properties relative to a reference material entity
+    examples:
+      - "a classifier that classifies a group of monoclonal antibody molecules detected as a high molecular weight fraction by size-exclusion chromatography as a size variant relative to a reference monoclonal antibody"
+      - "a classifier that classifies a group of recombinant protein fragments detected as a low molecular weight fraction by capillary electrophoresis as a size variant relative to a reference recombinant protein"
+      - "a classifier that classifies a group of antibody-drug conjugate molecules according to size-related analytical properties under a product-specific size variant method"
+    classification_conditions:
+      - "The entity must be a Classifier."
+      - "It must be such that it classifies some Object Aggregate."
+      - "It must be such that it is about some Design Specification that prescribes some Material Entity."
+    logical_definition: >
+      SizeVariantClassifier(x) → Classifier(x) ∧ ∃s (DesignSpecification(s) ∧ isAbout(x, s) ∧ ∃r (MaterialEntity(r) ∧ prescribes(s, r))) ∧ ∃g (ObjectAggregate(g) ∧ classifies(x, g))
+    explanatory_note: >
+      A size variant classifier is a broad parent for classifiers that group material entities by size-related analytical properties. It is intended to support different material domains, including molecular products and particle-based products. More specific subclasses should be used when the size-related terminology, analytical methods, or reference comparisons are domain-specific, such as protein size variants, molecular size variants, aggregate variants, fragment variants, or lipid nanoparticle particle-size variants. The reference material entity is the material entity prescribed by the relevant design specification as the basis for comparison.
+
+
+  - label: "Steroid"
+    iri: "https://spec.industrialontologies.org/ontology/construct/Steroid"
+    parent_class: "Lipid"
+    definition: >
+      lipid that has a core structure of four fused carbon rings, consisting of three six-membered rings and one five-membered ring
+    examples:
+      - "Estradiol"
+      - "Testosterone"
+      - "Cortisol"
+    classification_conditions:
+      - "The entity must be a Lipid."
+    logical_definition: >
+      Steroid(x) → Lipid(x)
+    explanatory_note: >
+      1) Additional side chains or functional groups may be attached to the core rings, and the rings may be hydrogenated or slightly modified by rearrangement. 2) Steroids include naturally occurring compounds and synthetic analogues. This class encompasses sterols (e.g., cholesterol), bile acids, and steroid hormones, as well as numerous synthetic derivatives with medicinal applications. 3) Chemically, steroids are compounds derived from the cyclopenta[a]phenanthrene skeleton, typically with methyl groups at C-10 and C-13 and often an alkyl side chain at C-17. Natural steroids arise from squalene and may show partial hydrogenation or minor ring modifications.
+
+
+  - label: "Trace Element Role"
+    iri: "https://spec.industrialontologies.org/ontology/construct/TraceElementRole"
+    parent_class: "Molecular Entity Role"
+    definition: >
+      role held by a molecular entity composed of a single chemical element that originates from a source external to cells, is present in a small amount, and supports biological processes in those cells
+    examples:
+      - "Trace element role held by Fe²⁺ from an iron salt that was added to media as part of a trace element supplement"
+      - "Trace element role held by Cu²⁺ from CuSO₄·5H₂O (copper sulfate pentahydrate) added to support oxidative enzyme function"
+    classification_conditions:
+      - "The entity must be a Molecular Entity Role."
+    logical_definition: >
+      TraceElementRole(x) → MolecularEntityRole(x)
+    explanatory_note: >
+      1) Entities bearing a trace element role support biological processes through activities such as catalysis, electron transfer, or structural stabilization of biomolecules. They are commonly introduced through inorganic salts, oxoanions, chelates, or other molecular entities that make the relevant element bioavailable. Examples include iron, zinc, copper, manganese, cobalt, and selenium supplied through compounds such as ferrous salts, zinc salts, copper salts, manganese salts, cobalt salts, or selenite. 2) Trace elements are often intentionally introduced through culture-medium or feed components, but may also originate from raw material impurities, equipment leachables, or process water. In such cases, an elemental molecular entity may bear both a trace element role and an impurity role, depending on its origin, amount, and contribution to biological processes. Mere presence in a small amount is insufficient for bearing a trace element role.
+
+
+  - label: "Vitamin"
+    iri: "https://spec.industrialontologies.org/ontology/construct/Vitamin"
+    parent_class: "Organic Molecular Entity"
+    definition: >
+      organic molecular entity with a vitamin role
+    examples:
+      - "Thiamine (vitamin B₁) supporting carbohydrate metabolism"
+      - "Riboflavin (vitamin B₂) serving as precursor of flavin cofactors (FAD, FMN)"
+      - "Biotin acting in carboxylation reactions."
+    classification_conditions:
+      - "The entity must be an Organic Molecular Entity."
+      - "Equivalent-class condition: it has role some Vitamin Role."
+    logical_definition: >
+      Vitamin(x) ↔ OrganicMolecularEntity(x) ∧ ∃r (hasRole(x, r) ∧ VitaminRole(r))
+    explanatory_note: >
+      See the expanded definition under the corresponding role class.
+
+
+  - label: "Vitamin Role"
+    iri: "https://spec.industrialontologies.org/ontology/construct/VitaminRole"
+    parent_class: "Molecular Entity Role"
+    definition: >
+      role held by an organic molecular entity that is used in small amounts to support metabolic or physiological functions and whose adequate availability depends on external supply or environmental activation
+    examples:
+      - "Vitamin role held by thiamine (vitamin B₁) when supporting carbohydrate metabolism"
+      - "Vitamin role held by riboflavin (vitamin B₂) when serving as precursor of flavin cofactors (FAD, FMN)"
+      - "Vitamin role held by biotin when acting in carboxylation reactions"
+    classification_conditions:
+      - "The entity must be a Molecular Entity Role."
+      - "It must be such that it is role of some Organic Molecular Entity."
+    logical_definition: >
+      VitaminRole(x) → MolecularEntityRole(x) ∧ ∃y (roleOf(x, y) ∧ OrganicMolecularEntity(y))
+    explanatory_note: >
+      Vitamins are organic compounds that support or regulate metabolic and physiological processes, often by serving as cofactors, coenzyme precursors, or regulatory metabolites. They are required only in small amounts but may not be synthesized, supplied, or activated in sufficient quantity without external inputs such as nutrient supplementation or relevant environmental conditions. In human and animal nutrition, vitamins are obtained through dietary intake; in biomanufacturing, they may be incorporated into culture media or feed formulations to support cell viability, growth, and productivity
+
+
+  - label: "Water Molecule"
+    iri: "https://spec.industrialontologies.org/ontology/construct/WaterMolecule"
+    parent_class: "Inorganic Molecular Entity"
+    definition: >
+      inorganic molecular entity consisting of an oxygen atom that is covalently bonded to two hydrogen atoms
+    examples:
+      - "H₂O (ordinary water)"
+      - "D₂O (heavy water)"
+      - "HDO (semi-heavy water)"
+    classification_conditions:
+      - "The entity must be an Inorganic Molecular Entity."
+    logical_definition: >
+      WaterMolecule(x) → InorganicMolecularEntity(x)
+    explanatory_note: >
+      1) Water molecule refers to the molecular entity H₂O, not to a bulk water material, aqueous solution, or other water-containing mixture. In laboratory and biomanufacturing usage, ‘water’ often refers to materials composed primarily of water molecules, such as Purified Water, Water for Injection, buffers, media, or other aqueous materials. These bulk materials and mixtures should be modeled separately from the water molecule itself. 2) Water molecules may occur in isotopic variants, such as heavy water (D₂O) or semi-heavy water (HDO). These variants have the same atom-connectivity pattern as H₂O but differ in hydrogen isotope composition.

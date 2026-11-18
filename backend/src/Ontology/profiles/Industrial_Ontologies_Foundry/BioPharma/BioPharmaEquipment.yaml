@@ -1,0 +1,1642 @@
+imports:
+  - iri: "https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaReferenceOntologyAttributes/"
+    label: Biopharma Reference Ontology Attributes
+  - iri: "https://spec.industrialontologies.org/ontology/202603/biopharma/ReferenceOntologyCandidates/"
+    label: Reference Ontology Candidates
+  - iri: "https://spec.industrialontologies.org/ontology/202603/core/Core/"
+    label: IOF Core
+    note: >
+      Classes such as Capability, Engineered System, Material Artifact, Container, Role,
+      Equipment Role, Material Entity, Site, Planned Process, Piece of Equipment and
+      Production Consumable are defined in the imported modules, not in this module.
+
+
+profile:
+  id: biopharma-equipment-complete
+  ontology_artifact: BiopharmaEquipment
+  ontology_iri: "https://spec.industrialontologies.org/ontology/biopharma/BiopharmaEquipment/"
+  version_iri: "https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaEquipment/"
+  title: Biopharma Equipment Ontology
+  description: >-
+    Complete profile generated from the Biopharma Equipment RDF; all named classes declared
+    in the RDF artifact are represented here. The module covers equipment types, their
+    properties (qualities, capabilities, functions), equipment specifications and validation.
+    This RDF declares no new properties; the relationships listed below are those referenced
+    in its class axioms. Examples are limited to the first few per class; adaptedFrom source
+    links are omitted.
+  include_ancestors: true
+  include_compatible_properties: true
+
+
+entities:
+  # ---------------- Cell culture holding ----------------
+  - label: Cell Culture Holding Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellCultureHoldingCapability"
+    parent_class: Material Containment Capability
+    definition: >
+      material containment capability to contain material undergoing a cell cultivation process
+    examples:
+      - "Capability of a T-flask to contain an adherent mammalian cell culture during incubation"
+      - "Capability of a shake flask to contain a microbial or mammalian suspension culture during shaking cultivation"
+      - "Capability of a bioreactor vessel to contain a cell culture during a controlled cultivation process"
+    classification_conditions:
+      - The entity must be a Material Containment Capability.
+    logical_definition: >
+      CellCultureHoldingCapability(x) → MaterialContainmentCapability(x)
+    explanatory_note: >
+      Specific to containing material while it undergoes cell cultivation (suspension or adherent cultures, microbial cultures, aggregates, tissues, culture-support materials, medium). Applies to vessels and vessel-like artifacts (T-flasks, shake flasks, spinner flasks, culture bags, microplate wells, bioreactor vessels). It does not by itself imply temperature, CO2 or humidity control, agitation, aeration, sterility or aseptic operation; those are separate capabilities.
+    is_primitive: true
+    primitive_rationale: >
+      The formalization requires processes that are in the manufacturing execution and material module.
+
+
+  - label: Cell Culture Holding Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellCultureHoldingFunction"
+    parent_class: Cell Culture Holding Capability
+    definition: >
+      cell culture holding capability that is a function of a material entity
+    examples:
+      - "the cell culture holding function of a T-flask to contain material undergoing adherent-cell cultivation"
+      - "the cell culture holding function of a bioreactor vessel to contain cultivated material during a controlled cultivation process"
+    classification_conditions:
+      - The entity must be a Cell Culture Holding Capability.
+      - It must be the function of some Material Entity.
+    logical_definition: >
+      CellCultureHoldingFunction(x) ↔ CellCultureHoldingCapability(x) ∧ ∃m (MaterialEntity(m) ∧ functionOf(x, m))
+
+
+  - label: Adherent Cell Culture Holding Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/AdherentCellCultureHoldingCapability"
+    parent_class: Cell Culture Holding Capability
+    definition: >
+      cell culture holding capability to contain an adherent cell culture during a cell cultivation process
+    examples:
+      - "Capability of a T-flask to contain adherent mammalian cells attached to its culture surface during incubation"
+      - "Capability of a multilayer cell culture vessel to contain adherent cells and medium during scale-up"
+      - "Capability of a microplate well to contain adherent cells during a cell-based assay"
+    classification_conditions:
+      - The entity must be a Cell Culture Holding Capability.
+    logical_definition: >
+      AdherentCellCultureHoldingCapability(x) → CellCultureHoldingCapability(x)
+    is_primitive: true
+    primitive_rationale: See the rationale under Cell Culture Holding Capability.
+
+
+  - label: Adherent Cell Culture Holding Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/AdherentCellCultureHoldingFunction"
+    parent_class: Adherent Cell Culture Holding Capability
+    definition: >
+      adherent cell culture holding capability that is a function of a material entity
+    examples:
+      - "the adherent cell culture holding function of a T-flask to contain cells attached to its culture surface"
+      - "the adherent cell culture holding function of a fixed-bed bioreactor vessel to contain cells attached to its internal culture-support structure"
+    classification_conditions:
+      - The entity must be an Adherent Cell Culture Holding Capability.
+      - It must be the function of some Material Entity.
+    logical_definition: >
+      AdherentCellCultureHoldingFunction(x) ↔ AdherentCellCultureHoldingCapability(x) ∧ ∃m (MaterialEntity(m) ∧ functionOf(x, m))
+
+
+  - label: Suspension Cell Culture Holding Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/SuspensionCellCultureHoldingCapability"
+    parent_class: Cell Culture Holding Capability
+    definition: >
+      cell culture holding capability to contain a suspension cell culture during a cell cultivation process
+    examples:
+      - "Capability of a shake flask to contain a suspension culture during shaking cultivation"
+      - "Capability of a spinner flask to contain a suspension cell culture during stirred cultivation"
+      - "Capability of a bioreactor vessel to contain a suspension cell culture during a controlled cultivation process"
+    classification_conditions:
+      - The entity must be a Cell Culture Holding Capability.
+    logical_definition: >
+      SuspensionCellCultureHoldingCapability(x) → CellCultureHoldingCapability(x)
+    is_primitive: true
+    primitive_rationale: See the rationale under Cell Culture Holding Capability.
+
+
+  - label: Suspension Cell Culture Holding Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/SuspensionCellCultureHoldingFunction"
+    parent_class: Suspension Cell Culture Holding Capability
+    definition: >
+      suspension cell culture holding capability that is a function of a material entity
+    examples:
+      - "the suspension cell culture holding function of a shake flask to contain a suspension culture during shaking cultivation"
+      - "the suspension cell culture holding function of a stirred-tank bioreactor vessel to contain a suspension cell culture during controlled cultivation"
+    classification_conditions:
+      - The entity must be a Suspension Cell Culture Holding Capability.
+      - It must be the function of some Material Entity.
+    logical_definition: >
+      SuspensionCellCultureHoldingFunction(x) ↔ SuspensionCellCultureHoldingCapability(x) ∧ ∃m (MaterialEntity(m) ∧ functionOf(x, m))
+
+
+  # ---------------- Containers ----------------
+  - label: Vial
+    iri: "https://spec.industrialontologies.org/ontology/construct/Vial"
+    parent_class: Container
+    definition: >
+      container that is small, sealable, and designed for holding, storing, or dispensing small quantities of material
+    examples:
+      - "glass reagent vial used for chemical or media samples"
+      - "autosampler vial used in analytical chromatography systems"
+      - "cryovial used for frozen storage of a cryopreserved cell suspension"
+    classification_conditions:
+      - The entity must be a Container.
+    logical_definition: >
+      Vial(x) → Container(x)
+    explanatory_note: >
+      Often cylindrical, typically glass or plastic; commonly hold pharmaceutical preparations, injectables, biological products, cryopreserved cells or lab samples; some are used for headspace analysis; usually sealed with a stopper, screw cap or crimp closure.
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs present to create a set of necessary and sufficient conditions.
+
+
+  - label: Cryovial
+    iri: "https://spec.industrialontologies.org/ontology/construct/Cryovial"
+    parent_class: Vial
+    definition: >
+      vial designed for storage of material at ultra-low temperatures
+    examples:
+      - "A 2 mL polypropylene cryovial with an O-ring screw cap designed for storing samples in vapor-phase liquid nitrogen."
+    classification_conditions:
+      - The entity must be a Vial.
+    logical_definition: >
+      Cryovial(x) → Vial(x)
+    explanatory_note: >
+      Specialized small sealable containers, typically plastic (e.g. polypropylene) or glass, designed to withstand liquid nitrogen or −80 °C conditions; used to preserve cells, tissues, nucleic acids or proteins.
+    is_primitive: true
+    primitive_rationale: >
+      Insufficient constructs to create necessary and sufficient conditions; the required capabilities and functions are missing.
+
+
+  - label: Flask
+    iri: "https://spec.industrialontologies.org/ontology/construct/Flask"
+    parent_class: Container
+    definition: >
+      container that has a body wider than its neck and is designed to contain material during a material transformation, separation, measurement, or cultivation process
+    examples:
+      - "a 2 L baffled Erlenmeyer flask holding a CHO seed culture"
+      - "a 250 mL spinner flask containing a suspension cell culture"
+      - "a T75 tissue-culture flask containing adherent HEK293 cells"
+    classification_conditions:
+      - The entity must be a Container.
+    logical_definition: >
+      Flask(x) → Container(x)
+    explanatory_note: >
+      Often glass or plastic; commonly conical (Erlenmeyer) or spherical (round-bottom); many are designed to allow heating, cooling or shaking.
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs present to create a set of necessary and sufficient conditions.
+
+
+  - label: Shake Flask
+    iri: "https://spec.industrialontologies.org/ontology/construct/ShakeFlask"
+    parent_class: Flask
+    definition: >
+      flask designed for cultivating biological material or conducting chemical reactions that require aeration and mixing under agitated conditions with a shape that minimizes spillage during shaking
+    examples:
+      - "A 2 L baffled PETG Erlenmeyer flask used in small-scale mammalian cell culture, with vented cap and controlled shaking"
+    counter_examples:
+      - "Test tubes placed on a shaker: they lack the flask geometry, venting options and mixing dynamics of shake flasks."
+    classification_conditions:
+      - The entity must be a Flask.
+    logical_definition: >
+      ShakeFlask(x) → Flask(x)
+    explanatory_note: >
+      Often based on Erlenmeyer geometry; may include baffles to improve mixing and oxygen transfer; usually closed with breathable stoppers, foam plugs or vented caps; commonly used for inoculum preparation, strain screening and preliminary process optimization before scale-up; typically glass or plastic, from milliliters to liters.
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs present to create a set of necessary and sufficient conditions.
+
+
+  - label: Spinner Flask
+    iri: "https://spec.industrialontologies.org/ontology/construct/SpinnerFlask"
+    parent_class: Flask
+    definition: >
+      flask designed for cultivating cells in suspension that has as part a component with a mixing function to keep the culture uniformly agitated
+    examples:
+      - "A 250 mL glass spinner flask with a magnetic stirring bar"
+    counter_examples:
+      - "T-flask for adherent cell culture, which lacks any internal component with a mixing function"
+    disjoint_with:
+      - T-flask
+    classification_conditions:
+      - The entity must be a Flask.
+      - It must have some Material Component as a component part at all times, and that component must have some Mixing Function.
+      - It must have some Suspension Cell Culture Holding Function.
+    logical_definition: >
+      SpinnerFlask(x) ↔ Flask(x) ∧ ∃c (MaterialComponent(c) ∧ hasComponentPartAtAllTimes(x, c) ∧ ∃a (MixingFunction(a) ∧ hasFunction(c, a))) ∧ ∃h (SuspensionCellCultureHoldingFunction(h) ∧ hasFunction(x, h))
+    explanatory_note: >
+      The mixing component is typically a magnetic stir bar, paddle or impeller built into the vessel and externally driven to keep cells and medium evenly agitated, preventing settling and improving oxygen and nutrient distribution. Commonly used for small-scale suspension cultures (e.g. hybridomas, CHO cells) before scale-up.
+
+
+  - label: T-flask
+    iri: "https://spec.industrialontologies.org/ontology/construct/TFlask"
+    parent_class: Flask
+    definition: >
+      flask designed for cultivating adherent cells that has as part a flat growth surface for cell attachment and a narrow neck for adding or removing material while reducing contamination risk
+    examples:
+      - "A T75 polystyrene tissue culture flask with vented cap, used for adherent HEK293 cell expansion."
+    counter_examples:
+      - "A spinner flask for suspension cell culture, which lacks a flat surface for cell attachment and has an internal stirring element"
+    disjoint_with:
+      - Spinner Flask
+    classification_conditions:
+      - The entity must be a Flask.
+      - It must have some Adherent Cell Culture Holding Function.
+    logical_definition: >
+      TFlask(x) → Flask(x) ∧ ∃f (hasFunction(x, f) ∧ AdherentCellCultureHoldingFunction(f))
+    is_primitive: true
+    primitive_rationale: >
+      Insufficient constructs to create necessary and sufficient conditions; constructs for representing flask geometry (shape) are missing.
+
+
+  - label: Bioreactor Vessel
+    iri: "https://spec.industrialontologies.org/ontology/construct/BioreactorVessel"
+    parent_class: Container
+    definition: >
+      container designed to contain material undergoing a cell cultivation process and to incorporate or interface with one or more components that provide mixing, aeration, monitoring, or control as part of a bioreactor
+    examples:
+      - "A 200 L single-use polymer bioreactor vessel"
+      - "A 2 L borosilicate glass bioreactor vessel with a stainless steel headplate"
+    classification_conditions:
+      - The entity must be a Container.
+      - It must have some Cell Culture Holding Function.
+    logical_definition: >
+      BioreactorVessel(x) → Container(x) ∧ ∃f (hasFunction(x, f) ∧ CellCultureHoldingFunction(f))
+    explanatory_note: >
+      The primary containment unit of a bioreactor; provides the physical space for cultivation or production while relying on integration with the bioreactor system for controlled conditions. Typical features include impellers, spargers, probes and ports. May be stainless steel, glass or single-use polymer.
+    is_primitive: true
+    primitive_rationale: >
+      Insufficient constructs, particularly for representing that a container is designed to incorporate or interface with components of a bioreactor during cell cultivation.
+
+
+  - label: Rocker Bag
+    iri: "https://spec.industrialontologies.org/ontology/construct/RockerBag"
+    parent_class: Container
+    definition: >
+      container that is a flexible bag designed for rocking or wave-motion mixing, gently agitating its contents to provide mixing and gas transfer that enable controlled cultivation of cells or microorganisms under low-shear conditions
+    examples:
+      - "Flexsafe RM bag"
+    classification_conditions:
+      - The entity must be a Container.
+      - It must have some Cell Culture Holding Function.
+      - If it is a member part at all times of some Bioreactor, it is a Bioreactor Vessel (additional subclass axiom stated in the RDF).
+    logical_definition: >
+      LA1: RockerBag(x) → Container(x) ∧ ∃f (hasFunction(x, f) ∧ CellCultureHoldingFunction(f)); LA2: RockerBag(x) ∧ ∃b (Bioreactor(b) ∧ memberPartOfAtAllTimes(x, b)) → BioreactorVessel(x)
+    explanatory_note: >
+      Single-use or disposable flexible culture chambers, typically inert plastic film; may be used with rocker-motion bioreactors or simpler incubator rockers or trays; mixing and gas transfer come from wave or rocking motion rather than impellers, reducing shear stress.
+    is_primitive: true
+    primitive_rationale: >
+      Insufficient constructs, particularly for representing the flexible bag construction and the rocking or wave-motion configuration.
+
+
+  # ---------------- Bioreactors ----------------
+  - label: Bioreactor
+    iri: "https://spec.industrialontologies.org/ontology/construct/Bioreactor"
+    parent_class: Engineered System
+    definition: >
+      engineered system designed to provide a controlled environment for the cultivation of cells, tissues, or microorganisms, or for the production of material products or process intermediate materials by those biological entities
+    examples:
+      - "Stainless steel production bioreactor with integrated agitation and feed control"
+      - "2000 L single-use production bioreactor for monoclonal antibody manufacturing"
+      - "Stirred-tank seed bioreactor with automated pH and DO control"
+    counter_examples:
+      - "Empty stainless steel vessel without integrated agitation, control skid, or single-use bag system"
+      - "Incubator designed to maintain temperature and CO2 for cell culture without agitation, feeding, or waste removal functions"
+      - "static cell culture flask lacking active environmental controls"
+    disjoint_with:
+      - Chromatography System
+      - Thawing System
+    classification_conditions:
+      - The entity must be an Engineered System.
+      - It must have some Bioreactor Vessel as a member part at some time.
+      - It must have some Cultivation Environment Function.
+    logical_definition: >
+      Bioreactor(x) ↔ EngineeredSystem(x) ∧ ∃b (BioreactorVessel(b) ∧ hasMemberPartAtSomeTime(x, b)) ∧ ∃f (CultivationEnvironmentFunction(f) ∧ hasFunction(x, f))
+
+
+  - label: Production Bioreactor
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProductionBioreactor"
+    parent_class: Bioreactor
+    definition: >
+      bioreactor which has a production bioreactor role
+    examples:
+      - "a 2,000 L stirred-tank bioreactor bearing a production bioreactor role during a monoclonal-antibody production culture"
+      - "a microbial fermenter bearing a production bioreactor role during enzyme production"
+    classification_conditions:
+      - The entity must be a Bioreactor.
+      - The entity must have some Production Bioreactor Role.
+    logical_definition: >
+      ProductionBioreactor(x) ↔ Bioreactor(x) ∧ ∃r (ProductionBioreactorRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      See the expanded definition under the corresponding role class. Formalized as a defined class by referring to its role class, for modeling and implementation convenience.
+
+
+  - label: Production Bioreactor Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProductionBioreactorRole"
+    parent_class: Equipment Role
+    definition: >
+      equipment role held by a bioreactor when it is used or planned to be used to carry out a biomanufacturing production process
+    examples:
+      - "the production bioreactor role borne by a single-use bioreactor during a fed-batch CHO production culture"
+      - "the production bioreactor role borne by a microbial fermenter during an enzyme-production culture"
+    classification_conditions:
+      - The role must be an Equipment Role.
+      - It must be the role of some Bioreactor.
+    logical_definition: >
+      ProductionBioreactorRole(x) → EquipmentRole(x) ∧ ∃b (roleOf(x, b) ∧ Bioreactor(b))
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Seed Bioreactor
+    iri: "https://spec.industrialontologies.org/ontology/construct/SeedBioreactor"
+    parent_class: Bioreactor
+    definition: >
+      bioreactor which has a seed bioreactor role
+    examples:
+      - "a 20 L stirred-tank bioreactor bearing a seed bioreactor role during cell expansion before inoculation of a 200 L production bioreactor"
+      - "an N-1 perfusion bioreactor bearing a seed bioreactor role before inoculation of a production culture"
+    classification_conditions:
+      - The entity must be a Bioreactor.
+      - The entity must have some Seed Bioreactor Role.
+    logical_definition: >
+      SeedBioreactor(x) ↔ Bioreactor(x) ∧ ∃r (SeedBioreactorRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      See the expanded definition under the corresponding role class. Formalized as a defined class by referring to its role class, for modeling and implementation convenience.
+
+
+  - label: Seed Bioreactor Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/SeedBioreactorRole"
+    parent_class: Equipment Role
+    definition: >
+      equipment role held by a bioreactor that is involved or planned to be involved in carrying out a cell culture expansion process that is part of a seed train
+    examples:
+      - "the seed bioreactor role borne by an N-1 perfusion bioreactor before inoculation of a production bioreactor"
+      - "the seed bioreactor role borne by a single-use bioreactor during an intermediate seed-train stage"
+    classification_conditions:
+      - The role must be an Equipment Role.
+      - It must be the role of some Bioreactor.
+    logical_definition: >
+      SeedBioreactorRole(x) → EquipmentRole(x) ∧ ∃b (roleOf(x, b) ∧ Bioreactor(b))
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Cultivation Environment Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/CultivationEnvironmentCapability"
+    parent_class: Capability
+    definition: >
+      capability of an engineered system to provide a controlled environment suitable for the growth or maintenance of cells, tissues, or microorganisms, or for the production of material products or process intermediates by those entities
+    examples:
+      - "the cultivation environment capability of a CO2 incubator to maintain temperature, carbon-dioxide concentration, and humidity for adherent mammalian-cell culture"
+      - "the cultivation environment capability of a seed bioreactor to maintain temperature, pH, dissolved oxygen, mixing, and nutrient supply during cell expansion"
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of some Engineered System.
+      - It can only be realized in Planned Processes.
+    logical_definition: >
+      CultivationEnvironmentCapability(x) → Capability(x) ∧ ∃z (EngineeredSystem(z) ∧ capabilityOf(x, z)) ∧ ∀y (hasRealization(x, y) → PlannedProcess(y))
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Cultivation Environment Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/CultivationEnvironmentFunction"
+    parent_class: Cultivation Environment Capability
+    definition: >
+      cultivation environment capability that is a function of an engineered system
+    examples:
+      - "the cultivation environment function of a CO2 incubator to provide controlled temperature, carbon-dioxide concentration, and humidity for adherent mammalian-cell cultivation"
+      - "the cultivation environment function of a seed bioreactor to provide suitable temperature, pH, dissolved oxygen, mixing, and nutrient supply during cell expansion"
+    classification_conditions:
+      - The entity must be a Cultivation Environment Capability.
+      - It must be the function of some Engineered System.
+    logical_definition: >
+      CultivationEnvironmentFunction(x) ↔ CultivationEnvironmentCapability(x) ∧ ∃e (EngineeredSystem(e) ∧ functionOf(x, e))
+
+
+  - label: Bioproduction Environment Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/BioproductionEnvironmentCapability"
+    parent_class: Cultivation Environment Capability
+    definition: >
+      cultivation environment capability to provide a controlled environment in which biological entities generate, or are expanded as, a material product or process intermediate
+    examples:
+      - "the bioproduction environment capability of a production bioreactor to maintain conditions for monoclonal-antibody production by a CHO cell culture"
+      - "the bioproduction environment capability of a perfusion bioreactor to maintain conditions for high-density recombinant-protein production"
+    classification_conditions:
+      - The entity must be a Cultivation Environment Capability.
+    logical_definition: >
+      BioproductionEnvironmentCapability(x) → CultivationEnvironmentCapability(x)
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Incubator
+    iri: "https://spec.industrialontologies.org/ontology/construct/Incubator"
+    parent_class: Engineered System
+    definition: >
+      engineered system designed to maintain controlled environmental conditions within an enclosed chamber for material entities placed within that chamber
+    examples:
+      - "CO2 incubator for mammalian cell culture."
+      - "A stainless-steel laboratory incubator with HEPA filtration and automated humidity control, maintaining 37 °C and 5 percent CO2, used for cultivating CHO cells."
+    counter_examples:
+      - "a shaking water bath used to heat and mix samples in tubes (no enclosed, regulated chamber environment)"
+      - "a bioreactor, because it controls conditions directly for material within its integrated vessel rather than around separately placed vessels"
+    disjoint_with:
+      - Chromatography System
+    classification_conditions:
+      - The entity must be an Engineered System.
+    logical_definition: >
+      Incubator(x) → EngineeredSystem(x)
+    explanatory_note: >
+      May regulate temperature, humidity, CO2, oxygen or light. Provides environmental control around material entities placed inside the chamber (flasks, plates, bags, tubes, vials); distinguish it from the vessel that directly holds the material. Differs from a bioreactor, which controls process conditions for the culture within its own vessel (agitation, aeration, pH, DO, temperature).
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs to create a set of necessary and sufficient conditions.
+
+
+  # ---------------- Control capabilities ----------------
+  - label: Control Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/ControlCapability"
+    parent_class: Capability
+    definition: >
+      capability of a material artifact, agent, or engineered system to carry out control during a planned process
+    examples:
+      - "the control capability of a bioreactor control system to carry out pH control during a production culture"
+      - "the control capability of a mass-flow controller to carry out gas-flow control during aeration"
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of some Material Artifact, Agent or Engineered System.
+      - It can only be realized in Planned Processes.
+    logical_definition: >
+      ControlCapability(x) → Capability(x) ∧ ∃b ((MaterialArtifact(b) ∨ Agent(b) ∨ EngineeredSystem(b)) ∧ capabilityOf(x, b)) ∧ ∀p (hasRealization(x, p) → PlannedProcess(p))
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Agitation Rate Controlling Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/AgitationRateControllingCapability"
+    parent_class: Control Capability
+    definition: >
+      control capability to carry out control of agitation rate
+    examples:
+      - "the agitation rate controlling capability of a stirred-tank bioreactor control system to maintain a specified impeller agitation rate"
+      - "the agitation rate controlling capability of an incubator shaker to maintain a specified orbital shaking rate"
+    classification_conditions:
+      - The entity must be a Control Capability.
+    logical_definition: >
+      AgitationRateControllingCapability(x) → ControlCapability(x)
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Dissolved Oxygen Controlling Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/DissolvedOxygenControllingCapability"
+    parent_class: Control Capability
+    alternative_labels:
+      - DO control capability
+    definition: >
+      control capability to carry out control of dissolved oxygen concentration within a particular liquid
+    examples:
+      - "the dissolved oxygen controlling capability of a stirred-tank bioreactor control system to control dissolved oxygen by adjusting agitation and gas flow"
+      - "the dissolved oxygen controlling capability of a microbial fermenter control system to control dissolved oxygen by cascading air flow and oxygen enrichment"
+    classification_conditions:
+      - The entity must be a Control Capability.
+    logical_definition: >
+      DissolvedOxygenControllingCapability(x) → ControlCapability(x)
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Flow Rate Controlling Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/FlowRateControllingCapability"
+    parent_class: Control Capability
+    definition: >
+      control capability to carry out control of flow rate
+    examples:
+      - "capability to control buffer flow rate during chromatography column equilibration"
+      - "capability to adjust feed solution flow rate in a fed-batch fermentation process"
+      - "capability to maintain consistent gas flow rate in a bioreactor sparging system"
+    counter_examples:
+      - "capability to measure flow rate passively without adjusting it"
+      - "capability to maintain structural integrity of a pipe during fluid transfer"
+    classification_conditions:
+      - The entity must be a Control Capability.
+    logical_definition: >
+      FlowRateControllingCapability(x) → ControlCapability(x)
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Flow Rate Controlling Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/FlowRateControllingFunction"
+    parent_class: Flow Rate Controlling Capability
+    definition: >
+      flow rate controlling capability that is a function of a material artifact or engineered system
+    examples:
+      - "the flow rate controlling function of a chromatography system to control mobile-phase flow during column operation"
+      - "the flow rate controlling function of a mass-flow controller to control gas flow into a bioreactor"
+    classification_conditions:
+      - The entity must be a Flow Rate Controlling Capability.
+      - It must be the function of some Material Artifact or Engineered System.
+    logical_definition: >
+      FlowRateControllingFunction(x) ↔ FlowRateControllingCapability(x) ∧ ∃b ((MaterialArtifact(b) ∨ EngineeredSystem(b)) ∧ functionOf(x, b))
+
+
+  - label: Foam Level Controlling Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/FoamLevelControllingCapability"
+    parent_class: Control Capability
+    definition: >
+      control capability to carry out control of foam level
+    examples:
+      - "the foam level controlling capability of a bioreactor control system to control foam through automated antifoam addition"
+      - "the foam level controlling capability of an operator to control foam by adjusting gas flow and antifoam addition"
+    classification_conditions:
+      - The entity must be a Control Capability.
+    logical_definition: >
+      FoamLevelControllingCapability(x) → ControlCapability(x)
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: pH Controlling Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/PHControllingCapability"
+    parent_class: Control Capability
+    definition: >
+      control capability to carry out control of pH
+    examples:
+      - "the pH controlling capability of a mammalian-cell bioreactor control system to control culture pH through carbon-dioxide and base addition"
+      - "the pH controlling capability of an operator to control buffer pH during preparation"
+    classification_conditions:
+      - The entity must be a Control Capability.
+    logical_definition: >
+      PHControllingCapability(x) → ControlCapability(x)
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Pressure Controlling Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/PressureControllingCapability"
+    parent_class: Control Capability
+    definition: >
+      control capability to carry out control of pressure
+    examples:
+      - "the pressure controlling capability of a backpressure regulator to control bioreactor vessel pressure"
+      - "the pressure controlling capability of an operator to control vessel pressure by adjusting a vent valve"
+    classification_conditions:
+      - The entity must be a Control Capability.
+    logical_definition: >
+      PressureControllingCapability(x) → ControlCapability(x)
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Temperature Controlling Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/TemperatureControllingCapability"
+    parent_class: Control Capability
+    definition: >
+      control capability to carry out control of temperature
+    examples:
+      - "the temperature controlling capability of a bioreactor temperature-control system to control culture temperature"
+      - "the temperature controlling capability of a CO2 incubator to control chamber temperature"
+      - "the temperature controlling capability of a dry thawing system to control the temperature of the process material to be unfrozen during thawing"
+    classification_conditions:
+      - The entity must be a Control Capability.
+    logical_definition: >
+      TemperatureControllingCapability(x) → ControlCapability(x)
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  # ---------------- Material / fluid / gas transfer ----------------
+  - label: Material Transfer Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialTransferCapability"
+    parent_class: Capability
+    definition: >
+      capability of an agent, material artifact, or engineered system to enable movement of material distinct from the capability bearer to or from a material entity or site
+    examples:
+      - "the material transfer capability of an operator to charge weighed buffer salt into a mixing vessel"
+      - "the material transfer capability of a peristaltic pump to transfer feed solution into a bioreactor"
+      - "the material transfer capability of a gas-delivery system to supply oxygen to a bioreactor"
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of some Agent, Material Artifact or Engineered System.
+      - It can only be realized in Material Addition Processes, Material Removal Processes or Material Transfer Processes.
+      - Each such process must have as participant some Material Entity with a Transferred Material Role, and that material entity must be distinct from the capability bearer.
+    logical_definition: >
+      MaterialTransferCapability(x) → Capability(x) ∧ ∃b ((Agent(b) ∨ MaterialArtifact(b) ∨ EngineeredSystem(b)) ∧ capabilityOf(x, b) ∧ ∀p (hasRealization(x, p) → ((MaterialAdditionProcess(p) ∨ MaterialRemovalProcess(p) ∨ MaterialTransferProcess(p)) ∧ ∃m ∃r (MaterialEntity(m) ∧ TransferredMaterialRole(r) ∧ hasParticipant(p, m) ∧ hasRole(m, r)) ∧ ∀n ((MaterialEntity(n) ∧ hasParticipant(p, n) ∧ ∃s (TransferredMaterialRole(s) ∧ hasRole(n, s))) → n ≠ b))))
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Fluid Transfer Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/FluidTransferCapability"
+    parent_class: Material Transfer Capability
+    definition: >
+      material transfer capability to enable movement of a fluid to or from a material entity or site
+    examples:
+      - "the fluid transfer capability of a peristaltic-pump assembly to transfer nutrient feed into a bioreactor"
+      - "the fluid transfer capability of a transfer skid to move cell-culture harvest to a hold vessel"
+    classification_conditions:
+      - The entity must be a Material Transfer Capability.
+      - It can only be realized in Planned Processes that have as participant some Material Entity with a Fluid Aggregate State quality and a Transferred Material Role.
+    logical_definition: >
+      FluidTransferCapability(x) → MaterialTransferCapability(x) ∧ ∀y (hasRealization(x, y) → (PlannedProcess(y) ∧ ∃m (MaterialEntity(m) ∧ hasParticipant(y, m) ∧ ∃q (FluidAggregateState(q) ∧ hasQuality(m, q)) ∧ ∃r (TransferredMaterialRole(r) ∧ hasRole(m, r)))))
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Gas Transfer Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/GasTransferCapability"
+    parent_class: Fluid Transfer Capability
+    definition: >
+      fluid transfer capability to enable movement of a gas to or from a material entity or site
+    examples:
+      - "the gas transfer capability of a gas-delivery assembly to supply air to a bioreactor"
+      - "the gas transfer capability of a bioreactor exhaust assembly to remove off-gas"
+    classification_conditions:
+      - The entity must be a Fluid Transfer Capability.
+      - It can only be realized in Planned Processes that have as participant some Material Entity with a Gaseous Aggregate State quality and a Transferred Material Role.
+    logical_definition: >
+      GasTransferCapability(x) → FluidTransferCapability(x) ∧ ∀y (hasRealization(x, y) → (PlannedProcess(y) ∧ ∃m (MaterialEntity(m) ∧ hasParticipant(y, m) ∧ ∃q (GaseousAggregateState(q) ∧ hasQuality(m, q)) ∧ ∃r (TransferredMaterialRole(r) ∧ hasRole(m, r)))))
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Aeration Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/AerationCapability"
+    parent_class: Gas Transfer Capability
+    definition: >
+      gas transfer capability to enable introduction of oxygen-containing gas to a material entity or site
+    examples:
+      - "the aeration capability of a bioreactor sparger to introduce air into a mammalian cell culture"
+      - "the aeration capability of an overlay-gas assembly to introduce air into a vessel headspace"
+    classification_conditions:
+      - The entity must be a Gas Transfer Capability.
+    logical_definition: >
+      AerationCapability(x) → GasTransferCapability(x)
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Exhaust Gas Removal Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/ExhaustGasRemovalCapability"
+    parent_class: Gas Transfer Capability
+    definition: >
+      gas transfer capability to enable removal of gas from a material entity or site
+    examples:
+      - "the exhaust gas removal capability of a bioreactor exhaust assembly to remove off-gas from the vessel headspace"
+      - "the exhaust gas removal capability of an incubator exhaust assembly to remove chamber gas"
+    classification_conditions:
+      - The entity must be a Gas Transfer Capability.
+    logical_definition: >
+      ExhaustGasRemovalCapability(x) → GasTransferCapability(x)
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Liquid Transfer Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/LiquidTransferCapability"
+    parent_class: Fluid Transfer Capability
+    definition: >
+      fluid transfer capability to enable movement of a liquid to or from a material entity or site
+    examples:
+      - "the liquid transfer capability of a peristaltic pump to transfer nutrient feed into a bioreactor"
+      - "the liquid transfer capability of an operator using a pipette to transfer a liquid sample into an analytical vial"
+    classification_conditions:
+      - The entity must be a Fluid Transfer Capability.
+      - It can only be realized in Planned Processes that have as participant some Material Entity with a Liquid Aggregate State quality and a Transferred Material Role.
+    logical_definition: >
+      LiquidTransferCapability(x) → FluidTransferCapability(x) ∧ ∀y (hasRealization(x, y) → (PlannedProcess(y) ∧ ∃m (MaterialEntity(m) ∧ hasParticipant(y, m) ∧ ∃q (LiquidAggregateState(q) ∧ hasQuality(m, q)) ∧ ∃r (TransferredMaterialRole(r) ∧ hasRole(m, r)))))
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Solid Transfer Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/SolidTransferCapability"
+    parent_class: Material Transfer Capability
+    definition: >
+      material transfer capability to enable movement of a solid to or from a material entity or site
+    examples:
+      - "the solid transfer capability of an operator to charge powdered medium into a mixing vessel"
+      - "the solid transfer capability of a vacuum-transfer system to move powdered buffer component from a dispensing container into a preparation vessel"
+    classification_conditions:
+      - The entity must be a Material Transfer Capability.
+      - It can only be realized in Planned Processes that have as participant some Material Entity with a Solid Aggregate State quality and a Transferred Material Role.
+    logical_definition: >
+      SolidTransferCapability(x) → MaterialTransferCapability(x) ∧ ∀y (hasRealization(x, y) → (PlannedProcess(y) ∧ ∃m (MaterialEntity(m) ∧ hasParticipant(y, m) ∧ ∃q (SolidAggregateState(q) ∧ hasQuality(m, q)) ∧ ∃r (TransferredMaterialRole(r) ∧ hasRole(m, r)))))
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  # ---------------- Mixing, heat, aseptic, binding, thawing ----------------
+  - label: Mixing Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/MixingCapability"
+    parent_class: Capability
+    definition: >
+      capability of a material artifact or engineered system to combine or redistribute material contents to produce a more uniform material mixture or maintain its uniformity
+    examples:
+      - "Capability of an impeller to agitate cell culture contents in a stirred-tank bioreactor"
+      - "Capability of a rocking platform to agitate liquid in a single-use bag"
+      - "Capability of a ribbon blender that mixes wheat flour, baking powder, salt, and flavoring ingredients to produce pre-mixed baking flour"
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of some Engineered System or Material Artifact.
+    logical_definition: >
+      MixingCapability(x) → Capability(x) ∧ ∃y (capabilityOf(x, y) ∧ (EngineeredSystem(y) ∨ MaterialArtifact(y)))
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs to create a set of necessary and sufficient conditions.
+
+
+  - label: Mixing Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/MixingFunction"
+    parent_class: Mixing Capability
+    definition: >
+      mixing capability that is a function of a material artifact or engineered system
+    examples:
+      - "the mixing function of a bioreactor impeller to redistribute cells and medium within a stirred-tank vessel"
+      - "the mixing function of a magnetic stirrer to combine and redistribute buffer components within a preparation vessel"
+    classification_conditions:
+      - The entity must be a Mixing Capability.
+      - It must be the function of some Material Artifact or Engineered System.
+    logical_definition: >
+      MixingFunction(x) ↔ MixingCapability(x) ∧ ∃b ((MaterialArtifact(b) ∨ EngineeredSystem(b)) ∧ functionOf(x, b))
+
+
+  - label: Heat Exchange Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/HeatExchangeCapability"
+    parent_class: Capability
+    definition: >
+      capability of a material artifact or engineered system to enable transfer of thermal energy between material entities
+    examples:
+      - "the heat exchange capability of a jacketed bioreactor vessel"
+      - "the heat exchange capability of a plate heat exchanger"
+      - "the heat exchange capability of a water bath"
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of some Material Artifact or Engineered System.
+    logical_definition: >
+      HeatExchangeCapability(x) → Capability(x) ∧ ∃b ((MaterialArtifact(b) ∨ EngineeredSystem(b)) ∧ capabilityOf(x, b))
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Aseptic Barrier Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/AsepticBarrierCapability"
+    parent_class: Capability
+    definition: >
+      capability of a material artifact or engineered system to prevent or limit transfer of contaminating material across a physical boundary separating protected material from potential contamination sources
+    examples:
+      - "the aseptic barrier capability of a sterile connector"
+      - "the aseptic barrier capability of a sealed single-use bioprocess bag"
+      - "the aseptic barrier capability of an isolator enclosure"
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of some Material Artifact or Engineered System.
+    logical_definition: >
+      AsepticBarrierCapability(x) → Capability(x) ∧ ∃b ((MaterialArtifact(b) ∨ EngineeredSystem(b)) ∧ capabilityOf(x, b))
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Protein Binding Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProteinBindingCapability"
+    parent_class: Capability
+    definition: >
+      capability of a material entity to selectively and reversibly interact with one or more protein molecules through non-covalent molecular interactions
+    examples:
+      - "the protein binding capability of Protein A resin to bind IgG molecules"
+      - "the protein binding capability of an immobilized capture antibody on an ELISA plate to bind its target protein"
+    counter_examples:
+      - "non-specific binding of proteins to surfaces of plastic containers"
+      - "covalent immobilization of Protein A on agarose resin"
+      - "gel filtration resins: while used for protein purification the interaction mechanism is not binding"
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of some Material Entity.
+    logical_definition: >
+      ProteinBindingCapability(x) → Capability(x) ∧ ∃z (MaterialEntity(z) ∧ capabilityOf(x, z))
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Thawing Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/ThawingCapability"
+    parent_class: Capability
+    definition: >
+      capability that an engineered system or material artifact has to provide controlled heating to raise the temperature of a material to a specified setpoint, typically to transition the material from a solid or frozen state to a soft or liquid state
+    examples:
+      - "Capability to uniformly raise temperature of cryopreserved cells in a sterile water bath"
+      - "capability of an automated thawing device for thawing cryovials by regulating its heated plate temperature"
+      - "capability of a hot-air thawing tunnel that circulates hot air with precisely controlled temperature and flow rate to safely pre-thaw deep-frozen food products"
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of some Engineered System or Material Artifact.
+      - It can only be realized in Planned Processes.
+    logical_definition: >
+      ThawingCapability(x) → Capability(x) ∧ ∃z ((EngineeredSystem(z) ∨ MaterialArtifact(z)) ∧ capabilityOf(x, z)) ∧ ∀y (hasRealization(x, y) → PlannedProcess(y))
+    explanatory_note: >
+      May be exhibited by complex engineered thawing systems or simpler material artifacts like warm water baths. Precise temperature control and monitoring are important to prevent damage to the material during thawing.
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Thawing Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/ThawingFunction"
+    parent_class: Thawing Capability
+    definition: >
+      thawing capability that is a function of a material artifact or engineered system
+    examples:
+      - "the thawing function of a temperature-controlled water bath to thaw closed cryovials containing cryopreserved cells from a cell bank"
+      - "the thawing function of a controlled-rate freeze-and-thaw system to thaw frozen bulk drug substance"
+    classification_conditions:
+      - The entity must be a Thawing Capability.
+      - It must be the function of some Material Artifact or Engineered System.
+    logical_definition: >
+      ThawingFunction(x) ↔ ThawingCapability(x) ∧ ∃b ((MaterialArtifact(b) ∨ EngineeredSystem(b)) ∧ functionOf(x, b))
+
+
+  - label: Thawing System
+    iri: "https://spec.industrialontologies.org/ontology/construct/ThawingSystem"
+    parent_class: Engineered System
+    definition: >
+      engineered system designed to raise the temperature of a material in a controlled manner to reach a specified setpoint, typically to transition it from a solid or frozen state to a soft or liquid state
+    examples:
+      - "Controlled-rate water bath thawing system"
+      - "sterile dry thawing system with temperature control"
+      - "automated cryopreserved cell thawing device with controlled ramp rates"
+    disjoint_with:
+      - Bioreactor
+      - Chromatography System
+    classification_conditions:
+      - The entity must be an Engineered System.
+      - It must have some Thawing Function.
+    logical_definition: >
+      ThawingSystem(x) ↔ EngineeredSystem(x) ∧ ∃f (ThawingFunction(f) ∧ hasFunction(x, f))
+    explanatory_note: >
+      Thawing systems can be applied directly to a material or indirectly by heating the container in which the material is held.
+
+
+  # ---------------- Other equipment ----------------
+  - label: Centrifuge
+    iri: "https://spec.industrialontologies.org/ontology/construct/Centrifuge"
+    parent_class: Engineered System
+    definition: >
+      engineered system designed to separate materials by subjecting them to centrifugal acceleration generated by rotation
+    examples:
+      - "a benchtop centrifuge used to pellet cells from a suspension"
+      - "a disc-stack centrifuge used for continuous separation of cells from cell-culture harvest"
+      - "a microcentrifuge used to separate precipitated material from a liquid sample"
+    classification_conditions:
+      - The entity must be an Engineered System.
+    logical_definition: >
+      Centrifuge(x) → EngineeredSystem(x)
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs to create a set of necessary and sufficient conditions.
+
+
+  - label: Shaker
+    iri: "https://spec.industrialontologies.org/ontology/construct/Shaker"
+    parent_class: Engineered System
+    definition: >
+      engineered system designed to apply shaking motion to material entities placed on or in it
+    examples:
+      - "Orbital shaker used to agitate shake flasks during microbial cultivation"
+      - "Rocking shaker used to move liquid in a single-use bag"
+      - "Incubator shaker used to shake culture vessels while maintaining controlled temperature."
+    classification_conditions:
+      - The entity must be an Engineered System.
+      - It must have some Mixing Function.
+    logical_definition: >
+      Shaker(x) → EngineeredSystem(x) ∧ ∃c (hasFunction(x, c) ∧ MixingFunction(c))
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs to create a set of necessary and sufficient conditions.
+
+
+  - label: Port
+    iri: "https://spec.industrialontologies.org/ontology/construct/Port"
+    parent_class: Site
+    definition: >
+      site that serves as an interface through which material, energy, or information may enter or leave
+    examples:
+      - "Sampling port used to withdraw culture samples from a bioreactor vessel"
+      - "Gas inlet port used to introduce air, oxygen, nitrogen, or CO2 into a bioreactor"
+      - "Probe port used for insertion or connection of a pH, dissolved oxygen, or temperature sensor to a bioreactor"
+    classification_conditions:
+      - The entity must be a Site.
+    logical_definition: >
+      Port(x) → Site(x)
+    is_primitive: true
+    primitive_rationale: >
+      Insufficient constructs; further formalization is expected in the Systems Engineering WG.
+
+
+  - label: Vessel Headspace
+    iri: "https://spec.industrialontologies.org/ontology/construct/VesselHeadspace"
+    parent_class: Site
+    definition: >
+      site within the interior of a vessel that is not occupied by the contained bulk material and is bounded by the vessel walls and, when contents are present, by a surface of those contents
+    examples:
+      - "The gas-filled space above the liquid culture in a stirred-tank bioreactor"
+      - "The nitrogen-blanketed space above a liquid medium in a mixing vessel"
+    classification_conditions:
+      - The entity must be a Site.
+    logical_definition: >
+      VesselHeadspace(x) → Site(x)
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs to create a set of necessary and sufficient conditions.
+
+
+  - label: Single Use Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/SingleUseRole"
+    parent_class: Role
+    definition: >
+      role held by a production consumable or piece of equipment that is used or planned to be used for a single defined use before being discarded or removed from further qualified use
+    examples:
+      - "the single use role borne by a bioreactor bag used for one cell-culture batch and then discarded"
+      - "the single use role borne by a tubing assembly qualified for one manufacturing campaign"
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Piece of Equipment or Production Consumable.
+    logical_definition: >
+      SingleUseRole(x) → Role(x) ∧ ∃z (roleOf(x, z) ∧ (PieceOfEquipment(z) ∨ ProductionConsumable(z)))
+    explanatory_note: >
+      Applies to production consumables or equipment items whose use pattern limits them to a single defined use, such as a batch run or manufacturing campaign.
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs present to fully formalize this construct.
+
+
+  # ---------------- Filtration ----------------
+  - label: Filter
+    iri: "https://spec.industrialontologies.org/ontology/construct/Filter"
+    parent_class: Material Artifact
+    definition: >
+      material artifact that is porous and designed to retain particles above a certain size threshold when a fluid is passed through it
+    examples:
+      - "Polyvinylidene Fluoride (PVDF) membrane filter"
+      - "Hollow-fiber Polyethersulfone (PES) membrane filter"
+      - "Millistak+ HC Pro Pod Depth Filter"
+    classification_conditions:
+      - The entity must be a Material Artifact.
+    logical_definition: >
+      Filter(x) → MaterialArtifact(x)
+    explanatory_note: >
+      Retention is achieved by deposition of suspended particles on the filter surface or by capture within the porous medium. "Retain" here means physical exclusion or capture of particles above a defined size, through structural exclusion or entrapment, and is not reversible under normal operating conditions.
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Depth Filter
+    iri: "https://spec.industrialontologies.org/ontology/construct/DepthFilter"
+    parent_class: Filter
+    definition: >
+      filter that does not rely on a uniform, defined pore size and that is designed to retain particles both on its surface and within its internal matrix
+    examples:
+      - "Cellulose-based depth filter"
+      - "glass fiber depth filter"
+      - "diatomaceous earth (DE) depth filter"
+    disjoint_with:
+      - Membrane Filter
+    classification_conditions:
+      - The entity must be a Filter.
+    logical_definition: >
+      DepthFilter(x) → Filter(x)
+    explanatory_note: >
+      Particles are entrapped or adsorbed both within and on the filter due to a randomly arranged matrix that creates a tortuous flow path, enabling retention of a broad range of particle sizes throughout the filter depth.
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Membrane Filter
+    iri: "https://spec.industrialontologies.org/ontology/construct/MembraneFilter"
+    parent_class: Filter
+    definition: >
+      filter consisting of one or more flat or pleated porous layers made from polymers, that has a defined pore size enabling the removal of particles from liquids by (physical exclusion) sieving or surface adsorption
+    examples:
+      - "Regenerated cellulose membrane filter"
+      - "PES (Polyethersulfone) membrane filter"
+      - "Amicon Ultra Centrifugal Filter, 10 kDa MWCO"
+    counter_examples:
+      - "Metal filters"
+      - "Activated carbon sheets"
+      - "Glass fibers"
+    disjoint_with:
+      - Depth Filter
+    classification_conditions:
+      - The entity must be a Filter.
+    logical_definition: >
+      MembraneFilter(x) → Filter(x)
+    explanatory_note: >
+      Used in biopharmaceutical manufacturing for bioburden control, virus retention, concentration and buffer exchange, including sterilizing filtration (0.2 micron), mycoplasma protection (0.1 micron) and high-throughput buffer filtration; may be multi-layer or single-layer. Typical requirements for protein pharmaceuticals are low protein adsorption, high total throughput, minimum fouling and regulatory compliance.
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  # ---------------- Chromatography ----------------
+  - label: Chromatography Column
+    iri: "https://spec.industrialontologies.org/ontology/construct/ChromatographyColumn"
+    parent_class: Material Artifact
+    definition: >
+      material artifact that is a tube or a cylinder designed to house chromatography medium as the stationary phase during one or more chromatography processes
+    examples:
+      - "Analytical stainless steel chromatography column"
+      - "preparative glass chromatography column"
+      - "high-pressure liquid chromatography (HPLC) column with silica resin"
+    disjoint_with:
+      - Chromatography Medium
+    classification_conditions:
+      - The entity must be a Material Artifact.
+    logical_definition: >
+      ChromatographyColumn(x) → MaterialArtifact(x)
+    explanatory_note: >
+      Columns vary in size and material depending on the application (analytical or preparative) and are selected based on pressure tolerance, chemical compatibility and flow dynamics.
+    is_primitive: true
+    primitive_rationale: >
+      There are currently insufficient constructs to adequately model the shape of a tube or a cylinder.
+
+
+  - label: Chromatography Medium
+    iri: "https://spec.industrialontologies.org/ontology/construct/ChromatographyMedium"
+    parent_class: Material Entity
+    definition: >
+      material entity designed to selectively and reversibly retain different molecules during one or more chromatography processes
+    examples:
+      - "affinity chromatography medium"
+      - "size exclusion chromatography medium"
+      - "anion exchange medium"
+    disjoint_with:
+      - Chromatography Column
+    classification_conditions:
+      - The entity must be a Material Entity.
+    logical_definition: >
+      ChromatographyMedium(x) → MaterialEntity(x)
+    explanatory_note: >
+      Typically engineered to separate by charge, size, hydrophobicity or specific affinity; may be functionalized with ligands or surface groups; commonly packed into columns or cartridges. Physical forms include resins (porous beads), monoliths (continuous porous structures) and membranes (thin porous films). In some workflows (e.g. affinity depletion) bound targets are not eluted, so binding appears irreversible, but the underlying interactions remain chemically reversible.
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Affinity Chromatography Medium
+    iri: "https://spec.industrialontologies.org/ontology/construct/AffinityChromatographyMedium"
+    parent_class: Chromatography Medium
+    definition: >
+      chromatography medium which has an immobilized ligand as its part which has reversible binding capability to a specific part of a biomolecule
+    examples:
+      - "Protein A Resin typically used for IgG capture"
+      - "IMAC resins for capturing proteins with a his-tag as their part"
+      - "Streptavidin agarose used for capturing biotinylated proteins or nucleic acids"
+    classification_conditions:
+      - The entity must be a Chromatography Medium.
+    logical_definition: >
+      AffinityChromatographyMedium(x) → ChromatographyMedium(x)
+    explanatory_note: >
+      Functional groups are chemical moieties on the stationary phase giving general interaction types (ionic, hydrophobic). Ligands are a specialized subset: larger, more complex molecules covalently attached to enable highly selective binding through molecular recognition. Affinity chromatography uses ligands rather than general functional groups to emphasize this specificity.
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Protein A Chromatography Medium
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProteinAChromatographyMedium"
+    parent_class: Affinity Chromatography Medium
+    definition: >
+      affinity chromatography medium which has protein A as an immobilized ligand
+    examples:
+      - "Protein A immobilized on cross-linked agarose beads"
+      - "Recombinant Protein A immobilized on methacrylate beads"
+    classification_conditions:
+      - The entity must be an Affinity Chromatography Medium.
+      - It must have some Protein Binding Capability.
+    logical_definition: >
+      ProteinAChromatographyMedium(x) → AffinityChromatographyMedium(x) ∧ ∃c (ProteinBindingCapability(c) ∧ hasCapability(x, c))
+    explanatory_note: >
+      Protein A is a Staphylococcus aureus cell wall protein that binds the Fc region of IgG, making it a primary capture step in monoclonal antibody purification. IgG capture is deliberately not part of the definition (to keep the concept future-proof); a protein binding capability is added as an axiom instead.
+    is_primitive: true
+    primitive_rationale: >
+      Insufficient constructs; specifically the Protein A ligand is missing.
+
+
+  - label: Anion Exchange Chromatography Medium
+    iri: "https://spec.industrialontologies.org/ontology/construct/AnionExchangeChromatographyMedium"
+    parent_class: Chromatography Medium
+    definition: >
+      chromatography medium consisting of a matrix and positively charged molecules that are chemically bound to it
+    examples:
+      - "DEAE-Sepharose"
+      - "Q Sepharose"
+    classification_conditions:
+      - The entity must be a Chromatography Medium.
+    logical_definition: >
+      AnionExchangeChromatographyMedium(x) → ChromatographyMedium(x)
+    explanatory_note: >
+      The positively charged molecules bound to the matrix serve as functional groups that provide the material basis of the resin function.
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Cation Exchange Chromatography Medium
+    iri: "https://spec.industrialontologies.org/ontology/construct/CationExchangeChromatographyMedium"
+    parent_class: Chromatography Medium
+    definition: >
+      chromatography medium consisting of a matrix and negatively charged molecules that are chemically bound to it
+    examples:
+      - "CM-Sepharose"
+      - "SP-Sepharose"
+    classification_conditions:
+      - The entity must be a Chromatography Medium.
+    logical_definition: >
+      CationExchangeChromatographyMedium(x) → ChromatographyMedium(x)
+    explanatory_note: >
+      The negatively charged molecules bound to the matrix serve as functional groups that provide the material basis of the resin function.
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Hydrophobic Chromatography Medium
+    iri: "https://spec.industrialontologies.org/ontology/construct/HydrophobicChromatographyMedium"
+    parent_class: Chromatography Medium
+    definition: >
+      chromatography medium consisting of a matrix and hydrophobic molecules that are chemically bound to it
+    examples:
+      - "Butyl Sepharose used for Hydrophobic Interaction Chromatography"
+      - "C18 Silica resin used for reversed-phase chromatography"
+    classification_conditions:
+      - The entity must be a Chromatography Medium.
+    logical_definition: >
+      HydrophobicChromatographyMedium(x) → ChromatographyMedium(x)
+    explanatory_note: >
+      The hydrophobic molecules bound to the matrix serve as functional groups that provide the material basis of the medium function.
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Mixed Mode Chromatography Medium
+    iri: "https://spec.industrialontologies.org/ontology/construct/MixedModeChromatographyMedium"
+    parent_class: Chromatography Medium
+    alternative_labels:
+      - multimodal chromatography medium
+    definition: >
+      chromatography medium with immobilized functional groups designed to selectively interact with molecules through multiple distinct interaction mechanisms
+    examples:
+      - "Hydroxyapatite (CHT/CFT/Bio-Gel HT/HTP) resins that interact through electrostatic and calcium coordination complexes"
+      - "Resins with hydrophobic ion exchange ligands"
+    classification_conditions:
+      - The entity must be a Chromatography Medium.
+    logical_definition: >
+      MixedModeChromatographyMedium(x) → ChromatographyMedium(x)
+    explanatory_note: >
+      Interaction modes may work cooperatively or independently depending on operating conditions. Example: the MEP ligand is hydrophobic at neutral and basic pH (uncharged pyridine ring) and becomes positively charged at lower pH, enabling ionic interactions (hydrophobic charge induction chromatography, HCIC).
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Size Exclusion Chromatography Medium
+    iri: "https://spec.industrialontologies.org/ontology/construct/SizeExclusionChromatographyMedium"
+    parent_class: Chromatography Medium
+    definition: >
+      chromatography medium designed to selectively and reversibly retain molecules based on differences in their size, shape, or molecular mass
+    examples:
+      - "Sephacryl resins"
+      - "Biogel Agarose Gel resins"
+      - "Biogel P Polyacrylamide Gel Resins"
+    classification_conditions:
+      - The entity must be a Chromatography Medium.
+    logical_definition: >
+      SizeExclusionChromatographyMedium(x) → ChromatographyMedium(x)
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Stationary Phase
+    iri: "https://spec.industrialontologies.org/ontology/construct/StationaryPhase"
+    parent_class: Material Entity
+    definition: >
+      material entity with a stationary phase role
+    examples:
+      - "C18 bonded silica as stationary phase in reverse-phase chromatography"
+      - "agarose bead gel as stationary phase in size-exclusion chromatography"
+      - "protein A immobilized on resin as stationary phase in affinity chromatography"
+    counter_examples:
+      - "an unpacked chromatography column"
+      - "chromatography medium when it is offered for sale by its manufacturer"
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - The entity must have some Stationary Phase Role.
+    logical_definition: >
+      StationaryPhase(x) ↔ MaterialEntity(x) ∧ ∃r (StationaryPhaseRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      Terms like "chromatographic bed" or "sorbent" may refer to various physical forms; prefer "liquid stationary phase" or "solid stationary phase" when specifying physical state.
+
+
+  - label: Stationary Phase Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/StationaryPhaseRole"
+    parent_class: Role
+    definition: >
+      role held by a solid, gel, or liquid that is planned to be or used in a chromatography process as the immobilized material which selectively and reversibly retains solutes in the mobile phase
+    examples:
+      - "the stationary phase role borne by Protein A resin during affinity chromatography"
+      - "the stationary phase role borne by C18-bonded silica during reversed-phase chromatography"
+    disjoint_with:
+      - Mobile Phase Role
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Material Entity.
+    logical_definition: >
+      StationaryPhaseRole(x) → Role(x) ∧ ∃y (MaterialEntity(y) ∧ roleOf(x, y))
+    explanatory_note: >
+      The stationary phase selectively and reversibly retains solutes through differential interactions with both the stationary and mobile phases (size exclusion, ion exchange, affinity binding).
+    is_primitive: true
+    primitive_rationale: >
+      Insufficient constructs; modeling of solid, gel or liquid is required.
+
+
+  - label: Mobile Phase
+    iri: "https://spec.industrialontologies.org/ontology/construct/MobilePhase"
+    parent_class: Material Entity
+    definition: >
+      material entity with a mobile phase role
+    examples:
+      - "Water as mobile phase in reverse-phase chromatography"
+      - "phosphate buffer as mobile phase in ion-exchange chromatography"
+      - "a water-acetonitrile mixture serving as the mobile phase during gradient elution"
+    counter_examples:
+      - "Liquid used for column cleaning or sanitization after chromatography is completed"
+      - "Air or nitrogen gas used for drying the column after elution"
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - The entity must have some Mobile Phase Role.
+    logical_definition: >
+      MobilePhase(x) ↔ MaterialEntity(x) ∧ ∃r (MobilePhaseRole(r) ∧ hasRole(x, r))
+
+
+  - label: Mobile Phase Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/MobilePhaseRole"
+    parent_class: Role
+    definition: >
+      role held by a fluid when it is planned to be or is used in a chromatography process to percolate through or along the stationary phase
+    examples:
+      - "the mobile phase role borne by phosphate buffer during ion-exchange chromatography"
+      - "the mobile phase role borne by helium during gas chromatography"
+    disjoint_with:
+      - Stationary Phase Role
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Material Entity.
+    logical_definition: >
+      MobilePhaseRole(x) → Role(x) ∧ ∃y (MaterialEntity(y) ∧ roleOf(x, y))
+    explanatory_note: >
+      In gas chromatography the mobile phase may be called "carrier gas"; in an elution process it may be called "eluent".
+    is_primitive: true
+    primitive_rationale: >
+      Insufficient constructs; modeling of fluid is required.
+
+
+  - label: Chromatography System
+    iri: "https://spec.industrialontologies.org/ontology/construct/ChromatographySystem"
+    parent_class: Engineered System
+    definition: >
+      engineered system designed to control the fluid flow of the mobile phase, provide monitoring or detection capabilities, and house or interface with the stationary phase for one or more chromatography processes
+    examples:
+      - "AKTA FPLC Chromatography systems such as AKTA pure and AKTAprime plus"
+      - "Agilent Gas Chromatography System"
+      - "Vanquish HPLC and UHPLC Systems"
+    disjoint_with:
+      - Incubator
+      - Bioreactor
+      - Thawing System
+    classification_conditions:
+      - The entity must be an Engineered System.
+      - It must have some Stationary Phase as a member part at some time.
+      - It must have some Measurement Capability.
+      - It must have some Flow Rate Controlling Function.
+    logical_definition: >
+      ChromatographySystem(x) ↔ EngineeredSystem(x) ∧ ∃s (StationaryPhase(s) ∧ hasMemberPartAtSomeTime(x, s)) ∧ ∃c (MeasurementCapability(c) ∧ hasCapability(x, c)) ∧ ∃f (FlowRateControllingFunction(f) ∧ hasFunction(x, f))
+    explanatory_note: >
+      Typically includes hardware for sample introduction, flow control and detection, plus software for configuring, monitoring and automating purification. Monitoring may include pH, conductivity, pressure, temperature. Available as single-use or multi-use models. "House or interface with the stationary phase" covers both built-in columns/cartridges and connection to external detachable columns.
+
+
+  - label: Analytical Chromatography System
+    iri: "https://spec.industrialontologies.org/ontology/construct/AnalyticalChromatographySystem"
+    parent_class: Chromatography System
+    alternative_labels:
+      - analytic chromatographic system
+    definition: >
+      chromatography system designed to be used in chromatography processes with the primary objective of identifying or quantifying chemical or biological substances
+    examples:
+      - "Gas chromatography-mass spectrometry (GC-MS) system"
+      - "High-performance liquid chromatography (HPLC) system with UV detection"
+      - "Ultra-Performance Liquid Chromatography (UPLC) system"
+    classification_conditions:
+      - The entity must be a Chromatography System.
+    logical_definition: >
+      AnalyticalChromatographySystem(x) → ChromatographySystem(x)
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+  - label: Preparative Chromatography System
+    iri: "https://spec.industrialontologies.org/ontology/construct/PreparativeChromatographySystem"
+    parent_class: Chromatography System
+    alternative_labels:
+      - preparative chromatographic system
+      - process chromatography system
+    definition: >
+      chromatography system designed to be used in chromatography processes that produce fractions for further downstream processing, such as purification, formulation, or additional separations
+    examples:
+      - "Stainless steel preparative HPLC system with large-diameter column"
+      - "single-use preparative chromatography skid for monoclonal antibody purification"
+      - "preparative affinity chromatography system with protein A resin"
+    classification_conditions:
+      - The entity must be a Chromatography System.
+    logical_definition: >
+      PreparativeChromatographySystem(x) → ChromatographySystem(x)
+    explanatory_note: >
+      Commonly used for purification, but also fractionation or other separations where multiple fractions are collected and retained. Typically involves larger sample loads and scales than analytical systems, which focus on identification and quantification.
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs in the ontology to create necessary and sufficient conditions.
+
+
+relationships:
+  # Referenced in class axioms; defined in imported modules (IOF Core / BFO), not declared in this RDF.
+
+  - label: Has Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasRole"
+    definition: >
+      relationship from an entity to a role that it holds
+    domain:
+      - Bioreactor
+      - Mobile Phase
+      - Stationary Phase
+      - Material Entity
+    range:
+      - Production Bioreactor Role
+      - Seed Bioreactor Role
+      - Mobile Phase Role
+      - Stationary Phase Role
+      - Transferred Material Role
+    inverse: Role Of
+    extraction_constraints:
+      - Production Bioreactor must have a Production Bioreactor Role.
+      - Seed Bioreactor must have a Seed Bioreactor Role.
+      - Mobile Phase must have a Mobile Phase Role.
+      - Stationary Phase must have a Stationary Phase Role.
+      - The relationship direction is Role Bearer → Role.
+
+
+  - label: Role Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/roleOf"
+    definition: >
+      relationship from a role to the entity that holds it
+    domain:
+      - Production Bioreactor Role
+      - Seed Bioreactor Role
+      - Single Use Role
+      - Mobile Phase Role
+      - Stationary Phase Role
+    range:
+      - Bioreactor
+      - Piece of Equipment
+      - Production Consumable
+      - Material Entity
+    inverse: Has Role
+    extraction_constraints:
+      - Production Bioreactor Role and Seed Bioreactor Role must be the role of a Bioreactor.
+      - Single Use Role must be the role of a Piece of Equipment or Production Consumable.
+      - Mobile Phase Role and Stationary Phase Role must be the role of a Material Entity.
+      - The relationship direction is Role → Role Bearer.
+
+
+  - label: Has Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasFunction"
+    definition: >
+      relationship from an entity to a function that it bears
+    domain:
+      - Bioreactor
+      - Bioreactor Vessel
+      - Rocker Bag
+      - T-flask
+      - Spinner Flask
+      - Shaker
+      - Chromatography System
+      - Thawing System
+      - Material Component
+    range:
+      - Cultivation Environment Function
+      - Cell Culture Holding Function
+      - Adherent Cell Culture Holding Function
+      - Suspension Cell Culture Holding Function
+      - Mixing Function
+      - Flow Rate Controlling Function
+      - Thawing Function
+    inverse: Function Of
+    extraction_constraints:
+      - Bioreactor must have a Cultivation Environment Function.
+      - Bioreactor Vessel and Rocker Bag must have a Cell Culture Holding Function.
+      - T-flask must have an Adherent Cell Culture Holding Function.
+      - Spinner Flask must have a Suspension Cell Culture Holding Function, and a component part with a Mixing Function.
+      - Shaker must have a Mixing Function.
+      - Chromatography System must have a Flow Rate Controlling Function.
+      - Thawing System must have a Thawing Function.
+      - The relationship direction is Function Bearer → Function.
+
+
+  - label: Function Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/functionOf"
+    definition: >
+      relationship from a function to the entity in which it inheres
+    domain:
+      - Cell Culture Holding Function
+      - Adherent Cell Culture Holding Function
+      - Suspension Cell Culture Holding Function
+      - Cultivation Environment Function
+      - Flow Rate Controlling Function
+      - Mixing Function
+      - Thawing Function
+    range:
+      - Material Entity
+      - Engineered System
+      - Material Artifact
+    inverse: Has Function
+    extraction_constraints:
+      - The three cell culture holding functions must be the function of a Material Entity.
+      - Cultivation Environment Function must be the function of an Engineered System.
+      - Flow Rate Controlling Function, Mixing Function and Thawing Function must be the function of a Material Artifact or Engineered System.
+      - The relationship direction is Function → Function Bearer.
+
+
+  - label: Has Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasCapability"
+    definition: >
+      relationship from an entity to a capability that it bears
+    domain:
+      - Chromatography System
+      - Protein A Chromatography Medium
+    range:
+      - Measurement Capability
+      - Protein Binding Capability
+    inverse: Capability Of
+    extraction_constraints:
+      - Chromatography System must have a Measurement Capability.
+      - Protein A Chromatography Medium must have a Protein Binding Capability.
+      - The relationship direction is Capability Bearer → Capability.
+
+
+  - label: Capability Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/capabilityOf"
+    definition: >
+      relationship from a capability to the entity that bears it
+    domain:
+      - Control Capability
+      - Cultivation Environment Capability
+      - Material Transfer Capability
+      - Mixing Capability
+      - Heat Exchange Capability
+      - Aseptic Barrier Capability
+      - Thawing Capability
+      - Protein Binding Capability
+    range:
+      - Agent
+      - Engineered System
+      - Material Artifact
+      - Material Entity
+    inverse: Has Capability
+    extraction_constraints:
+      - Control Capability and Material Transfer Capability must be the capability of an Agent, Material Artifact or Engineered System.
+      - Cultivation Environment Capability must be the capability of an Engineered System.
+      - Mixing, Heat Exchange, Aseptic Barrier and Thawing Capability must be the capability of an Engineered System or Material Artifact.
+      - Protein Binding Capability must be the capability of a Material Entity.
+      - The relationship direction is Capability → Capability Bearer.
+
+
+  - label: Has Quality
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasQuality"
+    definition: >
+      relationship from an entity to a quality that it bears
+    domain:
+      - Material Entity
+    range:
+      - Fluid Aggregate State
+      - Gaseous Aggregate State
+      - Liquid Aggregate State
+      - Solid Aggregate State
+    extraction_constraints:
+      - The transferred Material Entity in a fluid, gas, liquid or solid transfer must have the matching aggregate state quality.
+      - The relationship direction is Quality Bearer → Quality.
+
+
+  - label: Realized In
+    iri: "http://purl.obolibrary.org/obo/BFO_0000054"
+    definition: >
+      relationship from a realizable entity (capability) to the process in which it is realized
+    domain:
+      - Control Capability
+      - Cultivation Environment Capability
+      - Material Transfer Capability
+      - Fluid Transfer Capability
+      - Thawing Capability
+    range:
+      - Planned Process
+      - Material Addition Process
+      - Material Removal Process
+      - Material Transfer Process
+    inverse: Realizes
+    extraction_constraints:
+      - Control, Cultivation Environment, Fluid Transfer and Thawing Capabilities can only be realized in Planned Processes.
+      - Material Transfer Capability can only be realized in Material Addition, Material Removal or Material Transfer Processes.
+      - The relationship direction is Capability → Process.
+
+
+  - label: Has Participant
+    iri: "http://purl.obolibrary.org/obo/BFO_0000057"
+    definition: >
+      relationship from a process to an entity that participates in it
+    domain:
+      - Planned Process
+    range:
+      - Material Entity
+    inverse: Participates In
+    extraction_constraints:
+      - A process realizing a transfer capability must have as participant a Material Entity with a Transferred Material Role.
+      - The relationship direction is Process → Participant.
+
+
+  - label: Has Member Part
+    iri: "http://purl.obolibrary.org/obo/BFO_0000115"
+    definition: >
+      relationship from a whole to a member part it has (the axioms use hasMemberPartAtSomeTime)
+    domain:
+      - Bioreactor
+      - Chromatography System
+    range:
+      - Bioreactor Vessel
+      - Stationary Phase
+    extraction_constraints:
+      - Bioreactor must have a Bioreactor Vessel as member part.
+      - Chromatography System must have a Stationary Phase as member part.
+      - The relationship direction is Whole → Member Part.
+
+
+  - label: Has Component Part At All Times
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasComponentPartAtAllTimes"
+    definition: >
+      relationship from a whole to a component part it has at all times
+    domain:
+      - Spinner Flask
+    range:
+      - Material Component
+    extraction_constraints:
+      - Spinner Flask must have a Material Component with a Mixing Function as component part.
+      - The relationship direction is Whole → Component Part.
+
+
+  - label: Member Part Of At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000173"
+    definition: >
+      relationship from a member part to the whole it is part of at all times (RDF uses BFO_0000173 in the anonymous Rocker Bag axiom; the FOL names it memberPartOfAtAllTimes)
+    domain:
+      - Rocker Bag
+    range:
+      - Bioreactor
+    extraction_constraints:
+      - A Rocker Bag that is a member part at all times of a Bioreactor is a Bioreactor Vessel.
+      - The relationship direction is Member Part → Whole.

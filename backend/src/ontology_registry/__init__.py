@@ -31,7 +31,12 @@ from .authority import (AuthorityDrift, AuthorityPolicy, CompatibilityReport, Ir
                         MigrationPlan, build_migration_plan, check_compatibility, compare_labels)
 from .profile import NoOpProfileValidator, ProfileValidator, validate_with_optional_profile
 from .extraction_log import write_extraction_log
-from .reasoner import load_reasoning_closure, reason_over_ontology
+from .reasoner import (
+    load_all_local_ontologies,
+    load_reasoning_closure,
+    reason_over_all_local_ontologies,
+    reason_over_ontology,
+)
 
 __all__ = [
     "ImportResolutionError",
@@ -92,5 +97,7 @@ __all__ = [
     "validate_with_optional_profile",
     "write_extraction_log",
     "load_reasoning_closure",
+    "load_all_local_ontologies",
+    "reason_over_all_local_ontologies",
     "reason_over_ontology",
 ]

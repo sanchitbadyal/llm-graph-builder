@@ -13,6 +13,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from langchain_core.documents import Document
 from langchain_neo4j import Neo4jGraph
+import yaml
 
 
 from src.create_chunks import CreateChunksofDocument
@@ -36,7 +37,8 @@ from src.make_relationships import (
 from src.shared.common_fn import (
     check_url_source, create_gcs_bucket_folder_name_hashed, create_graph_database_connection,
     delete_uploaded_local_file, fetch_public_url, get_chunk_and_graphDocument, get_value_from_env,
-    handle_backticks_nodes_relationship_id_type, last_url_segment, save_graphDocuments_in_neo4j, track_token_usage
+    handle_backticks_nodes_relationship_id_type, last_url_segment, save_graphDocuments_in_neo4j,
+    save_ontology_hierarchy_in_neo4j, track_token_usage
 )
 from src.shared.constants import (
     DELETE_ENTITIES_AND_START_FROM_BEGINNING, QUERY_TO_DELETE_EXISTING_ENTITIES,
@@ -730,6 +732,78 @@ async def processing_chunks(chunkId_chunkDoc_list,graph,credentials,file_name,mo
               graph_documents, extraction_envelope
           )
           logging.info("Ontology semantic validation removed %s relationships", removed_relationships)
+
+  # Preserve the owning ontology profile on each extracted node so the graph
+  # API can expose profile membership alongside labels and properties.
+  if extraction_envelope.ontology_id:
+    from src.ontology_registry import OntologyExtractionAdapter
+    manifest = os.getenv(
+        "ONTOLOGY_MANIFEST_PATH",
+        os.path.join(os.path.dirname(__file__), "Ontology", "manifest.yaml"),
+    )
+    selected_ontology_profile = OntologyExtractionAdapter.build_selected(
+        manifest,
+        extraction_envelope.ontology_id.split(","),
+    )
+    from src.ontology_registry.reasoner import ontology_catalog_from_reasoner, parent_relationships, reason_over_all_local_ontologies
+    from src.ontology_registry.repository import OntologyRepository
+
+    reasoned_ontologies = reason_over_all_local_ontologies(OntologyRepository.from_manifest(manifest))
+    from src.shared.common_fn import save_ontology_catalog_in_neo4j
+    save_ontology_catalog_in_neo4j(graph, ontology_catalog_from_reasoner(reasoned_ontologies))
+
+    def normalize_class_label(value: str) -> str:
+      value = re.sub(r"([a-z0-9])([A-Z])", r"\1 \2", value)
+      return " ".join(re.sub(r"[^A-Za-z0-9]+", " ", value).casefold().split())
+
+    node_profile_lookup = dict(selected_ontology_profile.class_profile_lookup)
+    normalized_node_profile_lookup = {
+        normalize_class_label(label): profiles
+        for label, profiles in node_profile_lookup.items()
+    }
+    class_labels_by_iri = dict((iri, label) for label, iri in selected_ontology_profile.class_iri_lookup)
+
+    for graph_document in graph_documents:
+      for node in getattr(graph_document, "nodes", ()) or ():
+        properties = getattr(node, "properties", None)
+        if properties is None:
+          properties = {}
+          node.properties = properties
+        node_label = str(getattr(node, "type", ""))
+        ontology_profile = (
+            normalized_node_profile_lookup.get(normalize_class_label(node_label))
+            or ""
+        )
+        if ontology_profile:
+          properties.pop("ontology_profiles", None)
+          properties["ontology_profile"] = ontology_profile
+          class_iri = {
+              normalize_class_label(label): iri
+              for label, iri in selected_ontology_profile.class_iri_lookup
+          }.get(normalize_class_label(node_label))
+          if class_iri:
+            hierarchy = parent_relationships(class_iri)
+            properties["ontology_class_label"] = node_label
+            parent_iris = [item["child"] for item in hierarchy]
+            properties["ontology_parent_profiles"] = [
+                item["child_profile"] or ""
+                for item in hierarchy
+            ]
+            properties["ontology_class_profile"] = (
+                hierarchy[-1]["parent_profile"] if hierarchy else ""
+            )
+            properties["parent_classes"] = [
+                item.get("child_label", class_labels_by_iri.get(item["child"], item["child"]))
+                for item in hierarchy
+            ]
+            properties["parent_relationships"] = [
+                f'{item.get("child_label", class_labels_by_iri.get(item["child"], item["child"]))} '
+                f'--{item["relationship"]}--> '
+                f'{item.get("parent_label", class_labels_by_iri.get(item["parent"], item["parent"]))}'
+                for item in hierarchy
+            ]
+            properties["ontology_class_iri"] = class_iri
+            properties["ontology_parent_iris"] = parent_iris
   
   cleaned_graph_documents = handle_backticks_nodes_relationship_id_type(graph_documents)
   validation_counts = {"ontology_only": True, "rejected_nodes": [], "rejected_relationships": [],
@@ -751,6 +825,8 @@ async def processing_chunks(chunkId_chunkDoc_list,graph,credentials,file_name,mo
   
   start_save_graphDocuments = time.time()
   save_graphDocuments_in_neo4j(graph, cleaned_graph_documents)
+  if extraction_envelope.ontology_id:
+      save_ontology_hierarchy_in_neo4j(graph, cleaned_graph_documents)
   if extraction_envelope.ontology_id and get_value_from_env("ONTOLOGY_GUIDED_EXTRACTION", "false", "bool"):
       projected_relationships = project_relationship_metadata(graph, cleaned_graph_documents, extraction_envelope)
       logging.info("Ontology provenance projected to %s relationships", projected_relationships)

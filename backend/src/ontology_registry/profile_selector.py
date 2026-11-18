@@ -2,7 +2,13 @@
 
 from pydantic import BaseModel, Field
 
-from .adapter import OntologyExtractionAdapter, ALWAYS_LOADED, DEFAULT_PROFILE_NOTES
+from .adapter import (
+    OntologyExtractionAdapter,
+    ALWAYS_LOADED,
+    BUSINESS_PROFILE_IDS,
+    DEFAULT_PROFILE_NOTES,
+    business_profiles_enabled,
+)
 
 
 class ProfileSelection(BaseModel):
@@ -16,6 +22,7 @@ async def select_profiles(llm, document_text: str) -> ProfileSelection:
     selectable = {
         name: description for name, description in catalog.items()
         if name not in ALWAYS_LOADED
+        and (business_profiles_enabled() or name not in BUSINESS_PROFILE_IDS)
     }
     options = "\n".join(f"- {name}: {description}" for name, description in selectable.items())
     default_notes = "\n".join(
@@ -24,7 +31,7 @@ async def select_profiles(llm, document_text: str) -> ProfileSelection:
     prompt = f"""Choose the optional ontology profiles relevant to this document.
 Return only profile IDs from the catalog. Select multiple profiles when needed.
 Do not select a profile merely because a word appears once. Return an empty list
-when no specialized profile is appropriate; business-common and iof-core are automatic.
+when no specialized profile is appropriate; core-selected is automatic.
 
     Always-loaded profile context:
 {default_notes}

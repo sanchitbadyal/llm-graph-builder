@@ -1,142 +1,460 @@
 profile:
-  id: sensor-selected
+  id: sensor-complete
   ontology_artifact: sensor
   description: >-
-    IOF Sensor module context for sensors, detecting devices, transducers, observers, observation and sensing processes, their functions and roles, and design specifications. Only the explicitly selected classes are sent to the LLM; ancestors appear as context only.
+    Complete profile generated from Sensor.rdf; all named classes and properties declared in the RDF artifact are represented here.
   include_ancestors: true
   include_compatible_properties: true
 
-groups:
-  devices_and_agents:
-    - label: "Sensor"
-      iri: https://spec.industrialontologies.org/ontology/construct/Sensor
-      parent: "Material Entity"
-      definition: "A material entity that responds to changes in its environment."
-    - label: "Detecting Device"
-      iri: https://spec.industrialontologies.org/ontology/construct/DetectingDevice
-      parent: "Material Artifact"
-      definition: "A device or instrument designed to detect the presence of a particular object or substance and to emit a signal in response."
-    - label: "Transducer"
-      iri: https://spec.industrialontologies.org/ontology/construct/Transducer
-      parent: "Material Entity"
-      definition: "A material entity when it is used for transforming energy between two different forms."
-    - label: "Observer"
-      iri: https://spec.industrialontologies.org/ontology/construct/Observer
-      parent: "Agent"
-      definition: "An agent that has an observer role."
-  processes_and_functions:
-    - label: "Observing Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/ObservingProcess
-      parent: "Planned Process"
-      definition: "A planned process executed by an observer which may produce an observation."
-    - label: "Detecting Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/DetectingProcess
-      parent: "Observing Process"
-      definition: "A process that discovers or determines the existence, presence, or fact of some entity."
-    - label: "Sensing Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/SensingProcess
-      parent: "Observing Process"
-      definition: "A process to detect especially in response to a stimulus."
-    - label: "Sensor Measurement Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/SensorMeasurementProcess
-      parent: "Measurement Process"
-      definition: "Measurement of the value of an attribute of a sensor."
-    - label: "Detecting Function"
-      iri: https://spec.industrialontologies.org/ontology/construct/DetectingFunction
-      parent: "Function"
-      definition: "The function that provides information by detecting."
-    - label: "Sensing Function"
-      iri: https://spec.industrialontologies.org/ontology/construct/SensingFunction
-      parent: "Function"
-      definition: "The function of reacting to the environment."
-  roles:
-    - label: "Sensor Role"
-      iri: https://spec.industrialontologies.org/ontology/construct/SensorRole
-      parent: "Role"
-      definition: "A role held by an entity that responds to changes in its environment."
-    - label: "Detector Role"
-      iri: https://spec.industrialontologies.org/ontology/construct/DetectorRole
-      parent: "Role"
-      definition: "A role held by an entity that is designed to detect the presence of a particular object or substance and to emit a signal in response."
-    - label: "Transducer Role"
-      iri: https://spec.industrialontologies.org/ontology/construct/TransducerRole
-      parent: "Role"
-      definition: "A role held by an entity that transforms energy between two different forms."
-    - label: "Observer Role"
-      iri: https://spec.industrialontologies.org/ontology/construct/ObserverRole
-      parent: "Agent Role"
-      definition: "An agent role held by a person, organized group of agents, or engineered system when it perceives or notices an entity and distinguishes that entity from other entities in its environment."
-  information_and_specifications:
-    - label: "Observation"
-      iri: https://spec.industrialontologies.org/ontology/construct/Observation
-      parent: "Information Content Entity"
-      definition: "An information content entity that represents a remark, statement, or comment based on something one has seen, heard, or noticed by an observer."
-    - label: "Sensor Specification"
-      iri: https://spec.industrialontologies.org/ontology/construct/SensorSpecification
-      parent: "Design Specification"
-      definition: "A design specification that prescribes a sensor."
-    - label: "Detector Specification"
-      iri: https://spec.industrialontologies.org/ontology/construct/DetectorSpecification
-      parent: "Design Specification"
-      definition: "A design specification that prescribes a detector."
-    - label: "Transducer Specification"
-      iri: https://spec.industrialontologies.org/ontology/construct/TransducerSpecification
-      parent: "Design Specification"
-      definition: "A design specification that prescribes a transducer."
 
-type_sets:
-  entity_participants: &entity_participants [Sensor, Detecting Device, Transducer, Observer]
-  process_types: &process_types [Observing Process, Detecting Process, Sensing Process, Sensor Measurement Process]
-  function_types: &function_types [Detecting Function, Sensing Function]
-  roles: &roles [Sensor Role, Detector Role, Transducer Role, Observer Role]
-  specifications: &specifications [Sensor Specification, Detector Specification, Transducer Specification]
+entities:
+  - label: Detecting Device
+    iri: "https://spec.industrialontologies.org/ontology/construct/DetectingDevice"
+    parent_class: Material Artifact
+    definition: >
+      a device or instrument designed to detect the presence of a particular
+      object or substance and to emit a signal in response
+    examples:
+      - litmus paper
+    classification_conditions:
+      - The entity must be a Material Artifact.
+      - It must have some Detecting Function.
+    logical_definition: >
+      DetectingDevice(x) ↔ (MaterialArtifact(x) ∧ ∃f
+      (DetectingFunction(f) ∧ hasFunction(x, f)))
+
+
+  - label: Detecting Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/DetectingFunction"
+    parent_class: Function
+    definition: >
+      detecting is the function that provides information
+    classification_conditions:
+      - The entity must be a Function.
+      - It can only be realized in Detecting Processes.
+      - It must be the function of some Detecting Device.
+    logical_definition: >
+      DetectingFunction(x) → (Function(x) ∧ ∃d
+      (DetectingDevice(d) ∧ functionOf(x, d)) ∧ ∀p
+      (realizedIn(x, p) → DetectingProcess(p)))
+
+
+  - label: Detecting Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/DetectingProcess"
+    parent_class: Observing Process
+    definition: >
+      a process that discovers or determines the existence, presence, or
+      fact of some entity
+    classification_conditions:
+      - The process must be an Observing Process.
+
+
+  - label: Detector Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/DetectorRole"
+    parent_class: Role
+    definition: >
+      role held by an entity that is designed to detect the presence of a
+      particular object or substance and to emit a signal in response
+    classification_conditions:
+      - The role must be a Role.
+
+
+  - label: Detector Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/DetectorSpecification"
+    parent_class: Design Specification
+    definition: >
+      design specification that prescribes a detector
+    classification_conditions:
+      - The entity must be a Design Specification.
+      - Everything it prescribes must be a Detecting Device.
+    logical_definition: >
+      DetectorSpecification(x) → (DesignSpecification(x) ∧ ∀d
+      (prescribes(x, d) → DetectingDevice(d)))
+
+
+  - label: Facility
+    iri: "https://spec.industrialontologies.org/ontology/construct/Facility"
+
+
+  - label: Observation
+    iri: "https://spec.industrialontologies.org/ontology/construct/Observation"
+    parent_class: Information Content Entity
+    definition: >
+      an information content entity that represents a remark, statement, or
+      comment based on something one has seen, heard, or noticed by an
+      observer
+    classification_conditions:
+      - The entity must be an Information Content Entity.
+      - It must be the output of some Observing Process.
+    logical_definition: >
+      Observation(x) → (InformationContentEntity(x) ∧ ∃p
+      (ObservingProcess(p) ∧ isOutputOf(x, p)))
+
+
+  - label: Observer
+    iri: "https://spec.industrialontologies.org/ontology/construct/Observer"
+    parent_class: Agent
+    definition: >
+      an agent that has an observer role
+    examples:
+      - a person or a system that watches or notices or measures something to gain information
+    classification_conditions:
+      - The entity must be an Agent.
+      - The entity must have some Observer Role.
+    logical_definition: >
+      Observer(x) ↔ (Agent(x) ∧ ∃r
+      (ObserverRole(r) ∧ hasRole(x, r)))
+
+
+  - label: Observer Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/ObserverRole"
+    parent_class: Agent Role
+    definition: >
+      agent role held by a person, organized group of agents, or engineered
+      system when it perceives or notices an entity and distinguishes that
+      entity from other entities in its environment
+    classification_conditions:
+      - The role must be an Agent Role.
+
+
+  - label: Observing Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/ObservingProcess"
+    parent_class: Planned Process
+    definition: >
+      a planned process executed by an observer which may produce an
+      observation
+    classification_conditions:
+      - The process must be a Planned Process.
+      - Every specified output must be an Observation.
+      - It must have some Observer as a participant.
+    logical_definition: >
+      ObservingProcess(x) → (PlannedProcess(x) ∧ ∃o
+      (Observer(o) ∧ hasParticipant(x, o)) ∧ ∀z
+      (hasSpecifiedOutput(x, z) → Observation(z)))
+
+
+  - label: Sensing Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/SensingFunction"
+    parent_class: Function
+    definition: >
+      the function of reacting to the environment
+    classification_conditions:
+      - The entity must be a Function.
+      - It can only be realized in Sensing Processes.
+      - It must be the function of some Sensor.
+    logical_definition: >
+      SensingFunction(x) → (Function(x) ∧ ∃s
+      (Sensor(s) ∧ functionOf(x, s)) ∧ ∀p
+      (realizedIn(x, p) → SensingProcess(p)))
+    explanatory_note: >
+      a sensing function might inhere in different entities: a machine, in
+      lots of different things of different kinds
+
+
+  - label: Sensing Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/SensingProcess"
+    parent_class: Observing Process
+    definition: >
+      a process to detect especially in response to a stimulus
+    classification_conditions:
+      - The process must be an Observing Process.
+
+
+  - label: Sensor
+    iri: "https://spec.industrialontologies.org/ontology/construct/Sensor"
+    parent_class: Material Entity
+    definition: >
+      a material entity that responds to changes in its environment
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - The entity must have some Sensor Role.
+    logical_definition: >
+      Sensor(x) ↔ (MaterialEntity(x) ∧ ∃r
+      (SensorRole(r) ∧ hasRole(x, r)))
+    explanatory_note: >
+      We are thinking here about physical sensor not virtual sensors/soft
+      sensor
+
+
+  - label: Sensor Measurement Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/SensorMeasurementProcess"
+    parent_class: Measurement Process
+    definition: >
+      measurement of the value of an attribute of a sensor
+    classification_conditions:
+      - The process must be a Measurement Process.
+
+
+  - label: Sensor Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/SensorRole"
+    parent_class: Role
+    definition: >
+      role held by an entity that responds to changes in its environment
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Material Entity.
+    logical_definition: >
+      SensorRole(x) → (Role(x) ∧ ∃y
+      (MaterialEntity(y) ∧ roleOf(x, y)))
+    explanatory_note: >
+      this role may be held by entities other than sensors
+
+
+  - label: Sensor Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/SensorSpecification"
+    parent_class: Design Specification
+    definition: >
+      design specification that prescribes a sensor
+    classification_conditions:
+      - The entity must be a Design Specification.
+      - Everything it prescribes must be a Sensor.
+    logical_definition: >
+      SensorSpecification(x) → (DesignSpecification(x) ∧ ∀s
+      (prescribes(x, s) → Sensor(s)))
+
+
+  - label: Transducer
+    iri: "https://spec.industrialontologies.org/ontology/construct/Transducer"
+    parent_class: Material Entity
+    definition: >
+      material entity when it is used for transforming energy between two
+      different forms
+    examples:
+      - Any device by which variations in one physical quantity (e.g. pressure, brightness) are quantitatively converted into variations in another (e.g. voltage, position)
+      - a loudspeaker that transforms electrical energy into sound energy
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - The entity must have some Transducer Role.
+    logical_definition: >
+      Transducer(x) ↔ (MaterialEntity(x) ∧ ∃r
+      (TransducerRole(r) ∧ hasRole(x, r)))
+
+
+  - label: Transducer Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/TransducerRole"
+    parent_class: Role
+    definition: >
+      role held by an entity that transforms energy between two different
+      forms
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Material Entity.
+    logical_definition: >
+      TransducerRole(x) → (Role(x) ∧ ∃y
+      (MaterialEntity(y) ∧ roleOf(x, y)))
+
+
+  - label: Transducer Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/TransducerSpecification"
+    parent_class: Design Specification
+    definition: >
+      design specification that prescribes a transducer
+    classification_conditions:
+      - The entity must be a Design Specification.
+      - Everything it prescribes must be a Transducer.
+    logical_definition: >
+      TransducerSpecification(x) → (DesignSpecification(x) ∧ ∀t
+      (prescribes(x, t) → Transducer(t)))
+
 
 relationships:
-  - label: "has role"
-    type: HAS_ROLE
-    iri: https://spec.industrialontologies.org/ontology/construct/hasRole
-    domain: *entity_participants
-    range: *roles
-    definition: "The thing holds this role."
-  - label: "has function"
-    type: HAS_FUNCTION
-    iri: https://spec.industrialontologies.org/ontology/construct/hasFunction
-    domain: *entity_participants
-    range: *function_types
-    definition: "The thing bears this function."
-  - label: "function of"
-    type: FUNCTION_OF
-    iri: https://spec.industrialontologies.org/ontology/construct/functionOf
-    domain: *function_types
-    range: *entity_participants
-    definition: "The function inheres in this thing."
-  - label: "has specified output"
-    type: HAS_SPECIFIED_OUTPUT
-    iri: https://spec.industrialontologies.org/ontology/construct/hasSpecifiedOutput
-    domain: *process_types
-    range: ["Observation"]
-    definition: "The process produces this observation as its specified output."
-  - label: "is output of"
-    type: IS_OUTPUT_OF
-    iri: https://spec.industrialontologies.org/ontology/construct/isOutputOf
-    domain: ["Observation"]
-    range: *process_types
-    definition: "The observation is an output of this process."
-  - label: "has participant at some time"
-    type: HAS_PARTICIPANT_AT_SOME_TIME
-    iri: http://purl.obolibrary.org/obo/BFO_0000057
-    domain: *process_types
-    range: *entity_participants
-    definition: "The process has this thing as a participant."
-  - label: "prescribed by"
-    type: PRESCRIBED_BY
-    iri: https://spec.industrialontologies.org/ontology/construct/prescribedBy
-    domain: *entity_participants
-    range: *specifications
-    definition: "The thing is prescribed by this design specification."
-  - label: "prescribes"
-    type: PRESCRIBES
-    iri: https://spec.industrialontologies.org/ontology/construct/prescribes
-    domain: *specifications
-    range: *entity_participants
-    definition: "The design specification prescribes this thing."
+
+  - label: Owns
+    iri: "https://spec.industrialontologies.org/ontology/construct/owns"
+    definition: >
+      relationship from an owner to an entity that it owns
+    domain:
+      - Entity
+    range:
+      - Entity
+    extraction_constraints:
+      - Subject must be an Entity.
+      - Object must be an Entity.
+      - The relationship direction is Owner → Owned Entity.
+
+
+  - label: Is Part Of
+    iri: "https://www.omg.org/spec/Commons/Collections/isPartOf"
+    definition: >
+      relates something to another thing that it is some component or
+      portion of, regardless of how that whole-part relationship is
+      manifested
+    domain:
+      - Entity
+    range:
+      - Entity
+    extraction_constraints:
+      - Subject must be an Entity.
+      - Object must be an Entity.
+      - The relationship direction is Part → Whole.
+
+
+  - label: Prescribes
+    iri: "https://spec.industrialontologies.org/ontology/construct/prescribes"
+    definition: >
+      relationship from a design specification to the entity it prescribes
+    domain:
+      - Sensor Specification
+      - Detector Specification
+      - Transducer Specification
+    range:
+      - Sensor
+      - Detecting Device
+      - Transducer
+    inverse: Prescribed By
+    extraction_constraints:
+      - Sensor Specification must prescribe a Sensor.
+      - Detector Specification must prescribe a Detecting Device.
+      - Transducer Specification must prescribe a Transducer.
+      - The relationship direction is Specification → Prescribed Entity.
+
+
+  - label: Prescribed By
+    iri: "https://spec.industrialontologies.org/ontology/construct/prescribedBy"
+    definition: >
+      relationship from an entity to the design specification that prescribes it
+    domain:
+      - Sensor
+      - Detecting Device
+      - Transducer
+    range:
+      - Sensor Specification
+      - Detector Specification
+      - Transducer Specification
+    inverse: Prescribes
+    extraction_constraints:
+      - Sensor can be prescribed by a Sensor Specification.
+      - Detecting Device can be prescribed by a Detector Specification.
+      - Transducer can be prescribed by a Transducer Specification.
+      - The relationship direction is Prescribed Entity → Specification.
+
+
+  - label: Has Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasRole"
+    definition: >
+      relationship from an entity to a role that it holds
+    domain:
+      - Sensor
+      - Transducer
+      - Observer
+    range:
+      - Sensor Role
+      - Transducer Role
+      - Observer Role
+    inverse: Role Of
+    extraction_constraints:
+      - Sensor must have a Sensor Role.
+      - Transducer must have a Transducer Role.
+      - Observer must have an Observer Role.
+      - The relationship direction is Role Bearer → Role.
+
+
+  - label: Role Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/roleOf"
+    definition: >
+      relationship from a role to the entity that holds it
+    domain:
+      - Sensor Role
+      - Transducer Role
+    range:
+      - Material Entity
+    inverse: Has Role
+    extraction_constraints:
+      - Sensor Role must be the role of a Material Entity.
+      - Transducer Role must be the role of a Material Entity.
+      - The relationship direction is Role → Role Bearer.
+
+
+  - label: Has Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasFunction"
+    definition: >
+      relationship from an entity to a function that it bears
+    domain:
+      - Detecting Device
+      - Sensor
+    range:
+      - Detecting Function
+      - Sensing Function
+    inverse: Function Of
+    extraction_constraints:
+      - Detecting Device must have a Detecting Function.
+      - Sensor can have a Sensing Function.
+      - The relationship direction is Function Bearer → Function.
+
+
+  - label: Function Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/functionOf"
+    definition: >
+      relationship from a function to the entity in which it inheres
+    domain:
+      - Detecting Function
+      - Sensing Function
+    range:
+      - Detecting Device
+      - Sensor
+    inverse: Has Function
+    extraction_constraints:
+      - Detecting Function must be the function of a Detecting Device.
+      - Sensing Function must be the function of a Sensor.
+      - The relationship direction is Function → Function Bearer.
+
+
+  - label: Realized In
+    iri: "http://purl.obolibrary.org/obo/BFO_0000054"
+    definition: >
+      relationship from a function to the process in which it is realized
+    domain:
+      - Detecting Function
+      - Sensing Function
+    range:
+      - Detecting Process
+      - Sensing Process
+    inverse: Realizes
+    extraction_constraints:
+      - Detecting Function can only be realized in a Detecting Process.
+      - Sensing Function can only be realized in a Sensing Process.
+      - The relationship direction is Function → Process.
+
+
+  - label: Has Specified Output
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasSpecifiedOutput"
+    definition: >
+      relationship from a planned process to an information content entity that it is specified to produce
+    domain:
+      - Observing Process
+    range:
+      - Observation
+    inverse: Is Specified Output Of
+    extraction_constraints:
+      - Subject must be an Observing Process.
+      - Object must be an Observation.
+      - The relationship direction is Observing Process → Observation.
+
+
+  - label: Is Output Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/isOutputOf"
+    definition: >
+      relationship from an output to the process that produced it
+    domain:
+      - Observation
+    range:
+      - Observing Process
+    extraction_constraints:
+      - Subject must be an Observation.
+      - Object must be an Observing Process.
+      - The relationship direction is Observation → Observing Process.
+
+
+  - label: Has Participant
+    iri: "http://purl.obolibrary.org/obo/BFO_0000057"
+    definition: >
+      relationship from a process to an entity that participates in it
+    domain:
+      - Observing Process
+    range:
+      - Observer
+    inverse: Participates In
+    extraction_constraints:
+      - Subject must be an Observing Process.
+      - Object must be an Observer.
+      - The relationship direction is Observing Process → Observer.

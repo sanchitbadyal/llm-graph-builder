@@ -1,0 +1,484 @@
+profile:
+  id: targets-limits-ranges-complete
+  ontology_artifact: targetslimitsranges
+  description: >-
+    Complete profile generated from TargetsLimitsRanges.rdf; all named classes and properties declared in the RDF artifact are represented here.
+  include_ancestors: true
+  include_compatible_properties: true
+
+
+imports:
+- iri: https://spec.industrialontologies.org/ontology/biopharma/ReferenceOntologyCandidates/
+  label: Reference Ontology Candidates
+  note: Imported ontology; referenced classes and properties are defined there, not redeclared in this
+    module.
+- iri: https://spec.industrialontologies.org/ontology/core/Core/
+  label: IOF Core
+  note: Imported ontology; referenced classes and properties are defined there, not redeclared in this
+    module.
+
+
+entities:
+  - label: Acceptance Limit Value Expression
+    iri: "https://spec.industrialontologies.org/ontology/construct/AcceptanceLimitValueExpression"
+    parent_class: Limit Value Expression
+    definition: >
+      limit value expression beyond which an acceptance criterion is not
+      satisfied
+    examples:
+      - An acceptance limit of 100 ng/mg for residual host cell protein indicates that values above 100 ng/mg do not satisfy the applicable acceptance criterion
+      - An acceptance limit of 95 % purity indicates that values below 95 % do not satisfy the applicable acceptance criterion
+      - An acceptance limit of 2.0 % relative standard deviation for analytical method suitability indicates that values above 2.0 % do not satisfy the applicable acceptance criterion
+    classification_conditions:
+      - The entity must be a Limit Value Expression.
+      - It must be a continuant part of some Acceptance Criteria at all times.
+    logical_definition: >
+      AcceptanceLimitValueExpression(x) ↔ LimitValueExpression(x) ∧ ∃a
+      (AcceptanceCriteria(a) ∧ continuantPartOfAtAllTimes(x, a))
+
+
+  - label: Action Limit Value Expression
+    iri: "https://spec.industrialontologies.org/ontology/construct/ActionLimitValueExpression"
+    parent_class: Limit Value Expression
+    definition: >
+      limit value expression beyond which action is required to address a
+      departure from normal operating conditions and prevent or mitigate
+      potential impact on process performance or product quality
+    synonyms:
+      - action limit
+    examples:
+      - Chromatography column pressure has a normal operating range with an upper boundary of 1.5 bar and an action limit of 2.0 bar. A pressure value beyond 2.0 bar requires action to address potential fouling or blockage and prevent column damage or product loss
+      - dissolved oxygen in a bioreactor has a setpoint of 40 % air saturation, a normal operating range of 35–45 %, a lower action limit of 30 %, and an upper action limit of 50 %. Crossing either action limit requires action to restore dissolved oxygen to normal operating conditions and prevent impact on cell culture performance
+    classification_conditions:
+      - The entity must be a Limit Value Expression.
+    logical_definition: >
+      ActionLimitValueExpression(x) → LimitValueExpression(x)
+    explanatory_note: >
+      Exceeding an action limit requires the response prescribed for that
+      limit, which may include process adjustment, investigation, deviation
+      or nonconformance handling, impact assessment, and corrective or
+      preventive action. Action limits are part of the internal process
+      control framework and are not regulatory reporting limits.
+
+
+  - label: Alert Limit Value Expression
+    iri: "https://spec.industrialontologies.org/ontology/construct/AlertLimitValueExpression"
+    parent_class: Limit Value Expression
+    definition: >
+      limit value expression beyond which an early warning of potential
+      drift from normal operating conditions is triggered, prompting closer
+      monitoring or investigation
+    synonyms:
+      - alert limit
+    examples:
+      - Chromatography column pressure has a normal operating range with an upper boundary of 1.5 bar, an alert limit of 1.8 bar, and an action limit of 2.0 bar. A pressure value beyond 1.8 bar provides an early warning of potential fouling or blockage before the action limit is reached
+    classification_conditions:
+      - The entity must be a Limit Value Expression.
+    logical_definition: >
+      AlertLimitValueExpression(x) → LimitValueExpression(x)
+    explanatory_note: >
+      An alert limit serves as an early warning indicator of process drift.
+      It is typically established from process data using statistical
+      methods such as control charts or capability analysis and is
+      periodically reassessed during continued process verification (CPV).
+      It does not represent a specification or regulatory boundary; it
+      supports proactive control by identifying trends that may lead toward
+      an action limit or out-of-specification condition. Where alert and
+      action limits both exist, the alert limit ordinarily lies closer to
+      the expected operating region than the action limit. In
+      environmental monitoring, a result at the alert level urges attention
+      to approaching action conditions, and a result at the action level
+      should prompt a more thorough investigation.
+
+
+  - label: Control Limit Value Expression
+    iri: "https://spec.industrialontologies.org/ontology/construct/ControlLimitValueExpression"
+    parent_class: Limit Value Expression
+    definition: >
+      limit value expression that is a statistical or operational threshold
+      beyond which a process is considered to be out of control
+    synonyms:
+      - control limit
+      - CL
+    examples:
+      - For a temperature setpoint of 37 °C, the normal operating range is 36.5–37.5 °C and the operational control limits are 36.0 °C for the lower control limit and 38.0 °C for the upper control limit. Values outside the control limits indicate that the process is outside its expected controlled behavior and require investigation
+    classification_conditions:
+      - The entity must be a Limit Value Expression.
+    logical_definition: >
+      ControlLimitValueExpression(x) → LimitValueExpression(x)
+    explanatory_note: >
+      A statistical control limit is derived from process data (such as
+      mean ± 3σ) and reflects the natural variability of a stable process.
+      An operational control limit is defined using process knowledge,
+      equipment capability or risk assessment when statistical data are
+      limited or physical or engineering constraints dictate the threshold.
+      In biopharmaceutical manufacturing, control limits are typically
+      refined during continued process verification.
+
+
+  - label: Initial Control Limit Value Expression
+    iri: "https://spec.industrialontologies.org/ontology/construct/InitialControlLimitValueExpression"
+    parent_class: Control Limit Value Expression
+    definition: >
+      control limit established from limited process data or process
+      knowledge and applicable only until sufficient information is
+      available to establish statistically justified control limits
+    synonyms:
+      - initial control limit
+      - provisional control limit
+    examples:
+      - After installing a new sparger system, dissolved oxygen is monitored using initial control limits of 33 %–47 %, pending evaluation of additional process data to establish long-term control limits
+      - during the first 10 batches after scale-up, temperature is monitored using initial control limits of 36–38 °C until sufficient data are available to establish statistically justified control limits
+    classification_conditions:
+      - The entity must be a Control Limit Value Expression.
+    logical_definition: >
+      InitialControlLimitValueExpression(x) → ControlLimitValueExpression(x)
+    explanatory_note: >
+      An initial (provisional) control limit is used at the start of
+      continued process verification or after process changes when process
+      history is limited. It provides monitored boundaries while additional
+      data are collected to confirm process stability and variability, and
+      is replaced by control limits that represent the long-term state of
+      control once adequate data are available.
+
+
+  - label: Limit Value Expression
+    iri: "https://spec.industrialontologies.org/ontology/construct/LimitValueExpression"
+    parent_class: Value Expression
+    definition: >
+      value expression that is the specified boundary value for a
+      particular entity
+    examples:
+      - Chromatography column pressure has an alert limit of 1.8 bar and an action limit of 2.0 bar
+      - temperature control limits are set at 36.5 °C for the lower control limit and 37.5 °C for the upper control limit
+    classification_conditions:
+      - The entity must be a Value Expression.
+      - It must be a limit value expression of some Temporal Region, Specifically Dependent Continuant, Process Boundary or Process Characteristic at some time.
+    logical_definition: >
+      LimitValueExpression(x) → ValueExpression(x) ∧ ∃e
+      ((TemporalRegion(e) ∨ SpecificallyDependentContinuant(e) ∨
+      ProcessBoundary(e) ∨ ProcessCharacteristic(e)) ∧
+      isLimitValueExpressionOfAtSomeTime(x, e))
+    explanatory_note: >
+      A limit value expression is an expressed threshold used to interpret
+      whether a value remains within, reaches or crosses a relevant
+      boundary. It is not the full range and not the entity or quantity to
+      which the limit applies. Its subclasses determine the meaning of the
+      threshold, such as early warning, loss of control, required
+      corrective action, or acceptance/non-acceptance. It may be an upper
+      threshold, a lower threshold or another boundary value.
+
+
+  - label: Long-Term Control Limit Value Expression
+    iri: "https://spec.industrialontologies.org/ontology/construct/LongTermControlLimitValueExpression"
+    parent_class: Control Limit Value Expression
+    definition: >
+      control limit established from statistically sufficient process data
+      and used for routine monitoring and evaluation of stable long-term
+      process performance
+    synonyms:
+      - long-term control limit
+    examples:
+      - After one year of commercial production, temperature control limits of 36–38 °C are established as long-term control limits based on statistical analysis of 40 commercial manufacturing batches from a stable process
+    classification_conditions:
+      - The entity must be a Control Limit Value Expression.
+    logical_definition: >
+      LongTermControlLimitValueExpression(x) → ControlLimitValueExpression(x)
+    explanatory_note: >
+      A long-term control limit is established after sufficient
+      manufacturing data have been collected to characterize normal process
+      variability with statistical confidence. It is the boundary for
+      routine monitoring, trend evaluation and process capability
+      assessment, replacing provisional control limits once stable
+      operation is demonstrated, and is periodically reviewed and
+      re-established as part of lifecycle maintenance.
+
+
+  - label: Normal Operating Range Value Expression
+    iri: "https://spec.industrialontologies.org/ontology/construct/NormalOperatingRangeValueExpression"
+    parent_class: Range Value Expression
+    definition: >
+      range value expression that is an interval around a setpoint within
+      which a particular process parameter is expected to vary during
+      normal operation of a process and that lies within the proven
+      acceptable range for that parameter
+    synonyms:
+      - normal operating range
+      - NOR
+    examples:
+      - 36.5–37.5 °C as the normal operating range around the setpoint 37 °C for bioreactor temperature during mammalian cell culture
+      - 15–25 minutes as the normal operating range for residence time in a chromatography column during protein purification
+    classification_conditions:
+      - The entity must be a Range Value Expression.
+      - It must have some Setpoint Value Expression as a continuant part at all times.
+    logical_definition: >
+      NormalOperatingRangeValueExpression(x) → RangeValueExpression(x) ∧ ∃z
+      (SetpointValueExpression(z) ∧ hasContinuantPartAtAllTimes(x, z))
+    explanatory_note: >
+      NOR is the span within which a process parameter is expected to vary
+      during normal operation. It is distinct from broader ranges, which may
+      include values associated with abnormal operation or alarm
+      conditions. A parameter within its NOR is operating within its
+      expected region of normal variability.
+
+
+  - label: Proven Acceptable Range Value Expression
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProvenAcceptableRangeValueExpression"
+    parent_class: Range Value Expression
+    definition: >
+      range value expression that has been validated through testing or
+      documented experience and that is a prescribed interval within which
+      a single process parameter may vary without adversely affecting
+      product quality, assuming all other process parameters are held
+      constant at their target values
+    synonyms:
+      - proven acceptable range
+      - PAR
+    examples:
+      - 35.0–38.0 °C as the proven acceptable range for bioreactor temperature during mammalian cell culture
+      - pH 6.5–7.5 as the proven acceptable range for culture medium pH during fermentation
+    classification_conditions:
+      - The entity must be a Range Value Expression.
+    logical_definition: >
+      ProvenAcceptableRangeValueExpression(x) → RangeValueExpression(x)
+    explanatory_note: >
+      The PAR is established through process development and validation
+      activities and is typically narrower than the full instrument
+      operating span. It defines the demonstrated boundaries for acceptable
+      operation of the process parameter; excursions outside it may be
+      treated as process deviations requiring assessment, investigation or
+      corrective action.
+
+
+  - label: Range Value Expression
+    iri: "https://spec.industrialontologies.org/ontology/construct/RangeValueExpression"
+    parent_class: Value Expression
+    definition: >
+      value expression that is an interval for values of a particular entity
+    examples:
+      - 36.5–37.5 °C as the normal operating range around the setpoint 37 °C for bioreactor temperature during mammalian cell culture
+      - pH 6.5–7.5 as the proven acceptable range for culture medium pH during fermentation
+    classification_conditions:
+      - The entity must be a Value Expression.
+    logical_definition: >
+      RangeValueExpression(x) → ValueExpression(x)
+    explanatory_note: >
+      A range value expression represents the interval itself, not the
+      individual values within it. The interval is used to interpret,
+      prescribe or evaluate values associated with a specified entity, and
+      its exact meaning depends on the subclass or use context, such as a
+      target range, a normal operating range or a proven acceptable range.
+
+
+  - label: Setpoint Value Expression
+    iri: "https://spec.industrialontologies.org/ontology/construct/SetpointValueExpression"
+    parent_class: Target Value Expression
+    definition: >
+      target value expression which is a prescribed value that a process
+      parameter should have at a particular time point or during a
+      particular time interval of some planned process
+    synonyms:
+      - setpoint
+      - process parameter target value
+    examples:
+      - for a residential dwelling temperature control process, the setpoint might be 72 degrees Fahrenheit during the day and 68 degrees Fahrenheit during the night
+      - 250 rpm as the setpoint for agitation speed in a formulation tank
+      - 20 minutes as the setpoint for residence time in the protein purification chromatography step
+    classification_conditions:
+      - The entity must be a Target Value Expression.
+    logical_definition: >
+      SetpointValueExpression(x) → TargetValueExpression(x)
+    explanatory_note: >
+      A setpoint is a prescribed target for a process parameter. It may be
+      used by an automated control system, supervisory system, recipe or
+      operator as a reference for regulating or evaluating the realized
+      parameter. In a closed-loop control system, the measured process
+      variable is compared with the setpoint and the difference may be used
+      to determine control action.
+
+
+  - label: Specification Limit Value Expression
+    iri: "https://spec.industrialontologies.org/ontology/construct/SpecificationLimitValueExpression"
+    parent_class: Acceptance Limit Value Expression
+    definition: >
+      acceptance limit value expression that is part of a specification
+    examples:
+      - upper specification limit for host cell protein concentration in a drug substance
+      - lower specification limit for protein concentration in a formulated product
+      - upper and lower specification limits for osmolality of a process intermediate
+      - specification limit for aggregate percentage in a monoclonal antibody product
+      - specification limit for bioburden in a material prior to further processing
+    classification_conditions:
+      - The entity must be an Acceptance Limit Value Expression.
+    logical_definition: >
+      SpecificationLimitValueExpression(x) → AcceptanceLimitValueExpression(x)
+
+
+  - label: Target Range Value Expression
+    iri: "https://spec.industrialontologies.org/ontology/construct/TargetRangeValueExpression"
+    parent_class: Range Value Expression
+    definition: >
+      range value expression that prescribes a preferred interval for a
+      quality attribute, material attribute, performance indicator, or
+      process parameter at a particular time point or during a particular
+      time interval of some planned process
+    examples:
+      - target pH range of 7.0–7.4 for a prepared buffer before use
+      - target osmolality range of 280–320 mOsm/kg for a prepared media lot at release
+      - target viability range of 90–95 % for a cell culture before inoculation
+      - target galactosylation range of 45–55 % for a product quality attribute at harvest
+    classification_conditions:
+      - The entity must be a Range Value Expression.
+    logical_definition: >
+      TargetRangeValueExpression(x) → RangeValueExpression(x)
+    explanatory_note: >
+      A target range describes the preferred band for an attribute,
+      indicator or parameter and does not by itself state what variation is
+      permissible. To state permissibility or demonstrated acceptability of
+      a parameter range, use normal operating range (NOR) or proven
+      acceptable range (PAR) instead.
+
+
+  - label: Target Value Expression
+    iri: "https://spec.industrialontologies.org/ontology/construct/TargetValueExpression"
+    parent_class: Value Expression
+    definition: >
+      value expression which is a prescribed value that a quality
+      attribute, material attribute, performance indicator, or process
+      parameter should have at a particular time point or during a
+      particular time interval of some planned process
+    synonyms:
+      - target value
+    examples:
+      - 37 °C as the target value for bioreactor temperature during cell culture
+      - pH 7.2 as the target value for a prepared buffer before use
+      - 300 mOsm/kg as the target osmolality for a prepared media lot at release
+      - 95 % viability as the target value for a cell culture before inoculation
+      - 5.0 g/L as the target product concentration at harvest
+    classification_conditions:
+      - The entity must be a Value Expression.
+    logical_definition: >
+      TargetValueExpression(x) → ValueExpression(x)
+    explanatory_note: >
+      For material attributes, a target value may prescribe the required
+      attribute value of an input material, such as a raw material,
+      intermediate or prepared solution, at a specified checkpoint in the
+      planned process, for example at material receipt, at lot release, or
+      when the material is introduced into the process.
+
+
+relationships:
+
+  - label: Is Limit Value Expression Of At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/isLimitValueExpressionOfAtSomeTime"
+    definition: >
+      relation from a limit value expression to an entity indicating that
+      the limit value expression contains a value that marks a boundary of
+      a value region relevant to the entity
+    examples:
+      - the lower pH limit of 6.8 for the pH of cell culture material during a production culture process
+      - the upper harvest viability limit of 80 percent for the harvest viability ratio
+      - the upper endotoxin level limit of 0.25 EU/mL for the endotoxin level of a prepared solution
+    domain:
+      - Limit Value Expression
+    range:
+      - Entity
+    extraction_constraints:
+      - Subject must be a Limit Value Expression.
+      - Object must be an Entity, in practice a Temporal Region, Specifically Dependent Continuant, Process Boundary or Process Characteristic.
+      - The value region may concern one characteristic (such as a permitted pH range) or several considered together (such as permitted combinations of pH and temperature).
+      - The boundary value may be included in the region or be an excluded limiting value, such as a supremum or infimum.
+      - The relation alone does not state whether a value at, below or above the boundary is conforming, an alert, an action condition or a violation.
+      - The relationship direction is Limit Value Expression → Entity.
+
+
+  - label: Is Lower Side Limit Value Expression Of At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/isLowerSideLimitValueExpressionOfAtSomeTime"
+    definition: >
+      relation from a limit value expression to an entity indicating that
+      the limit value expression contains a value that marks a lower-side
+      boundary of a value region relevant to the entity with respect to an
+      ordering in the relevant value space
+    examples:
+      - the lower pH limit of 6.8 for the pH of cell culture material during a production culture process
+      - the lower dissolved oxygen limit of 30 percent air saturation for the dissolved oxygen saturation ratio of a cell culture
+      - the lower acceptable harvest viability limit of 80 percent for the harvest viability ratio
+      - the lower operating temperature limit of 35 °C for the temperature of process material in a production bioreactor
+    domain:
+      - Limit Value Expression
+    range:
+      - Entity
+    extraction_constraints:
+      - Subject must be a Limit Value Expression.
+      - Object must be an Entity.
+      - It is a more specific form of Is Limit Value Expression Of At Some Time.
+      - The relationship direction is Limit Value Expression → Entity.
+
+
+  - label: Is Upper Side Limit Value Expression Of At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/isUpperSideLimitValueExpressionOfAtSomeTime"
+    definition: >
+      relation from a limit value expression to an entity indicating that
+      the limit value expression contains a value that marks an upper-side
+      boundary of a value region relevant to the entity with respect to an
+      ordering in the relevant value space
+    examples:
+      - the upper pH limit of 7.2 for the pH of cell culture material during a production culture process
+      - the upper dissolved oxygen limit of 60 percent air saturation for the dissolved oxygen saturation ratio of a cell culture
+      - the upper endotoxin level limit of 0.25 EU/mL for the endotoxin level of a prepared solution
+      - the upper operating temperature limit of 37 °C for the temperature of process material in a production bioreactor
+    domain:
+      - Limit Value Expression
+    range:
+      - Entity
+    extraction_constraints:
+      - Subject must be a Limit Value Expression.
+      - Object must be an Entity.
+      - It is a more specific form of Is Limit Value Expression Of At Some Time.
+      - The relationship direction is Limit Value Expression → Entity.
+
+
+  - label: Is Value Expression Of At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/isValueExpressionOfAtSomeTime"
+    definition: >
+      relationship from a value expression to the entity whose value it
+      expresses at some time
+    domain:
+      - Value Expression
+    range:
+      - Entity
+    extraction_constraints:
+      - Subject must be a Value Expression.
+      - Object must be an Entity.
+      - Is Limit Value Expression Of At Some Time is a more specific form of this relationship.
+      - The relationship direction is Value Expression → Entity.
+
+
+  - label: Has Continuant Part At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000110"
+    definition: >
+      relationship from a continuant to a continuant that is part of it at
+      all times
+    domain:
+      - Normal Operating Range Value Expression
+    range:
+      - Setpoint Value Expression
+    inverse: Continuant Part Of At All Times
+    extraction_constraints:
+      - Normal Operating Range Value Expression must have a Setpoint Value Expression as a continuant part.
+      - The relationship direction is Whole → Part.
+
+
+  - label: Continuant Part Of At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000177"
+    definition: >
+      relationship from a continuant to a continuant of which it is a part
+      at all times
+    domain:
+      - Acceptance Limit Value Expression
+    range:
+      - Acceptance Criteria
+    inverse: Has Continuant Part At All Times
+    extraction_constraints:
+      - Acceptance Limit Value Expression must be a continuant part of some Acceptance Criteria.
+      - The relationship direction is Part → Whole.

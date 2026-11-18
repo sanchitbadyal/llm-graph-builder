@@ -1,0 +1,1731 @@
+imports:
+  - iri: "https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaReferenceOntologyAttributes/"
+    label: Biopharma Reference Ontology Attributes
+  - iri: "https://spec.industrialontologies.org/ontology/202603/biopharma/MolecularEntity/"
+    label: Molecular Entity
+  - iri: "https://spec.industrialontologies.org/ontology/202603/biopharma/ReferenceOntologyCandidates/"
+    label: Reference Ontology Candidates
+  - iri: "https://spec.industrialontologies.org/ontology/202603/core/Core/"
+    label: IOF Core
+    
+profile:
+  id: biopharma-material-complete
+  ontology_artifact: biopharma_material
+  description: >-
+    Complete profile generated from BiopharmaMaterial.rdf; all named classes declared in the RDF artifact are represented here.
+  include_ancestors: true
+  include_compatible_properties: true
+
+
+entities:
+  - label: Acidifying Agent Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/AcidifyingAgentRole"
+    parent_class: pH Adjusting Agent Role
+    definition: "pH adjusting agent role of a material entity when it is used, or planned to be used, to lower pH"
+    examples:
+      - "the acidifying agent role of hydrochloric acid solution used to lower the pH of a buffer"
+    classification_conditions:
+      - The role must be a pH Adjusting Agent Role.
+    logical_definition: "AcidifyingAgentRole(x) → PHAdjustingAgentRole(x)"
+
+  - label: Alkalizing Agent Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/AlkalizingAgentRole"
+    parent_class: pH Adjusting Agent Role
+    definition: "pH adjusting agent role of a material entity when it is used, or planned to be used, to raise pH"
+    examples:
+      - "the alkalizing agent role of sodium hydroxide solution used to raise the pH of a buffer"
+    classification_conditions:
+      - The role must be a pH Adjusting Agent Role.
+    logical_definition: "AlkalizingAgentRole(x) → PHAdjustingAgentRole(x)"
+
+  - label: Amount Of Substance
+    iri: "https://spec.industrialontologies.org/ontology/construct/AmountOfSubstance"
+    parent_class: Quality
+    definition: "quality of a material entity that is proportional to the number of elementary entities of a particular kind present in that material entity"
+    examples:
+      - "the molar amount of glucose in a glucose constituent of a cell culture medium"
+    classification_conditions:
+      - The entity must be a Quality.
+      - It must be the quality of some Material Entity.
+      - Any magnitude basis in a bearer part must be a Material Entity of which the bearer is made.
+    logical_definition: "AmountOfSubstance(x) → Quality(x) ∧ ∃m (MaterialEntity(m) ∧ qualityOf(x, m) ∧ ∀p (hasMagnitudeBasisInBearerPart(x, p) → (MaterialEntity(p) ∧ isMadeOfAtSomeTime(m, p))))"
+
+  - label: Antifoaming Agent
+    iri: "https://spec.industrialontologies.org/ontology/construct/AntifoamingAgent"
+    parent_class: Material Entity
+    definition: "material entity with an antifoaming agent role"
+    examples:
+      - "Polydimethylsiloxane serving as an antifoam in a mammalian cell culture bioreactor to minimize surface foaming"
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - The entity must have some Antifoaming Agent Role.
+    logical_definition: "AntifoamingAgent(x) ↔ MaterialEntity(x) ∧ ∃r(AntifoamingAgentRole(r) ∧ hasRole(x,r))"
+
+  - label: Antifoaming Agent Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/AntifoamingAgentRole"
+    parent_class: Role
+    definition: "role of a material entity when it is used, or planned to be used, to reduce or prevent foam formation in a liquid"
+    examples:
+      - "Polydimethylsiloxane serving as an antifoam in a mammalian cell culture bioreactor to minimize surface foaming"
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Material Entity.
+    logical_definition: "AntifoamingAgentRole(x) → Role(x) ∧ ∃m (MaterialEntity(m) ∧ roleOf(x, m))"
+
+  - label: Bacterium Cell
+    iri: "https://spec.industrialontologies.org/ontology/construct/BacteriumCell"
+    parent_class: Cell
+    definition: "cell that lacks a membrane-bound nucleus and has ribosomes of the bacterial type"
+    examples:
+      - "an Escherichia coli cell"
+    classification_conditions:
+      - The entity must be a Cell.
+    logical_definition: "BacteriumCell(x) → Cell(x)"
+
+  - label: Basal Culture Medium
+    iri: "https://spec.industrialontologies.org/ontology/construct/BasalCultureMedium"
+    parent_class: Culture Medium
+    definition: "culture medium which has the basal culture medium role"
+    examples:
+      - "MEM (Minimum Essential Medium)"
+    classification_conditions:
+      - The entity must be a Culture Medium.
+      - It must have some Basal Culture Medium Role.
+    logical_definition: "BasalCultureMedium(x) ↔ CultureMedium(x) ∧ ∃f (BasalCultureMediumRole(f) ∧ hasRole(x, f))"
+
+  - label: Basal Culture Medium Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/BasalCultureMediumRole"
+    parent_class: Role
+    definition: "role held by a culture medium when it is used or planned to be used either directly in a cell culture process to provide essential nutritional and physicochemical support or together with supplements to prepare a complete culture medium for such a process"
+    examples:
+      - "MEM bearing a basal culture medium role when planned to be supplemented with fetal bovine serum to support robust proliferation of mammalian cells"
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Culture Medium.
+      - It can only be realized in Planned Processes that have a Culture Medium Supplement as input or a Cell Culture as participant.
+    logical_definition: "BasalCultureMediumRole(x) → Role(x) ∧ ∃m (CultureMedium(m) ∧ roleOf(x, m)) ∧ ∀p (hasRealization(x, p) → (PlannedProcess(p) ∧ ((∃s (CultureMediumSupplement(s) ∧ hasInput(p, s))) ∨ (∃c (CellCulture(c) ∧ hasParticipantAtSomeTime(p, c))))))"
+
+  - label: Bioburden
+    iri: "https://spec.industrialontologies.org/ontology/construct/Bioburden"
+    parent_class: Relational Quality
+    definition: "relational quality of a material entity that is the extent to which viable microorganisms are present in or on the surface of the material entity"
+    examples:
+      - "the bioburden of a raw material lot before use in manufacturing"
+    classification_conditions:
+      - The entity must be a Relational Quality.
+      - It must be the quality of some Material Entity.
+    logical_definition: "Bioburden(x) → RelationalQuality(x) ∧ ∃m (MaterialEntity(m) ∧ qualityOf(x, m))"
+
+  - label: Bioproduction Supporting Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/BioproductionSupportingFunction"
+    parent_class: Specialized Culture Medium Function
+    definition: "culture medium specialized function that enables the generation of a target biological product by sustaining cellular activity under production conditions"
+    examples:
+      - "function of CHO production media"
+    classification_conditions:
+      - The entity must be a Specialized Culture Medium Function.
+    logical_definition: "BioproductionSupportingFunction(x) → SpecializedCultureMediumFunction(x)"
+
+  - label: Buffer Solution
+    iri: "https://spec.industrialontologies.org/ontology/construct/BufferSolution"
+    parent_class: Solution
+    definition: "solution consisting of a mixture of a weak acid and its conjugate base or a weak base and its conjugate acid which is resistant to pH changes upon addition of an acidic or basic component"
+    examples:
+      - "phosphate buffer used during protein purification"
+    classification_conditions:
+      - The entity must be a Solution.
+      - It must have some Buffering Function.
+    logical_definition: "BufferSolution(x) ↔ Solution(x) ∧ ∃f (BufferingFunction(f) ∧ hasFunction(x, f))"
+
+  - label: Buffering Agent Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/BufferingAgentRole"
+    parent_class: Role
+    definition: "role of a material entity when it is added or planned to be added to a mixture, typically aqueous, to enable or enhance the mixture's resistance to changes in pH upon the addition of small amounts of acid or base"
+    examples:
+      - "mixture of sodium phosphate monobasic and dibasic salts playing a buffer role in cell-culture medium to maintain pH near neutrality"
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of a Material Entity that is a continuant part of a Mixed Material having a Buffering Capability, or that is prescribed by an Input Specification of a Plan Specification prescribing a Planned Process whose specified output is a Mixed Material with a Buffering Capability.
+    logical_definition: "BufferingAgentRole(x) → Role(x) ∧ ∃m(MaterialEntity(m) ∧ roleOf(x, m) ∧ ((∃s∃b(MixedMaterial(s) ∧ BufferingCapability(b) ∧ hasCapability(s, b) ∧ continuantPartOfAtSomeTime(m, s) ∧ materialBasisOfAtSomeTime(m, b))) ∨ (∃i∃p∃o∃s∃b(InputSpecification(i) ∧ PlanSpecification(p) ∧ continuantPartOfAtAllTimes(i, p) ∧ prescribes(p, o) ∧ PlannedProcess(o) ∧ prescribedBy(m, i) ∧ MixedMaterial(s) ∧ hasSpecifiedOutput(o, s) ∧ BufferingCapability(b) ∧ hasCapability(s, b)))))"
+
+  - label: Buffering Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/BufferingCapability"
+    parent_class: Capability
+    definition: "capability of a solution to resist a change in pH when acid or base is added"
+    examples:
+      - "the buffering capability of a phosphate buffer during acid addition"
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of some Solution.
+    logical_definition: "BufferingCapability(x) → Capability(x) ∧ ∃s (Solution(s) ∧ capabilityOf(x, s))"
+
+  - label: Buffering Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/BufferingFunction"
+    parent_class: Buffering Capability
+    definition: "function of a solution to resist a change in pH when an acid or base is added"
+    examples:
+      - "the buffering function of a phosphate buffer solution prepared for buffer exchange"
+    classification_conditions:
+      - The entity must be a Buffering Capability.
+      - It must be the function of some Solution.
+    logical_definition: "BufferingFunction(x) ↔ BufferingCapability(x) ∧ ∃s (Solution(s) ∧ functionOf(x,s))"
+
+  - label: Bulk Density
+    iri: "https://spec.industrialontologies.org/ontology/construct/BulkDensity"
+    parent_class: Mass Density
+    definition: "mass density of a particulate material that is the mass per total bulk volume occupied by the material, where the total bulk volume includes particle volume, pore volume within particles, and void volume between particles"
+    examples:
+      - "the bulk density of powdered cell culture medium"
+    classification_conditions:
+      - The entity must be a Mass Density.
+      - It must be the quality of some Material Entity that has a Particulate Form.
+    logical_definition: "BulkDensity(x) → MassDensity(x) ∧ ∃m (MaterialEntity(m) ∧ qualityOf(x, m) ∧ ∃f (ParticulateForm(f) ∧ hasQuality(m, f)))"
+
+  - label: Caking Propensity
+    iri: "https://spec.industrialontologies.org/ontology/construct/CakingPropensity"
+    parent_class: Disposition
+    definition: "disposition of a particulate material entity to form persistent lumps, agglomerates, or a coherent solid mass"
+    examples:
+      - "the caking propensity of powdered cell culture medium during storage under humid conditions"
+    classification_conditions:
+      - The entity must be a Disposition.
+      - It must be the disposition of some Material Entity that has a Particulate Form.
+    logical_definition: "CakingPropensity(x) → Disposition(x) ∧ ∃m (MaterialEntity(m) ∧ dispositionOf(x, m) ∧ ∃f (ParticulateForm(f) ∧ hasQuality(m, f)))"
+
+  - label: Carbon Source Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/CarbonSourceRole"
+    parent_class: Nutrient Role
+    definition: "nutrient role held by a material entity that provides carbon used by an organism or cell for biosynthesis, energy generation, or both"
+    examples:
+      - "Role held by glucose as the main carbon source in DMEM (Dulbecco's Modified Eagle's Medium) or CD-CHO media"
+    classification_conditions:
+      - The role must be a Nutrient Role.
+    logical_definition: "CarbonSourceRole(x) → NutrientRole(x)"
+
+  - label: Cell
+    iri: "https://spec.industrialontologies.org/ontology/construct/Cell"
+    parent_class: Object
+    definition: "object of anatomical origin (part of or deriving from an organism) that has as its parts a maximally connected cell compartment surrounded by a plasma membrane"
+    examples:
+      - "CHO-K1 cell"
+    classification_conditions:
+      - The entity must be an Object.
+    logical_definition: "Cell(x) → Object(x)"
+
+  - label: Cell Bank
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellBank"
+    parent_class: Object Aggregate
+    definition: "object aggregate consisting of containers whose contents are uniform portions derived from a single pool of cells and that are stored under defined conditions as a referenceable source of cells"
+    examples:
+      - "a master cell bank used to generate working cell banks"
+    classification_conditions:
+      - The entity must be an Object Aggregate.
+    logical_definition: "CellBank(x) → ObjectAggregate(x)"
+
+  - label: Cell Count
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellCount"
+    parent_class: Count
+    definition: "count that is the number of cells that are present as parts of a material entity"
+    examples:
+      - "the cell count of a cell suspension before seeding"
+    classification_conditions:
+      - The entity must be a Count.
+      - Any magnitude basis in a bearer part must be a Cell.
+    logical_definition: "CellCount(x) → Count(x) ∧ ∀p(hasMagnitudeBasisInBearerPart(x,p) → Cell(p))"
+
+  - label: Cell Culture
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellCulture"
+    parent_class: Material Entity
+    definition: "material entity that has cultured cells and the media in which they are being propagated or stored as parts"
+    examples:
+      - "CHO Suspension Culture in CD-CHO Medium"
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - It must have some Culture Medium as a continuant part at all times.
+      - It must have some Cultured Cell Population as a continuant part at all times.
+    logical_definition: "CellCulture(x) → MaterialEntity(x) ∧ ∃y (CultureMedium(y) ∧ hasContinuantPartAtAllTimes(x, y)) ∧ ∃z (CulturedCellPopulation(z) ∧ hasContinuantPartAtAllTimes(x, z))"
+
+  - label: Cell Culture Derived Impurity Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellCultureDerivedImpurityRole"
+    parent_class: Manufacturing Process Related Impurity Role
+    definition: "manufacturing process related impurity role held by a material entity that originates from an acellular material component of a cell culture"
+    examples:
+      - "the cell culture-derived impurity role of residual insulin from a cell culture medium supplement remaining in a harvested process intermediate"
+    classification_conditions:
+      - The role must be a Manufacturing Process Related Impurity Role.
+    logical_definition: "CellCultureDerivedImpurityRole(x) → ManufacturingProcessRelatedImpurityRole(x)"
+
+  - label: Cell Density
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellDensity"
+    parent_class: Number Density
+    definition: "number density that is the number of cells per unit size"
+    examples:
+      - "the total cell density of a bioreactor culture sample"
+    classification_conditions:
+      - The entity must be a Number Density.
+      - Any magnitude basis in a bearer part must be a Cell.
+    logical_definition: "CellDensity(x) → NumberDensity(x) ∧ ∀p(hasMagnitudeBasisInBearerPart(x,p) → Cell(p))"
+
+  - label: Cell Line
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellLine"
+    parent_class: Cultured Cell Population
+    definition: "cultured cell population that is derived from a primary cell source and that has been propagated through repeated subculture under defined conditions, resulting in a genetically stable and homogeneous population of cells with a shared propagation history"
+    examples:
+      - "HeLa cells"
+    classification_conditions:
+      - The entity must be a Cultured Cell Population.
+    logical_definition: "CellLine(x) → CulturedCellPopulation(x)"
+
+  - label: Cell Line Lineage
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellLineLineage"
+    parent_class: History
+    definition: "history of the development of a cell line"
+    examples:
+      - "HEK293 history: derived from human embryonic kidney cells transfected with adenovirus 5 DNA selected for stable growth in culture"
+    classification_conditions:
+      - The entity must be a History.
+      - It must be the history of some Cell Line.
+    logical_definition: "CellLineLineage(x) ↔ History(x) ∧ ∃y(CellLine(y) ∧ historyOf(x, y))"
+
+  - label: Cell Population
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellPopulation"
+    parent_class: Object Aggregate
+    definition: "object aggregate which only has cells as its member parts"
+    examples:
+      - "CHO Cell Line"
+    classification_conditions:
+      - The entity must be an Object Aggregate.
+      - It must have some Cell as a member part at some time.
+      - Everything that is a member part at some time must be a Cell.
+    logical_definition: "CellPopulation(x) ↔ ObjectAggregate(x) ∧ ∃y(Cell(y) ∧ hasMemberPartAtSomeTime(x, y)) ∧ ∀z(hasMemberPartAtSomeTime(x, z) → Cell(z))"
+
+  - label: Cell Proliferation Supporting Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellProliferationSupportingFunction"
+    parent_class: Specialized Culture Medium Function
+    definition: "specialized culture medium function that supports cell division and maintenance of cell viability during expansion culture by providing appropriate nutrients and culture-supporting physicochemical properties"
+    examples:
+      - "function of T cell expansion medium containing cytokines"
+    classification_conditions:
+      - The entity must be a Specialized Culture Medium Function.
+    logical_definition: "CellProliferationSupportingFunction(x) → SpecializedCultureMediumFunction(x)"
+
+  - label: Cell Substrate Derived Impurity Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellSubstrateDerivedImpurityRole"
+    parent_class: Manufacturing Process Related Impurity Role
+    definition: "manufacturing process related impurity role held by a material entity that originates from cells used in a manufacturing process"
+    examples:
+      - "the cell substrate-derived impurity role of host cell protein remaining in a monoclonal antibody process intermediate"
+    classification_conditions:
+      - The role must be a Manufacturing Process Related Impurity Role.
+    logical_definition: "CellSubstrateDerivedImpurityRole(x) → ManufacturingProcessRelatedImpurityRole(x)"
+
+  - label: Cell Viability Ratio
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellViabilityRatio"
+    parent_class: Relative Abundance
+    definition: "relative abundance that is the number of viable cells in a cell population relative to the total number of cells in that population"
+    examples:
+      - "the cell viability ratio of a CHO cell culture reported as 95% viable during production"
+    classification_conditions:
+      - The entity must be a Relative Abundance.
+    logical_definition: "CellViabilityRatio(x) → RelativeAbundance(x)"
+
+  - label: Chemical Substance Material
+    iri: "https://spec.industrialontologies.org/ontology/construct/ChemicalSubstanceMaterial"
+    parent_class: Material Entity
+    definition: "material entity that is made primarily of one kind of molecular entity, allowing for minor impurities"
+    examples:
+      - "a portion of water"
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - It must be made of some Molecular Entity at all times.
+    logical_definition: "ChemicalSubstanceMaterial(x) → MaterialEntity(x) ∧ ∃m (MolecularEntity(m) ∧ isMadeOfAtAllTimes(x, m))"
+
+  - label: Chemically Defined Culture Medium
+    iri: "https://spec.industrialontologies.org/ontology/construct/ChemicallyDefinedCultureMedium"
+    parent_class: Serum Free Culture Medium
+    definition: "serum free culture medium in which each component and its concentration are known and reproducible, and that excludes undefined components such as serum, extracts, or hydrolysates"
+    examples:
+      - "ExpiCHO Expression Medium is chemically defined, serum-free, used in high-density fed-batch processes"
+    classification_conditions:
+      - The entity must be a Serum Free Culture Medium.
+    logical_definition: "ChemicallyDefinedCultureMedium(x) → SerumFreeCultureMedium(x)"
+
+  - label: Cloned Cell Line
+    iri: "https://spec.industrialontologies.org/ontology/construct/ClonedCellLine"
+    parent_class: Cell Line
+    definition: "cell line that originates from a single ancestral cell"
+    examples:
+      - "CHO DG44 clone 5F7 – a clonal derivative of CHO DG44 cells selected for high monoclonal antibody productivity"
+    classification_conditions:
+      - The entity must be a Cell Line.
+    logical_definition: "ClonedCellLine(x) → CellLine(x)"
+
+  - label: Compendial Grade Classifier
+    iri: "https://spec.industrialontologies.org/ontology/construct/CompendialGradeClassifier"
+    parent_class: Material Grade Classifier
+    definition: "material grade classifier that classifies a material entity as conforming to the requirements stated in an applicable pharmacopeial monograph"
+    examples:
+      - "USP grade classification of a sodium chloride raw material lot"
+    classification_conditions:
+      - The entity must be a Material Grade Classifier.
+    logical_definition: "CompendialGradeClassifier(x) → MaterialGradeClassifier(x)"
+
+  - label: Complete Culture Medium
+    iri: "https://spec.industrialontologies.org/ontology/construct/CompleteCultureMedium"
+    parent_class: Culture Medium
+    definition: "culture medium which has the complete culture medium role"
+    examples:
+      - "DMEM (Dulbecco's Modified Eagle's Medium) + 10 % FBS (Fetal Bovine Serum)"
+    classification_conditions:
+      - The entity must be a Culture Medium.
+      - It must have some Complete Culture Medium Role.
+    logical_definition: "CompleteCultureMedium(x) ↔ CultureMedium(x) ∧ ∃f (CompleteCultureMediumRole(f) ∧ hasRole(x, f))"
+
+  - label: Complete Culture Medium Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/CompleteCultureMediumRole"
+    parent_class: Role
+    definition: "role held by a culture medium when it is used or planned for direct use in a cell culture process to meet the full set of nutritional, biological, and physicochemical requirements specified for that process without requiring prior supplementation"
+    examples:
+      - "DMEM supplemented with 10% fetal bovine serum bearing a complete culture medium role when planned for direct use in a mammalian cell culture process"
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Culture Medium.
+      - It can only be realized in Planned Processes that have some Cell Culture as a participant.
+    logical_definition: "CompleteCultureMediumRole(x) → Role(x) ∧ ∃m (CultureMedium(m) ∧ roleOf(x, m)) ∧ ∀p (hasRealization(x, p) → (PlannedProcess(p) ∧ ∃c (CellCulture(c) ∧ hasParticipantAtSomeTime(p, c))))"
+
+  - label: Concentration
+    iri: "https://spec.industrialontologies.org/ontology/construct/Concentration"
+    parent_class: Relational Quality
+    definition: "relational quality of a mixture that is the amount of substance or number or mass or volume of a specified constituent of the mixture per unit volume of that mixture"
+    examples:
+      - "mass concentration of glucose in a cell culture medium"
+    classification_conditions:
+      - The entity must be a Relational Quality.
+      - It must be the quality of some Mixed Material.
+      - Any magnitude basis in a bearer part must be a Material Entity of which the Mixed Material is made.
+    logical_definition: "Concentration(x) → RelationalQuality(x) ∧ ∃m (MixedMaterial(m) ∧ qualityOf(x, m) ∧ ∀c (hasMagnitudeBasisInBearerPart(x, c) → (MaterialEntity(c) ∧ isMadeOfAtSomeTime(m, c))))"
+
+  - label: Contaminant Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/ContaminantRole"
+    parent_class: Material Impurity Role
+    definition: "material impurity role held by a material entity when it is adventitiously introduced during a manufacturing process"
+    examples:
+      - "the contaminant role of mycoplasma adventitiously introduced into a mammalian cell culture"
+    classification_conditions:
+      - The role must be a Material Impurity Role.
+    logical_definition: "ContaminantRole(x) → MaterialImpurityRole(x)"
+
+  - label: Cryoprotective Agent Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/CryoprotectiveAgentRole"
+    parent_class: Protective Agent Role
+    definition: "protective agent role of a material entity when it is used, or planned to be used, to protect one or more other material entities from damage during cooling, freezing, frozen storage, or thawing"
+    examples:
+      - "role held by Dimethyl sulfoxide (DMSO) added to freezing medium for cell preservation"
+    classification_conditions:
+      - The role must be a Protective Agent Role.
+    logical_definition: "CryoprotectiveAgentRole(x) → ProtectiveAgentRole(x)"
+
+  - label: Culture Medium
+    iri: "https://spec.industrialontologies.org/ontology/construct/CultureMedium"
+    parent_class: Mixed Material
+    definition: "mixed material that is a liquid, semi-solid or solid formulation that provides essential nutrients (such as carbon, nitrogen, vitamins, and minerals) and controlled physicochemical conditions (such as pH and osmotic balance) required for the growth, maintenance, or specific metabolic activity of microorganisms or cells"
+    examples:
+      - "DMEM (Dulbecco's Modified Eagle's Medium)"
+    classification_conditions:
+      - The entity must be a Mixed Material.
+    logical_definition: "CultureMedium(x) → MixedMaterial(x)"
+
+  - label: Culture Medium Supplement
+    iri: "https://spec.industrialontologies.org/ontology/construct/CultureMediumSupplement"
+    parent_class: Material Entity
+    definition: "material entity that has a culture medium supplement role"
+    examples:
+      - "Albumin solution is a media supplement when added to serum-free medium to stabilize cells"
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - It must have some Culture Medium Supplement Role.
+    logical_definition: "CultureMediumSupplement(x) ↔ MaterialEntity(x) ∧ ∃r(CultureMediumSupplementRole(r) ∧ hasRole(x, r))"
+
+  - label: Culture Medium Supplement Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/CultureMediumSupplementRole"
+    parent_class: Material Component Role
+    definition: "material component role held by a material entity when it is added or planned to be added to culture media to enrich or modify the medium composition or functional properties"
+    examples:
+      - "Albumin stock solution bearing a media supplement role when added to serum-free medium to stabilize cells"
+    classification_conditions:
+      - The role must be a Material Component Role.
+      - It must be the role of a Material Entity that is a component part of some Culture Medium at all times, or is prescribed by an Input Specification of a Plan Specification prescribing a Planned Process with a Culture Medium as participant.
+    logical_definition: "CultureMediumSupplementRole(x) → MaterialComponentRole(x) ∧ ∃m (MaterialEntity(m) ∧ roleOf(x, m) ∧ ((∃c (CultureMedium(c) ∧ componentPartOfAtAllTimes(m, c))) ∨ ∃i∃p∃q (InputSpecification(i) ∧ prescribedBy(m, i) ∧ PlanSpecification(p) ∧ continuantPartOfAtAllTimes(i, p) ∧ prescribes(p, q) ∧ PlannedProcess(q) ∧ ∃c (CultureMedium(c) ∧ hasParticipantAtSomeTime(q, c)))))"
+
+  - label: Culture Preservation Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/CulturePreservationFunction"
+    parent_class: Specialized Culture Medium Function
+    definition: "culture medium specialized function that maintains cell viability and structural integrity during storage and transport by providing physicochemical conditions and protective components that minimize cellular stress under refrigerated or cryogenic conditions"
+    examples:
+      - "function of cryopreservation medium to maintain cell viability under cryogenic conditions"
+    classification_conditions:
+      - The entity must be a Specialized Culture Medium Function.
+    logical_definition: "CulturePreservationFunction(x) → SpecializedCultureMediumFunction(x)"
+
+  - label: Cultured Cell
+    iri: "https://spec.industrialontologies.org/ontology/construct/CulturedCell"
+    parent_class: Cell
+    definition: "cell that is grown, maintained, or adapted to grow in a controlled artificial environment that supports its survival and proliferation"
+    examples:
+      - "CHO-K1 cell"
+    classification_conditions:
+      - The entity must be a Cell.
+    logical_definition: "CulturedCell(x) → Cell(x)"
+
+  - label: Cultured Cell Population
+    iri: "https://spec.industrialontologies.org/ontology/construct/CulturedCellPopulation"
+    parent_class: Cell Population
+    definition: "cell population which only has cultured cells as its member parts"
+    examples:
+      - "population of CHO-K1 cells"
+    classification_conditions:
+      - The entity must be a Cell Population.
+      - It must have some Cultured Cell as a member part at some time.
+      - Everything that is a member part at some time must be a Cultured Cell.
+    logical_definition: "CulturedCellPopulation(x) ↔ CellPopulation(x) ∧ ∃y(CulturedCell(y) ∧ hasMemberPartAtSomeTime(x, y)) ∧ ∀z(hasMemberPartAtSomeTime(x, z) → CulturedCell(z))"
+
+  - label: Dead
+    iri: "https://spec.industrialontologies.org/ontology/construct/Dead"
+    parent_class: Viability Status
+    definition: "viability status of a biological material entity that has irreversibly ceased to maintain the biological processes characteristic of life"
+    examples:
+      - "CHO cell classified as dead after trypan blue staining"
+    classification_conditions:
+      - The entity must be a Viability Status.
+    logical_definition: "Dead(x) → ViabilityStatus(x)"
+
+  - label: Dead Cell Count
+    iri: "https://spec.industrialontologies.org/ontology/construct/DeadCellCount"
+    parent_class: Cell Count
+    definition: "cell count that is the number of dead cells that are present as parts of a material entity"
+    examples:
+      - "the dead cell count of a cell suspension determined during viability analysis"
+    classification_conditions:
+      - The entity must be a Cell Count.
+      - Any magnitude basis in a bearer part must be a Cell that has quality Dead.
+    logical_definition: "DeadCellCount(x) → CellCount(x) ∧ ∀p(hasMagnitudeBasisInBearerPart(x,p) → (Cell(p) ∧ ∃d(Dead(d) ∧ hasQuality(p,d))))"
+
+  - label: Dead Cell Density
+    iri: "https://spec.industrialontologies.org/ontology/construct/DeadCellDensity"
+    parent_class: Cell Density
+    definition: "cell density that is the number of dead cells per unit size"
+    examples:
+      - "the dead cell density of a stressed CHO cell culture sample after viability analysis"
+    classification_conditions:
+      - The entity must be a Cell Density.
+      - Any magnitude basis in a bearer part must be a Cell that has quality Dead.
+    logical_definition: "DeadCellDensity(x) → CellDensity(x) ∧ ∀p(hasMagnitudeBasisInBearerPart(x,p) → (Cell(p) ∧ ∃d(Dead(d) ∧ hasQuality(p,d))))"
+
+  - label: Dead Cell Population
+    iri: "https://spec.industrialontologies.org/ontology/construct/DeadCellPopulation"
+    parent_class: Cell Population
+    definition: "cell population consisting of only dead cells"
+    examples:
+      - "the subpopulation of propidium iodide-positive CHO cells identified by flow cytometry within a cell culture"
+    classification_conditions:
+      - The entity must be a Cell Population.
+      - It must have some Cell with quality Dead as a member part at some time.
+      - Every member part at some time must be a Cell with quality Dead.
+    logical_definition: "DeadCellPopulation(x) ↔ CellPopulation(x) ∧ ∃y(Cell(y) ∧ ∃q(Dead(q) ∧ hasQuality(y, q)) ∧ hasMemberPartAtSomeTime(x, y)) ∧ ∀z(hasMemberPartAtSomeTime(x, z) → (Cell(z) ∧ ∃r(Dead(r) ∧ hasQuality(z, r))))"
+
+  - label: Dissolution Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/DissolutionRole"
+    parent_class: Role
+    definition: "role held by a material entity that is realized in a dissolution process in which it participates in forming a solution"
+    examples:
+      - "a sodium chloride portion bearing a dissolution role that is realized in a buffer preparation process having a sodium chloride solution as specified output"
+    classification_conditions:
+      - The role must be a Role.
+      - It can only be realized in Processes that have some Solution as output.
+    logical_definition: "DissolutionRole(x) → Role(x) ∧ ∀y(hasRealization(x, y) → (Process(y) ∧ ∃z(Solution(z) ∧ hasOutput(y, z))))"
+
+  - label: Dissolved Oxygen Saturation Ratio
+    iri: "https://spec.industrialontologies.org/ontology/construct/DissolvedOxygenSaturationRatio"
+    parent_class: Solution Saturation Ratio
+    definition: "solution saturation ratio that is the dissolved oxygen concentration in a liquid solution relative to the dissolved oxygen saturation concentration in that liquid solution"
+    examples:
+      - "the dissolved oxygen saturation ratio of cell culture medium in a production bioreactor at 37 °C"
+    classification_conditions:
+      - The entity must be a Solution Saturation Ratio.
+      - It must be the quality of some Solution that has a Liquid Aggregate State.
+      - Any magnitude basis in a bearer part must be a Dioxygen Molecule of which that Solution is made.
+    logical_definition: "DissolvedOxygenSaturationRatio(x) → SolutionSaturationRatio(x) ∧ ∃s∃l (Solution(s) ∧ qualityOf(x, s) ∧ LiquidAggregateState(l) ∧ hasQuality(s, l) ∧ ∀p(hasMagnitudeBasisInBearerPart(x,p) → (DioxygenMolecule(p) ∧ isMadeOfAtSomeTime(s,p))))"
+
+  - label: Downstream Derived Impurity Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/DownstreamDerivedImpurityRole"
+    parent_class: Manufacturing Process Related Impurity Role
+    definition: "manufacturing process related impurity role held by a material entity that originates from a raw material, production consumable, or equipment used in a downstream manufacturing process"
+    examples:
+      - "the downstream-derived impurity role of residual Protein A ligand leached from chromatography resin into a drug substance intermediate"
+    classification_conditions:
+      - The role must be a Manufacturing Process Related Impurity Role.
+    logical_definition: "DownstreamDerivedImpurityRole(x) → ManufacturingProcessRelatedImpurityRole(x)"
+
+  - label: Dusting Propensity
+    iri: "https://spec.industrialontologies.org/ontology/construct/DustingPropensity"
+    parent_class: Disposition
+    definition: "disposition of a particulate material entity to generate airborne particulate matter during handling or processing"
+    examples:
+      - "the dusting propensity of powdered cell culture medium during weighing"
+    classification_conditions:
+      - The entity must be a Disposition.
+      - It must be the disposition of some Material Entity that has a Particulate Form.
+    logical_definition: "DustingPropensity(x) → Disposition(x) ∧ ∃m (MaterialEntity(m) ∧ dispositionOf(x, m) ∧ ∃f (ParticulateForm(f) ∧ hasQuality(m, f)))"
+
+  - label: Emulsion Propensity
+    iri: "https://spec.industrialontologies.org/ontology/construct/EmulsionPropensity"
+    parent_class: Disposition
+    definition: "disposition of a material entity to form an emulsion"
+    examples:
+      - "the emulsion propensity of an oil-containing process intermediate when mixed with an aqueous buffer during liquid-liquid extraction"
+    classification_conditions:
+      - The entity must be a Disposition.
+      - It must be the disposition of some Material Entity.
+    logical_definition: "EmulsionPropensity(x) → Disposition(x) ∧ ∃m (MaterialEntity(m) ∧ dispositionOf(x, m))"
+
+  - label: Energy Substrate Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/EnergySubstrateRole"
+    parent_class: Nutrient Role
+    definition: "nutrient role held by a material entity that is metabolized in cellular pathways to generate adenosine triphosphate, reducing equivalents, or other forms of metabolic energy required for growth, maintenance, or biosynthesis"
+    examples:
+      - "role held by glucose serving as the main energy substrate in DMEM or RPMI 1640 cell-culture media"
+    classification_conditions:
+      - The role must be a Nutrient Role.
+    logical_definition: "EnergySubstrateRole(x) → NutrientRole(x)"
+
+  - label: Equilibrium Saturation Concentration
+    iri: "https://spec.industrialontologies.org/ontology/construct/EquilibriumSaturationConcentration"
+    parent_class: Solution Saturation Concentration
+    definition: "solution saturation concentration of a particular solute at thermodynamic equilibrium"
+    examples:
+      - "the equilibrium saturation concentration of sodium chloride in water at 20 °C"
+    classification_conditions:
+      - The entity must be a Solution Saturation Concentration.
+    logical_definition: "EquilibriumSaturationConcentration(x) → SolutionSaturationConcentration(x)"
+
+  - label: Expansion Culture Medium
+    iri: "https://spec.industrialontologies.org/ontology/construct/ExpansionCultureMedium"
+    parent_class: Specialized Culture Medium
+    definition: "specialized culture medium that has a cell proliferation supporting function"
+    examples:
+      - "Human-Mesenchymal-XF-Expansion-Medium"
+    classification_conditions:
+      - The entity must be a Specialized Culture Medium.
+      - It must have some Cell Proliferation Supporting Function.
+    logical_definition: "ExpansionCultureMedium(x) ↔ SpecializedCultureMedium(x) ∧ ∃f (CellProliferationSupportingFunction(f) ∧ hasFunction(x, f))"
+
+  - label: Extractable And Leachable Impurity Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/ExtractableAndLeachableImpurityRole"
+    parent_class: Material Impurity Role
+    definition: "material impurity role held by a material entity in virtue of that material entity being present in a target material as a result of transfer from an artifact that contacts the target material"
+    examples:
+      - "the extractable and leachable impurity role of a plasticizer extracted from single-use tubing during an extractables study"
+    classification_conditions:
+      - The role must be a Material Impurity Role.
+    logical_definition: "ExtractableAndLeachableImpurityRole(x) → MaterialImpurityRole(x)"
+
+  - label: Filterability
+    iri: "https://spec.industrialontologies.org/ontology/construct/Filterability"
+    parent_class: Capability
+    definition: "capability of a fluid to pass through a filtration medium without undue blockage or loss of permeability"
+    examples:
+      - "the filterability of a clarified harvest feed before sterile filtration"
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of some Material Entity that has a Fluid Aggregate State.
+    logical_definition: "Filterability(x) → Capability(x) ∧ ∃m (MaterialEntity(m) ∧ capabilityOf(x, m) ∧ ∃s (FluidAggregateState(s) ∧ hasQuality(m, s)))"
+
+  - label: Flowability
+    iri: "https://spec.industrialontologies.org/ontology/construct/Flowability"
+    parent_class: Capability
+    definition: "capability of a material entity to move by flow"
+    examples:
+      - "the flowability of powdered cell culture medium during hopper discharge"
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of some Material Entity.
+    logical_definition: "Flowability(x) → Capability(x) ∧ ∃m (MaterialEntity(m) ∧ capabilityOf(x, m))"
+
+  - label: Foamability
+    iri: "https://spec.industrialontologies.org/ontology/construct/Foamability"
+    parent_class: Capability
+    definition: "capability of a liquid to form foam during a particular process"
+    examples:
+      - "the foamability of a cell culture medium during bioreactor sparging"
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of some Material Entity that has a Liquid Aggregate State.
+    logical_definition: "Foamability(x) → Capability(x) ∧ ∃m∃s (MaterialEntity(m) ∧ capabilityOf(x, m) ∧ LiquidAggregateState(s) ∧ hasQuality(m, s))"
+
+  - label: Hygroscopicity
+    iri: "https://spec.industrialontologies.org/ontology/construct/Hygroscopicity"
+    parent_class: Capability
+    definition: "capability of a material entity to attract and hold moisture from the surrounding environment"
+    examples:
+      - "the hygroscopicity of powdered cell culture medium during storage"
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of some Material Entity.
+    logical_definition: "Hygroscopicity(x) → Capability(x) ∧ ∃m (MaterialEntity(m) ∧ capabilityOf(x, m))"
+
+  - label: Impurity Fraction
+    iri: "https://spec.industrialontologies.org/ontology/construct/ImpurityFraction"
+    parent_class: Fraction
+    definition: "fraction of a material entity that is determined by the proportion of material considered an impurity relative to the material entity as a whole"
+    examples:
+      - "the impurity fraction of host cell protein in a purified protein solution"
+    classification_conditions:
+      - The entity must be a Fraction.
+      - It must be the quality of some Material Entity.
+      - Any magnitude basis in a bearer part must be a Material Entity that has some Material Impurity Role.
+    logical_definition: "ImpurityFraction(x) → Fraction(x) ∧ ∃m(MaterialEntity(m) ∧ qualityOf(x,m) ∧ ∀p(hasMagnitudeBasisInBearerPart(x,p) → (MaterialEntity(p) ∧ ∃r(MaterialImpurityRole(r) ∧ hasRole(p,r)))))"
+
+  - label: Infected Host Cell
+    iri: "https://spec.industrialontologies.org/ontology/construct/InfectedHostCell"
+    parent_class: Cell
+    definition: "cell that is infected by a virus or another type of microorganism"
+    examples:
+      - "A HEK293 cell that has been infected by an adenovirus vector"
+    classification_conditions:
+      - The entity must be a Cell.
+    logical_definition: "InfectedHostCell(x) → Cell(x)"
+
+  - label: Inoculum Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/InoculumRole"
+    parent_class: Role
+    definition: "role held by a material entity containing biological material when it is being added, or is planned to be added, to initiate or establish biological growth, culture, infection, propagation or biological response"
+    examples:
+      - "the inoculum role of a thawed CHO cell suspension added to fresh medium to initiate seed expansion"
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Material Entity.
+    logical_definition: "InoculumRole(x) → Role(x) ∧ ∃m (MaterialEntity(m) ∧ roleOf(x, m))"
+
+  - label: Intact Molecular Mass
+    iri: "https://spec.industrialontologies.org/ontology/construct/IntactMolecularMass"
+    parent_class: Molecular Mass
+    definition: "molecular mass of a molecular entity or molecular entity population considered in its whole, intact form, without fragmentation, cleavage, or removal of any covalently bound parts"
+    examples:
+      - "the intact molecular mass of a monoclonal antibody of approximately 150 kDa"
+    classification_conditions:
+      - The entity must be a Molecular Mass.
+    logical_definition: "IntactMolecularMass(x) → MolecularMass(x)"
+
+  - label: Intermediate Stock Solution Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/IntermediateStockSolutionRole"
+    parent_class: Stock Solution Role
+    definition: "stock solution role held by a solution when the solution is prepared by diluting another stock solution and is used, or planned to be used, to prepare further dilutions"
+    examples:
+      - "intermediate stock solution role of a 0.1 M NaCl solution prepared from a 1 M stock and used to prepare a 1 mM NaCl solution for an assay"
+    classification_conditions:
+      - The role must be a Stock Solution Role.
+    logical_definition: "IntermediateStockSolutionRole(x) → StockSolutionRole(x)"
+
+  - label: Isoelectric Point
+    iri: "https://spec.industrialontologies.org/ontology/construct/IsoelectricPoint"
+    parent_class: Electrical Quality
+    definition: "electrical quality of a molecular entity that corresponds to the pH of a homogeneous aqueous mixture at which that molecular entity has zero net electric charge and does not migrate in an electric field"
+    examples:
+      - "a monoclonal antibody with pI 8.6"
+    classification_conditions:
+      - The entity must be an Electrical Quality.
+      - It must be the quality of some Molecular Entity.
+    logical_definition: "IsoelectricPoint(x) → ElectricalQuality(x) ∧ ∃m (MolecularEntity(m) ∧ qualityOf(x, m))"
+
+  - label: Manufacturing Process Related Impurity Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/ManufacturingProcessRelatedImpurityRole"
+    parent_class: Material Impurity Role
+    definition: "material impurity role held by a material entity that is present in a process intermediate material or material product and whose presence is attributable to planned or inherent aspects of manufacturing execution"
+    examples:
+      - "the manufacturing process related impurity role of residual Protein A ligand leached from chromatography resin into a drug substance intermediate"
+    classification_conditions:
+      - The role must be a Material Impurity Role.
+      - It must be the role of a Material Entity that is a proper continuant part at some time of a Material Product or a Process Intermediate Material.
+    logical_definition: "ManufacturingProcessRelatedImpurityRole(x) → MaterialImpurityRole(x) ∧ ∃m (MaterialEntity(m) ∧ roleOf(x, m) ∧ ∃w ((MaterialProduct(w) ∨ ProcessIntermediateMaterial(w)) ∧ properContinuantPartOfAtSomeTime(m, w)))"
+
+  - label: Mass Concentration
+    iri: "https://spec.industrialontologies.org/ontology/construct/MassConcentration"
+    parent_class: Concentration
+    definition: "concentration that is the mass of a specified constituent of a mixture per unit volume of that mixture"
+    examples:
+      - "the mass concentration of glucose in a cell culture medium"
+    classification_conditions:
+      - The entity must be a Concentration.
+    logical_definition: "MassConcentration(x) → Concentration(x)"
+
+  - label: Master Cell Bank
+    iri: "https://spec.industrialontologies.org/ontology/construct/MasterCellBank"
+    parent_class: Cell Bank
+    definition: "cell bank produced in a single preparation event from a well-characterized cell line or clone, stored under validated cryogenic conditions, and established as the authoritative reference lot for direct use or the generation of further banks"
+    examples:
+      - "a master cell bank of CHO cells used to generate working cell banks for monoclonal antibody production"
+    classification_conditions:
+      - The entity must be a Cell Bank.
+    logical_definition: "MasterCellBank(x) → CellBank(x)"
+
+  - label: Material Differentiation Inducer
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialDifferentiationInducer"
+    parent_class: Material Functional Inducer
+    definition: "material entity with a material differentiation inducer role"
+    examples:
+      - "Activin A is a differentiation inducer when added to human pluripotent stem cell cultures to direct differentiation toward definitive endoderm lineage"
+    classification_conditions:
+      - The entity must be a Material Functional Inducer.
+      - It must have some Material Differentiation Inducer Role.
+    logical_definition: "MaterialDifferentiationInducer(x) ↔ MaterialFunctionalInducer(x) ∧ ∃r(MaterialDifferentiationInducerRole(r) ∧ hasRole(x, r))"
+
+  - label: Material Differentiation Inducer Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialDifferentiationInducerRole"
+    parent_class: Material Functional Inducer Role
+    definition: "role held by a material entity when it is used, or planned to be used to activate signaling pathways that drive cell fate decisions, lineage commitment, or functional specialization within a cell culture"
+    examples:
+      - "Activin A bearing a differentiation inducer role when added to human pluripotent stem cell cultures to direct differentiation toward definitive endoderm lineage"
+    classification_conditions:
+      - The role must be a Material Functional Inducer Role.
+    logical_definition: "MaterialDifferentiationInducerRole(x) → MaterialFunctionalInducerRole(x)"
+
+  - label: Material Functional Inducer
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialFunctionalInducer"
+    parent_class: Material Entity
+    definition: "material entity with a material functional inducer role"
+    examples:
+      - "Tetracycline is a production inducer when added to a mammalian cell culture to activate a Tet-regulated promoter driving recombinant protein expression."
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - It must have some Material Functional Inducer Role.
+    logical_definition: "MaterialFunctionalInducer(x) ↔ MaterialEntity(x) ∧ ∃r(MaterialFunctionalInducerRole(r) ∧ hasRole(x, r))"
+
+  - label: Material Functional Inducer Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialFunctionalInducerRole"
+    parent_class: Role
+    definition: "role held by a material entity when it is used, or planned to be used, to trigger, enhance, or repress a specified cellular activity or pathway in a cell culture, organism, or microbial community beyond baseline nutrient support"
+    examples:
+      - "the material functional inducer role of IPTG in induction of recombinant protein expression in an E. coli lac-based expression system"
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Material Entity.
+    logical_definition: "MaterialFunctionalInducerRole(x) → Role(x) ∧ ∃m (MaterialEntity(m) ∧ roleOf(x, m))"
+
+  - label: Material Grade Classifier
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialGradeClassifier"
+    parent_class: Classifier
+    definition: "classifier that classifies a material entity into an organization- or authority-defined material grade based on the material entity's conformance to a documented set of acceptance requirements and associated controls"
+    examples:
+      - "USP grade classification of a sodium chloride raw material lot"
+    classification_conditions:
+      - The entity must be a Classifier.
+      - It must classify some Material Entity that satisfies some Requirement Specification.
+    logical_definition: "MaterialGradeClassifier(x) → Classifier(x) ∧ ∃m∃r (MaterialEntity(m) ∧ RequirementSpecification(r) ∧ classifies(x, m) ∧ satisfiesRequirement(m, r))"
+
+  - label: Material Metabolic Inducer
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialMetabolicInducer"
+    parent_class: Material Functional Inducer
+    definition: "material entity with a material metabolic inducer role"
+    examples:
+      - "Lactose as a metabolic inducer in E. coli cell culture via lac operon activation"
+    classification_conditions:
+      - The entity must be a Material Functional Inducer.
+      - It must have some Material Metabolic Inducer Role.
+    logical_definition: "MaterialMetabolicInducer(x) ↔ MaterialFunctionalInducer(x) ∧ ∃r(MaterialMetabolicInducerRole(r) ∧ hasRole(x, r))"
+
+  - label: Material Metabolic Inducer Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialMetabolicInducerRole"
+    parent_class: Material Functional Inducer Role
+    definition: "role held by a material entity when it is used, or planned to be used to activate expression of enzymes or pathways involved in the utilization or regulation of metabolites within a cell culture, organism, or microbial community"
+    examples:
+      - "Lactose as a metabolic inducer in E. coli cell culture via lac operon activation"
+    classification_conditions:
+      - The role must be a Material Functional Inducer Role.
+    logical_definition: "MaterialMetabolicInducerRole(x) → MaterialFunctionalInducerRole(x)"
+
+  - label: Material Production Inducer
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialProductionInducer"
+    parent_class: Material Functional Inducer
+    definition: "material entity with a material production inducer role"
+    examples:
+      - "Tetracycline is a production inducer when added to a mammalian cell culture to activate a Tet-regulated promoter driving recombinant protein expression."
+    classification_conditions:
+      - The entity must be a Material Functional Inducer.
+      - It must have some Material Production Inducer Role.
+    logical_definition: "MaterialProductionInducer(x) ↔ MaterialFunctionalInducer(x) ∧ ∃r(MaterialProductionInducerRole(r) ∧ hasRole(x, r))"
+
+  - label: Material Production Inducer Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialProductionInducerRole"
+    parent_class: Material Functional Inducer Role
+    definition: "role held by a material entity when it is added, or planned to be added, to a cell culture to trigger the synthesis of a target product"
+    examples:
+      - "Tetracycline bearing a production inducer role when added to a mammalian cell culture to activate a Tet-regulated promoter driving recombinant protein expression."
+    classification_conditions:
+      - The role must be a Material Functional Inducer Role.
+    logical_definition: "MaterialProductionInducerRole(x) → MaterialFunctionalInducerRole(x)"
+
+  - label: Miscibility
+    iri: "https://spec.industrialontologies.org/ontology/construct/Miscibility"
+    parent_class: Capability
+    definition: "capability of two or more material entities to form a single homogeneous phase when combined as a mixture"
+    examples:
+      - "the miscibility of ethanol and water during buffer or formulation preparation"
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of at least two distinct Material Entities.
+    logical_definition: "Miscibility(x) → Capability(x) ∧ ∃m1∃m2 (MaterialEntity(m1) ∧ MaterialEntity(m2) ∧ m1 ≠ m2 ∧ capabilityOf(x, m1) ∧ capabilityOf(x, m2))"
+
+  - label: Mixed Material
+    iri: "https://spec.industrialontologies.org/ontology/construct/MixedMaterial"
+    parent_class: Material Entity
+    definition: "material entity composed of at least two material constituents that are distinct in chemical identity or material composition, excluding constituents present only as minor impurities"
+    examples:
+      - "a portion of phosphate-buffered saline made of water, sodium chloride, and phosphate constituents"
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - It must be made at all times of at least two distinct material entities, neither of which is made of the other.
+    logical_definition: "MixedMaterial(x) → MaterialEntity(x) ∧ ∃m∃m1(MaterialEntity(m) ∧ MaterialEntity(m1) ∧ isMadeOfAtAllTimes(x, m) ∧ isMadeOfAtAllTimes(x, m1) ∧ ¬(m = m1 ∨ isMadeOfAtAllTimes(m, m1) ∨ isMadeOfAtAllTimes(m1, m)))"
+
+  - label: Moisture Content
+    iri: "https://spec.industrialontologies.org/ontology/construct/MoistureContent"
+    parent_class: Ratio
+    definition: "ratio that is the mass of water contained in a material entity relative to a defined reference mass of that material entity"
+    examples:
+      - "the moisture content of powdered cell culture medium on a wet basis"
+    classification_conditions:
+      - The entity must be a Ratio.
+      - It must be the quality of some Material Entity.
+    logical_definition: "MoistureContent(x) → Ratio(x) ∧ ∃m (MaterialEntity(m) ∧ qualityOf(x, m))"
+
+  - label: Molar Concentration
+    iri: "https://spec.industrialontologies.org/ontology/construct/MolarConcentration"
+    parent_class: Concentration
+    definition: "concentration that is the amount of substance of a specified constituent of a mixture per unit volume of that mixture"
+    examples:
+      - "the molar concentration of sodium chloride in a buffer solution"
+    classification_conditions:
+      - The entity must be a Concentration.
+    logical_definition: "MolarConcentration(x) → Concentration(x)"
+
+  - label: Molar Mass
+    iri: "https://spec.industrialontologies.org/ontology/construct/MolarMass"
+    parent_class: Quality
+    definition: "quality that is the quality of a molecular entity or population of molecular entities, and is either the mass of one mole of that single entity, or the average mass of one mole of molecules in the population"
+    examples:
+      - "molar mass of glucose is 180 g/mol"
+    classification_conditions:
+      - The entity must be a Quality.
+      - It must be the quality of some Molecular Entity or some Molecular Entity Population.
+    logical_definition: "MolarMass(x) → Quality(x) ∧ ∃m ((MolecularEntity(m) ∨ MolecularEntityPopulation(m)) ∧ qualityOf(x, m))"
+
+  - label: Molecular Carrier Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/MolecularCarrierRole"
+    parent_class: Role
+    definition: "role of a material entity when it supports the transport, or delivery of one or more molecular entities in a physical, chemical, or biological system without serving primarily as a reactant in their chemical transformation"
+    examples:
+      - "molecular carrier role of serum albumin carrying fatty acids in extracellular fluid"
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Material Entity.
+    logical_definition: "MolecularCarrierRole(x) → Role(x) ∧ ∃m (MaterialEntity(m) ∧ roleOf(x, m))"
+
+  - label: Molecular Mass
+    iri: "https://spec.industrialontologies.org/ontology/construct/MolecularMass"
+    parent_class: Mass
+    definition: "mass that is either the mass of a molecular entity or an average of the masses of the molecular entities in a molecular entity population"
+    examples:
+      - "the molecular mass of a monoclonal antibody glycoform of approximately 148 kDa"
+    classification_conditions:
+      - The entity must be a Mass.
+      - It must be the quality of some Molecular Entity or some Molecular Entity Population.
+    logical_definition: "MolecularMass(x) → Mass(x) ∧ (∃m(MolecularEntity(m) ∧ qualityOf(x,m)) ∨ ∃p(MolecularEntityPopulation(p) ∧ qualityOf(x,p)))"
+
+  - label: Mycoplasma Cell
+    iri: "https://spec.industrialontologies.org/ontology/construct/MycoplasmaCell"
+    parent_class: Bacterium Cell
+    definition: "bacterium cell that lacks a rigid cell wall and is capable of infecting mammalian cells"
+    examples:
+      - "Mycoplasma orale detected in a mammalian cell culture"
+    classification_conditions:
+      - The entity must be a Bacterium Cell.
+    logical_definition: "MycoplasmaCell(x) → BacteriumCell(x)"
+
+  - label: Nitrogen Source Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/NitrogenSourceRole"
+    parent_class: Nutrient Role
+    definition: "nutrient role held by a material entity that provides nitrogen for synthesis of amino acids, nucleotides, and other nitrogen-containing cellular material"
+    examples:
+      - "nitrogen source role held by glutamine acting as the primary nitrogen source in CHO and hybridoma culture media"
+    classification_conditions:
+      - The role must be a Nutrient Role.
+    logical_definition: "NitrogenSourceRole(x) → NutrientRole(x)"
+
+  - label: Non Glycosylated Molecular Mass
+    iri: "https://spec.industrialontologies.org/ontology/construct/NonGlycosylatedMolecularMass"
+    parent_class: Molecular Mass
+    definition: "molecular mass of a glycoprotein or population of glycoproteins that characterizes the mass contribution of its non-glycan molecular structure"
+    examples:
+      - "the non-glycosylated molecular mass of a monoclonal antibody heavy chain after excluding attached N-glycans"
+    classification_conditions:
+      - The entity must be a Molecular Mass.
+      - It must be the quality of some Glycoprotein or some Molecular Entity Population that has a Glycoprotein as member part at all times.
+    logical_definition: "NonGlycosylatedMolecularMass(x) → MolecularMass(x) ∧ ∃g ((Glycoprotein(g) ∨ (MolecularEntityPopulation(g) ∧ ∃p (Glycoprotein(p) ∧ hasMemberPartAtAllTimes(g, p)))) ∧ qualityOf(x, g))"
+
+  - label: Nutrient Feed
+    iri: "https://spec.industrialontologies.org/ontology/construct/NutrientFeed"
+    parent_class: Material Entity
+    definition: "material entity with a nutrient feed role"
+    examples:
+      - "concentrated glucose feed pumped to maintain glucose above a target setpoint"
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - It must have some Nutrient Feed Role.
+    logical_definition: "NutrientFeed(x) ↔ MaterialEntity(x) ∧ ∃r(NutrientFeedRole(r) ∧ hasRole(x, r))"
+
+  - label: Nutrient Feed Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/NutrientFeedRole"
+    parent_class: Role
+    definition: "role held by a material entity when it is added, or planned to be added, to a cell culture during cultivation or production to supply or replenish nutrients"
+    examples:
+      - "role held by concentrated glucose feed pumped to maintain glucose above a target setpoint"
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Material Entity.
+    logical_definition: "NutrientFeedRole(x) → Role(x) ∧ ∃m (MaterialEntity(m) ∧ roleOf(x, m))"
+
+  - label: Nutrient Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/NutrientRole"
+    parent_class: Role
+    definition: "role held by a material entity that is made available to an organism or cell to support metabolism, growth, maintenance, or biomass formation by providing energy for cellular activities or to build or maintain cellular material"
+    examples:
+      - "nutrient role borne by glucose serving as a carbon source and energy source in mammalian cell culture medium"
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Material Entity.
+    logical_definition: "NutrientRole(x) → Role(x) ∧ ∃m (MaterialEntity(m) ∧ roleOf(x, m))"
+
+  - label: Osmolality
+    iri: "https://spec.industrialontologies.org/ontology/construct/Osmolality"
+    parent_class: Relational Quality
+    definition: "relational quality of a solution that is the amount of osmotically active solute entities in that solution per unit mass of solvent"
+    examples:
+      - "the osmolality of a cell culture medium after concentrated feed addition"
+    classification_conditions:
+      - The entity must be a Relational Quality.
+      - It must be the quality of some Solution.
+    logical_definition: "Osmolality(x) → RelationalQuality(x) ∧ ∃s (Solution(s) ∧ qualityOf(x, s))"
+
+  - label: Osmolarity
+    iri: "https://spec.industrialontologies.org/ontology/construct/Osmolarity"
+    parent_class: Relational Quality
+    definition: "relational quality of a solution that is the amount of osmotically active solute entities in that solution per unit volume of that solution"
+    examples:
+      - "the osmolarity of a cell culture medium after concentrated feed addition"
+    classification_conditions:
+      - The entity must be a Relational Quality.
+      - It must be the quality of some Solution.
+    logical_definition: "Osmolarity(x) → RelationalQuality(x) ∧ ∃s (Solution(s) ∧ qualityOf(x, s))"
+
+  - label: pH
+    iri: "https://spec.industrialontologies.org/ontology/construct/PH"
+    parent_class: Relational Quality
+    definition: "quality of a material entity that is quantified as the negative decimal logarithm of the relative activity of hydrogen ions in that material entity"
+    examples:
+      - "the pH of a phosphate-buffered saline solution measured as 7.4 at 25 °C"
+    classification_conditions:
+      - The entity must be a Relational Quality.
+      - It must be the quality of some Material Entity.
+    logical_definition: "PH(x) → RelationalQuality(x) ∧ ∃m (MaterialEntity(m) ∧ qualityOf(x, m))"
+
+  - label: pH Adjusting Agent Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/PHAdjustingAgentRole"
+    parent_class: Role
+    definition: "role of a material entity when it is used, or planned to be used to adjust pH"
+    examples:
+      - "the pH adjuster role of hydrochloric acid solution during buffer preparation"
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Material Entity.
+    logical_definition: "PHAdjustingAgentRole(x) → Role(x) ∧ ∃m (MaterialEntity(m) ∧ roleOf(x, m))"
+
+  - label: Partial Pressure
+    iri: "https://spec.industrialontologies.org/ontology/construct/PartialPressure"
+    parent_class: Pressure
+    definition: "pressure that is the contribution of a particular gaseous constituent of a gas mixture to the total pressure of that mixture"
+    examples:
+      - "oxygen contributing to the total pressure of air in a bioreactor headspace"
+    classification_conditions:
+      - The entity must be a Pressure.
+      - It must be the quality of some Mixed Material that has a Gaseous Aggregate State.
+      - Any magnitude basis in a bearer part must be a Material Entity of which that Mixed Material is made.
+    logical_definition: "PartialPressure(x) → Pressure(x) ∧ ∃m∃g(MixedMaterial(m) ∧ qualityOf(x,m) ∧ GaseousAggregateState(g) ∧ hasQuality(m,g) ∧ ∀p(hasMagnitudeBasisInBearerPart(x,p) → (MaterialEntity(p) ∧ isMadeOfAtSomeTime(m,p))))"
+
+  - label: Pharmaceutical Degradation Product Impurity Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/PharmaceuticalDegradationProductImpurityRole"
+    parent_class: Pharmaceutical Product Related Impurity Role
+    definition: "pharmaceutical product related impurity role held by a material entity that differs from the targeted drug substance or drug product as a result of chemical change occurring during manufacture or storage"
+    examples:
+      - "the degradation product impurity role of oxidized protein species formed during storage"
+    classification_conditions:
+      - The role must be a Pharmaceutical Product Related Impurity Role.
+    logical_definition: "PharmaceuticalDegradationProductImpurityRole(x) → PharmaceuticalProductRelatedImpurityRole(x)"
+
+  - label: Pharmaceutical Product Related Impurity Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/PharmaceuticalProductRelatedImpurityRole"
+    parent_class: Material Impurity Role
+    definition: "material impurity role held by a material entity that is related to the targeted drug substance or drug product but is not part of the desired product composition or accepted product heterogeneity at the relevant stage and does not have properties comparable to the desired product with respect to safety, efficacy or activity"
+    examples:
+      - "the pharmaceutical product related impurity role of clipped antibody fragments in a process intermediate when the fragments reduce antigen-binding activity or Fc-mediated function"
+    classification_conditions:
+      - The role must be a Material Impurity Role.
+      - It must be the role of a Material Entity that is a proper continuant part at all times of a Material Product or a Process Intermediate Material.
+    logical_definition: "PharmaceuticalProductRelatedImpurityRole(x) → MaterialImpurityRole(x) ∧ ∃m (MaterialEntity(m) ∧ roleOf(x, m) ∧ ∃w ((MaterialProduct(w) ∨ ProcessIntermediateMaterial(w)) ∧ properContinuantPartOfAtAllTimes(m, w)))"
+
+  - label: Portion Of Water
+    iri: "https://spec.industrialontologies.org/ontology/construct/PortionOfWater"
+    parent_class: Chemical Substance Material
+    definition: "chemical substance material composed primarily of water molecules, allowing for minor impurities arising from production, handling, or environmental exchange"
+    examples:
+      - "purified water"
+    classification_conditions:
+      - The entity must be a Chemical Substance Material.
+      - It must be made of some Water Molecule at all times.
+    logical_definition: "PortionOfWater(x) → ChemicalSubstanceMaterial(x) ∧ ∃m (WaterMolecule(m) ∧ isMadeOfAtAllTimes(x, m))"
+
+  - label: Portion Of Water For Injection
+    iri: "https://spec.industrialontologies.org/ontology/construct/PortionOfWaterForInjection"
+    parent_class: Portion Of Water
+    definition: "portion of water that is classified by a water for injection classifier"
+    examples:
+      - "a batch of purified water classified as water for injection following manufacture and testing against the applicable water-for-injection specification"
+    classification_conditions:
+      - The entity must be a Portion Of Water.
+      - It must be classified by some Water For Injection Classifier.
+    logical_definition: "PortionOfWaterForInjection(x) ↔ PortionOfWater(x) ∧ ∃y(WaterForInjectionClassifier(y) ∧ classifiedBy(x, y))"
+
+  - label: Precipitation Propensity
+    iri: "https://spec.industrialontologies.org/ontology/construct/PrecipitationPropensity"
+    parent_class: Disposition
+    definition: "disposition of a liquid mixed material to form an insoluble solid phase from dissolved constituents"
+    examples:
+      - "the precipitation propensity of a cell culture medium containing calcium and phosphate ions"
+    classification_conditions:
+      - The entity must be a Disposition.
+      - It must be the disposition of some Mixed Material that has a Liquid Aggregate State.
+      - Any realization must be a Process that has as output a Material Entity with a Solid Aggregate State.
+    logical_definition: "PrecipitationPropensity(x) → Disposition(x) ∧ ∃m (MixedMaterial(m) ∧ dispositionOf(x, m) ∧ ∃l (LiquidAggregateState(l) ∧ hasQuality(m, l)) ∧ ∀b (hasMaterialBasisAtSomeTime(x, b) → (MaterialEntity(b) ∧ properContinuantPartOfAtSomeTime(b, m))) ∧ ∀p (hasRealization(x, p) → (Process(p) ∧ ∃o (MaterialEntity(o) ∧ hasOutput(p, o) ∧ ∃s (SolidAggregateState(s) ∧ hasQuality(o, s))))))"
+
+  - label: Preservation Culture Medium
+    iri: "https://spec.industrialontologies.org/ontology/construct/PreservationCultureMedium"
+    parent_class: Specialized Culture Medium
+    definition: "specialized culture medium that has a culture preservation function"
+    examples:
+      - "cryopreservation medium"
+    classification_conditions:
+      - The entity must be a Specialized Culture Medium.
+      - It must have some Culture Preservation Function.
+    logical_definition: "PreservationCultureMedium(x) ↔ SpecializedCultureMedium(x) ∧ ∃f (CulturePreservationFunction(f) ∧ hasFunction(x, f))"
+
+  - label: Production Culture Medium
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProductionCultureMedium"
+    parent_class: Specialized Culture Medium
+    definition: "specialized culture medium that has a bioproduction supporting function"
+    examples:
+      - "CHO production medium used for monoclonal antibody expression"
+    classification_conditions:
+      - The entity must be a Specialized Culture Medium.
+      - It must have some Bioproduction Supporting Function.
+    logical_definition: "ProductionCultureMedium(x) ↔ SpecializedCultureMedium(x) ∧ ∃f (BioproductionSupportingFunction(f) ∧ hasFunction(x, f))"
+
+  - label: Protective Agent Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProtectiveAgentRole"
+    parent_class: Role
+    definition: "role of a material entity when it is used or planned to be used to protect one or more other material entities from stress or damage"
+    examples:
+      - "role borne by Dimethyl sulfoxide (DMSO) added to freezing medium for cell preservation"
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Material Entity.
+    logical_definition: "ProtectiveAgentRole(x) → Role(x) ∧ ∃m (MaterialEntity(m) ∧ roleOf(x, m))"
+
+  - label: Protein Free Culture Medium
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProteinFreeCultureMedium"
+    parent_class: Serum Free Culture Medium
+    definition: "serum free culture medium that does not include any proteins"
+    examples:
+      - "CHO protein-free media used for recombinant protein production (e.g., PF-CHO, CD-PF)"
+    classification_conditions:
+      - The entity must be a Serum Free Culture Medium.
+      - It must not be made of any Protein at all times.
+    logical_definition: "ProteinFreeCultureMedium(x) ↔ SerumFreeCultureMedium(x) ∧ ¬∃p (Protein(p) ∧ isMadeOfAtAllTimes(x, p))"
+
+  - label: Protein Hydrolysate
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProteinHydrolysate"
+    parent_class: Mixed Material
+    definition: "mixed material produced by partial or extensive hydrolysis of protein-containing material and composed primarily of oligopeptides, peptides, and free amino acids"
+    examples:
+      - "soy protein hydrolysate"
+    classification_conditions:
+      - The entity must be a Mixed Material.
+      - It must be made of some Amino Acid at all times.
+      - It must be made of some Peptide at all times.
+    logical_definition: "ProteinHydrolysate(x) → MixedMaterial(x) ∧ ∃a (AminoAcid(a) ∧ isMadeOfAtAllTimes(x, a)) ∧ ∃p (Peptide(p) ∧ isMadeOfAtAllTimes(x, p))"
+
+  - label: Reconstitutability
+    iri: "https://spec.industrialontologies.org/ontology/construct/Reconstitutability"
+    parent_class: Capability
+    definition: "capability of a dried or concentrated material entity to form a liquid mixture that satisfies specified usage requirements when combined with an appropriate solvent or diluent"
+    examples:
+      - "reconstitutability of a lyophilized drug product cake with sterile water for injection"
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of some Material Entity.
+    logical_definition: "Reconstitutability(x) → Capability(x) ∧ ∃m (MaterialEntity(m) ∧ capabilityOf(x, m))"
+
+  - label: Relative Abundance
+    iri: "https://spec.industrialontologies.org/ontology/construct/RelativeAbundance"
+    parent_class: Ratio
+    definition: "ratio that is determined by the magnitude of a specified member or subset of a defined group of material entities relative to the total magnitude of that group"
+    examples:
+      - "relative abundance of a sequence variant in a drug substance lot"
+    classification_conditions:
+      - The entity must be a Ratio.
+    logical_definition: "RelativeAbundance(x) → Ratio(x)"
+
+  - label: Relative Humidity
+    iri: "https://spec.industrialontologies.org/ontology/construct/RelativeHumidity"
+    parent_class: Saturation Ratio
+    definition: "saturation ratio of a gas mixture whose magnitude is the partial pressure of water vapor in that gas mixture relative to the saturation vapor pressure of water under the same temperature conditions"
+    examples:
+      - "the relative humidity of incubator air at 37 °C"
+    classification_conditions:
+      - The entity must be a Saturation Ratio.
+      - It must be the quality of some Mixed Material that has a Gaseous Aggregate State.
+    logical_definition: "RelativeHumidity(x) → SaturationRatio(x) ∧ ∃m∃g(MixedMaterial(m) ∧ qualityOf(x,m) ∧ GaseousAggregateState(g) ∧ hasQuality(m,g))"
+
+  - label: Saturated State
+    iri: "https://spec.industrialontologies.org/ontology/construct/SaturatedState"
+    parent_class: Solution Saturation State
+    definition: "material state of a solution in which the dissolved solute concentration stays at the solute's equilibrium saturation concentration in that solution under prevailing conditions"
+    examples:
+      - "a concentrated buffer solution at the solubility limit of one buffer component during preparation"
+    classification_conditions:
+      - The entity must be a Solution Saturation State.
+    logical_definition: "SaturatedState(x) → SolutionSaturationState(x)"
+
+  - label: Saturation Ratio
+    iri: "https://spec.industrialontologies.org/ontology/construct/SaturationRatio"
+    parent_class: Ratio
+    definition: "ratio of a material entity whose magnitude is the magnitude of a quality of that material entity relative to the magnitude at the saturation limit for that quality under defined conditions"
+    examples:
+      - "the dissolved oxygen saturation ratio of a cell culture medium at 37 °C"
+    classification_conditions:
+      - The entity must be a Ratio.
+      - It must be the quality of some Material Entity.
+    logical_definition: "SaturationRatio(x) → Ratio(x) ∧ ∃m (MaterialEntity(m) ∧ qualityOf(x, m))"
+
+  - label: Serum
+    iri: "https://spec.industrialontologies.org/ontology/construct/Serum"
+    parent_class: Mixed Material
+    definition: "mixed material that is obtained from blood following coagulation and removal of cells and clotting factors"
+    examples:
+      - "fetal bovine serum used as a cell culture supplement"
+    classification_conditions:
+      - The entity must be a Mixed Material.
+    logical_definition: "Serum(x) → MixedMaterial(x)"
+
+  - label: Serum Containing Culture Medium
+    iri: "https://spec.industrialontologies.org/ontology/construct/SerumContainingCultureMedium"
+    parent_class: Culture Medium
+    definition: "culture medium that contains serum"
+    examples:
+      - "RPMI-1640 medium + 10% horse serum that is commonly used for hematopoietic cell lines"
+    classification_conditions:
+      - The entity must be a Culture Medium.
+      - It must have some Serum as a continuant part at all times.
+      - It must be disjoint from Serum Free Culture Medium.
+    logical_definition: "SerumContainingCultureMedium(x) ↔ CultureMedium(x) ∧ ∃y(Serum(y) ∧ hasContinuantPartAtAllTimes(x, y))"
+
+  - label: Serum Free Culture Medium
+    iri: "https://spec.industrialontologies.org/ontology/construct/SerumFreeCultureMedium"
+    parent_class: Culture Medium
+    definition: "culture medium that contains no serum"
+    examples:
+      - "CD-CHO (chemically defined CHO medium) contains recombinant insulin and transferrin, no serum"
+    classification_conditions:
+      - The entity must be a Culture Medium.
+      - It must not have any Serum as a continuant part at some time.
+    logical_definition: "SerumFreeCultureMedium(x) ↔ CultureMedium(x) ∧ ¬∃s (Serum(s) ∧ hasContinuantPartAtSomeTime(x, s))"
+
+  - label: Shear Protective Agent Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/ShearProtectiveAgentRole"
+    parent_class: Protective Agent Role
+    definition: "protective agent role of a material entity when it is used, or planned to be used, to protect one or more other material entities from mechanical damage caused by shear stress"
+    examples:
+      - "Role held by Poloxamer 188 (Pluronic F-68) that is a surface-active nonionic polymer used in cell culture media to reduce shear stress from agitation and sparging"
+    classification_conditions:
+      - The role must be a Protective Agent Role.
+    logical_definition: "ShearProtectiveAgentRole(x) → ProtectiveAgentRole(x)"
+
+  - label: Solubility Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/SolubilityCapability"
+    parent_class: Capability
+    definition: "capability of a material entity to dissolve in a particular solvent"
+    examples:
+      - "solubility capability of a powdered cell culture medium when prepared at 1X working concentration"
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of some Material Entity.
+      - It can only be realized in Processes that have some Solvent as input.
+    logical_definition: "SolubilityCapability(x) → Capability(x) ∧ ∃m (MaterialEntity(m) ∧ capabilityOf(x, m)) ∧ ∀p (hasRealization(x, p) → (Process(p) ∧ ∃h (Solvent(h) ∧ hasInput(p, h))))"
+
+  - label: Solute
+    iri: "https://spec.industrialontologies.org/ontology/construct/Solute"
+    parent_class: Material Entity
+    definition: "material entity with a solute role"
+    examples:
+      - "a sodium chloride portion in a buffer preparation process"
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - It must have some Solute Role.
+    logical_definition: "Solute(x) ↔ MaterialEntity(x) ∧ ∃r(SoluteRole(r) ∧ hasRole(x, r))"
+
+  - label: Solute Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/SoluteRole"
+    parent_class: Dissolution Role
+    definition: "dissolution role held by a material entity that is realized in a process where it is dissolved within another substance (the solvent) to form a solution"
+    examples:
+      - "a sodium chloride portion bearing a solute role in a buffer preparation process"
+    classification_conditions:
+      - The role must be a Dissolution Role.
+      - It must be disjoint from Solvent Role.
+    logical_definition: "SoluteRole(x) → DissolutionRole(x)"
+
+  - label: Solution
+    iri: "https://spec.industrialontologies.org/ontology/construct/Solution"
+    parent_class: Mixed Material
+    definition: "mixed material composed of one homogeneous phase in which constituent particles are not visible to the naked eye and that does not exhibit visible light scattering characteristic of a colloidal dispersion"
+    examples:
+      - "a sodium chloride solution"
+    classification_conditions:
+      - The entity must be a Mixed Material.
+    logical_definition: "Solution(x) → MixedMaterial(x)"
+
+  - label: Solution Saturation Concentration
+    iri: "https://spec.industrialontologies.org/ontology/construct/SolutionSaturationConcentration"
+    parent_class: Concentration
+    definition: "concentration of a dissolved solute in a solution at the solubility limit of that solute under stated conditions"
+    examples:
+      - "The saturation concentration of glucose in an aqueous solution at 25 °C"
+    classification_conditions:
+      - The entity must be a Concentration.
+      - It must be the quality of some Solution.
+    logical_definition: "SolutionSaturationConcentration(x) → Concentration(x) ∧ ∃s(Solution(s) ∧ qualityOf(x,s))"
+
+  - label: Solution Saturation Ratio
+    iri: "https://spec.industrialontologies.org/ontology/construct/SolutionSaturationRatio"
+    parent_class: Saturation Ratio
+    definition: "saturation ratio of a solution whose magnitude is the concentration of a dissolved solute in that solution relative to the saturation concentration of that solute for the solution under the same conditions"
+    examples:
+      - "the solution saturation ratio of dissolved oxygen in cell culture medium at 37 °C during bioreactor operation"
+    classification_conditions:
+      - The entity must be a Saturation Ratio.
+      - It must be the quality of some Solution.
+    logical_definition: "SolutionSaturationRatio(x) → SaturationRatio(x) ∧ ∃s(Solution(s) ∧ qualityOf(x,s))"
+
+  - label: Solution Saturation State
+    iri: "https://spec.industrialontologies.org/ontology/construct/SolutionSaturationState"
+    parent_class: Material State
+    definition: "material state of a solution in which the dissolved solute concentration stays below, at, or above the solute's equilibrium saturation concentration in that solution under prevailing conditions"
+    examples:
+      - "a sodium chloride buffer in which additional sodium chloride can still dissolve at 20 °C"
+    classification_conditions:
+      - The entity must be a Material State.
+      - It must be the material state of some Solution.
+    logical_definition: "SolutionSaturationState(x) → MaterialState(x) ∧ ∃s (Solution(s) ∧ isMaterialStateOf(x, s))"
+
+  - label: Solvent
+    iri: "https://spec.industrialontologies.org/ontology/construct/Solvent"
+    parent_class: Material Entity
+    definition: "material entity with a solvent role"
+    examples:
+      - "a purified water portion in a buffer preparation process"
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - It must have some Solvent Role.
+    logical_definition: "Solvent(x) ↔ MaterialEntity(x) ∧ ∃r(SolventRole(r) ∧ hasRole(x, r))"
+
+  - label: Solvent Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/SolventRole"
+    parent_class: Dissolution Role
+    definition: "dissolution role held by a material entity that is realized in a process where it dissolves another substance (the solute) to form a solution"
+    examples:
+      - "a purified water portion bearing a solvent role in a buffer preparation process"
+    classification_conditions:
+      - The role must be a Dissolution Role.
+    logical_definition: "SolventRole(x) → DissolutionRole(x)"
+
+  - label: Specialized Culture Medium
+    iri: "https://spec.industrialontologies.org/ontology/construct/SpecializedCultureMedium"
+    parent_class: Culture Medium
+    definition: "culture medium that has a specialized culture medium function"
+    examples:
+      - "Human-Mesenchymal-XF-Expansion-Medium"
+    classification_conditions:
+      - The entity must be a Culture Medium.
+      - It must have some Specialized Culture Medium Function.
+    logical_definition: "SpecializedCultureMedium(x) ↔ CultureMedium(x) ∧ ∃f (SpecializedCultureMediumFunction(f) ∧ hasFunction(x, f))"
+
+  - label: Specialized Culture Medium Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/SpecializedCultureMediumFunction"
+    parent_class: Designed Function
+    definition: "designed function that inheres in a culture medium and is specified to satisfy the culture requirements of a particular cell type, tissue, microorganism, or cultivation application, often through selective supplements or tailored nutrient formulations"
+    examples:
+      - "the bioproduction supporting function borne by a CHO production medium used during monoclonal-antibody expression"
+    classification_conditions:
+      - The entity must be a Designed Function.
+      - It must inhere in some Culture Medium.
+      - It must satisfy some Requirement Specification.
+    logical_definition: "SpecializedCultureMediumFunction(x) → DesignedFunction(x) ∧ ∃m (CultureMedium(m) ∧ inheresIn(x, m)) ∧ ∃r (RequirementSpecification(r) ∧ satisfiesRequirement(x, r))"
+
+  - label: Spent Culture Medium State
+    iri: "https://spec.industrialontologies.org/ontology/construct/SpentCultureMediumState"
+    parent_class: Material State
+    definition: "material state of culture medium that has participated in a cell cultivation process and is characterized by compositional changes caused by cellular activity, process additions, or accumulation of extracellular material"
+    examples:
+      - "State of culture medium in a CHO fed-batch culture after several days of glucose and amino acid consumption"
+    classification_conditions:
+      - The entity must be a Material State.
+      - It must be the material state of some Culture Medium.
+    logical_definition: "SpentCultureMediumState(x) → MaterialState(x) ∧ ∃m (CultureMedium(m) ∧ isMaterialStateOf(x, m))"
+
+  - label: Stock Solution Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/StockSolutionRole"
+    parent_class: Role
+    definition: "role held by a solution that is prepared with an accurately known solute concentration so that measured portions can be diluted to the concentration needed for a particular use"
+    examples:
+      - "the stock solution role of a 1 M glucose solution used to prepare lower-concentration glucose additions for cell culture medium"
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Solution.
+    logical_definition: "StockSolutionRole(x) → Role(x) ∧ ∃s (Solution(s) ∧ roleOf(x, s))"
+
+  - label: Supersaturated State
+    iri: "https://spec.industrialontologies.org/ontology/construct/SupersaturatedState"
+    parent_class: Solution Saturation State
+    definition: "solution saturation state in which the dissolved solute concentration stays above the solute's equilibrium saturation concentration in that solution under prevailing conditions"
+    examples:
+      - "a concentrated buffer component remaining dissolved above its equilibrium solubility before precipitation begins"
+    classification_conditions:
+      - The entity must be a Solution Saturation State.
+    logical_definition: "SupersaturatedState(x) → SolutionSaturationState(x)"
+
+  - label: Surface Tension
+    iri: "https://spec.industrialontologies.org/ontology/construct/SurfaceTension"
+    parent_class: Quality
+    definition: "quality of a liquid material entity that is the resistance of the liquid surface to an increase in surface area, arising from unbalanced cohesive forces between molecules at the liquid surface"
+    examples:
+      - "the surface tension of a protein formulation containing polysorbate"
+    classification_conditions:
+      - The entity must be a Quality.
+      - It must be the quality of some Material Entity that has a Liquid Aggregate State.
+    logical_definition: "SurfaceTension(x) → Quality(x) ∧ ∃m∃s (MaterialEntity(m) ∧ qualityOf(x, m) ∧ LiquidAggregateState(s) ∧ hasQuality(m, s))"
+
+  - label: Surfactant
+    iri: "https://spec.industrialontologies.org/ontology/construct/Surfactant"
+    parent_class: Material Entity
+    definition: "material entity with a surfactant role"
+    examples:
+      - "polysorbate 80 when added to culture medium to improve wetting and dispersion"
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - It must have some Surfactant Role.
+    logical_definition: "Surfactant(x) ↔ MaterialEntity(x) ∧ ∃r(SurfactantRole(r) ∧ hasRole(x,r))"
+
+  - label: Surfactant Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/SurfactantRole"
+    parent_class: Role
+    definition: "role of a material entity when it is used, or planned to be used, to lower the surface tension of a medium or the interfacial tension between phases by preferentially adsorbing at liquid-vapor or other phase interfaces"
+    examples:
+      - "Role borne by polysorbate 80 when added to culture medium to improve wetting and dispersion"
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Material Entity.
+    logical_definition: "SurfactantRole(x) → Role(x) ∧ ∃m (MaterialEntity(m) ∧ roleOf(x, m))"
+
+  - label: Tapped Density
+    iri: "https://spec.industrialontologies.org/ontology/construct/TappedDensity"
+    parent_class: Mass Density
+    definition: "mass density of a particulate material that is the mass per tapped volume occupied by the material after tapping until little or no further volume change is observed"
+    examples:
+      - "the tapped density of powdered cell culture medium measured during raw material characterization"
+    classification_conditions:
+      - The entity must be a Mass Density.
+      - It must be the quality of some Material Entity that has a Particulate Form.
+    logical_definition: "TappedDensity(x) → MassDensity(x) ∧ ∃m (MaterialEntity(m) ∧ qualityOf(x, m) ∧ ∃f (ParticulateForm(f) ∧ hasQuality(m, f)))"
+
+  - label: Total Cell Count
+    iri: "https://spec.industrialontologies.org/ontology/construct/TotalCellCount"
+    parent_class: Cell Count
+    definition: "cell count that is the number of all cells present as parts of a material entity"
+    examples:
+      - "the total cell count of a seed bioreactor culture sample measured by an automated cell counter using trypan blue exclusion"
+    classification_conditions:
+      - The entity must be a Cell Count.
+    logical_definition: "TotalCellCount(x) → CellCount(x)"
+
+  - label: Total Cell Density
+    iri: "https://spec.industrialontologies.org/ontology/construct/TotalCellDensity"
+    parent_class: Cell Density
+    definition: "cell density that is the total number of cells per unit size"
+    examples:
+      - "the total cell density of a bioreactor culture sample measured by an automated cell counter"
+    classification_conditions:
+      - The entity must be a Cell Density.
+    logical_definition: "TotalCellDensity(x) → CellDensity(x)"
+
+  - label: Unsaturated State
+    iri: "https://spec.industrialontologies.org/ontology/construct/UnsaturatedState"
+    parent_class: Solution Saturation State
+    definition: "material state of a solution in which the dissolved solute concentration stays below the solute's equilibrium saturation concentration in that solution under prevailing conditions"
+    examples:
+      - "a sodium chloride buffer in which additional sodium chloride can still dissolve at 20 °C"
+    classification_conditions:
+      - The entity must be a Solution Saturation State.
+    logical_definition: "UnsaturatedState(x) → SolutionSaturationState(x)"
+
+  - label: Viability Status
+    iri: "https://spec.industrialontologies.org/ontology/construct/ViabilityStatus"
+    parent_class: Quality
+    definition: "quality of a biological material entity by virtue of whether that entity is alive and capable of maintaining or recovering relevant physiological activity"
+    examples:
+      - "the viability of a CHO cell classified as viable in a FACS assay using propidium iodide exclusion"
+    classification_conditions:
+      - The entity must be a Quality.
+      - It must be the quality of some Material Entity.
+    logical_definition: "ViabilityStatus(x) → Quality(x) ∧ ∃m (MaterialEntity(m) ∧ qualityOf(x, m))"
+
+  - label: Viable
+    iri: "https://spec.industrialontologies.org/ontology/construct/Viable"
+    parent_class: Viability Status
+    definition: "viability status of a biological material entity that is alive and capable of maintaining or recovering relevant physiological activity"
+    examples:
+      - "a CHO cell classified as viable after trypan blue exclusion"
+    classification_conditions:
+      - The entity must be a Viability Status.
+    logical_definition: "Viable(x) → ViabilityStatus(x)"
+
+  - label: Viable Cell Count
+    iri: "https://spec.industrialontologies.org/ontology/construct/ViableCellCount"
+    parent_class: Cell Count
+    definition: "cell count that is the number of viable cells that are present as parts of a material entity"
+    examples:
+      - "the viable cell count of a thawed cell suspension after viability staining"
+    classification_conditions:
+      - The entity must be a Cell Count.
+      - Any magnitude basis in a bearer part must be a Cell that has quality Viable.
+    logical_definition: "ViableCellCount(x) → CellCount(x) ∧ ∀p(hasMagnitudeBasisInBearerPart(x,p) → (Cell(p) ∧ ∃v(Viable(v) ∧ hasQuality(p,v))))"
+
+  - label: Viable Cell Density
+    iri: "https://spec.industrialontologies.org/ontology/construct/ViableCellDensity"
+    parent_class: Cell Density
+    definition: "cell density that is the number of viable cells per unit size"
+    examples:
+      - "the viable cell density of a CHO cell culture during production"
+    classification_conditions:
+      - The entity must be a Cell Density.
+      - Any magnitude basis in a bearer part must be a Cell that has quality Viable.
+    logical_definition: "ViableCellDensity(x) → CellDensity(x) ∧ ∀p(hasMagnitudeBasisInBearerPart(x,p) → (Cell(p) ∧ ∃d(Viable(d) ∧ hasQuality(p,d))))"
+
+  - label: Viable Cell Population
+    iri: "https://spec.industrialontologies.org/ontology/construct/ViableCellPopulation"
+    parent_class: Cell Population
+    definition: "cell population consisting of only viable cells"
+    examples:
+      - "the population of cells recovered from a cryopreserved cell bank vial that retains the capacity to resume proliferation after thawing and transfer to suitable culture medium"
+    classification_conditions:
+      - The entity must be a Cell Population.
+      - It must have some Cell with quality Viable as a member part at some time.
+      - Every member part at some time must be a Cell with quality Viable.
+    logical_definition: "ViableCellPopulation(x) ↔ CellPopulation(x) ∧ ∃y(Cell(y) ∧ ∃q(Viable(q) ∧ hasQuality(y, q)) ∧ hasMemberPartAtSomeTime(x, y)) ∧ ∀z(hasMemberPartAtSomeTime(x, z) → (Cell(z) ∧ ∃r(Viable(r) ∧ hasQuality(z, r))))"
+
+  - label: Virus
+    iri: "https://spec.industrialontologies.org/ontology/construct/Virus"
+    parent_class: Object
+    definition: "minute infectious agent that has a DNA or RNA genome, lacks independent metabolism, and replicates only through use of a living host cell"
+    examples:
+      - "adenovirus used as a viral vector"
+    classification_conditions:
+      - The entity must be an Object.
+    logical_definition: "Virus(x) → Object(x)"
+
+  - label: Virus Seed
+    iri: "https://spec.industrialontologies.org/ontology/construct/VirusSeed"
+    parent_class: Object Aggregate
+    definition: "object aggregate consisting of containers whose contents are portions of a virus preparation derived from a single defined virus source and maintained as a referenceable lot"
+    examples:
+      - "master virus seed stock for production of an adenovirus-based vaccine, consisting of multiple frozen portions derived from a single characterized virus preparation"
+    classification_conditions:
+      - The entity must be an Object Aggregate.
+    logical_definition: "VirusSeed(x) → ObjectAggregate(x)"
+
+  - label: Water For Injection Classifier
+    iri: "https://spec.industrialontologies.org/ontology/construct/WaterForInjectionClassifier"
+    parent_class: Compendial Grade Classifier
+    definition: "compendial grade classifier that classifies a portion of water that conforms to the requirements stated in a Water for Injection pharmacopeial monograph and thus has very high purity"
+    examples:
+      - "USP Water for Injection classification of a pharmaceutical water lot"
+    classification_conditions:
+      - The entity must be a Compendial Grade Classifier.
+      - It must classify some Portion Of Water that has a Purity quality.
+    logical_definition: "WaterForInjectionClassifier(x) → CompendialGradeClassifier(x) ∧ ∃w (PortionOfWater(w) ∧ classifies(x, w) ∧ ∃p (Purity(p) ∧ hasQuality(w, p)))"
+
+  - label: Wettability
+    iri: "https://spec.industrialontologies.org/ontology/construct/Wettability"
+    parent_class: Capability
+    definition: "capability of a solid material to be wetted by a liquid"
+    examples:
+      - "the wettability of powdered cell culture medium during reconstitution"
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of some Material Entity that has a Solid Aggregate State.
+      - It can only be realized in Processes that have as participant a Material Entity with a Liquid Aggregate State.
+    logical_definition: "Wettability(x) → Capability(x) ∧ ∃m∃s (MaterialEntity(m) ∧ capabilityOf(x, m) ∧ SolidAggregateState(s) ∧ hasQuality(m, s)) ∧ ∀p (hasRealization(x, p) → (Process(p) ∧ ∃l∃ls (MaterialEntity(l) ∧ LiquidAggregateState(ls) ∧ hasQuality(l, ls) ∧ hasParticipantAtSomeTime(p, l))))"
+
+  - label: Working Cell Bank
+    iri: "https://spec.industrialontologies.org/ontology/construct/WorkingCellBank"
+    parent_class: Cell Bank
+    definition: "cell bank prepared from cells recovered from one or more containers of a master cell bank and stored under validated cryogenic conditions as a source of cryopreserved cells for routine use in research, development, or manufacturing"
+    examples:
+      - "working cell bank of CHO cells used to inoculate production seed trains"
+    classification_conditions:
+      - The entity must be a Cell Bank.
+    logical_definition: "WorkingCellBank(x) → CellBank(x)"
+
+  - label: Working Solution Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/WorkingSolutionRole"
+    parent_class: Role
+    definition: "role held by a solution when the solution is prepared from a stock solution or intermediate stock solution at the concentration required for use in a planned process that is not itself a dilution process"
+    examples:
+      - "50 mM Tris-HCl prepared by diluting a 1 M Tris stock solution for use in an enzymatic assay"
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Solution.
+    logical_definition: "WorkingSolutionRole(x) → Role(x) ∧ ∃s (Solution(s) ∧ roleOf(x, s))"
+
+
+relationships:
+
+  - label: Has Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasRole"
+    inverse: Role Of
+
+  - label: Role Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/roleOf"
+    inverse: Has Role
+
+  - label: Has Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasFunction"
+    inverse: Function Of
+
+  - label: Function Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/functionOf"
+    inverse: Has Function
+
+  - label: Has Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasCapability"
+    inverse: Capability Of
+
+  - label: Capability Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/capabilityOf"
+    inverse: Has Capability
+
+  - label: Disposition Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/dispositionOf"
+
+  - label: Quality Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/qualityOf"
+    inverse: Has Quality
+
+  - label: Has Quality
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasQuality"
+    inverse: Quality Of
+
+  - label: Has Magnitude Basis In Bearer Part
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasMagnitudeBasisInBearerPart"
+
+  - label: Is Made Of At All Times
+    iri: "https://spec.industrialontologies.org/ontology/construct/isMadeOfAtAllTimes"
+
+  - label: Is Made Of At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/isMadeOfAtSomeTime"
+
+  - label: Component Part Of At All Times
+    iri: "https://spec.industrialontologies.org/ontology/construct/componentPartOfAtAllTimes"
+
+  - label: Prescribes
+    iri: "https://spec.industrialontologies.org/ontology/construct/prescribes"
+    inverse: Prescribed By
+
+  - label: Prescribed By
+    iri: "https://spec.industrialontologies.org/ontology/construct/prescribedBy"
+    inverse: Prescribes
+
+  - label: Has Input
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasInput"
+
+  - label: Has Output
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasOutput"
+
+  - label: Has Specified Output
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasSpecifiedOutput"
+
+  - label: Classifies
+    iri: "https://spec.industrialontologies.org/ontology/construct/classifies"
+    inverse: Classified By
+
+  - label: Classified By
+    iri: "https://spec.industrialontologies.org/ontology/construct/classifiedBy"
+    inverse: Classifies
+
+  - label: Satisfies Requirement
+    iri: "https://spec.industrialontologies.org/ontology/construct/satisfiesRequirement"
+
+  - label: Is Material State Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/isMaterialStateOf"
+
+  - label: Has Realization
+    iri: "http://purl.obolibrary.org/obo/BFO_0000054"
+
+  - label: Has Participant At Some Time
+    iri: "http://purl.obolibrary.org/obo/BFO_0000057"
+
+  - label: Has Continuant Part At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000110"
+
+  - label: Has Continuant Part At Some Time
+    iri: "http://purl.obolibrary.org/obo/BFO_0000178"
+
+  - label: Has Member Part At Some Time
+    iri: "http://purl.obolibrary.org/obo/BFO_0000115"
+
+  - label: Has Member Part At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000172"
+
+  - label: Continuant Part Of At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000177"
+
+  - label: Proper Continuant Part Of At Some Time
+    iri: "http://purl.obolibrary.org/obo/BFO_0000175"
+
+  - label: Proper Continuant Part Of At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000137"
+
+  - label: Material Basis Of At Some Time
+    iri: "http://purl.obolibrary.org/obo/BFO_0000127"
+
+  - label: Has Material Basis At Some Time
+    iri: "http://purl.obolibrary.org/obo/BFO_0000218"
+
+  - label: Inheres In
+    iri: "http://purl.obolibrary.org/obo/BFO_0000197"

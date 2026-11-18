@@ -1,0 +1,1863 @@
+imports:
+  - iri: "https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaEquipment/"
+    label: Biopharma Equipment
+  - iri: "https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaMaterial/"
+    label: Biopharma Material
+  - iri: "https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaMonitoringAndControl/"
+    label: Biopharma Monitoring and Control
+  - iri: "https://spec.industrialontologies.org/ontology/202603/biopharma/Recipe/"
+    label: Recipe
+    note: >
+      Classes such as Planned Process, Manufacturing Process, Material Addition Process, Material Removal Process,
+      Cell Culture, Cell Population, Culture Medium, Solution, Filter, Bioreactor, Plan Specification and the
+      material-related roles and states are defined in these imported modules (and IOF Core), not in this module.
+
+
+profile:
+  id: biopharma-manufacturing-execution-complete
+  ontology_artifact: BiopharmaManufacturingExecution
+  ontology_iri: "https://spec.industrialontologies.org/ontology/biopharma/BiopharmaManufacturingExecution/"
+  version_iri: "https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaManufacturingExecution/"
+  title: Biopharma Manufacturing Execution Ontology
+  description: >-
+    Complete profile generated from the Biopharma Manufacturing Execution RDF; all named classes declared in the
+    RDF artifact are represented here. The module represents actual occurrences of manufacturing processes with
+    respect to recipes: upstream cell culture, purification, filtration, chromatography, viral clearance,
+    solution preparation, and process operating modes. This RDF declares no new properties; the relationships
+    below are those referenced in its class axioms. Examples are limited to the first few per class and
+    adaptedFrom source links are omitted. Most classes are primitive (is_primitive: true).
+  include_ancestors: true
+  include_compatible_properties: true
+
+
+entities:
+  # ---------------- Operating modes ----------------
+  - label: Planned Process Operating Mode
+    iri: "https://spec.industrialontologies.org/ontology/construct/PlannedProcessOperatingMode"
+    parent_class: Process Characteristic
+    definition: >
+      process characteristic of a planned process that characterizes the overall pattern by which process material is introduced into, retained in, and removed from the planned process over an operating interval
+    examples:
+      - "batch process operating mode of a Protein A capture chromatography process, in which a finite quantity of clarified harvest is processed as a single unit"
+      - "continuous process operating mode of a simulated moving-bed chromatography process, in which material is introduced while output material is concomitantly removed"
+      - "semi-continuous process operating mode of a draw-and-fill culture process"
+    classification_conditions:
+      - The entity must be a Process Characteristic.
+      - It must be the process characteristic of some Planned Process.
+    logical_definition: >
+      PlannedProcessOperatingMode(x) → ProcessCharacteristic(x) ∧ ∃p (PlannedProcess(p) ∧ processCharacteristicOf(x, p))
+    is_primitive: true
+    primitive_rationale: There are insufficient constructs to create a set of necessary and sufficient conditions.
+
+
+  - label: Batch Process Operating Mode
+    iri: "https://spec.industrialontologies.org/ontology/construct/BatchProcessOperatingMode"
+    parent_class: Planned Process Operating Mode
+    definition: >
+      process operating mode of a planned process in which a finite quantity of process material is introduced before or at the start of the main processing interval and processed as a single unit, without additional process material being introduced or removed during that interval
+    examples:
+      - "batch mode of mammalian cell culture in which process material is introduced at the start of cultivation and processed as a single unit without further addition"
+      - "batch mode of API crystallization in which a finite solvent/solute quantity is processed as a single unit before solids recovery"
+    classification_conditions:
+      - The entity must be a Planned Process Operating Mode.
+    logical_definition: >
+      BatchProcessOperatingMode(x) → PlannedProcessOperatingMode(x)
+    explanatory_note: >
+      Does not exclude sampling, gas exchange, venting, minor control additions or other ancillary operations. Distinguish from fed batch mode (additional process material intentionally introduced during the run) and continuous mode (material introduced while output is concomitantly removed).
+    is_primitive: true
+    primitive_rationale: There are insufficient constructs to define a set of necessary and sufficient conditions.
+
+
+  - label: Fed Batch Process Operating Mode
+    iri: "https://spec.industrialontologies.org/ontology/construct/FedBatchProcessOperatingMode"
+    parent_class: Planned Process Operating Mode
+    definition: >
+      process operating mode of a planned process in which a finite quantity of process material is introduced before or at the start of the main processing interval, and additional process material is introduced during that interval while the process material is retained and processed as a single unit
+    examples:
+      - "CHO culture with bolus glucose feeds to maintain viable cell density, harvested in a single terminal step"
+      - "Semi-batch polymerization where monomer is added gradually to control heat release, then reactor is emptied"
+    counter_examples:
+      - "Simple batch bioreactor run with no feeding"
+      - "Perfusion culture"
+    classification_conditions:
+      - The entity must be a Planned Process Operating Mode.
+      - It must be the process characteristic of some Planned Process that has as occurrent part a Material Addition Process whose input is a Process Intermediate Material or Raw Material with a Transferred Material Role.
+    logical_definition: >
+      FedBatchProcessOperatingMode(x) → PlannedProcessOperatingMode(x) ∧ ∃p ∃i ∃m ∃r (PlannedProcess(p) ∧ processCharacteristicOf(x, p) ∧ MaterialAdditionProcess(i) ∧ hasOccurrentPart(p, i) ∧ (ProcessIntermediateMaterial(m) ∨ RawMaterial(m)) ∧ hasInput(i, m) ∧ TransferredMaterialRole(r) ∧ hasRole(m, r))
+    explanatory_note: >
+      Ancillary additions (pH adjusters, antifoam, sparging gas, buffers, wash or cleaning solutions) do not by themselves make the mode fed batch.
+    is_primitive: true
+    primitive_rationale: There are insufficient constructs to define a set of necessary and sufficient conditions.
+
+
+  - label: Continuous Process Operating Mode
+    iri: "https://spec.industrialontologies.org/ontology/construct/ContinuousProcessOperatingMode"
+    parent_class: Planned Process Operating Mode
+    definition: >
+      process operating mode that characterizes a planned process in which input material is introduced into the process while output material is concomitantly removed from the same process over the whole operating interval
+    examples:
+      - "continuous mode of perfusion cell culture with fresh medium introduction and concomitant harvest removal through a cell retention device"
+      - "continuous mode of simulated moving-bed chromatography with feed introduction and concomitant product-stream removal"
+      - "continuous mode of a Haber-Bosch process for ammonia synthesis"
+    classification_conditions:
+      - The entity must be a Planned Process Operating Mode.
+      - It must be the process characteristic of some Planned Process that has as occurrent parts a Material Addition Process and a Material Removal Process that overlap in time (simultaneously, overlapping or overlapped by), where the removal's specified output is an output of the planned process.
+    logical_definition: >
+      ContinuousProcessOperatingMode(x) → PlannedProcessOperatingMode(x) ∧ ∃p ∃a ∃r ∃m (PlannedProcess(p) ∧ processCharacteristicOf(x, p) ∧ MaterialAdditionProcess(a) ∧ MaterialRemovalProcess(r) ∧ MaterialEntity(m) ∧ hasOccurrentPart(p, a) ∧ hasOccurrentPart(p, r) ∧ (occursSimultaneouslyWith(a, r) ∨ temporallyOverlaps(a, r) ∨ isTemporallyOverlappedBy(a, r)) ∧ hasSpecifiedOutput(r, m) ∧ isOutputOf(m, p))
+    is_primitive: true
+    primitive_rationale: There are insufficient constructs to define a set of necessary and sufficient conditions.
+
+
+  - label: Continuous Culture Process Operating Mode
+    iri: "https://spec.industrialontologies.org/ontology/construct/ContinuousCultureProcessOperatingMode"
+    parent_class: Continuous Process Operating Mode
+    definition: >
+      continuous process operating mode of a culture process in which culture medium or other input material is introduced while culture material, spent medium, or product-containing harvest material is concomitantly removed over an operating interval
+    examples:
+      - "continuous culture mode of a chemostat culture process"
+      - "continuous culture mode of a turbidostat process, with flow adjusted to maintain a target cell density or turbidity"
+      - "continuous culture mode of a perfusion culture process with cells retained in the culture system"
+    classification_conditions:
+      - The entity must be a Continuous Process Operating Mode.
+      - It must be the process characteristic of some Planned Process that has some Cell Culture as participant.
+    logical_definition: >
+      ContinuousCultureProcessOperatingMode(x) → ContinuousProcessOperatingMode(x) ∧ ∃p (PlannedProcess(p) ∧ processCharacteristicOf(x, p) ∧ ∃c (CellCulture(c) ∧ hasParticipantAtSomeTime(p, c)))
+    is_primitive: true
+    primitive_rationale: There are insufficient constructs to define a set of necessary and sufficient conditions.
+
+
+  - label: Chemostat Culture Process Operating Mode
+    iri: "https://spec.industrialontologies.org/ontology/construct/ChemostatCultureProcessOperatingMode"
+    parent_class: Continuous Culture Process Operating Mode
+    definition: >
+      continuous culture process operating mode in which culture medium containing a growth-limiting component is introduced while culture material is concomitantly removed over an operating interval, with dilution rate used to regulate culture growth
+    examples:
+      - "chemostat mode of a microbial culture process, in which fresh medium containing a limiting nutrient is introduced while culture broth is removed at a controlled dilution rate"
+    classification_conditions:
+      - The entity must be a Continuous Culture Process Operating Mode.
+    logical_definition: >
+      ChemostatCultureProcessOperatingMode(x) → ContinuousCultureProcessOperatingMode(x)
+    is_primitive: true
+    primitive_rationale: There are insufficient constructs to define a set of necessary and sufficient conditions.
+
+
+  - label: Perfusion Culture Process Operating Mode
+    iri: "https://spec.industrialontologies.org/ontology/construct/PerfusionCultureProcessOperatingMode"
+    parent_class: Continuous Culture Process Operating Mode
+    definition: >
+      continuous culture process operating mode in which culture medium or other input material is introduced while spent medium or product-containing harvest material is concomitantly removed over an operating interval, with cell retention used to preferentially keep cells in the culture system
+    examples:
+      - "perfusion mode of a mammalian cell culture process, with fresh medium introduced while product-containing harvest is removed through a cell retention device"
+    classification_conditions:
+      - The entity must be a Continuous Culture Process Operating Mode.
+      - It must be the process characteristic of some Planned Process that has as occurrent parts some Cell Retention Process and some Perfusion Medium Exchange Process.
+    logical_definition: >
+      PerfusionCultureProcessOperatingMode(x) → ContinuousCultureProcessOperatingMode(x) ∧ ∃p (PlannedProcess(p) ∧ processCharacteristicOf(x, p) ∧ ∃r (CellRetentionProcess(r) ∧ hasOccurrentPart(p, r)) ∧ ∃e (PerfusionMediumExchangeProcess(e) ∧ hasOccurrentPart(p, e)))
+    is_primitive: true
+    primitive_rationale: There are insufficient constructs to define a set of necessary and sufficient conditions.
+
+
+  # ---------------- Cell line development and banking ----------------
+  - label: Genetic Transformation Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/GeneticTransformationProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process that results in the introduction, alteration, or integration of genetic material into a cell or organism
+    examples:
+      - "transfection of a mammalian cell"
+      - "transduction of a CHO cell by a retrovirus containing a genetic sequence of a particular mAb"
+      - "Gene deletion by using the CRISPR-CAS9 gene editing technology"
+    classification_conditions:
+      - The entity must be a Planned Process.
+    logical_definition: >
+      GeneticTransformationProcess(x) → PlannedProcess(x)
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Transfection Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/TransfectionProcess"
+    parent_class: Genetic Transformation Process
+    definition: >
+      genetic transformation process of introducing DNA or RNA into eukaryotic cells by non-viral methods to modify the cell's genetic material
+    examples:
+      - "transfection of a mammalian cell by electroporation, sonoporation or microinjection"
+    counter_examples:
+      - "introducing a gene encoding a recombinant protein into a yeast cell by using a virus"
+    classification_conditions:
+      - The entity must be a Genetic Transformation Process.
+    logical_definition: >
+      TransfectionProcess(x) → GeneticTransformationProcess(x)
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Planned Transduction Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/PlannedTransductionProcess"
+    parent_class: Genetic Transformation Process
+    definition: >
+      genetic transformation process of introducing DNA or RNA into cells by a virus or viral vector to modify the cell's genetic material
+    examples:
+      - "Lentiviral transduction of primary human T cells in CAR-T manufacturing"
+      - "AAV-mediated delivery of a therapeutic gene to retinal cells in gene therapy"
+    counter_examples:
+      - "Lipofection of plasmid DNA into CHO cells"
+      - "Natural bacteriophage transfer of genes between gut bacteria"
+    classification_conditions:
+      - The entity must be a Genetic Transformation Process.
+    logical_definition: >
+      PlannedTransductionProcess(x) → GeneticTransformationProcess(x)
+    explanatory_note: >
+      Restricted to planned applications (therapeutic, manufacturing, experimental). Natural transduction (e.g. phage-driven horizontal gene transfer) is out of scope.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Clone Selection Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/CloneSelectionProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process in which an optimal set of cell clones is identified and isolated based on the clones exhibiting desirable characteristics
+    examples:
+      - "using microscope images from clone experiments as input to a predictive model to prioritize clones, followed by selecting candidates with optimal morphology and expression levels"
+      - "selecting clones based on functional assays confirming high target protein activity and long-term culture stability"
+    classification_conditions:
+      - The entity must be a Planned Process.
+      - It must have some Cloned Cell Line as specified output.
+    logical_definition: >
+      CloneSelectionProcess(x) → PlannedProcess(x) ∧ ∃y (ClonedCellLine(y) ∧ hasSpecifiedOutput(x, y))
+    explanatory_note: >
+      Desirable characteristics include high protein expression, consistent product quality and robust growth.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Cell Banking
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellBanking"
+    parent_class: Planned Process
+    definition: >
+      planned process of preserving and maintaining a cell line for future use
+    examples:
+      - "establishing a master cell bank by freezing portions of a cloned HEK293 cell line under GMP conditions"
+      - "banking a hybridoma cell line after single-cell cloning and characterization"
+    classification_conditions:
+      - The entity must be a Planned Process.
+      - It must have some Cell Line as participant at some time.
+    logical_definition: >
+      CellBanking(x) → PlannedProcess(x) ∧ ∃y (CellLine(y) ∧ hasParticipantAtSomeTime(x, y))
+    explanatory_note: >
+      Provides a reliable, consistent source of a cell line, reducing continued propagation and risks of genetic drift or contamination. Future uses include research, drug development and biopharmaceutical manufacturing.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Cell Line Development
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellLineDevelopment"
+    parent_class: Planned Process
+    alternative_labels:
+      - establishing cell line
+    definition: >
+      planned process in which a cell line is engineered to produce a therapeutic biomolecule or biologic
+    examples:
+      - "Cell line development that starts with transfecting a CHO population with a vector containing the genetic sequence for the cNIST mAb and ends with banking the cell line stemming from the clone with the highest mAb productivity"
+    classification_conditions:
+      - The entity must be a Planned Process.
+      - It must be temporally started by some Genetic Transformation Process, which also is an occurrent part and precedes some Clone Selection Process that is also an occurrent part.
+      - It must have some Cloned Cell Line as specified output (also the specified output of the clone selection).
+      - It must meet or temporally overlap some Cell Banking whose participant is that cell line.
+    logical_definition: >
+      CellLineDevelopment(x) → PlannedProcess(x) ∧ ∃g ∃c ∃l ∃b (GeneticTransformationProcess(g) ∧ CloneSelectionProcess(c) ∧ ClonedCellLine(l) ∧ CellBanking(b) ∧ hasOccurrentPart(x, g) ∧ hasOccurrentPart(x, c) ∧ precedes(g, c) ∧ temporallyStartedBy(x, g) ∧ hasSpecifiedOutput(c, l) ∧ hasSpecifiedOutput(x, l) ∧ hasParticipantAtSomeTime(b, l) ∧ (meets(x, b) ∨ temporallyOverlaps(x, b)))
+    explanatory_note: >
+      Involves one or more clonal selection processes to isolate a genetically stable monoclonal population; ends with banking of the resulting cell line; engineering includes introduction of genetic material, immortalization or other stable modification. Regulatory standards require proof of monoclonality for a production cell line.
+    is_primitive: true
+    primitive_rationale: There are insufficient constructs to create a set of necessary and sufficient conditions.
+
+
+  - label: Clone Stability Study
+    iri: "https://spec.industrialontologies.org/ontology/construct/CloneStabilityStudy"
+    parent_class: Planned Process
+    alternative_labels:
+      - clone stability study process
+    definition: >
+      planned process composed of one or more measurement or monitoring processes, designed to evaluate whether a selected cell clone maintains its key phenotypic characteristics, genotypic traits, and genetic integrity over time and across multiple generations of cell division
+    examples:
+      - "Assessing the stability of a CHO cell clone by monitoring titer and cell growth during a 14-day fed-batch culture in a 5 L bioreactor"
+      - "Evaluating the genetic, phenotypic, and productivity stability of a CHO-K1 clone over 70 days of continuous culture (~140 generations)"
+    classification_conditions:
+      - The entity must be a Planned Process.
+      - It must have some Cloned Cell Line as input.
+      - It must have some Measurement Process or Monitoring Process as occurrent part.
+    logical_definition: >
+      CloneStabilityStudy(x) → PlannedProcess(x) ∧ ∃y (ClonedCellLine(y) ∧ hasInput(x, y)) ∧ ∃z ((MeasurementProcess(z) ∨ MonitoringProcess(z)) ∧ hasOccurrentPart(x, z))
+    explanatory_note: >
+      Results are often process dependent; consider them applicable only to the process used to obtain the data.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  # ---------------- Cell culture processes ----------------
+  - label: Cell Population Proliferation
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellPopulationProliferation"
+    parent_class: Process
+    alternative_labels:
+      - cell population growth
+    definition: >
+      process in which cells reproduce or multiply, resulting in an increase in the number of cells
+    examples:
+      - "natural proliferation of skin fibroblasts during wound healing"
+      - "bacterial population growth in a nutrient-rich medium"
+      - "multiplication of yeast cells during fermentation"
+    classification_conditions:
+      - The entity must be a Process.
+      - It must have some Cell Population as participant at all times.
+    logical_definition: >
+      CellPopulationProliferation(x) → Process(x) ∧ ∃y (CellPopulation(y) ∧ hasParticipantAtAllTimes(x, y))
+    is_primitive: true
+    primitive_rationale: Expected to remain primitive; details of cellular reproduction are out of scope and should come from a biological ontology.
+
+
+  - label: Cell Culture Recovery Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellCultureRecoveryProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process in which cells that have undergone a stress-inducing process are cultured under controlled conditions to restore or stabilize viability, metabolic activity, or growth potential
+    examples:
+      - "Recovery of cryopreserved CHO Cells after thawing"
+      - "Recovery of mammalian cells after transfer to serum-free medium"
+    disjoint_with:
+      - Cell Culture Expansion Process
+      - Production Culture Production Phase
+    classification_conditions:
+      - The entity must be a Planned Process.
+      - It must have some Cell Culture as participant at some time.
+    logical_definition: >
+      CellCultureRecoveryProcess(x) → PlannedProcess(x) ∧ ∃c (CellCulture(c) ∧ hasParticipantAtSomeTime(x, c))
+    explanatory_note: >
+      Applied after stress (e.g. thaw, shear, nutrient deprivation, culture transfer). Cells are not necessarily in exponential growth; focus is stabilization, viability recovery and adaptation, so acceptance criteria differ from expansion. Distinguish from cell culture expansion, which is directed at increasing cell number; some proliferation may occur but is not the defining purpose.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Cell Culture Expansion Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellCultureExpansionProcess"
+    parent_class: Planned Process
+    definition: >
+      planned cell culture process during which cultivation is managed primarily to increase the total number of cells through cell proliferation
+    examples:
+      - "Shake flask expansion of CHO cells with controlled feeding and monitoring"
+      - "seed train expansion of hematopoietic stem cells under GMP conditions"
+      - "T cell expansion in gas-permeable bags with scheduled media additions"
+    counter_examples:
+      - "proliferation of cells caused by a contamination"
+    disjoint_with:
+      - Cell Culture Recovery Process
+      - Production Culture Production Phase
+    classification_conditions:
+      - The entity must be a Planned Process.
+      - It must have some Cell Population Proliferation as occurrent part.
+      - It must have some Cell Culture as participant at some time.
+    logical_definition: >
+      CellCultureExpansionProcess(x) → PlannedProcess(x) ∧ ∃p (CellPopulationProliferation(p) ∧ hasOccurrentPart(x, p)) ∧ ∃c (CellCulture(c) ∧ hasParticipantAtSomeTime(x, c))
+    explanatory_note: >
+      Assumes cells remain healthy and proliferative (monitored via viability). Incidental proliferation during recovery or a production phase does not by itself make a process an expansion process.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Inoculation Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/InoculationProcess"
+    parent_class: Material Addition Process
+    definition: >
+      material addition process in which cells, microorganisms, viruses, or biological preparations are deliberately introduced into a defined recipient to initiate growth, infection, testing, production, or a biological response
+    examples:
+      - "After thawing, CHO cells are introduced into a shake flask containing fresh medium to initiate expansion"
+      - "A starter culture of Saccharomyces cerevisiae is added to a fermenter to begin beer production"
+      - "A viral stock is added to a mammalian cell culture to study infection dynamics"
+    classification_conditions:
+      - The entity must be a Material Addition Process.
+      - It must have as input some Material Entity with both an Inoculum Role and a Transferred Material Role.
+    logical_definition: >
+      InoculationProcess(x) → MaterialAdditionProcess(x) ∧ ∃m ∃r ∃tr (MaterialEntity(m) ∧ InoculumRole(r) ∧ TransferredMaterialRole(tr) ∧ hasInput(x, m) ∧ hasRole(m, r) ∧ hasRole(m, tr))
+    explanatory_note: >
+      Biological preparations are non-living, biologically derived materials (vaccines, purified antigens, toxoids, inactivated microorganisms, viral particles) that do not replicate autonomously. A defined recipient encompasses medium, host or vessel.
+    is_primitive: true
+    primitive_rationale: There are insufficient constructs present to create a set of necessary and sufficient conditions.
+
+
+  - label: Cell Culture Inoculation Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellCultureInoculationProcess"
+    parent_class: Inoculation Process
+    definition: >
+      inoculation process in which a cell-containing inoculum is introduced to initiate a cell culture process
+    examples:
+      - "adding thawed ultra-high-density CHO cell material from a working cell bank into a wave-mixed perfusion bioreactor to start culture growth"
+      - "using seed culture to inoculate an N-1 perfusion bioreactor"
+      - "inoculating fed-batch production bioreactors with cells from an N-1 perfusion bioreactor"
+    classification_conditions:
+      - The entity must be an Inoculation Process.
+      - Its input must be a Material Entity with a Cell Population as continuant part at all times, with Inoculum Role and Transferred Material Role.
+      - It must be an occurrent part of some Planned Process that has some Cell Culture as participant.
+    logical_definition: >
+      CellCultureInoculationProcess(x) → InoculationProcess(x) ∧ ∃m ∃c ∃ir ∃tr (MaterialEntity(m) ∧ CellPopulation(c) ∧ hasInput(x, m) ∧ hasContinuantPartAtAllTimes(m, c) ∧ InoculumRole(ir) ∧ hasRole(m, ir) ∧ TransferredMaterialRole(tr) ∧ hasRole(m, tr)) ∧ ∃p ∃cc (PlannedProcess(p) ∧ occurrentPartOf(x, p) ∧ CellCulture(cc) ∧ hasParticipantAtSomeTime(p, cc))
+    explanatory_note: >
+      Marks the start of a new cell culture process (recovery, expansion, seed train, N-1 or production). Distinguish from culture medium charging (before inoculation) and culture feed addition (after the culture has begun).
+    is_primitive: true
+    primitive_rationale: There are insufficient constructs to create a set of necessary and sufficient conditions.
+
+
+  - label: Virus Inoculation Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/VirusInoculationProcess"
+    parent_class: Inoculation Process
+    definition: >
+      inoculation process in which a virus seed or infected host-cell-containing material is deliberately introduced into a cell culture to initiate viral propagation
+    examples:
+      - "addition of working virus seed to a confluent Vero cell culture to initiate viral propagation"
+      - "inoculation of Sf9 insect cells with baculovirus seed stock in a production bioreactor"
+      - "infection of HEK293 cells with adenoviral vector for recombinant protein expression"
+    classification_conditions:
+      - The entity must be an Inoculation Process.
+      - It must have some Cell Culture with a Material Addition Target Role as participant.
+      - Its input must be a Virus Seed, or a Cell Population with some Infected Host Cell as member part, with Inoculum Role and Transferred Material Role.
+    logical_definition: >
+      VirusInoculationProcess(x) → InoculationProcess(x) ∧ ∃c ∃tr (CellCulture(c) ∧ MaterialAdditionTargetRole(tr) ∧ hasParticipantAtSomeTime(x, c) ∧ hasRole(c, tr)) ∧ ∃m ∃ir ∃mr ((VirusSeed(m) ∨ (CellPopulation(m) ∧ ∃h (InfectedHostCell(h) ∧ hasMemberPartAtSomeTime(m, h)))) ∧ InoculumRole(ir) ∧ TransferredMaterialRole(mr) ∧ hasInput(x, m) ∧ hasRole(m, ir) ∧ hasRole(m, mr))
+    is_primitive: true
+    primitive_rationale: There are insufficient constructs to create a set of necessary and sufficient conditions.
+
+
+  - label: Planned Cell Infection Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/PlannedCellInfectionProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process in which a cell culture is exposed to a virus inoculum under defined conditions in order to generate a population of infected host cells
+    examples:
+      - "Infecting HEK293 cells with an adenovirus vector at MOI 5, incubating 2 hours at 37 °C for adsorption, replacing medium, and culturing 48 hours to produce infected HEK293 cells"
+    counter_examples:
+      - "Transfecting cells with plasmid DNA"
+    classification_conditions:
+      - The entity must be a Planned Process.
+      - It must have some Virus Inoculation Process as occurrent part.
+      - It must have as specified output a Cell Population that has some Infected Host Cell as member part at all times.
+    logical_definition: >
+      PlannedCellInfectionProcess(x) ↔ PlannedProcess(x) ∧ ∃v (VirusInoculationProcess(v) ∧ hasOccurrentPart(x, v)) ∧ ∃p (CellPopulation(p) ∧ hasSpecifiedOutput(x, p) ∧ ∃c (InfectedHostCell(c) ∧ hasMemberPartAtAllTimes(p, c)))
+    explanatory_note: >
+      Refers to intentional exposure of a host cell culture (e.g. HEK293, MDCK) to virus under documented conditions (MOI, adsorption time, temperature, incubation duration). The output cell population may be propagated, harvested for virus recovery, or used as inoculum for a later stage.
+
+
+  - label: Culture Medium Charging Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/CultureMediumChargingProcess"
+    parent_class: Material Addition Process
+    definition: >
+      material addition process in which culture medium is added to a culture vessel in preparation for cell culture inoculation
+    examples:
+      - "charging medium into a production bioreactor before seed culture inoculation"
+      - "adding recovery medium to a shake flask before thawed cell suspension inoculation"
+    classification_conditions:
+      - The entity must be a Material Addition Process.
+      - It must have as participant a Material Artifact with a Cell Culture Holding Capability and a Material Addition Target Role.
+      - It must have as input a Culture Medium with a Transferred Material Role.
+      - It must precede some Cell Culture Inoculation Process.
+    logical_definition: >
+      CultureMediumChargingProcess(x) → MaterialAdditionProcess(x) ∧ ∃a ∃c ∃ar ∃m ∃mr ∃i (MaterialArtifact(a) ∧ CellCultureHoldingCapability(c) ∧ hasCapability(a, c) ∧ MaterialAdditionTargetRole(ar) ∧ hasParticipantAtSomeTime(x, a) ∧ hasRole(a, ar) ∧ CultureMedium(m) ∧ TransferredMaterialRole(mr) ∧ hasInput(x, m) ∧ hasRole(m, mr) ∧ CellCultureInoculationProcess(i) ∧ precedes(x, i))
+    explanatory_note: >
+      The charged medium may be complete, growth, seed, expansion or production medium. Distinguish from inoculation (adds inoculum) and culture feed addition (adds to an already inoculated culture).
+    is_primitive: true
+    primitive_rationale: There are insufficient constructs to create a set of necessary and sufficient conditions.
+
+
+  - label: Culture Feed Addition Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/CultureFeedAdditionProcess"
+    parent_class: Material Addition Process
+    definition: >
+      material addition process in which a nutrient feed is added to a cell culture during a culture process
+    examples:
+      - "addition of carbohydrate and amino acid feed to a CHO fed-batch culture"
+      - "controlled exponential glucose feeding in an E. coli high-cell-density culture"
+      - "perfusion feed supplying fresh medium to a CHO bioreactor"
+    classification_conditions:
+      - The entity must be a Material Addition Process.
+      - It must have as input a Nutrient Feed with a Transferred Material Role.
+      - It must have as participant a Cell Culture with a Material Addition Target Role.
+      - It must occur during a Planned Process that has the same Cell Culture as participant.
+    logical_definition: >
+      CultureFeedAdditionProcess(x) → MaterialAdditionProcess(x) ∧ ∃m ∃r ∃c ∃t ∃p (NutrientFeed(m) ∧ TransferredMaterialRole(r) ∧ hasInput(x, m) ∧ hasRole(m, r) ∧ CellCulture(c) ∧ MaterialAdditionTargetRole(t) ∧ hasParticipantAtSomeTime(x, c) ∧ hasRole(c, t) ∧ PlannedProcess(p) ∧ occursDuring(x, p) ∧ hasParticipantAtSomeTime(p, c))
+    explanatory_note: >
+      Occurs after the cell culture has been established by inoculation; distinguish from initial medium charging and from inoculation.
+    is_primitive: true
+    primitive_rationale: There are insufficient constructs to create a set of necessary and sufficient conditions.
+
+
+  - label: Culture Feeding Strategy
+    iri: "https://spec.industrialontologies.org/ontology/construct/CultureFeedingStrategy"
+    parent_class: Plan Specification
+    definition: >
+      plan specification that prescribes how one or more feeding processes are to be executed during a cell culture process, including scheduling and amounts or rates, and any specified triggering conditions
+    examples:
+      - "periodic bolus feeding strategy for CHO fed-batch cultures"
+      - "exponential feeding strategy maintaining a defined specific growth rate in E. coli fed-batch process"
+      - "model-predictive feeding strategy controlling nutrient supply in CHO perfusion culture"
+    classification_conditions:
+      - The entity must be a Plan Specification.
+      - It must prescribe some Culture Feed Addition Process.
+    logical_definition: >
+      CultureFeedingStrategy(x) → PlanSpecification(x) ∧ ∃p (CultureFeedAdditionProcess(p) ∧ prescribes(x, p))
+    explanatory_note: >
+      Specifies how feeding is to be executed rather than performing it: scheduling, frequency and decision rules (fixed schedules, condition-based triggers on process measurements, or model-based rules). Acts as a template guiding one or more feeding processes.
+    is_primitive: true
+    primitive_rationale: There are insufficient constructs to create a set of necessary and sufficient conditions.
+
+
+  - label: Culture Medium Exchange Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/CultureMediumExchangeProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process in which part or all of the spent culture medium associated with a cell culture is removed and fresh culture medium is added
+    examples:
+      - "Partial medium exchange in a T-cell expansion culture to restore nutrient levels and reduce lactate"
+      - "Complete media change in adherent Vero cells before virus inoculation"
+    counter_examples:
+      - "Addition of fresh medium without removal of existing culture fluid"
+    classification_conditions:
+      - The entity must be a Planned Process.
+      - It must have as occurrent part a Material Addition Process whose input is a Culture Medium with a Transferred Material Role.
+      - It must have as occurrent part a Material Removal Process whose specified output is, or contains, a Culture Medium in a Spent Culture Medium State.
+      - It must be an occurrent part of a Planned Process that has some Cell Culture as participant.
+    logical_definition: >
+      CultureMediumExchangeProcess(x) → PlannedProcess(x) ∧ ∃a ∃f ∃t (MaterialAdditionProcess(a) ∧ hasOccurrentPart(x, a) ∧ CultureMedium(f) ∧ hasInput(a, f) ∧ TransferredMaterialRole(t) ∧ hasRole(f, t)) ∧ ∃r ∃o ∃m ∃s (MaterialRemovalProcess(r) ∧ hasOccurrentPart(x, r) ∧ MaterialEntity(o) ∧ hasSpecifiedOutput(r, o) ∧ CultureMedium(m) ∧ SpentCultureMediumState(s) ∧ hasMaterialState(m, s) ∧ (o = m ∨ hasContinuantPartAtAllTimes(o, m))) ∧ ∃p ∃c (PlannedProcess(p) ∧ occurrentPartOf(x, p) ∧ CellCulture(c) ∧ hasParticipantAtSomeTime(p, c))
+    explanatory_note: >
+      Includes both removal and addition; distinct from feeding, which adds fresh material without removal. May be partial or complete; used to restore nutrients, reduce metabolites or remove inhibitory compounds.
+    is_primitive: true
+    primitive_rationale: There are insufficient constructs to create a set of necessary and sufficient conditions.
+
+
+  - label: Perfusion Medium Exchange Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/PerfusionMediumExchangeProcess"
+    parent_class: Culture Medium Exchange Process
+    definition: >
+      culture medium exchange process in which fresh culture medium is added to a cell culture while material is continuously or quasi-continuously removed from the cell culture, with cell retention used to preferentially keep cells in the culture
+    examples:
+      - "perfusion medium exchange in a CHO perfusion culture, where fresh medium is supplied while product-containing harvest is removed through an Alternating Tangential Flow (ATF) cell retention device"
+      - "perfusion medium exchange using a spin filter, where medium is exchanged while cells are preferentially kept in the culture"
+    classification_conditions:
+      - The entity must be a Culture Medium Exchange Process.
+      - It must have some Cell Retention Process as occurrent part.
+    logical_definition: >
+      PerfusionMediumExchangeProcess(x) → CultureMediumExchangeProcess(x) ∧ ∃r (CellRetentionProcess(r) ∧ hasOccurrentPart(x, r))
+    is_primitive: true
+    primitive_rationale: There are insufficient constructs to create a set of necessary and sufficient conditions.
+
+
+  - label: Cell Retention Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellRetentionProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process in which material is removed from a cell culture while cells are preferentially kept in or returned to the cell culture
+    examples:
+      - "cell retention in a perfusion culture, in which cells are retained while product-containing harvest is removed through an alternating tangential flow device"
+      - "cell retention in a culture process, in which a spin filter retains cells while culture fluid is withdrawn"
+    classification_conditions:
+      - The entity must be a Planned Process.
+      - It must have some Cell Culture as input.
+      - It must have some Material Removal Process as occurrent part.
+      - It must be an occurrent part of a Planned Process that has the same Cell Culture as participant.
+    logical_definition: >
+      CellRetentionProcess(x) → PlannedProcess(x) ∧ ∃c ((CellCulture(c) ∧ hasInput(x, c)) ∧ ∃r (MaterialRemovalProcess(r) ∧ hasOccurrentPart(x, r)) ∧ ∃p (PlannedProcess(p) ∧ occurrentPartOf(x, p) ∧ hasParticipantAtSomeTime(p, c)))
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Cell Bleed Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellBleedProcess"
+    parent_class: Material Removal Process
+    definition: >
+      material removal process in which a portion of cell-containing culture material is withdrawn from a cell culture during an ongoing culture process to regulate culture properties such as viable cell density, biomass concentration, or metabolite accumulation
+    examples:
+      - "In a perfusion CHO culture, a controlled daily bleed of 10% of reactor volume maintains cell density within a target range (e.g. 20–30 × 10⁶ cells/mL)"
+    counter_examples:
+      - "At the end of a fed-batch run, the entire bioreactor contents are removed to recover product (harvesting): the goal is to terminate the culture, not regulate it"
+    classification_conditions:
+      - The entity must be a Material Removal Process.
+      - It must have as participant a Cell Culture with a Material Withdrawal Source Role.
+      - It must have as specified output a Material Entity that has a Cell Population as continuant part and a Transferred Material Role.
+      - It must occur during a Planned Process that has the same Cell Culture as participant.
+    logical_definition: >
+      CellBleedProcess(x) → MaterialRemovalProcess(x) ∧ ∃c ∃sr ∃o ∃tr ∃p (CellCulture(c) ∧ hasParticipantAtSomeTime(x, c) ∧ MaterialWithdrawalSourceRole(sr) ∧ hasRole(c, sr) ∧ MaterialEntity(o) ∧ hasSpecifiedOutput(x, o) ∧ ∃cp (CellPopulation(cp) ∧ hasContinuantPartAtAllTimes(o, cp)) ∧ TransferredMaterialRole(tr) ∧ hasRole(o, tr) ∧ PlannedProcess(p) ∧ occursDuring(x, p) ∧ hasParticipantAtSomeTime(p, c))
+    explanatory_note: >
+      Commonly used in perfusion, but not limited to continuous mode; may occur in semi-continuous or other ongoing culture processes. Distinguish from terminal harvest and from sampling.
+    is_primitive: true
+    primitive_rationale: There are insufficient constructs to create a set of necessary and sufficient conditions.
+
+
+  - label: Induction Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/InductionProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process that is a part of a cultivation or production process and triggers a defined change in cellular function, pathway activity, production phase, or differentiation state
+    examples:
+      - "IPTG addition to induce recombinant protein expression under a lac promoter"
+      - "Temperature downshift from 37 °C to 32 °C to initiate production phase"
+    counter_examples:
+      - "galactose addition to shift glycosylation profile"
+    classification_conditions:
+      - The entity must be a Planned Process.
+    logical_definition: >
+      InductionProcess(x) → PlannedProcess(x)
+    explanatory_note: >
+      Intentionally pushes the culture into a new physiological or metabolic state via material addition (IPTG, tetracycline), depletion or starvation (serum withdrawal), environmental change (temperature or pH shift) or physical stimuli (light pulse).
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Seed Train
+    iri: "https://spec.industrialontologies.org/ontology/construct/SeedTrain"
+    parent_class: Manufacturing Process
+    definition: >
+      manufacturing process composed of a sequence of cell culture expansion processes occurring at increasing scales and that has as its specified output a cell culture at the required density to inoculate a production culture process
+    examples:
+      - "a monoclonal antibody seed train expanding CHO cells through shake flasks, a 10 L bioreactor, and a 200 L seed bioreactor based on target inoculation density"
+      - "a seed train progressing through shake flasks and seed bioreactors to generate inoculum for a 5,000 L production bioreactor"
+    disjoint_with:
+      - Biomanufacturing Production Process
+    classification_conditions:
+      - The entity must be a Manufacturing Process.
+      - It must have some Cell Culture as input and some Cell Culture Expansion Process as occurrent part.
+      - It must have as specified output a Cell Culture that satisfies an Input Specification which is a continuant part of a Plan Specification prescribing a Production Culture Process.
+    logical_definition: >
+      SeedTrain(x) ↔ ManufacturingProcess(x) ∧ ∃a (CellCulture(a) ∧ hasInput(x, a)) ∧ ∃b (CellCultureExpansionProcess(b) ∧ hasOccurrentPart(x, b)) ∧ ∃c (CellCulture(c) ∧ hasSpecifiedOutput(x, c) ∧ ∃i ∃p ∃y (InputSpecification(i) ∧ PlanSpecification(p) ∧ satisfiesRequirement(c, i) ∧ continuantPartOfAtAllTimes(i, p) ∧ ProductionCultureProcess(y) ∧ prescribes(p, y)))
+    explanatory_note: >
+      Progressively grows and expands an initial small-scale culture to inoculate the large-scale bioreactor. A single expansion within the seed train is a 'passage'. N = production vessel, N-1 = final expansion used to inoculate it, N-2 = the expansion before that, and so on.
+
+
+  - label: Biomanufacturing Production Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/BiomanufacturingProductionProcess"
+    parent_class: Manufacturing Process
+    definition: >
+      manufacturing process in which biological entities such as cells, enzymes, or organisms are used to synthesize, secrete, accumulate, or themselves serve as the target product
+    examples:
+      - "CHO cells serving as the mammalian host platform for producing recombinant protein therapeutics"
+      - "monoclonal antibody production in a bioreactor"
+      - "fermentation process for production of penicillin by Penicillium chrysogenum"
+    disjoint_with:
+      - Seed Train
+    classification_conditions:
+      - The entity must be a Manufacturing Process.
+    logical_definition: >
+      BiomanufacturingProductionProcess(x) → ManufacturingProcess(x)
+    explanatory_note: >
+      Target products may be proteins, nucleic acids, metabolites or whole cells. Distinct from a full product production process: here the product is typically in a complex mixture with impurities and still needs purification, concentration and formulation.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Production Culture Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProductionCultureProcess"
+    parent_class: Biomanufacturing Production Process
+    definition: >
+      biomanufacturing production process during which a cell culture synthesizes, secretes, or accumulates the target product in a controlled environment provided by a bioreactor following expansion in a seed train
+    examples:
+      - "A production culture process grows HEK293 cells in suspension to generate viral vectors for gene therapy"
+      - "A production culture process uses CHO cells in a fed-batch bioreactor to produce monoclonal antibodies"
+    counter_examples:
+      - "shake flask studies"
+      - "seed train bioreactor runs"
+      - "Cell-free protein synthesis"
+    classification_conditions:
+      - The entity must be a Biomanufacturing Production Process.
+      - It must have some Cell Culture as participant at some time.
+      - It must be preceded by some Seed Train.
+      - It must have some Bioreactor as participant at some time.
+    logical_definition: >
+      ProductionCultureProcess(x) ↔ BiomanufacturingProductionProcess(x) ∧ ∃y (CellCulture(y) ∧ hasParticipantAtSomeTime(x, y)) ∧ ∃s (SeedTrain(s) ∧ precededBy(x, s)) ∧ ∃b (Bioreactor(b) ∧ hasParticipantAtSomeTime(x, b))
+
+
+  - label: Production Culture Growth Phase
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProductionCultureGrowthPhase"
+    parent_class: Cell Culture Expansion Process
+    definition: >
+      cell culture expansion process that is a temporal part of a production culture process
+    examples:
+      - "growth window before a scheduled production-phase transition"
+      - "early fed-batch culture window managed primarily to increase viable cell density"
+    classification_conditions:
+      - The entity must be a Cell Culture Expansion Process.
+      - It must be a temporal part of some Production Culture Process.
+    logical_definition: >
+      ProductionCultureGrowthPhase(x) ↔ CellCultureExpansionProcess(x) ∧ ∃s (ProductionCultureProcess(s) ∧ temporalPartOf(x, s))
+    explanatory_note: >
+      An operational window within a production culture process, not the whole process; operating decisions and monitoring are organized around increasing cell number rather than product accumulation. 'Phase' does not imply an ISA-88 phase.
+
+
+  - label: Production Culture Production Phase
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProductionCultureProductionPhase"
+    parent_class: Manufacturing Process
+    definition: >
+      manufacturing process that is a temporal part of a production culture process and during which process conditions are managed primarily to support target product production
+    examples:
+      - "production-focused window after a planned process transition"
+      - "production culture period where monitoring and control is organized around titer, productivity, viability, and product quality"
+    disjoint_with:
+      - Cell Culture Expansion Process
+      - Cell Culture Recovery Process
+    classification_conditions:
+      - The entity must be a Manufacturing Process.
+      - It must have some Cell Culture as participant at some time.
+      - It must be a temporal part of some Production Culture Process.
+    logical_definition: >
+      ProductionCultureProductionPhase(x) → ManufacturingProcess(x) ∧ ∃c (CellCulture(c) ∧ hasParticipantAtSomeTime(x, c)) ∧ ∃p (ProductionCultureProcess(p) ∧ temporalPartOf(x, p))
+    explanatory_note: >
+      An operational window within a production culture process, not the whole process. 'Phase' does not imply an ISA-88 phase.
+    is_primitive: true
+    primitive_rationale: There are insufficient constructs present to create a set of necessary and sufficient conditions.
+
+
+  - label: Cell Therapy Production Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellTherapyProductionProcess"
+    parent_class: Biomanufacturing Production Process
+    definition: >
+      biomanufacturing production process that results in a cell population which constitutes the targeted product material
+    examples:
+      - "manufacturing of autologous CAR-T cell therapy through patient-derived T-cell activation and expansion in culture bags"
+      - "large-scale allogeneic NK-cell expansion in single-use bioreactors for immunotherapy"
+    classification_conditions:
+      - The entity must be a Biomanufacturing Production Process.
+      - It must have as specified output a Material Product or Process Intermediate Material that has a Cultured Cell Population as continuant part at all times.
+    logical_definition: >
+      CellTherapyProductionProcess(x) → BiomanufacturingProductionProcess(x) ∧ ∃o ((MaterialProduct(o) ∨ ProcessIntermediateMaterial(o)) ∧ hasSpecifiedOutput(x, o) ∧ ∃p (CulturedCellPopulation(p) ∧ hasContinuantPartAtAllTimes(o, p)))
+    is_primitive: true
+    primitive_rationale: Insufficient constructs; in particular constructs for representing cells as the target product are missing.
+
+
+  - label: Upstream Biomanufacturing Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/UpstreamBiomanufacturingProcess"
+    parent_class: Manufacturing Process
+    definition: >
+      manufacturing process that includes preparation, expansion, cultivation, or propagation of biological material under controlled conditions to produce a process intermediate material or material product
+    examples:
+      - "upstream process for monoclonal antibody production in CHO cells involving cell thaw, recovery, seed expansion, and production culture"
+      - "upstream process of lentiviral vector manufacturing in HEK293 cells covering producer cell expansion, infection, and culture"
+    classification_conditions:
+      - The entity must be a Manufacturing Process.
+      - It must have some Biomanufacturing Production Process as occurrent part.
+      - It must have as specified output a Material Product or Process Intermediate Material.
+    logical_definition: >
+      UpstreamBiomanufacturingProcess(x) → ManufacturingProcess(x) ∧ ∃p (BiomanufacturingProductionProcess(p) ∧ hasOccurrentPart(x, p)) ∧ ∃o ((MaterialProduct(o) ∨ ProcessIntermediateMaterial(o)) ∧ hasSpecifiedOutput(x, o))
+    explanatory_note: >
+      Some practices include harvest in upstream processing, others treat harvest as the start of downstream processing; this reflects organizational convention. Activities may include cell thaw and recovery, seed expansion, inoculum preparation, production culture, fermentation, infection, transfection, viral propagation or harvest.
+    is_primitive: true
+    primitive_rationale: Expected to remain primitive because the upstream/downstream boundary varies by modality, method and company convention.
+
+
+  # ---------------- Material addition ----------------
+  - label: Aeration Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/AerationProcess"
+    parent_class: Material Addition Process
+    definition: >
+      material addition process in which an oxygen-containing gas is added to a defined recipient to provide oxygen or support gas exchange
+    examples:
+      - "sparging of air into a bioreactor to supply oxygen for mammalian cell culture"
+      - "oxygen gas addition to a bioreactor to maintain dissolved oxygen within a target range"
+    classification_conditions:
+      - The entity must be a Material Addition Process.
+      - It must have as input a Material Entity with a Gaseous Aggregate State, a Transferred Material Role, and made of some Dioxygen Molecule at all times.
+    logical_definition: >
+      AerationProcess(x) → MaterialAdditionProcess(x) ∧ ∃g ∃q ∃r ∃o (MaterialEntity(g) ∧ hasInput(x, g) ∧ GaseousAggregateState(q) ∧ hasQuality(g, q) ∧ TransferredMaterialRole(r) ∧ hasRole(g, r) ∧ DioxygenMolecule(o) ∧ isMadeOfAtAllTimes(g, o))
+    is_primitive: true
+    primitive_rationale: There are insufficient constructs to create a set of necessary and sufficient conditions.
+
+
+  - label: Antifoam Addition Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/AntifoamAdditionProcess"
+    parent_class: Material Addition Process
+    definition: >
+      material addition process in which an antifoam agent is introduced into a defined recipient to suppress, reduce, or prevent foam formation
+    examples:
+      - "polypropylene glycol addition in microbial fermentation to prevent foam overflow and support stable dissolved oxygen control"
+      - "antifoam addition to a mammalian cell culture bioreactor in response to foam detection"
+    classification_conditions:
+      - The entity must be a Material Addition Process.
+      - It must have as input an Antifoaming Agent with a Transferred Material Role.
+    logical_definition: >
+      AntifoamAdditionProcess(x) → MaterialAdditionProcess(x) ∧ ∃m ∃r (AntifoamingAgent(m) ∧ TransferredMaterialRole(r) ∧ hasInput(x, m) ∧ hasRole(m, r))
+    is_primitive: true
+    primitive_rationale: There are insufficient constructs to create a set of necessary and sufficient conditions.
+
+
+  - label: pH Adjustment Addition Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/PHAdjustmentAdditionProcess"
+    parent_class: Material Addition Process
+    definition: >
+      material addition process in which an acidifying or alkalizing material is introduced into a defined recipient to modify pH
+    examples:
+      - "Controlled dosing of sodium hydroxide (NaOH) into a mammalian cell culture bioreactor during production scale to neutralize acidity from lactate accumulation."
+    counter_examples:
+      - "Addition of nutrient feeds (e.g. glucose, amino acids) might indirectly affect pH, but their purpose is metabolic, not direct pH control."
+    classification_conditions:
+      - The entity must be a Material Addition Process.
+      - It must have as input a Material Entity with a Transferred Material Role and an Acidifying Agent Role or Alkalizing Agent Role.
+    logical_definition: >
+      PHAdjustmentAdditionProcess(x) → MaterialAdditionProcess(x) ∧ ∃m ∃r ∃a (MaterialEntity(m) ∧ TransferredMaterialRole(r) ∧ hasInput(x, m) ∧ hasRole(m, r) ∧ ((AcidifyingAgentRole(a) ∨ AlkalizingAgentRole(a)) ∧ hasRole(m, a)))
+    is_primitive: true
+    primitive_rationale: There are insufficient constructs to create a set of necessary and sufficient conditions.
+
+
+  - label: Degassing Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/DegassingProcess"
+    parent_class: Planned Process
+    synonyms:
+      - degasification process
+    definition: >
+      planned process during which dissolved, entrained, or adsorbed gas is separated from a liquid or solid material
+    examples:
+      - "vacuum degassing of culture medium prior to sterilization"
+      - "nitrogen sparging to remove dissolved oxygen from buffer solution"
+    classification_conditions:
+      - The entity must be a Planned Process.
+      - It must have as input and as specified output the same Material Entity with a Liquid or Solid Aggregate State.
+      - It must have as output a Material Entity with a Gaseous Aggregate State.
+    logical_definition: >
+      DegassingProcess(x) → PlannedProcess(x) ∧ ∃m ∃q ∃g ∃gq (MaterialEntity(m) ∧ hasInput(x, m) ∧ hasSpecifiedOutput(x, m) ∧ ((LiquidAggregateState(q) ∨ SolidAggregateState(q)) ∧ hasQuality(m, q)) ∧ MaterialEntity(g) ∧ hasOutput(x, g) ∧ GaseousAggregateState(gq) ∧ hasQuality(g, gq))
+    explanatory_note: >
+      Dissolved gas does not imply the material is in a gaseous aggregate state while dissolved (e.g. dissolved dioxygen in medium is molecular material in a liquid solution). Entrained gas may be bubbles; adsorbed gas is associated with a solid surface.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  # ---------------- Solution preparation ----------------
+  - label: Solution Preparation Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/SolutionPreparationProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process in which a homogeneous mixture is created by dissolving one or more solutes in a solvent, or by diluting an existing solution with additional solvent
+    examples:
+      - "dissolving sodium chloride in water to prepare a saline solution"
+      - "preparing a glucose solution by dissolving D-glucose powder in sterile water"
+    classification_conditions:
+      - The entity must be a Planned Process.
+      - It must have some Solution as specified output.
+    logical_definition: >
+      SolutionPreparationProcess(x) → PlannedProcess(x) ∧ ∃s (Solution(s) ∧ hasSpecifiedOutput(x, s))
+    explanatory_note: >
+      A solvent can be an individual compound or a mixture. Dissolved or diluted substances may be solids, liquids or gases; the mixture is uniform at the molecular level.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Dilution Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/DilutionProcess"
+    parent_class: Solution Preparation Process
+    definition: >
+      solution preparation process in which a solvent is added to a solution to reduce the concentration of one or more solutes
+    examples:
+      - "diluting a 10× phosphate-buffered saline (PBS) stock with water to make a 1× working solution"
+    classification_conditions:
+      - The entity must be a Solution Preparation Process.
+      - It must have some Solution as input and some Solvent as input.
+    logical_definition: >
+      DilutionProcess(x) → SolutionPreparationProcess(x) ∧ ∃s ∃v (Solution(s) ∧ Solvent(v) ∧ hasInput(x, s) ∧ hasInput(x, v))
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Media Solution Preparation
+    iri: "https://spec.industrialontologies.org/ontology/construct/MediaSolutionPreparation"
+    parent_class: Solution Preparation Process
+    definition: >
+      solution preparation process in which a media powder, an input media solution, or individual media components are dissolved or diluted in water or a buffered solution to produce a media solution that satisfies the material input specification of a target process
+    examples:
+      - "dissolving CHO cell culture media powder in water for use in a fed-batch bioreactor"
+      - "diluting a 10× DMEM stock solution with water to prepare a 1× working media solution"
+    counter_examples:
+      - "thawing pre-made liquid media before use in cell culture"
+      - "sterilizing a commercially available ready-to-use media without any modification"
+    classification_conditions:
+      - The entity must be a Solution Preparation Process.
+      - It must have as specified output a Culture Medium that satisfies some Input Specification.
+    logical_definition: >
+      MediaSolutionPreparation(x) → SolutionPreparationProcess(x) ∧ ∃y (CultureMedium(y) ∧ hasSpecifiedOutput(x, y) ∧ ∃z (InputSpecification(z) ∧ satisfiesRequirement(y, z)))
+    explanatory_note: >
+      May involve adjusting pH, sterile filtration or supplementation with additives depending on the application.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Mixing Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/MixingProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process that combines material entities or redistributes parts of a material entity to increase or maintain the homogeneity of the material being processed
+    examples:
+      - "mixing a buffer solution"
+      - "mixing a cell culture suspension"
+      - "maintaining a suspension by agitation"
+    classification_conditions:
+      - The entity must be a Planned Process.
+      - It must have as participant some Agent or Piece of Equipment that has some Mixing Capability.
+    logical_definition: >
+      MixingProcess(x) → PlannedProcess(x) ∧ ∃y ∃c ((Agent(y) ∨ PieceOfEquipment(y)) ∧ MixingCapability(c) ∧ hasCapability(y, c) ∧ hasParticipantAtSomeTime(x, y))
+    explanatory_note: >
+      May combine initially separate materials or redistribute parts of an existing material; manual or mechanical; liquids, solids, gases, suspensions or pastes. Homogeneity need not be absolute; the process may maintain it by preventing segregation.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Sterilization Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/SterilizationProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process in which a material entity is rendered free of all viable microorganisms
+    examples:
+      - "steam sterilization of stainless-steel bioreactor vessel prior to culture"
+      - "filtration sterilization of culture medium through 0.22 µm membrane filter before inoculation"
+      - "gamma irradiation of single-use tubing assemblies prior to installation"
+    classification_conditions:
+      - The entity must be a Planned Process.
+      - It must have some Material Entity as input, and that entity must have a Sterile Material State that is also the post material state of the process.
+    logical_definition: >
+      SterilizationProcess(x) → PlannedProcess(x) ∧ ∃m ∃s (MaterialEntity(m) ∧ hasInput(x, m) ∧ SterileMaterialState(s) ∧ hasPostMaterialState(x, s) ∧ hasMaterialState(m, s))
+    is_primitive: true
+    primitive_rationale: There are insufficient constructs to create a set of necessary and sufficient conditions.
+
+
+  - label: Thawing Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/ThawingProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process in which the temperature of a material entity is raised in a controlled manner to a specified setpoint, typically to transition it from a solid or frozen state to a soft or liquid state
+    examples:
+      - "Cryopreserved cells in cryovials are thawed in a 37 °C water bath with gentle swirling"
+      - "frozen blocks of Cod are thawed in tanks with counter-flow temperature-controlled, agitated water"
+    classification_conditions:
+      - The entity must be a Planned Process.
+      - It must have as participant some Piece of Equipment that has some Thawing Capability.
+    logical_definition: >
+      ThawingProcess(x) → PlannedProcess(x) ∧ ∃y ∃c (PieceOfEquipment(y) ∧ ThawingCapability(c) ∧ hasCapability(y, c) ∧ hasParticipantAtSomeTime(x, y))
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  # ---------------- Splitting, pooling, formulation, chemical synthesis ----------------
+  - label: Pooling Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/PoolingProcess"
+    parent_class: Manufacturing Process
+    definition: >
+      manufacturing process in which two or more batches of a product or intermediate are combined to produce a single, larger volume that is more homogeneous
+    examples:
+      - "Clarified harvests from four parallel 2,000 L bioreactor batches are pooled into a single lot before downstream processing"
+      - "Drug substance pools from three mAb batches are combined into a single lot prior to ultrafiltration and diafiltration"
+    counter_examples:
+      - "combining individual patient samples for pooled testing in a diagnostic laboratory"
+      - "preparing a media solution by mixing multiple components (not batches)"
+    classification_conditions:
+      - The entity must be a Manufacturing Process.
+      - It must have as input at least two distinct Material Products or Process Intermediate Materials.
+    logical_definition: >
+      PoolingProcess(x) → ∃m1 ∃m2 (((MaterialProduct(m1) ∨ ProcessIntermediateMaterial(m1)) ∧ (MaterialProduct(m2) ∨ ProcessIntermediateMaterial(m2))) ∧ hasInput(x, m1) ∧ hasInput(x, m2) ∧ m1 ≠ m2)
+    explanatory_note: >
+      Reduces batch-to-batch variability and defines a lot for further processing or release. Not to be confused with test pooling (combining samples for initial testing).
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Splitting Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/SplittingProcess"
+    parent_class: Manufacturing Process
+    definition: >
+      manufacturing process in which a batch or lot of a product or intermediate is divided into two or more separately managed portions for further processing, handling, storage or release
+    examples:
+      - "An intermediate seed culture lot is divided into multiple separately managed portions for parallel seed expansion"
+      - "A harvested intermediate batch is divided into three separately managed portions for downstream purification"
+    classification_conditions:
+      - The entity must be a Manufacturing Process.
+      - It must have as input a Material Product or Process Intermediate Material.
+      - It must have at least two distinct Material Entities as specified output.
+    logical_definition: >
+      SplittingProcess(x) → ManufacturingProcess(x) ∧ ∃i ((MaterialProduct(i) ∨ ProcessIntermediateMaterial(i)) ∧ hasInput(x, i)) ∧ ∃o1 ∃o2 (MaterialEntity(o1) ∧ MaterialEntity(o2) ∧ hasSpecifiedOutput(x, o1) ∧ hasSpecifiedOutput(x, o2) ∧ o1 ≠ o2)
+    explanatory_note: >
+      Portions remain traceable to the parent batch or lot. Not sampling or aliquoting for analytical purposes.
+    is_primitive: true
+    primitive_rationale: Expected to remain primitive as formalization in OWL requires cardinality constraints.
+
+
+  - label: Drug Product Formulation Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/DrugProductFormulationProcess"
+    parent_class: Manufacturing Process
+    definition: >
+      manufacturing process in which various components are combined to create a drug product that is safe, effective, and stable for patient use
+    examples:
+      - "Simvastatin tablet formulation, combining the API with excipients that ensure structure, stability, absorption and manufacturability"
+    classification_conditions:
+      - The entity must be a Manufacturing Process.
+    logical_definition: >
+      DrugProductFormulationProcess(x) → ManufacturingProcess(x)
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Chemical Synthesis Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/ChemicalSynthesisProcess"
+    parent_class: Manufacturing Process
+    definition: >
+      manufacturing process in which one or more chemical compounds are created through a set of chemical reactions
+    examples:
+      - "Benzene is produced by hydrodealkylation of toluene with hydrogen, yielding benzene, methane and diphenyl as by-product"
+      - "Hydrogen chloride is produced by reacting chlorine and hydrogen in an exothermic process"
+    classification_conditions:
+      - The entity must be a Manufacturing Process.
+    logical_definition: >
+      ChemicalSynthesisProcess(x) → ManufacturingProcess(x)
+    is_primitive: true
+    primitive_rationale: Expected to remain primitive as modeling chemical reactions is out of scope.
+
+
+  # ---------------- Harvest and purification ----------------
+  - label: Purification Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/PurificationProcess"
+    parent_class: Manufacturing Process
+    definition: >
+      manufacturing process in which an input material is separated into multiple output fractions, such that one or more fractions are enriched in a target component, while the remaining fractions contain predominantly impurities and are discarded or excluded from further use
+    examples:
+      - "capture stage"
+      - "harvesting process"
+      - "polishing process"
+    classification_conditions:
+      - The entity must be a Manufacturing Process.
+    logical_definition: >
+      PurificationProcess(x) → ManufacturingProcess(x)
+    explanatory_note: >
+      Impurities may include process byproducts, unreacted reagents, degraded products or contaminants. 'Further use' means inclusion of an output fraction in subsequent workflow steps; other fractions are discarded, repurposed or treated as waste.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Harvesting Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/HarvestingProcess"
+    parent_class: Purification Process
+    definition: >
+      purification process that has as input the specified output of a biomanufacturing production process and that results in the separation or recovery of biotechnology products from the associated process streams, typically through the isolation or removal of cells, cell debris, or other bulk impurities
+    examples:
+      - "Harvesting by depth filtration of a CHO cell culture to remove cells and debris, yielding a clarified supernatant containing the secreted monoclonal antibody"
+      - "Harvesting E. coli cells at early log phase and centrifuging at 4 °C and 4,000 × g for 10 minutes to separate biomass from the culture medium"
+    classification_conditions:
+      - The entity must be a Purification Process.
+      - It must have as input a Process Intermediate Material that is the specified output of some Biomanufacturing Production Process.
+    logical_definition: >
+      HarvestingProcess(x) → PurificationProcess(x) ∧ ∃m ∃p (ProcessIntermediateMaterial(m) ∧ BiomanufacturingProductionProcess(p) ∧ isSpecifiedOutputOf(m, p) ∧ hasInput(x, m))
+    explanatory_note: >
+      Uses one or more sequential unit operations (centrifugation, filtration, cell concentration, membrane separation), depending on whether the product is intracellular, secreted or the cells themselves.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Capture Step
+    iri: "https://spec.industrialontologies.org/ontology/construct/CaptureStep"
+    parent_class: Purification Process
+    definition: >
+      purification process in which target molecules are selectively and reversibly retained while impurities are allowed to pass through in the flowthrough or wash fractions
+    examples:
+      - "A capture process uses protein A chromatography to retain monoclonal antibodies while host cell proteins flow through"
+      - "A capture process applies ion exchange chromatography to bind recombinant proteins from cell culture supernatant"
+    counter_examples:
+      - "A flowthrough chromatography process removes DNA and endotoxins while the target protein does not bind to the column"
+      - "A depth filtration process removes cells and debris without selectively retaining the target molecule"
+    classification_conditions:
+      - The entity must be a Purification Process.
+    logical_definition: >
+      CaptureStep(x) → PurificationProcess(x)
+    explanatory_note: >
+      Retention is reversible: buffer composition or pH can be adjusted to release the target from the capture medium so purification can continue.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Polishing Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/PolishingProcess"
+    parent_class: Purification Process
+    definition: >
+      purification process in which minute amounts of impurities are removed and that occurs as one of the final processes of a drug substance manufacturing process
+    examples:
+      - "anion exchange chromatography used to remove residual DNA and endotoxins from a monoclonal antibody solution"
+      - "nanofiltration performed as a polishing step to remove trace viral particles following prior inactivation"
+    counter_examples:
+      - "protein A affinity chromatography used as a primary capture step"
+      - "depth filtration of harvested cell culture fluid to remove cells and debris"
+    classification_conditions:
+      - The entity must be a Purification Process.
+    logical_definition: >
+      PolishingProcess(x) → PurificationProcess(x)
+    explanatory_note: >
+      Follows primary capture and intermediate purification; removes residual host cell proteins, DNA, viruses and product variants prior to formulation and fill–finish.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Centrifugation Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/CentrifugationProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process in which particles such as cells, organelles, or molecules are separated based on size or density by applying centrifugal forces generated by a spinning rotor
+    examples:
+      - "Centrifugation is used to harvest CHO cells by separating them from spent culture media after production"
+      - "Centrifuging cell lysates to remove debris before protein quantification"
+    classification_conditions:
+      - The entity must be a Planned Process.
+      - It must have some Centrifuge as participant at some time.
+    logical_definition: >
+      CentrifugationProcess(x) → PlannedProcess(x) ∧ ∃c (Centrifuge(c) ∧ hasParticipantAtSomeTime(x, c))
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  # ---------------- Viral clearance ----------------
+  - label: Viral Clearance
+    iri: "https://spec.industrialontologies.org/ontology/construct/ViralClearance"
+    parent_class: Manufacturing Process
+    definition: >
+      manufacturing process that results in the elimination of a target virus by either removing viral particles or by inactivating its infectivity
+    examples:
+      - "anion exchange chromatography operated in flow-through mode to remove retrovirus-like particles from CHO cell harvest"
+      - "Viral inactivation by incubating mAb solutions in 50 mM citrate buffer at pH 3.0 for 40 minutes, followed by neutralization"
+    classification_conditions:
+      - The entity must be a Manufacturing Process.
+    logical_definition: >
+      ViralClearance(x) → ManufacturingProcess(x)
+    explanatory_note: >
+      Virus removal is physical separation of virus particles from the product; inactivation reduces infectivity by chemical or physical modification. Clearance is typically demonstrated by spiking studies with known quantities of relevant and model viruses and quantified as log reduction.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Viral Removal Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/ViralRemovalProcess"
+    parent_class: Viral Clearance
+    definition: >
+      viral clearance during which viral particles are physically separated from the input material based on differences in physical properties such as size or charge
+    examples:
+      - "nanofiltration of plasma-derived products to remove non-enveloped viruses"
+      - "tangential flow filtration used to remove contaminating virus particles from a process intermediate"
+    disjoint_with:
+      - Viral Inactivation
+    classification_conditions:
+      - The entity must be a Viral Clearance.
+    logical_definition: >
+      ViralRemovalProcess(x) → ViralClearance(x)
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Viral Inactivation
+    iri: "https://spec.industrialontologies.org/ontology/construct/ViralInactivation"
+    parent_class: Viral Clearance
+    definition: >
+      viral clearance during which viral infectivity is reduced by physically or chemically modifying the input material
+    examples:
+      - "incubating mAb solutions in 50 mM citrate buffer at pH 3.0 for 40 minutes at low ionic strength, followed by neutralization to pH 5.0"
+      - "treating the product stream with 0.3% Triton X-100 for 60 minutes at room temperature to disrupt lipid-enveloped viruses"
+    disjoint_with:
+      - Viral Removal Process
+    classification_conditions:
+      - The entity must be a Viral Clearance.
+    logical_definition: >
+      ViralInactivation(x) → ViralClearance(x)
+    explanatory_note: >
+      Viral particles are not necessarily removed from the input. Common methods: heat (pasteurization), acidic pH, solvent-detergent treatment, UV exposure.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Viral Filtration
+    iri: "https://spec.industrialontologies.org/ontology/construct/ViralFiltration"
+    parent_class: Viral Removal Process
+    definition: >
+      viral removal process in which viral particles are physically separated from the input material through a nanofiltration process
+    examples:
+      - "Viral filtration using a Planova BioEX filter after a 0.2 µm prefilter process, applied to a monoclonal antibody solution in defined buffer conditions"
+    classification_conditions:
+      - The entity must be a Viral Removal Process.
+      - It must have some Nanofiltration Process as occurrent part.
+    logical_definition: >
+      ViralFiltration(x) → ViralRemovalProcess(x) ∧ ∃n (NanofiltrationProcess(n) ∧ hasOccurrentPart(x, n))
+    explanatory_note: >
+      Relies on size-based exclusion with nanometer-scale pore sizes. Ultrafiltration alone is not accepted for regulatory purposes. Typically validated for ≥4 log₁₀ reduction; pre-filtration is often used to protect the virus filter.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  # ---------------- Filtration ----------------
+  - label: Fluid Flow Orientation
+    iri: "https://spec.industrialontologies.org/ontology/construct/FluidFlowOrientation"
+    parent_class: Process Profile
+    definition: >
+      process profile that is the orientation of fluid movement in a process with respect to a reference surface or spatial axis
+    examples:
+      - "the fluid flows perpendicular to the surface of a filter medium"
+      - "in a tubular reactor, the direction of fluid flow is aligned with the central axis of the flow channel"
+    classification_conditions:
+      - The entity must be a Process Profile.
+    logical_definition: >
+      FluidFlowOrientation(x) → ProcessProfile(x)
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Perpendicular Flow Orientation
+    iri: "https://spec.industrialontologies.org/ontology/construct/PerpendicularFlowOrientation"
+    parent_class: Fluid Flow Orientation
+    alternative_labels:
+      - normal flow orientation
+    definition: >
+      fluid flow orientation that is the perpendicular (normal) orientation of fluid movement in a process with respect to a defined surface
+    examples:
+      - "the fluid flows perpendicular to the surface of a filter medium"
+    disjoint_with:
+      - Tangential Flow Orientation
+    classification_conditions:
+      - The entity must be a Fluid Flow Orientation.
+    logical_definition: >
+      PerpendicularFlowOrientation(x) → FluidFlowOrientation(x)
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Tangential Flow Orientation
+    iri: "https://spec.industrialontologies.org/ontology/construct/TangentialFlowOrientation"
+    parent_class: Fluid Flow Orientation
+    alternative_labels:
+      - cross-flow orientation
+    definition: >
+      fluid flow orientation that is the tangential orientation of fluid movement in a process with respect to a defined surface
+    examples:
+      - "the fluid flows tangentially to the surface of a filter medium during a tangential filtration process"
+    disjoint_with:
+      - Perpendicular Flow Orientation
+    classification_conditions:
+      - The entity must be a Fluid Flow Orientation.
+    logical_definition: >
+      TangentialFlowOrientation(x) → FluidFlowOrientation(x)
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Filtration Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/FiltrationProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process in which suspended solids or dissolved components are separated from a fluid by passing it through a filter
+    examples:
+      - "depth filtration"
+      - "TFF filtration"
+      - "direct flow filtration"
+      - "membrane filtration"
+    classification_conditions:
+      - The entity must be a Planned Process.
+      - It must have some Filter as participant at some time.
+    logical_definition: >
+      FiltrationProcess(x) → PlannedProcess(x) ∧ ∃y (Filter(y) ∧ hasParticipantAtSomeTime(x, y))
+    explanatory_note: >
+      Passing can use gravity or pressure. In conventional (normal, direct, perpendicular) filtration, fluid flows perpendicular to the medium and a cake of solids deposits; in tangential flow filtration, fluid flows parallel to the medium to minimize buildup. Flow direction is the differentiating characteristic, so tangential and direct flow filtration are defined subclasses. Separation is predominantly by particle size, though shape and electrostatic charge can also influence retention.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Direct Flow Filtration
+    iri: "https://spec.industrialontologies.org/ontology/construct/DirectFlowFiltration"
+    parent_class: Filtration Process
+    alternative_labels:
+      - dead-end filtration
+      - normal flow filtration
+    definition: >
+      filtration in which the fluid travels in the direction that is perpendicular to the surface of the filter
+    examples:
+      - "In brewing, dead-end filtration separates wort from barley husks after mashing"
+      - "Dead-end filtration removes particulates from buffer solutions before chromatography"
+    classification_conditions:
+      - The entity must be a Filtration Process.
+      - It must have some Perpendicular Flow Orientation as process profile.
+    logical_definition: >
+      DirectFlowFiltration(x) ↔ FiltrationProcess(x) ∧ ∃y (PerpendicularFlowOrientation(y) ∧ hasProcessProfile(x, y))
+
+
+  - label: Tangential Flow Filtration
+    iri: "https://spec.industrialontologies.org/ontology/construct/TangentialFlowFiltration"
+    parent_class: Filtration Process
+    alternative_labels:
+      - cross-flow filtration
+      - TFF
+    definition: >
+      filtration process in which the liquid travels tangentially across the surface of the membrane or bed filter
+    examples:
+      - "TFF is used to purify and concentrate viral vectors by separating them from residual DNA, cell debris and small fragments"
+      - "TFF is applied to concentrate monoclonal antibodies before anion exchange chromatography"
+    classification_conditions:
+      - The entity must be a Filtration Process.
+      - It must have some Tangential Flow Orientation as process profile.
+    logical_definition: >
+      TangentialFlowFiltration(x) ↔ FiltrationProcess(x) ∧ ∃y (TangentialFlowOrientation(y) ∧ hasProcessProfile(x, y))
+    explanatory_note: >
+      TFF can operate in batch mode (Batch TFF) and continuous mode (single-pass TFF).
+
+
+  - label: Depth Filtration Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/DepthFiltrationProcess"
+    parent_class: Filtration Process
+    definition: >
+      filtration process in which a fluid is passed through a depth filter
+    examples:
+      - "used to clarify harvested cell culture by removing cells and large debris"
+      - "serves as the primary clarification step prior to sterile filtration"
+    classification_conditions:
+      - The entity must be a Filtration Process.
+      - It must have some Depth Filter as participant at some time.
+    logical_definition: >
+      DepthFiltrationProcess(x) → FiltrationProcess(x) ∧ ∃y (DepthFilter(y) ∧ hasParticipantAtSomeTime(x, y))
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Membrane Filtration Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/MembraneFiltrationProcess"
+    parent_class: Filtration Process
+    definition: >
+      filtration process in which a fluid is passed through a membrane
+    examples:
+      - "used to sterilize media solutions by removing microorganisms"
+      - "removes aggregates and particulates from monoclonal antibody formulations"
+    classification_conditions:
+      - The entity must be a Filtration Process.
+      - It must have some Membrane Filter as participant at some time.
+    logical_definition: >
+      MembraneFiltrationProcess(x) → FiltrationProcess(x) ∧ ∃y (MembraneFilter(y) ∧ hasParticipantAtSomeTime(x, y))
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Nanofiltration Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/NanofiltrationProcess"
+    parent_class: Membrane Filtration Process
+    definition: >
+      filtration process in which a membrane filter that is used has pore size in the range of 0.001 to 0.01 μm
+    examples:
+      - "used to remove endotoxins while allowing most proteins to pass through"
+      - "applied after viral inactivation to clear potential viral contaminants"
+    classification_conditions:
+      - The entity must be a Membrane Filtration Process.
+    logical_definition: >
+      NanofiltrationProcess(x) → MembraneFiltrationProcess(x)
+    explanatory_note: >
+      The pore-size range indicates a characteristic scale, not exact classification boundaries; a process with a nominal rating near or modestly outside the interval may still be nanofiltration if the membrane and its retention performance are recognized as such.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Ultrafiltration Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/UltrafiltrationProcess"
+    parent_class: Membrane Filtration Process
+    definition: >
+      filtration process in which a membrane filter that is used has pore size in the range of 0.01 to 0.1 μm
+    examples:
+      - "In mAb production, ultrafiltration concentrates antibody solutions before formulation"
+      - "applied for buffer exchange before viral filtration"
+    classification_conditions:
+      - The entity must be a Membrane Filtration Process.
+    logical_definition: >
+      UltrafiltrationProcess(x) → MembraneFiltrationProcess(x)
+    explanatory_note: >
+      Pressure or concentration gradients drive separation through a semipermeable membrane; suspended solids and high-molecular-weight solutes are retained (retentate) while water and low-molecular-weight solutes pass (permeate). The pore-size range is a characteristic scale, not an exact boundary.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Diafiltration Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/DiafiltrationProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process that consists of either multiple cycles of dilution followed by filtration, or of dilution and filtration occurring simultaneously, to remove unretained solutes or to exchange the solution's solvent or buffer environment
+    examples:
+      - "After mAb purification, the protein solution undergoes diafiltration to exchange the buffer and remove residual salts before formulation"
+      - "Whey is concentrated by ultrafiltration, followed by continuous water addition during filtration to remove residual lactose and salts"
+    classification_conditions:
+      - The entity must be a Planned Process.
+      - It must have some Dilution Process and some Filtration Process as occurrent parts, where the dilution occurs before or simultaneously with the filtration.
+    logical_definition: >
+      DiafiltrationProcess(x) → PlannedProcess(x) ∧ ∃y (DilutionProcess(y) ∧ hasOccurrentPart(x, y)) ∧ ∃z (FiltrationProcess(z) ∧ hasOccurrentPart(x, z)) ∧ (∃y ∃z (DilutionProcess(y) ∧ FiltrationProcess(z) ∧ hasOccurrentPart(x, y) ∧ hasOccurrentPart(x, z) ∧ (before(y, z) ∨ occursSimultaneouslyWith(y, z))))
+    explanatory_note: >
+      Continuous diafiltration adds buffer continuously as filtrate is removed, keeping volume and concentration constant. Discontinuous diafiltration dilutes, re-concentrates and repeats.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  # ---------------- Chromatography ----------------
+  - label: Chromatography Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/ChromatographyProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process that results in the separation of components in a mixture based on their distribution between two phases, one of which is stationary and the other moves in a definite direction
+    examples:
+      - "In recombinant human insulin manufacturing, a Size Exclusion Chromatography process is used for final polishing using Sephadex G-25 to remove salts"
+      - "continuous simulated moving bed (SMB) chromatography to separate fructose from glucose in corn processing"
+    classification_conditions:
+      - The entity must be a Planned Process.
+      - It must have some Mobile Phase as participant at some time.
+      - It must have some Stationary Phase as participant at some time.
+    logical_definition: >
+      ChromatographyProcess(x) → PlannedProcess(x) ∧ ∃y (MobilePhase(y) ∧ hasParticipantAtSomeTime(x, y)) ∧ ∃z (StationaryPhase(z) ∧ hasParticipantAtSomeTime(x, z))
+    explanatory_note: >
+      The phase moving in a definite direction is the mobile phase and is a fluid.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Gas Chromatography Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/GasChromatographyProcess"
+    parent_class: Chromatography Process
+    definition: >
+      chromatography process in which the phase moving in a definite direction (mobile phase) is a gas
+    examples:
+      - "analyzing residual solvents in a drug substance using gas chromatography with a flame ionization detector"
+      - "separating volatile organic compounds in a pharmaceutical formulation"
+    classification_conditions:
+      - The entity must be a Chromatography Process.
+    logical_definition: >
+      GasChromatographyProcess(x) → ChromatographyProcess(x)
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Liquid Chromatography Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/LiquidChromatographyProcess"
+    parent_class: Chromatography Process
+    definition: >
+      chromatography process in which the phase moving in a definite direction (mobile phase) is a liquid
+    examples:
+      - "separating protein isoforms using ion exchange chromatography with a buffered liquid mobile phase"
+      - "quantifying monoclonal antibody titer using protein A affinity chromatography"
+    classification_conditions:
+      - The entity must be a Chromatography Process.
+    logical_definition: >
+      LiquidChromatographyProcess(x) → ChromatographyProcess(x)
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Normal Phase Chromatography Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/NormalPhaseChromatographyProcess"
+    parent_class: Liquid Chromatography Process
+    definition: >
+      liquid chromatography process in which the stationary phase is polar and the mobile phase is nonpolar, resulting in the separation of components based on their relative polarity
+    examples:
+      - "a phospholipid extract separated into lipid classes using a polar silica stationary phase and a hexane/isopropanol mobile phase"
+      - "a glycan mixture separated by polarity using an amino-functionalized silica stationary phase and an acetonitrile–water mobile phase"
+    classification_conditions:
+      - The entity must be a Liquid Chromatography Process.
+    logical_definition: >
+      NormalPhaseChromatographyProcess(x) → LiquidChromatographyProcess(x)
+    explanatory_note: >
+      Commonly used to separate small, polar organic compounds. More polar components interact more strongly with the stationary phase and elute later.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+  - label: Reverse Phase Chromatography Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/ReversePhaseChromatographyProcess"
+    parent_class: Liquid Chromatography Process
+    definition: >
+      liquid chromatography process in which the stationary phase is nonpolar and the mobile phase is polar, resulting in the separation of components based on their relative hydrophobicity
+    examples:
+      - "a synthetic peptide purified using a C18-bonded silica stationary phase and a water/acetonitrile mobile phase with 0.1% TFA"
+      - "a monoclonal antibody digest resolved using a C18 stationary phase and a water/methanol gradient with 0.1% formic acid"
+    classification_conditions:
+      - The entity must be a Liquid Chromatography Process.
+    logical_definition: >
+      ReversePhaseChromatographyProcess(x) → LiquidChromatographyProcess(x)
+    explanatory_note: >
+      Used for purification, separation and analysis of proteins, peptides, antibodies and metabolites, and for intermediates and final products in chemical synthesis.
+    is_primitive: true
+    primitive_rationale: Insufficient constructs are present to create a set of necessary and sufficient conditions.
+
+
+relationships:
+  # Referenced in class axioms; defined in imported modules (IOF Core / BFO), not declared in this RDF.
+
+  - label: Has Input
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasInput"
+    definition: >
+      relationship from a process to a material entity that is an input of it
+    domain:
+      - Planned Process
+    range:
+      - Material Entity
+    extraction_constraints:
+      - Culture feed, medium charging, inoculation, aeration, antifoam and pH adjustment processes require specific inputs with a Transferred Material Role.
+      - The relationship direction is Process → Input.
+
+
+  - label: Has Output
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasOutput"
+    definition: >
+      relationship from a process to a material entity that it produces
+    domain:
+      - Degassing Process
+    range:
+      - Material Entity
+    extraction_constraints:
+      - The relationship direction is Process → Output.
+
+
+  - label: Has Specified Output
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasSpecifiedOutput"
+    definition: >
+      relationship from a planned process to an entity it is specified to produce
+    domain:
+      - Planned Process
+    range:
+      - Material Entity
+    inverse: Is Specified Output Of
+    extraction_constraints:
+      - Clone Selection and Cell Line Development have a Cloned Cell Line as specified output.
+      - Solution Preparation Process has a Solution as specified output.
+      - The relationship direction is Process → Output.
+
+
+  - label: Is Specified Output Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/isSpecifiedOutputOf"
+    definition: >
+      relationship from an output to the planned process specified to produce it
+    domain:
+      - Process Intermediate Material
+    range:
+      - Biomanufacturing Production Process
+    inverse: Has Specified Output
+    extraction_constraints:
+      - The relationship direction is Output → Process.
+
+
+  - label: Is Output Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/isOutputOf"
+    definition: >
+      relationship from an output to the process that produced it
+    domain:
+      - Material Entity
+    range:
+      - Planned Process
+    extraction_constraints:
+      - The relationship direction is Output → Process.
+
+
+  - label: Has Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasRole"
+    definition: >
+      relationship from an entity to a role that it holds
+    domain:
+      - Material Entity
+      - Cell Culture
+      - Material Artifact
+    range:
+      - Transferred Material Role
+      - Inoculum Role
+      - Material Addition Target Role
+      - Material Withdrawal Source Role
+      - Acidifying Agent Role
+      - Alkalizing Agent Role
+    extraction_constraints:
+      - Transferred material in addition, removal and inoculation processes must have a Transferred Material Role.
+      - The relationship direction is Role Bearer → Role.
+
+
+  - label: Has Quality
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasQuality"
+    definition: >
+      relationship from an entity to a quality that it bears
+    domain:
+      - Material Entity
+    range:
+      - Gaseous Aggregate State
+      - Liquid Aggregate State
+      - Solid Aggregate State
+    extraction_constraints:
+      - Aeration input must have a Gaseous Aggregate State; Degassing input and specified output must have a Liquid or Solid Aggregate State.
+      - The relationship direction is Quality Bearer → Quality.
+
+
+  - label: Has Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasCapability"
+    definition: >
+      relationship from an entity to a capability that it bears
+    domain:
+      - Material Artifact
+      - Agent
+      - Piece of Equipment
+    range:
+      - Cell Culture Holding Capability
+      - Mixing Capability
+      - Thawing Capability
+    extraction_constraints:
+      - The relationship direction is Capability Bearer → Capability.
+
+
+  - label: Has Participant
+    iri: "http://purl.obolibrary.org/obo/BFO_0000057"
+    definition: >
+      relationship from a process to an entity that participates in it (the axioms use hasParticipantAtSomeTime)
+    domain:
+      - Planned Process
+    range:
+      - Cell Culture
+      - Cell Line
+      - Centrifuge
+      - Filter
+      - Bioreactor
+      - Mobile Phase
+      - Stationary Phase
+      - Piece of Equipment
+    extraction_constraints:
+      - The relationship direction is Process → Participant.
+
+
+  - label: Has Participant At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000167"
+    definition: >
+      relationship from a process to an entity that participates in it at all times (RDF uses BFO_0000167 for the Cell Population Proliferation restriction; the FOL names it hasParticipantAtAllTimes)
+    domain:
+      - Cell Population Proliferation
+    range:
+      - Cell Population
+    extraction_constraints:
+      - The relationship direction is Process → Participant.
+
+
+  - label: Has Occurrent Part
+    iri: "http://purl.obolibrary.org/obo/BFO_0000117"
+    definition: >
+      relationship from a process to a process that is a part of it
+    domain:
+      - Planned Process
+    range:
+      - Planned Process
+    inverse: Occurrent Part Of
+    extraction_constraints:
+      - Used for process composition, e.g. Diafiltration has Dilution and Filtration as parts; Perfusion Medium Exchange has Cell Retention as part.
+      - The relationship direction is Whole Process → Part Process.
+
+
+  - label: Occurrent Part Of
+    iri: "http://purl.obolibrary.org/obo/BFO_0000132"
+    definition: >
+      relationship from a process to a process of which it is a part
+    domain:
+      - Planned Process
+    range:
+      - Planned Process
+    inverse: Has Occurrent Part
+    extraction_constraints:
+      - The relationship direction is Part Process → Whole Process.
+
+
+  - label: Temporal Part Of
+    iri: "http://purl.obolibrary.org/obo/BFO_0000139"
+    definition: >
+      relationship from a process to a process of which it is a temporal part
+    domain:
+      - Production Culture Growth Phase
+      - Production Culture Production Phase
+    range:
+      - Production Culture Process
+    extraction_constraints:
+      - The relationship direction is Temporal Part → Whole Process.
+
+
+  - label: Precedes
+    iri: "http://purl.obolibrary.org/obo/BFO_0000063"
+    definition: >
+      relationship from a process to a process that occurs after it
+    domain:
+      - Planned Process
+    range:
+      - Planned Process
+    inverse: Preceded By
+    extraction_constraints:
+      - Culture Medium Charging precedes Cell Culture Inoculation; Genetic Transformation precedes Clone Selection within Cell Line Development; a Seed Train precedes a Production Culture Process.
+      - The relationship direction is Earlier Process → Later Process.
+
+
+  - label: Preceded By
+    iri: "http://purl.obolibrary.org/obo/BFO_0000062"
+    definition: >
+      relationship from a process to a process that occurs before it
+    domain:
+      - Production Culture Process
+    range:
+      - Seed Train
+    inverse: Precedes
+    extraction_constraints:
+      - The relationship direction is Later Process → Earlier Process.
+
+
+  - label: Occurs During
+    iri: "https://spec.industrialontologies.org/ontology/construct/occursDuring"
+    definition: >
+      relationship from a process to a process during which it occurs
+    domain:
+      - Cell Bleed Process
+      - Culture Feed Addition Process
+    range:
+      - Planned Process
+    extraction_constraints:
+      - The containing Planned Process must have the same Cell Culture as participant.
+      - The relationship direction is Contained Process → Containing Process.
+
+
+  - label: Temporal Relations Between Processes
+    iri: "https://spec.industrialontologies.org/ontology/construct/temporallyOverlaps"
+    definition: >
+      group of temporal relations referenced in axioms: before, meets, temporallyOverlaps, isTemporallyOverlappedBy, occursSimultaneouslyWith, temporallyStartedBy
+    domain:
+      - Planned Process
+    range:
+      - Planned Process
+    extraction_constraints:
+      - Continuous mode requires an addition and a removal that occur simultaneously or overlap in time.
+      - Cell Line Development is temporally started by a Genetic Transformation Process and meets or overlaps Cell Banking.
+      - Diafiltration requires dilution before or simultaneous with filtration.
+
+
+  - label: Has Continuant Part At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000110"
+    definition: >
+      relationship from a whole to a continuant part it has at all times
+    domain:
+      - Material Entity
+    range:
+      - Cell Population
+      - Cultured Cell Population
+    extraction_constraints:
+      - Cell Bleed output, Cell Culture Inoculation input and Cell Therapy output must have a Cell Population as continuant part.
+      - The relationship direction is Whole → Part.
+
+
+  - label: Has Member Part At Some Time
+    iri: "http://purl.obolibrary.org/obo/BFO_0000115"
+    definition: >
+      relationship from a collection to a member part it has at some time
+    domain:
+      - Cell Population
+    range:
+      - Infected Host Cell
+    extraction_constraints:
+      - The relationship direction is Whole → Member Part.
+
+
+  - label: Has Member Part At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000172"
+    definition: >
+      relationship from a collection to a member part it has at all times
+    domain:
+      - Cell Population
+    range:
+      - Infected Host Cell
+    extraction_constraints:
+      - A Planned Cell Infection Process outputs a Cell Population with some Infected Host Cell as member part at all times.
+      - The relationship direction is Whole → Member Part.
+
+
+  - label: Is Made Of At All Times
+    iri: "https://spec.industrialontologies.org/ontology/construct/isMadeOfAtAllTimes"
+    definition: >
+      relationship from a material entity to a kind of molecule or material it is made of at all times
+    domain:
+      - Material Entity
+    range:
+      - Dioxygen Molecule
+    extraction_constraints:
+      - The input of an Aeration Process is made of Dioxygen Molecule.
+      - The relationship direction is Material Entity → Constituent.
+
+
+  - label: Process Characteristic Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/processCharacteristicOf"
+    definition: >
+      relationship from a process characteristic to the process it characterizes
+    domain:
+      - Planned Process Operating Mode
+    range:
+      - Planned Process
+    extraction_constraints:
+      - The relationship direction is Characteristic → Process.
+
+
+  - label: Has Process Profile
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasProcessProfile"
+    definition: >
+      relationship from a process to a process profile that it has
+    domain:
+      - Filtration Process
+    range:
+      - Perpendicular Flow Orientation
+      - Tangential Flow Orientation
+    extraction_constraints:
+      - Direct Flow Filtration has a Perpendicular Flow Orientation; Tangential Flow Filtration has a Tangential Flow Orientation.
+      - The relationship direction is Process → Process Profile.
+
+
+  - label: Prescribes
+    iri: "https://spec.industrialontologies.org/ontology/construct/prescribes"
+    definition: >
+      relationship from a specification to the entity or process it prescribes
+    domain:
+      - Culture Feeding Strategy
+      - Plan Specification
+    range:
+      - Culture Feed Addition Process
+      - Production Culture Process
+    extraction_constraints:
+      - The relationship direction is Specification → Prescribed Entity.
+
+
+  - label: Satisfies Requirement
+    iri: "https://spec.industrialontologies.org/ontology/construct/satisfiesRequirement"
+    definition: >
+      relationship from an entity to a requirement or specification it satisfies
+    domain:
+      - Culture Medium
+      - Cell Culture
+    range:
+      - Input Specification
+    extraction_constraints:
+      - Media Solution Preparation outputs a Culture Medium that satisfies an Input Specification; a Seed Train outputs a Cell Culture that satisfies an Input Specification of a plan prescribing a Production Culture Process.
+      - The relationship direction is Entity → Specification.
+
+
+  - label: Continuant Part Of At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000177"
+    definition: >
+      relationship from a part to a whole it is part of at all times
+    domain:
+      - Input Specification
+    range:
+      - Plan Specification
+    extraction_constraints:
+      - The relationship direction is Part → Whole.
+
+
+  - label: Has Material State
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasMaterialState"
+    definition: >
+      relationship from a material entity to a material state it has
+    domain:
+      - Culture Medium
+      - Material Entity
+    range:
+      - Spent Culture Medium State
+      - Sterile Material State
+    inverse: Is Material State Of
+    extraction_constraints:
+      - The relationship direction is Material Entity → State.
+
+
+  - label: Has Post Material State
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasPostMaterialState"
+    definition: >
+      relationship from a process to the material state resulting from it
+    domain:
+      - Sterilization Process
+    range:
+      - Sterile Material State
+    extraction_constraints:
+      - The relationship direction is Process → Post Material State.

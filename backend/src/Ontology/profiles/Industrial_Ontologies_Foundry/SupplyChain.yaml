@@ -1,0 +1,3343 @@
+profile:
+  id: supply-chain-complete
+  ontology_artifact: supplychain
+  description: >-
+    Complete profile generated from SupplyChain.rdf; all named classes and properties declared in the RDF artifact are represented here.
+  include_ancestors: true
+  include_compatible_properties: true
+
+
+imports:
+- iri: https://spec.industrialontologies.org/ontology/202603/core/Core/
+  label: IOF Core
+  note: Imported ontology; referenced classes and properties are defined there, not redeclared in this
+    module.
+
+
+entities:
+  - label: Advance Shipment Notice
+    iri: "https://spec.industrialontologies.org/ontology/construct/AdvanceShipmentNotice"
+    parent_class: Information Content Entity
+    definition: >
+      information content entity about a shipment, sent by a supplier or
+      consignor to a buyer or consignee, before the shipment’s arrival
+    synonyms:
+      - ASN
+      - Advanced Shipping Notice
+    examples:
+      - an electronic message sent by a supplier to a buyer before delivery, indicating that a shipment has been prepared and providing details such as shipment identifier, carrier, tracking number, shipped items, quantities, and expected arrival date.
+    classification_conditions:
+      - The entity must be an Information Content Entity.
+      - It must be about some Shipment.
+      - It must be about some Supplier or Consignor.
+      - It must be about some Buyer or Consignee.
+      - It must be the output of some Shipment Preparation Process that precedes some Arrival Process in which the Shipment participates.
+    logical_definition: >
+      AdvanceShipmentNotice(x) ↔ InformationContentEntity(x) ∧ ∃y,z,w,p,a
+      (Shipment(y) ∧ isAbout(x, y) ∧ (Buyer(z) ∨ Consignee(z)) ∧
+      isAbout(x, z) ∧ (Supplier(w) ∨ Consignor(w)) ∧ isAbout(x, w) ∧
+      ShipmentPreparationProcess(p) ∧ ArrivalProcess(a) ∧ isOutputOf(x, p)
+      ∧ precedes(p, a) ∧ participatesInAtSomeTime(y, a))
+    explanatory_note: >
+      A notification sent by the shipper to the purchasing organization
+      before the shipment leaves the facility, giving the receiver time to
+      prepare for delivery. It is often sent via EDI and may also describe
+      the carrier. The OWL equivalence approximates the logical definition
+      and does not enforce that the shipment the notice is about is the one
+      in the arrival process.
+
+
+  - label: Airway
+    iri: "https://spec.industrialontologies.org/ontology/construct/Airway"
+    parent_class: Three Dimensional Spatial Region
+    definition: >
+      three-dimensional spatial region that connects one specified location
+      (navigation point) to another at a specified altitude, along which an
+      aircraft may be flown
+    synonyms:
+      - air route
+    examples:
+      - Airway #B9 (Blue 9) that connects the Southern Florida mainland to Marathon Key
+    classification_conditions:
+      - The entity must be a Three Dimensional Spatial Region.
+    logical_definition: >
+      Airway(x) → ThreeDimensionalSpatialRegion(x)
+    explanatory_note: >
+      A series of abstract GPS points that create designated routes that
+      aeroplanes fly to aid navigation and avoid accidents. An airway is
+      based on a centerline extending from one navigation aid or
+      intersection to another, and is defined with segments within a
+      specific altitude block and corridor width.
+
+
+  - label: Appraisal Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/AppraisalProcess"
+    parent_class: Measurement Process
+    definition: >
+      measurement process that involves evaluating, assessing, estimating,
+      or judging the nature, value, importance, condition, or quality of
+      some entity
+    examples:
+      - a food critic rating the quality of a restaurant's ambiance, service, and food
+      - a mechanic assessing whether a damaged vehicle is repairable
+      - an insurance agent appraising the financial value of a building
+    classification_conditions:
+      - The process must be a Measurement Process.
+    logical_definition: >
+      AppraisalProcess(x) → MeasurementProcess(x)
+
+
+  - label: Arrival Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/ArrivalProcess"
+    parent_class: Material Location Change Process
+    definition: >
+      material location change process that consists of the participating
+      entity reaching its destination such that the travel or transport
+      process which it is a part of is completed
+    examples:
+      - the process during which a truck enters the facility of the receiver
+    classification_conditions:
+      - The process must be a Material Location Change Process.
+      - It must be an occurrent part of some Transport Process or Travel Process.
+      - It must occupy a temporal region that contains the last instant of the temporal region of that Transport Process or Travel Process.
+    logical_definition: >
+      ArrivalProcess(x) → MaterialLocationChangeProcess(x) ∧ ∃y
+      (TravelProcess(y) ∨ TransportProcess(y)) ∧ occurrentPartOf(x, y) ∧
+      ∃z,z1,t (TemporalRegion(z) ∧ TemporalRegion(z1) ∧ TemporalInstant(t)
+      ∧ occupiesTemporalRegion(x, z) ∧ occupiesTemporalRegion(y, z1) ∧
+      lastInstantOf(t, z1) ∧ occupiesTemporalRegion(x, t))
+
+
+  - label: Bill Of Lading
+    iri: "https://spec.industrialontologies.org/ontology/construct/BillOfLading"
+    parent_class: Commercial Service Agreement
+    definition: >
+      agreement between a shipper and a carrier that prescribes some
+      consigning process
+    synonyms:
+      - BOL
+    examples:
+      - Bill of Lading related to transportation of 2200 gallons of antifreeze from a shipper's location to a receiver/consignee's location by a carrier.
+    classification_conditions:
+      - The entity must be a Commercial Service Agreement.
+      - It must have, at all times, some Information Content Entity as a continuant part that prescribes only Consigning Processes.
+      - It must have, at all times, some Information Content Entity as a continuant part that prescribes only Consignor Roles.
+      - It must have, at all times, some Information Content Entity as a continuant part that prescribes only Transportation Service Provider Roles.
+      - A Commercial Service Agreement that is about some Consigning Process and prescribes some Consignor Role and some Transportation Service Provider Role is a Bill Of Lading.
+    logical_definition: >
+      LA1: BillOfLading(x) → CommercialServiceAgreement(x) ∧ ∀y,z
+      ((ConsignorRole(y) ∧ prescribes(x, y)) ∧ (TransportationServiceProviderRole(z)
+      ∧ prescribes(x, z)));
+      LA2: CommercialServiceAgreement(x) ∧ ∃c,y,z (ConsigningProcess(c) ∧
+      ConsignorRole(y) ∧ TransportationServiceProviderRole(z) ∧ isAbout(x, c) ∧
+      prescribes(x, y) ∧ prescribes(x, z)) → BillOfLading(x)
+    explanatory_note: >
+      A legal document between a shipper and a carrier that details the
+      type, quantity and destination of the goods being transported. It
+      serves as a receipt of goods, a contract of carriage and, in some
+      cases, a document of title.
+
+
+  - label: Cargo
+    iri: "https://spec.industrialontologies.org/ontology/construct/Cargo"
+    parent_class: Material Entity
+    definition: >
+      material entity that is transported using a transport equipment by a
+      carrier
+    examples:
+      - All articles, goods, materials, merchandise, or wares carried onboard an aircraft, ship, train, or truck, and for which an air waybill, or bill of lading, or other receipt is issued by the carrier
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - The entity must have some Cargo Role.
+    logical_definition: >
+      Cargo(x) ↔ MaterialEntity(x) ∧ ∃r (CargoRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      A product shipped in an aircraft, railroad car, ship, barge, or
+      truck; the subject of a shipment, being the materials carried.
+
+
+  - label: Cargo Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/CargoRole"
+    parent_class: Role
+    definition: >
+      role held by a material entity when it is being transported or is
+      planned to be transported by a carrier
+    examples:
+      - role of pallets of aluminum ingots when they are being transported on a train
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Material Entity.
+      - That Material Entity must participate at some time in some Transport Process that has some Carrier as its agent.
+    logical_definition: >
+      CargoRole(x) → Role(x) ∧ ∃m,p,c (MaterialEntity(m) ∧
+      TransportProcess(p) ∧ Carrier(c) ∧ participatesInAtSomeTime(m, p) ∧
+      agentIn(c, p) ∧ roleOf(x, m))
+
+
+  - label: Carrier
+    iri: "https://spec.industrialontologies.org/ontology/construct/Carrier"
+    parent_class: Supplier
+    definition: >
+      person or business organization who provides transportation services
+    synonyms:
+      - Transportation Service Provider
+    examples:
+      - Trucking Companies, Airlines
+    classification_conditions:
+      - The entity must be a Business Organization or a Person.
+      - The entity must have some Transportation Service Provider Role.
+    logical_definition: >
+      Carrier(x) ↔ (BusinessOrganization(x) ∨ Person(x)) ∧ ∃r
+      (TransportationServiceProviderRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      A company that provides air, sea, or land transportation services;
+      the party that provides freight transportation services. Formalized
+      as a defined class by referring to its role class, for modeling
+      convenience.
+
+
+  - label: Change
+    iri: "https://spec.industrialontologies.org/ontology/construct/Change"
+    parent_class: Process
+    definition: >
+      process in which some independent continuant endures and 1) one or
+      more of the dependent entities it bears increase or decrease in
+      intensity, 2) the entity begins to bear some dependent entity or 3)
+      the entity ceases to bear some dependent entity
+    examples:
+      - the process of change in the color of an object
+      - the process of gaining a new student role when a person enrolls for the first time in university courses
+    classification_conditions:
+      - The entity must be a Process.
+    logical_definition: >
+      Change(x) → Process(x)
+    explanatory_note: >
+      Candidate IOF Core construct.
+
+
+  - label: Consignee
+    iri: "https://spec.industrialontologies.org/ontology/construct/Consignee"
+    parent_class: Agent
+    definition: >
+      person or business organization that receives some shipment
+    synonyms:
+      - receiver
+    examples:
+      - A Walmart warehouse is a consignee when it receives a shipment
+    classification_conditions:
+      - The entity must be a Business Organization or a Person.
+      - The entity must have some Consignee Role.
+    logical_definition: >
+      Consignee(x) ↔ (BusinessOrganization(x) ∨ Person(x)) ∧ ∃r
+      (ConsigneeRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      The party by whom the goods are meant to be received, and to whom
+      goods are shipped and delivered. The ultimate owner of the product is
+      the consignee, so shipments destined for a 3PL do not list the 3PL
+      as the consignee.
+
+
+  - label: Consignee Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/ConsigneeRole"
+    parent_class: Agent Role
+    definition: >
+      role held by a person or business organization when it receives a
+      shipment from a carrier and owns the shipment after the receipt
+    examples:
+      - Discount Tire has a consignee role when it receives a shipment of 200 tires from Pirelli
+    classification_conditions:
+      - The role must be an Agent Role.
+      - It must be the role of some Business Organization or Person.
+      - That Business Organization or Person must participate at some time in some Receiving Process that has some Carrier as a participant.
+    logical_definition: >
+      ConsigneeRole(x) → Role(x) ∧ ∃y,p ((BusinessOrganization(y) ∨
+      Person(y)) ∧ ReceivingProcess(p) ∧ participatesInAtSomeTime(y, p) ∧
+      roleOf(x, y))
+
+
+  - label: Consigning Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/ConsigningProcess"
+    parent_class: Business Process
+    definition: >
+      business process that results in placing a material entity in the
+      possession of some agent without changing the ownership until the
+      material entity is sold
+    examples:
+      - a mobile retailer signing a contract with Apple and Samsung to receive sample mobile devices to be used for display purposes only while they are still owned by Apple and Samsung
+    classification_conditions:
+      - The process must be a Business Process.
+    logical_definition: >
+      ConsigningProcess(x) → BusinessProcess(x)
+    explanatory_note: >
+      The act of placing goods in the possession of another, but retaining
+      ownership until the goods are sold.
+
+
+  - label: Consignor Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/ConsignorRole"
+    parent_class: Agent Role
+    definition: >
+      role held by a business organization or person when it prepares,
+      initiates, and consigns a shipment it owns
+    examples:
+      - Pirelli has a consignor role when it prepares and initiates a shipment of 200 tires to a branch of Discount Tire in Ann Arbor, MI
+    classification_conditions:
+      - The role must be an Agent Role.
+      - It must be the role of some Business Organization or Person.
+      - That Business Organization or Person must be an agent in some Consigning Process and in some Shipment Preparation Process.
+      - That Business Organization or Person must own some Shipment that is the specified output of a Shipment Preparation Process.
+    logical_definition: >
+      LA1: ConsignorRole(x) → Role(x) ∧ ∃y,p,s ((BusinessOrganization(y) ∨
+      Person(y)) ∧ ShipmentPreparationProcess(p) ∧ Shipment(s) ∧
+      agentIn(y, p) ∧ isSpecifiedOutputOf(s, p) ∧ owns(y, s) ∧ roleOf(x, y));
+      LA2: ConsignorRole(x) → Role(x) ∧ ∃y,p ((BusinessOrganization(y) ∨
+      Person(y)) ∧ ShipmentPreparationProcess(p) ∧ agentIn(y, p) ∧
+      roleOf(x, y))
+
+
+  - label: Container Identifier
+    iri: "https://spec.industrialontologies.org/ontology/construct/ContainerIdentifier"
+    parent_class: Identifier
+    definition: >
+      identifier that identifies a container
+    examples:
+      - A QR code printed on a plastic drum used to store and transport a buffer solution
+      - A barcode on a stainless steel transport vessel used to transfer cell culture harvest material from a fed-batch bioreactor to the primary capture chromatography system
+    classification_conditions:
+      - The entity must be an Identifier.
+      - It must designate some Container.
+    logical_definition: >
+      ContainerIdentifier(x) ↔ Identifier(x) ∧ ∃y
+      (Container(y) ∧ designates(x, y))
+    explanatory_note: >
+      Not container identifiers are a product catalog number that refers
+      to a type of plastic container sold by a manufacturer, and a batch
+      number assigned to a lot of buffer solution held in a tank; the
+      latter identifies the material and not the container.
+
+
+  - label: Departure Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/DepartureProcess"
+    parent_class: Material Location Change Process
+    definition: >
+      material location change process that consists of the participating
+      entity leaving its starting location such that the travel or transport
+      process it is a part of is initiated
+    examples:
+      - the process during which a truck (loaded with a shipment) leaves the warehouse site of the shipper
+    classification_conditions:
+      - The process must be a Material Location Change Process.
+      - It must be an occurrent part of some Transport Process or Travel Process.
+      - It must occupy a temporal region that contains the first instant of the temporal region of that Transport Process or Travel Process.
+    logical_definition: >
+      DepartureProcess(x) → MaterialLocationChangeProcess(x) ∧ ∃y
+      (TravelProcess(y) ∨ TransportProcess(y)) ∧ occurrentPartOf(x, y) ∧
+      ∃z,z1,t (TemporalRegion(z) ∧ TemporalRegion(z1) ∧ TemporalInstant(t)
+      ∧ occupiesTemporalRegion(x, z) ∧ occupiesTemporalRegion(y, z1) ∧
+      firstInstantOf(t, z1) ∧ occupiesTemporalRegion(x, t))
+
+
+  - label: Distribution Center
+    iri: "https://spec.industrialontologies.org/ontology/construct/DistributionCenter"
+    parent_class: Storage Facility
+    definition: >
+      storage facility designed to store manufactured products that are to
+      be distributed to resellers and wholesalers
+    examples:
+      - Costco Distribution Center in Salt Lake City, UT
+    classification_conditions:
+      - The entity must be a Storage Facility.
+    logical_definition: >
+      DistributionCenter(x) → StorageFacility(x)
+    explanatory_note: >
+      The warehouse facility which holds inventory from manufacturing
+      pending distribution to the appropriate stores.
+
+
+  - label: Distributor
+    iri: "https://spec.industrialontologies.org/ontology/construct/Distributor"
+    parent_class: Agent
+    definition: >
+      person or business organization when it purchases products from
+      manufacturers and resells them to wholesalers
+    examples:
+      - Grainger is a distributor when it buys HVAC units and parts from manufacturers and sells them to wholesalers
+    classification_conditions:
+      - The entity must be a Business Organization or a Person.
+      - The entity must have some Distributor Role.
+    logical_definition: >
+      Distributor(x) ↔ (BusinessOrganization(x) ∨ Person(x)) ∧ ∃r
+      (DistributorRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      A business which acts as a third-party local representative and
+      distribution point for a manufacturing firm, typically purchasing
+      goods in quantity from the manufacturer and shipping smaller
+      quantities. It does not manufacture its own products and usually
+      maintains a finished goods inventory.
+
+
+  - label: Distributor Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/DistributorRole"
+    parent_class: Agent Role
+    definition: >
+      role held by a person or business organization when it buys some
+      material products from a manufacturer and resells them to a
+      wholesaler
+    examples:
+      - Grainger has a distributor role when it sells HVAC units and parts to wholesalers
+    classification_conditions:
+      - The role must be an Agent Role.
+      - It must be the role of some Business Organization or Person.
+      - That Business Organization or Person must be an agent in some Selling Business Process that realizes some Material Product Role of a Material Entity.
+      - It must also be the agent in some Supplying Business Process that realizes a Buyer Role of a Wholesaler and a Material Product Role of a Material Entity.
+      - It must also have a Buyer Role realized in a Buying Business Process whose Supplier Role is the role of a Manufacturer.
+    logical_definition: >
+      LA1: DistributorRole(x) → AgentRole(x) ∧ ∃y,p,r,m
+      ((BusinessOrganization(y) ∨ Person(y)) ∧ roleOf(x, y) ∧
+      OfferingForSaleBusinessProcess(p) ∧ MaterialProductRole(r) ∧
+      MaterialEntity(m) ∧ agentIn(y, p) ∧ realizes(p, r) ∧ roleOf(r, m));
+      LA2: DistributorRole(x) → AgentRole(x) ∧ ∃y,p,r,r1,r2,m,d
+      ((BusinessOrganization(y) ∨ Person(y)) ∧ roleOf(x, y) ∧ BuyerRole(r) ∧
+      hasRole(y, r) ∧ BuyingBusinessProcess(p) ∧ hasRealization(r, p) ∧
+      MaterialProductRole(r1) ∧ SupplierRole(r2) ∧ MaterialEntity(m) ∧
+      Manufacturer(d) ∧ realizes(p, r1) ∧ roleOf(r1, m) ∧ realizes(p, r2) ∧
+      roleOf(r2, d));
+      LA3: DistributorRole(x) → AgentRole(x) ∧ ∃y,p,w,r1,r2,m
+      ((BusinessOrganization(y) ∨ Person(y)) ∧ roleOf(x, y) ∧
+      SupplyingBusinessProcess(p) ∧ agentIn(y, p) ∧ Wholesaler(w) ∧
+      BuyerRole(r1) ∧ roleOf(r1, w) ∧ MaterialEntity(m) ∧
+      MaterialProductRole(r2) ∧ roleOf(r2, m) ∧ realizes(p, r1) ∧
+      realizes(p, r2))
+
+
+  - label: Facility
+    iri: "https://spec.industrialontologies.org/ontology/construct/Facility"
+    parent_class: Engineered System
+    definition: >
+      engineered system that consists of buildings, structures, roads,
+      machines, and equipment designed to provide certain capabilities
+    examples:
+      - an oil refinery, a manufacturing plant, an airport
+    classification_conditions:
+      - The entity must be an Engineered System.
+      - It must be located in some Site at all times.
+    logical_definition: >
+      Facility(x) → EngineeredSystem(x) ∧ ∃s
+      (Site(s) ∧ locatedInAtAllTimes(x, s))
+    explanatory_note: >
+      Candidate IOF Core construct. This definition applies to stationary
+      facilities with a fixed geospatial location on the ground, not
+      mobile facilities.
+
+
+  - label: Factory
+    iri: "https://spec.industrialontologies.org/ontology/construct/Factory"
+    parent_class: Facility
+    definition: >
+      facility that is designed for manufacturing products and includes one
+      or more production systems
+    synonyms:
+      - manufacturing plant
+      - plant
+    examples:
+      - aircraft manufacturing factory (factory that is designed for manufacturing aircraft)
+      - motor vehicle manufacturing factory (factory that is designed for manufacturing motor vehicles)
+      - Ford's plant in Dearborn, MI
+    classification_conditions:
+      - The entity must be a Facility.
+      - It must have some Production Capability.
+    logical_definition: >
+      Factory(x) → Facility(x) ∧ ∃c
+      (ProductionCapability(c) ∧ hasCapability(x, c))
+    explanatory_note: >
+      Candidate IOF Core construct.
+
+
+  - label: Freight Container
+    iri: "https://spec.industrialontologies.org/ontology/construct/FreightContainer"
+    parent_class: Container
+    definition: >
+      A container that is designed to enclose, protect, and enable the
+      transport of one or more material entities across multiple modes of
+      transportation
+    examples:
+      - an intermodal container, a shipping container, cargo container, multimodal container, or a freight container
+    classification_conditions:
+      - The entity must be a Container.
+    logical_definition: >
+      FreightContainer(x) → Container(x)
+    explanatory_note: >
+      Per ISO 668:1995(E), a shipping container is an article of transport
+      equipment that is of permanent character and strong enough for
+      repeated use; specially designed to facilitate carriage of goods by
+      one or more modes of transport without intermediate reloading;
+      fitted with devices permitting ready handling, particularly transfer
+      between modes; easy to fill and empty; stackable; and with an
+      internal volume of 1 cubic metre or more.
+
+
+  - label: Freight Forwarder
+    iri: "https://spec.industrialontologies.org/ontology/construct/FreightForwarder"
+    parent_class: Agent
+    definition: >
+      person or business organization when it arranges the transportation
+      of shipments on behalf of the shipper (consignor) or consignee
+    synonyms:
+      - forwarding agent
+    examples:
+      - International Equipment Relocations, TMF Logistics, Landstar, ICAT Logistics Inc.
+    classification_conditions:
+      - The entity must be a Business Organization or a Person.
+      - The entity must have some Freight Forwarder Role.
+    logical_definition: >
+      FreightForwarder(x) ↔ (BusinessOrganization(x) ∨ Person(x)) ∧ ∃r
+      (FreightForwarderRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      The party that arranges the carriage of goods, including connected
+      services and formalities, on behalf of the shipper or consignee. A
+      "middle man" between the carrier and the shipping organization, often
+      combining smaller shipments to take advantage of lower bulk costs.
+
+
+  - label: Freight Forwarder Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/FreightForwarderRole"
+    parent_class: Logistics Service Provider Role
+    definition: >
+      logistics service provider role held by an agent when it arranges the
+      transportation of shipments on behalf of the shipper (consignor) or
+      consignee
+    examples:
+      - the role of Wagner Forwarders LLC when it picks up shipments from a shipper's warehouse, carries out customs clearance, transports the goods from the destination, and delivers them to the clients
+    classification_conditions:
+      - The role must be a Logistics Service Provider Role.
+      - It must be the role of some Business Organization or Person.
+      - That Business Organization or Person must be an agent in some Freight Forwarding Service.
+      - That Business Organization or Person must act at some time on behalf of some Consignee or Shipper.
+    logical_definition: >
+      FreightForwarderRole(x) ↔ LogisticsServiceProviderRole(x) ∧ ∃y,p,c
+      ((BusinessOrganization(y) ∨ Person(y)) ∧ FreightForwardingService(p)
+      ∧ (Consignor(c) ∨ Consignee(c)) ∧ agentIn(y, p) ∧
+      actsOnBehalfOfAtSomeTime(y, c) ∧ roleOf(x, y))
+
+
+  - label: Freight Forwarding Business Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/FreightForwardingBusinessFunction"
+    parent_class: Business Function
+    definition: >
+      business function that is realized in a freight forwarding service
+    examples:
+      - the function of Wagner Forwarders LLC to pick up shipments from a shipper's warehouse, carries out customs clearance, transports the goods from the destination, and delivers them to the clients
+    classification_conditions:
+      - The entity must be a Business Function.
+      - It must be realized in some Freight Forwarding Service.
+    logical_definition: >
+      FreightForwardingBusinessFunction(x) ↔ BusinessFunction(x) ∧ ∃s
+      (FreightForwardingService(s) ∧ hasRealization(x, s))
+    explanatory_note: >
+      A business function realized in the process of planning and
+      coordinating the transportation of material products on behalf of a
+      shipper.
+
+
+  - label: Freight Forwarding Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/FreightForwardingProcess"
+    parent_class: Business Process
+    definition: >
+      business process of planning and coordinating the transportation of
+      material products on behalf of a shipper
+    examples:
+      - Vermont Tech manufactures electric spare parts in Vermont and exports them to Canada and Mexico. Vermont Tech hired Wagner Forwarders LLC that picks up shipments from Vermont Tech's warehouse, carries out customs clearance, transports the goods from the destination, and delivers them to the clients in Mexico and Canada.
+    classification_conditions:
+      - The process must be a Business Process.
+      - It must have some Freight Forwarder as a participant at some time.
+      - It must have some Shipment as a participant at some time.
+    logical_definition: >
+      FreightForwardingProcess(x) → BusinessProcess(x) ∧ ∃f,s
+      (FreightForwarder(f) ∧ Shipment(s) ∧ hasParticipantAtSomeTime(x, f) ∧
+      hasParticipantAtSomeTime(x, s))
+    explanatory_note: >
+      Freight forwarding is the process of organizing shipments for
+      individuals or corporations to get goods from a manufacturer to a
+      market, customer or final point of distribution.
+
+
+  - label: Freight Forwarding Service
+    iri: "https://spec.industrialontologies.org/ontology/construct/FreightForwardingService"
+    parent_class: Logistics Service
+    definition: >
+      logistics service that consists of at least one freight forwarding
+      process
+    examples:
+      - the service provided by Wagner Forwarders LLC when it picks up shipments from a shipper's warehouse, carries out customs clearance, transports the goods from the destination, and delivers them to the clients
+    classification_conditions:
+      - The entity must be a Logistics Service.
+      - It must have some Freight Forwarding Process as an occurrent part.
+    logical_definition: >
+      FreightForwardingService(x) ↔ LogisticsService(x) ∧ ∃p
+      (FreightForwardingProcess(p) ∧ hasOccurrentPart(x, p))
+
+
+  - label: Geospatial Location
+    iri: "https://spec.industrialontologies.org/ontology/construct/GeospatialLocation"
+    parent_class: Geospatial Site
+    definition: >
+      geospatial site that is the location of some material entity at some
+      time or the site of some process
+    examples:
+      - the location of Toyota's plant in San Antonio
+      - the location of a shipping dock in warehouse facility
+      - the site of a mixing process
+      - the current location of a moving truck
+      - the site of a truck loading process
+    classification_conditions:
+      - The entity must be a Geospatial Site.
+      - The entity must have some Location Role.
+    logical_definition: >
+      GeospatialLocation(x) ↔ GeospatialSite(x) ∧ ∃r
+      (LocationRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      Candidate IOF Core construct.
+
+
+  - label: Geospatial Site
+    iri: "https://spec.industrialontologies.org/ontology/construct/GeospatialSite"
+    parent_class: Site
+    definition: >
+      site at or near the surface of the earth
+    examples:
+      - the site of a farm, the site of an airport, the site of a factory
+    classification_conditions:
+      - The entity must be a Site.
+    logical_definition: >
+      GeospatialSite(x) → Site(x)
+    explanatory_note: >
+      Candidate IOF Core construct.
+
+
+  - label: Global Location Number
+    iri: "https://spec.industrialontologies.org/ontology/construct/GlobalLocationNumber"
+    parent_class: Identifier
+    definition: >
+      identifier that uniquely identifies a business organization or a
+      geospatial location and complies with GS1 GLN coding scheme
+    synonyms:
+      - GLN
+    examples:
+      - Company XYZ Branch 1 GLN:9012345000004
+      - Company XYZ Branch 2 GLN:9012345100001
+      - GLN 5012345000046 = "AWS Region us-west-2 IoT Hub for Facility B"
+      - GLN 5012345000114 -> Warehouse A – Loading Dock 2
+    classification_conditions:
+      - The entity must be an Identifier.
+      - It must designate some Business Organization or Geospatial Location.
+      - It must be prescribed by the GS1 GLN Specifications scheme (GLNScheme).
+    logical_definition: >
+      GlobalLocationNumber(x) → Identifier(x) ∧ ∃y
+      (BusinessOrganization(y) ∨ GeospatialLocation(y)) ∧ designates(x, y) ∧
+      prescribedBy(x, GLNScheme)
+    explanatory_note: >
+      A GLN is the GS1 identification key for uniquely identifying parties
+      (legal entities) and physical locations in business transactions. It
+      is a 13-digit number comprising a GS1 Company Prefix, a Location
+      Reference and a Check Digit. It can identify physical locations
+      (addresses, buildings, storage sites, loading platforms) and digital
+      locations (electronic network addresses).
+
+
+  - label: Group Of Suppliers
+    iri: "https://spec.industrialontologies.org/ontology/construct/GroupOfSuppliers"
+    parent_class: Organized Group Of Agents
+    definition: >
+      group of agents involved in trading and other business relationships
+      with one another during the operation of specific supply chains
+    synonyms:
+      - Supply Network
+    examples:
+      - The companies that are involved in manufacturing of iPhone and its parts
+    classification_conditions:
+      - The entity must be an Organized Group Of Agents.
+      - Every member part it has at all times must be a Business Organization that has some Supplier Role.
+      - That Supplier Role must be specifically depended on by some Supply Relationship that is prescribed by some Supply Chain Plan Specification.
+    logical_definition: >
+      GroupOfSuppliers(x) → OrganizedGroupOfAgents(x) ∧ ∀y
+      (hasMemberPartAtAllTimes(x, y) → (BusinessOrganization(y) ∧ ∃r,s
+      (SupplierRole(r) ∧ SupplyRelationship(s) ∧ specificallyDependedOnBy(r,
+      s) ∧ ∃p (SupplyChainPlanSpecification(p) ∧ prescribes(p, s)) ∧
+      hasRole(y, r))))
+    explanatory_note: >
+      There exists a supply chain link between two interacting agents who
+      are members of the same supplier group related to a specific supply
+      chain system.
+
+
+  - label: Industrial Inventory
+    iri: "https://spec.industrialontologies.org/ontology/construct/IndustrialInventory"
+    parent_class: Material Entity
+    definition: >
+      material product, material component, raw material, or material
+      artifact that is ready to be sold or used and is stored in a storage
+      facility or on factory floor
+    examples:
+      - sealed and labeled boxes of ball bearings packaged for shipment
+    classification_conditions:
+      - The entity must be a Material Artifact, Material Component, Material Product or Raw Material.
+      - The entity must have some Industrial Inventory Role.
+    logical_definition: >
+      IndustrialInventory(x) ↔ (MaterialArtifact(x) ∨ MaterialComponent(x) ∨
+      MaterialProduct(x) ∨ RawMaterial(x)) ∧ ∃r
+      (IndustrialInventoryRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      Those stocks or items used to support production (raw materials and
+      work-in-process items), supporting activities (maintenance, repair
+      and operating supplies), and customer service (finished goods and
+      spare parts).
+
+
+  - label: Industrial Inventory Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/IndustrialInventoryRole"
+    parent_class: Material Resource Role
+    definition: >
+      role held by some material entity when it is stored by a business
+      organization and it is intended to be supplied to a customer or to be
+      used or consumed in some product production process
+    examples:
+      - (for a tile manufacturer) role held by the boxes of tile that are ready to sell, the semi-finished stock of tiles that haven’t been packed yet, the tiles set aside for quality checking, and raw materials like silica sand, clay, and pottery stone
+      - role held by the rolls of aluminum a manufacturer stores to be consumed later on its bottling lines
+    classification_conditions:
+      - The role must be a Material Resource Role.
+      - It must be the role of some Material Entity that participates at some time in some Product Production Process or Supplying Business Process.
+      - That Material Entity must also participate at some time in some Inventory Management Process.
+    logical_definition: >
+      IndustrialInventoryRole(x) → MaterialResourceRole(x) ∧ ∃m,p
+      (MaterialEntity(m) ∧ (ProductProductionProcess(p) ∨
+      SupplyingBusinessProcess(p)) ∧ participatesInAtSomeTime(m, p) ∧ ∃i
+      (InventoryManagementProcess(i) ∧ participatesInAtSomeTime(m, i) ∧
+      roleOf(x, m)))
+
+
+  - label: Industry
+    iri: "https://spec.industrialontologies.org/ontology/construct/Industry"
+    parent_class: Group Of Agents
+    definition: >
+      group of organizations that are related based on their primary
+      business activities
+    examples:
+      - automotive industry, defense industry, oil and gas industry
+    classification_conditions:
+      - The entity must be a Group Of Agents.
+      - It must have some Business Organization as a member part at all times.
+      - Every member part it has at all times must be a Business Organization.
+    logical_definition: >
+      Industry(x) → GroupOfAgents(x) ∧ ∃y (BusinessOrganization(y) ∧
+      memberPartOfAtAllTimes(y, x)) ∧ ∀z (memberPartOfAtAllTimes(z, x) →
+      BusinessOrganization(z))
+    explanatory_note: >
+      Group of organizations that participate in similar or related
+      business processes and are intended to realize similar or related
+      primary business functions. Candidate IOF Core construct.
+
+
+  - label: Integrated Carrier Business Organization
+    iri: "https://spec.industrialontologies.org/ontology/construct/IntegratedCarrierBusinessOrganization"
+    parent_class: Business Organization
+    definition: >
+      business organization that is created for the purpose of providing
+      different types of transportation and freight forwarding services
+    examples:
+      - FedEx, UPS, DHL
+    classification_conditions:
+      - The entity must be a Business Organization.
+      - It must have some Freight Forwarding Business Function.
+      - It must have some Transportation Business Function.
+    logical_definition: >
+      IntegratedCarrierBusinessOrganization(x) ↔ BusinessOrganization(x) ∧
+      ∃f,t (FreightForwardingBusinessFunction(f) ∧
+      TransportationBusinessFunction(t) ∧ hasFunction(x, f) ∧ hasFunction(x, t))
+    explanatory_note: >
+      A company that offers a blend of transportation services such as
+      land, sea and air carriage, freight forwarding, and ground handling.
+
+
+  - label: Inventory Management Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/InventoryManagementProcess"
+    parent_class: Business Process
+    definition: >
+      business process that consists of the activities required for
+      controlling, tracking, recording, and planning inventories
+    examples:
+      - A collection of tasks carried out in IKEA that ensures optimal inventory levels of raw material and finished products at all times.
+    classification_conditions:
+      - The process must be a Business Process.
+    logical_definition: >
+      InventoryManagementProcess(x) → BusinessProcess(x)
+    explanatory_note: >
+      The process of ensuring the availability of products through
+      inventory administration; the branch of business management
+      concerned with planning and controlling inventories.
+
+
+  - label: Load
+    iri: "https://spec.industrialontologies.org/ontology/construct/Load"
+    parent_class: Material Entity
+    definition: >
+      collection of material entities which share the same transportation
+      and transfer history
+    examples:
+      - a portion of grain loaded on a truck and transported from a grain elevator to a food processing facility
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - The entity must have some Load Role.
+    logical_definition: >
+      Load(x) ↔ MaterialEntity(x) ∧ ∃r (LoadRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      Collection of material entities transported or transferred together.
+
+
+  - label: Load Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/LoadRole"
+    parent_class: Traceable Resource Unit Role
+    definition: >
+      traceable resource unit role held by a number of material entities
+      that have been transferred or transported together
+    examples:
+      - role of 200 pounds of wheat when it is transferred from one container to another container
+    classification_conditions:
+      - The role must be a Traceable Resource Unit Role.
+      - It must be the role of some Material Entity that participates at some time in some Material Location Change Process.
+      - That Material Entity must be designated by some Identifier.
+    logical_definition: >
+      LoadRole(x) → TraceableResourceUnitRole(x) ∧ ∃m,p
+      (MaterialEntity(m) ∧ MaterialLocationChangeProcess(p) ∧
+      participatesInAtSomeTime(m, p) ∧ ∃i (Identifier(i) ∧ designates(i, m))
+      ∧ roleOf(x, m))
+
+
+  - label: Location Identification Scheme
+    iri: "https://spec.industrialontologies.org/ontology/construct/LocationIdentificationScheme"
+    parent_class: Information Content Entity
+    definition: >
+      identification scheme that prescribes how unique identifiers of
+      physical locations are formulated
+    examples:
+      - GS1 specifications related to creating global location numbers (GLN) for physical and digital locations
+      - the individual GLNScheme, GS1 GLN Specifications, which specifies constraints on the structure of a GLN
+    classification_conditions:
+      - The entity must be an Information Content Entity.
+      - An Information Content Entity that prescribes some Identifier that designates some Geospatial Location is a Location Identification Scheme.
+    logical_definition: >
+      InformationContentEntity(x) ∧ ∃i,g (Identifier(i) ∧
+      GeospatialLocation(g) ∧ prescribes(x, i) ∧ designates(i, g)) →
+      LocationIdentificationScheme(x)
+
+
+  - label: Location Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/LocationRole"
+    parent_class: Role
+    definition: >
+      role held by a geospatial site when it is the location of some
+      material entity at some time or the site of some process
+    examples:
+      - role held by the site of a piece of land when it is the landing location for a SpaceX rocket
+      - role of the site of a parking lot when it is used as a drop off location during a receiving process
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Geospatial Site.
+      - That Geospatial Site must be the location of some Material Entity at some time or the site of some Process.
+    logical_definition: >
+      LocationRole(x) ↔ Role(x) ∧ ∃g (GeospatialSite(g) ∧ roleOf(x, g) ∧
+      (∃m (MaterialEntity(m) ∧ locationOfAtSomeTime(g, m)) ∨ ∃p (Process(p)
+      ∧ isSiteOf(g, p))))
+    explanatory_note: >
+      Candidate IOF Core construct.
+
+
+  - label: Logistic Unit
+    iri: "https://spec.industrialontologies.org/ontology/construct/LogisticUnit"
+    parent_class: Material Entity
+    definition: >
+      material entities packaged together for transport or storage
+    examples:
+      - a case, pallet or parcel
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - It must be designated by some Identifier.
+      - The entity must have some Logistic Unit Role.
+    logical_definition: >
+      LogisticUnit(x) ↔ MaterialEntity(x) ∧ ∃r
+      (LogisticUnitRole(r) ∧ hasRole(x, r)) ∧ ∃i
+      (Identifier(i) ∧ designatedBy(x, i))
+    explanatory_note: >
+      An item of any composition established for transport and/or storage
+      that needs to be managed through the supply chain. It is a
+      composition of one or more trade items to be delivered by transport
+      and/or stored to fulfill a trade agreement.
+
+
+  - label: Logistic Unit Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/LogisticUnitRole"
+    parent_class: Traceable Resource Unit Role
+    definition: >
+      traceable resource unit role held by a number of material entities
+      that are packaged together for transport or storage
+    examples:
+      - role held by a pallet of soft drinks when it is stored before being shipped to a known location
+    classification_conditions:
+      - The role must be a Traceable Resource Unit Role.
+    logical_definition: >
+      LogisticUnitRole(x) → TraceableResourceUnitRole(x)
+
+
+  - label: Logistics Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/LogisticsProcess"
+    parent_class: Business Process
+    definition: >
+      business process composed of one or more processes such as transport,
+      shipment preparation, storage, or receiving that are coordinated to
+      enable the movement, handling, or distribution of material entities
+      across one or more locations within a supply chain
+    examples:
+      - Inbound Raw Material Delivery
+      - Finished Goods Shipment to Distributor
+      - Work-in-Progress (WIP) Transfer Between Production Sites
+      - Third-Party Logistics (3PL) Coordination
+      - Return Logistics (Reverse Supply Chain)
+    classification_conditions:
+      - The process must be a Business Process.
+      - It must have some Receiving Process, Shipment Preparation Process, Storage Process, Freight Forwarding Process or Transport Process as an occurrent part.
+    logical_definition: >
+      LogisticsProcess(x) → BusinessProcess(x) ∧ ∃p
+      ((ReceivingProcess(p) ∨ ShipmentPreparationProcess(p) ∨
+      StorageProcess(p) ∨ FreightForwardingProcess(p) ∨ TransportProcess(p))
+      ∧ hasOccurrentPart(x, p))
+
+
+  - label: Logistics Service
+    iri: "https://spec.industrialontologies.org/ontology/construct/LogisticsService"
+    parent_class: Commercial Service
+    definition: >
+      commercial service that consists of at least one transport process,
+      packaging process, freight forwarding, or storage process
+    examples:
+      - the shipping service provided by a trucking company
+      - the freight forwarding service provided by Logistix Co
+    classification_conditions:
+      - The entity must be a Commercial Service.
+      - It must have some Transport Process, Packaging Process, Freight Forwarding Process or Storage Process as an occurrent part.
+    logical_definition: >
+      LogisticsService(x) → CommercialService(x) ∧ ∃p
+      ((TransportProcess(p) ∨ FreightForwardingProcess(p) ∨
+      PackagingProcess(p) ∨ StorageProcess(p)) ∧ hasOccurrentPart(x, p))
+    explanatory_note: >
+      Services related to planning, implementing and controlling
+      procedures for the efficient and effective transportation and
+      storage of goods, and related information, from the point of origin
+      to the point of consumption.
+
+
+  - label: Logistics Service Provider Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/LogisticsServiceProviderRole"
+    parent_class: Service Provider Role
+    definition: >
+      service provider role that is held by a business organization or
+      person when it provides a logistics service
+    synonyms:
+      - 3PL
+    examples:
+      - role of FedEx when it provides transportation services to its customers
+    classification_conditions:
+      - The role must be a Service Provider Role.
+      - It must be the role of some Business Organization or Person.
+      - That Business Organization or Person must be an agent in some Logistics Service.
+    logical_definition: >
+      LogisticsServiceProviderRole(x) → ServiceProviderRole(x) ∧ ∃y,p
+      ((BusinessOrganization(y) ∨ Person(y)) ∧ LogisticsService(p) ∧
+      agentIn(y, p) ∧ roleOf(x, y))
+    explanatory_note: >
+      Any business which provides logistics services, including those
+      typically referred to as 3PL, 4PL and LLP. Services may include
+      provisioning, transport, warehousing and packaging.
+
+
+  - label: Lot
+    iri: "https://spec.industrialontologies.org/ontology/construct/Lot"
+    parent_class: Material Entity
+    definition: >
+      quantity of material entities produced together and sharing the same
+      production history and specifications
+    examples:
+      - a batch of water pump housings manufactured during the morning shift of diecasting plant on a certain machine
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - It must be designated by some Lot Identifier.
+      - The entity must have some Lot Role.
+    logical_definition: >
+      Lot(x) ↔ MaterialEntity(x) ∧ ∃r (LotRole(r) ∧ hasRole(x, r)) ∧ ∃i
+      (LotIdentifier(i) ∧ designatedBy(x, i))
+    explanatory_note: >
+      A lot can consist of a portion of bulk material.
+
+
+  - label: Lot Identifier
+    iri: "https://spec.industrialontologies.org/ontology/construct/LotIdentifier"
+    parent_class: Identifier
+    definition: >
+      identifier that uniquely denotes a particular quantity of material
+      entities that have shared production or transformation history
+    examples:
+      - 'Lot Number: 180220601. The first two digits (18) is the year of manufacture (2018). The next two digits (02) is the month of manufacture (February). The next two digits (20) is the day of the month of manufacture (20th). The next digit (6) is the plant number. The last two digits (01) represents the product batch of that specific day'
+    classification_conditions:
+      - The entity must be an Identifier.
+      - It must designate some Lot.
+    logical_definition: >
+      LotIdentifier(x) ↔ Identifier(x) ∧ ∃y (Lot(y) ∧ designates(x, y))
+    explanatory_note: >
+      A unique identification assigned to a homogeneous quantity of
+      material, or a sequence number associated with a specific batch or
+      production run, used for tracking. It is often used interchangeably
+      with Batch Number.
+
+
+  - label: Lot Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/LotRole"
+    parent_class: Traceable Resource Unit Role
+    definition: >
+      traceable resource unit role held by material entities that have a
+      shared production or transformation history
+    synonyms:
+      - Batch Role
+    examples:
+      - role held by a number of aluminum shafts machined by certain operator on a certain CNC machine during a work shift
+    classification_conditions:
+      - The role must be a Traceable Resource Unit Role.
+      - It must be the role of some Material Entity that participates at some time in some Manufacturing Process.
+      - That Material Entity must be designated by some Lot Identifier.
+    logical_definition: >
+      LotRole(x) → TraceableResourceUnitRole(x) ∧ ∃m,p
+      (MaterialEntity(m) ∧ ManufacturingProcess(p) ∧
+      participatesInAtSomeTime(m, p) ∧ ∃i (LotIdentifier(i) ∧
+      designates(i, m)) ∧ roleOf(x, m))
+
+
+  - label: Make-To-Order Production Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/Make-To-OrderProductionCapability"
+    parent_class: Production Capability
+    definition: >
+      production capability to manufacture some material artifact only
+      after a confirmed customer order is received
+    synonyms:
+      - MTO
+    examples:
+      - the capability of BMW to customize their vehicles according to customers' preferences. BMW lets customers select the interior and exterior, the engine, as well as other features
+      - Dell Computers is an example of a business that uses the MTO production strategy, wherein customers can order a fully customized computer online and receive it in a couple of weeks.
+    classification_conditions:
+      - The entity must be a Production Capability.
+    logical_definition: >
+      MakeToOrderProductionCapability(x) → ProductionCapability(x)
+
+
+  - label: Make-To-Stock Production Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/Make-To-StockProductionCapability"
+    parent_class: Production Capability
+    definition: >
+      production capability to manufacture and store some product to
+      fulfill the expected incoming orders or forecasted demand
+    examples:
+      - The company that manufactures t-shirts knows that it generally sells more t-shirts in the summer than any other time of year. So it will produce a certain amount of t-shirts in advance and keep them in stock until customers purchase them.
+    classification_conditions:
+      - The entity must be a Production Capability.
+    logical_definition: >
+      MakeToStockProductionCapability(x) → ProductionCapability(x)
+    explanatory_note: >
+      Make-to-stock is the traditional production approach of building up
+      an inventory based on sales forecasts.
+
+
+  - label: Manufacturing Service
+    iri: "https://spec.industrialontologies.org/ontology/construct/ManufacturingService"
+    parent_class: Commercial Service
+    definition: >
+      commercial service that consists of at least one manufacturing process
+    examples:
+      - The final assembly service provided by Foxconn to Apple (Foxconn is a contract manufacturing service company that owns and operates factories in China that do the final assembly of iPhones for Apple)
+      - The machining services provided by a contract machinist
+    classification_conditions:
+      - The entity must be a Commercial Service.
+      - It must have some Manufacturing Process as an occurrent part.
+    logical_definition: >
+      ManufacturingService(x) ↔ CommercialService(x) ∧ ∃p
+      (ManufacturingProcess(p) ∧ hasOccurrentPart(x, p))
+
+
+  - label: Manufacturing Service Provider Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/ManufacturingServiceProviderRole"
+    parent_class: Service Provider Role
+    definition: >
+      service provider role that is held by a person or business
+      organization when it provides a manufacturing service
+    examples:
+      - a contract machinist who machines parts owned by another company
+    classification_conditions:
+      - The role must be a Service Provider Role.
+      - It must be the role of some Business Organization or Person.
+      - That Business Organization or Person must be an agent in some Manufacturing Service.
+    logical_definition: >
+      ManufacturingServiceProviderRole(x) → ServiceProviderRole(x) ∧ ∃y,p
+      ((BusinessOrganization(y) ∨ Person(y)) ∧ ManufacturingService(p) ∧
+      agentIn(y, p) ∧ roleOf(x, y))
+
+
+  - label: Manufacturing Supply Chain System
+    iri: "https://spec.industrialontologies.org/ontology/construct/ManufacturingSupplyChain"
+    parent_class: Supply Chain System
+    definition: >
+      supply chain system that is formed to manufacture one or more products
+    examples:
+      - a supply chain that manufactures and delivers F-150 engines to Ford Motor Company
+    classification_conditions:
+      - The entity must be a Supply Chain System.
+      - It must participate at some time in some Supply Chain Process that has some Material Product as a specified output.
+    logical_definition: >
+      ManufacturingSupplyChainSystem(x) ↔ SupplyChainSystem(x) ∧ ∃p,m
+      (SupplyChainProcess(p) ∧ MaterialProduct(m) ∧
+      participatesInAtSomeTime(x, p) ∧ hasSpecifiedOutput(p, m))
+
+
+  - label: Material Trade Item
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialTradeItem"
+    parent_class: Material Entity
+    definition: >
+      material entity that is uniquely identified and is intended to be
+      offered for sale in a selling business process.
+    examples:
+      - Case of 24 soda cans, Box of 100 surgical masks, Office chair, one ceramic capacitor in a antistatic tape, reel of 5000 capacitor units, a surface mount precision kit with 50 capacitors, 50 resistors and 25 inductors.
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - The entity must have some Material Trade Item Role.
+      - It must be a continuant part at some time of some Logistic Unit.
+    logical_definition: >
+      LA1: MaterialTradeItem(x) ↔ MaterialEntity(x) ∧ ∃r
+      (MaterialTradeItemRole(r) ∧ hasRole(x, r));
+      LA2: MaterialTradeItem(x) → MaterialEntity(x) ∧ ∃y (LogisticUnit(y) ∧
+      continuantPartOfAtSomeTime(x, y))
+    explanatory_note: >
+      Any item (product or service) upon which there is a need to retrieve
+      pre-defined information and that may be priced, ordered or invoiced
+      at any point in the supply chain. The 'material trade item' class is
+      disjoint from 'service trade item'. A logistic unit is a composition
+      of one or more trade items to be delivered by transport and/or
+      stored to fulfill a trade agreement.
+
+
+  - label: Material Trade Item Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialTradeItemRole"
+    parent_class: Role
+    definition: >
+      role of a material product, package of, or group of material
+      products when it is intended to be offered for sale in a selling
+      business process and is identified for trade.
+    examples:
+      - role of a bottle of detergent, identified by a GTIN for retail
+      - role of a box containing 6 bottles of the detergent available for sale
+      - role of a corrugated carton containing 4 inner packs available for sale
+      - role of a full pallet holding 20 cases of the detergent available for sale.
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Material Product, Package or Commercial Service Agreement.
+      - That entity must participate at some time in some Selling Business Process.
+      - That entity must be designated by some Identifier.
+    logical_definition: >
+      MaterialTradeItemRole(x) → Role(x) ∧ ∃y,p,i (roleOf(x, y) ∧
+      (MaterialProduct(y) ∨ Package(y) ∨ CommercialServiceAgreement(y)) ∧
+      SellingBusinessProcess(p) ∧ participatesInAtSomeTime(y, p) ∧
+      Identifier(i) ∧ designatedBy(y, i))
+
+
+  - label: Packaging Plan Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/PackagingPlanSpecification"
+    parent_class: Plan Specification
+    definition: >
+      plan specification that prescribes a packaging process
+    examples:
+      - plan that describes how iPhone 14 is packaged at the item-level and batch-level
+      - plan that prescribes how windows are plastic wrapped and separated using pads before transportation
+    classification_conditions:
+      - The entity must be a Plan Specification.
+      - A Plan Specification that prescribes some Packaging Process is a Packaging Plan Specification.
+    logical_definition: >
+      PlanSpecification(x) ∧ ∃p (PackagingProcess(p) ∧ prescribes(x, p)) →
+      PackagingPlanSpecification(x)
+
+
+  - label: Packaging Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/PackagingProcess"
+    parent_class: Business Process
+    definition: >
+      business process of putting some products or some portion of material
+      into a package according to a packaging plan specification
+    examples:
+      - filling aluminum cans with beverage
+      - Boxing an item in an Amazon Fulfillment Center before shipping
+      - Plastic wrapping office furniture before shipment
+      - putting 12 bottles of soft drink in a case and wrapping the case before transporting to the warehouse
+    classification_conditions:
+      - The process must be a Business Process.
+      - It must have some Material Product as a participant at some time.
+      - It must be prescribed by some Packaging Plan Specification.
+    logical_definition: >
+      PackagingProcess(x) → BusinessProcess(x) ∧ ∃m,p (MaterialProduct(m) ∧
+      PackagingPlanSpecification(p) ∧ hasParticipantAtSomeTime(x, m) ∧
+      prescribedBy(x, p))
+    explanatory_note: >
+      Packaging may prepare product for storage or transport, or prepare
+      something for sale, in which case the resulting product includes the
+      package and may have a different product identifier (as with GTINs).
+      It may entail blocking, bracing, cushioning, marking, sealing,
+      labeling, strapping, weather proofing and wrapping.
+
+
+  - label: Packaging Service
+    iri: "https://spec.industrialontologies.org/ontology/construct/PackagingService"
+    parent_class: Logistics Service
+    definition: >
+      logistics service that consists of at least one packaging process
+    examples:
+      - On-site packing and knitting service provided by ABC company when they bring materials and a crew to the customer site and pack the products that need to be shipped.
+    classification_conditions:
+      - The entity must be a Logistics Service.
+      - It must have some Packaging Process as an occurrent part.
+    logical_definition: >
+      PackagingService(x) ↔ LogisticsService(x) ∧ ∃p
+      (PackagingProcess(p) ∧ hasOccurrentPart(x, p))
+
+
+  - label: Packaging Service Provider Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/PackagingServiceProviderRole"
+    parent_class: Logistics Service Provider Role
+    definition: >
+      logistics service provider role held by a business organization or
+      person when it provides a packaging service
+    examples:
+      - The role of ABC Co. when they provide on-site packing and knitting service by bringing materials and a crew to the customer site and packing the products that need to be shipped.
+    classification_conditions:
+      - The role must be a Logistics Service Provider Role.
+      - It must be the role of some Business Organization or Person that is an agent in some Packaging Service.
+    logical_definition: >
+      PackagingServiceProviderRole(x) ↔ LogisticsServiceProviderRole(x) ∧
+      ∃y,p ((BusinessOrganization(y) ∨ Person(y)) ∧ PackagingService(p) ∧
+      agentIn(y, p) ∧ roleOf(x, y))
+
+
+  - label: Packing List
+    iri: "https://spec.industrialontologies.org/ontology/construct/PackingList"
+    parent_class: Information Content Entity
+    definition: >
+      information content entity that describes one or more logistic units
+      planned to participate in some logistics process
+    synonyms:
+      - Packing Slip
+    examples:
+      - "A paper packing slip included inside a single cardboard shipping box (Logistic Unit) delivered to a residential customer. The document describes the packaging configuration (1 Corrugated Box, Gross Weight: 2.3 kg) and itemizes the contents (2x Wireless Headphones, SKU: HP-900; 1x Charging Cable, SKU: CB-12). It participates in the parcel delivery logistics process."
+    classification_conditions:
+      - The entity must be an Information Content Entity.
+      - It must describe at least one Logistic Unit.
+      - That Logistic Unit must participate at some time in some Logistics Process.
+    logical_definition: >
+      PackingList(x) ↔ InformationContentEntity(x) ∧ ∃y
+      (LogisticUnit(y) ∧ describes(x, y) ∧ ∃z (LogisticsProcess(z) ∧
+      participatesInAtSomeTime(y, z)))
+    explanatory_note: >
+      A document that itemizes in detail the contents of a particular
+      package, carton, pallet or container for shipment to a customer,
+      including item descriptions, part numbers, quantities and SKUs. It
+      accompanies the shipment to help the consignee verify the contents
+      received. It may also describe packaging configuration, arrival time,
+      invoice number or bill of lading, but these are not axiomatized.
+
+
+  - label: Piece Of Transport Equipment
+    iri: "https://spec.industrialontologies.org/ontology/construct/PieceofTransportEquipment"
+    parent_class: Piece Of Equipment
+    definition: >
+      material artifact which has a transport equipment role
+    examples:
+      - a truck, a trailer, a mobile yard crane, a towing vehicle, an intermodal container
+    classification_conditions:
+      - The entity must be a Material Artifact.
+      - The entity must have some Transport Equipment Role.
+    logical_definition: >
+      PieceOfTransportEquipment(x) ↔ MaterialArtifact(x) ∧ ∃r
+      (TransportEquipmentRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      Transport equipment is a piece of high-value equipment used to hold,
+      protect or secure cargo for transportation purposes.
+
+
+  - label: Production Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProductionCapability"
+    parent_class: Capability
+    definition: >
+      capability of an agent or a system that is realized in a product
+      production process
+    examples:
+      - the capability of Philips Lighting Co to manufacture 1000 LED lamps per day
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of some Agent or System.
+      - It must be realized in some Product Production Process.
+    logical_definition: >
+      ProductionCapability(x) → Capability(x) ∧ ∃y ((Agent(y) ∨
+      EngineeredSystem(y)) ∧ capabilityOf(x, y)) ∧ ∃p
+      (ProductProductionProcess(p) ∧ hasRealization(x, p))
+
+
+  - label: Purchase Order
+    iri: "https://spec.industrialontologies.org/ontology/construct/PurchaseOrder"
+    parent_class: Agreement
+    definition: >
+      agreement between a buyer and a seller that contains a set of
+      commitments undertaken by the buyer and the seller
+    synonyms:
+      - PO
+    examples:
+      - A PO issued by Discount Tire (buyer) regarding purchasing 500 tires from Bridgestone company (supplier)
+    classification_conditions:
+      - The entity must be an Agreement.
+      - An Agreement that is about some Buying Business Process and prescribes some Buyer Role and some Supplier Role is a Purchase Order.
+    logical_definition: >
+      Agreement(x) ∧ ∃p,b,s (BuyingBusinessProcess(p) ∧ isAbout(x, p) ∧
+      BuyerRole(b) ∧ SupplierRole(s) ∧ prescribes(x, b) ∧ prescribes(x, s))
+      → PurchaseOrder(x)
+    explanatory_note: >
+      A PO becomes a legally binding document (contract) between a buyer
+      and a seller once it is approved by the seller.
+
+
+  - label: Receiving Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/ReceivingProcess"
+    parent_class: Business Process
+    definition: >
+      planned process in which an agent receives some material entity from
+      another agent
+    synonyms:
+      - Receipt Process
+    examples:
+      - the process of receiving and inspecting a shipment at a Walmart warehouse
+    classification_conditions:
+      - The process must be a Business Process.
+    logical_definition: >
+      ReceivingProcess(x) → BusinessProcess(x)
+    explanatory_note: >
+      The function of taking physical receipt of material and performing
+      initial inspection of the incoming shipment for damage and
+      validation against purchase order quantity. It typically includes
+      some initial data recording, but not quality assurance or stocking.
+
+
+  - label: Retailer
+    iri: "https://spec.industrialontologies.org/ontology/construct/Retailer"
+    parent_class: Agent
+    definition: >
+      person or business organization who buys products from wholesalers
+      and manufacturers and resells them to end users
+    examples:
+      - Target; Discount Tire; your local grocery store
+    classification_conditions:
+      - The entity must be a Business Organization or a Person.
+      - The entity must have some Retailer Role.
+    logical_definition: >
+      Retailer(x) ↔ (BusinessOrganization(x) ∨ Person(x)) ∧ ∃r
+      (RetailerRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      A person or business that sells goods to the public in relatively
+      small quantities for use or consumption rather than resale, as
+      opposed to a wholesaler or supplier, who normally sell to another
+      business. It ranges from corner stores to global companies and
+      on-line stores.
+
+
+  - label: Retailer Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/RetailerRole"
+    parent_class: Agent Role
+    definition: >
+      role held by a person or business organization when it buys products
+      (material product) from manufacturers or wholesalers and offers them
+      for sale to customers who are the end users of the product
+    examples:
+      - Home Depot has a retailer role when it sells construction materials to contractors
+    classification_conditions:
+      - The role must be an Agent Role.
+      - It must be the role of some Business Organization or Person.
+      - That Business Organization or Person must have a Buyer Role realized in a Buying Business Process whose Supplier Role is the role of a Manufacturer or Wholesaler.
+      - It must also be the agent in some Supplying Business Process that realizes a Buyer Role of a Customer and a Material Product Role.
+      - It must also be the agent in some Offering For Sale Business Process that realizes a Material Product Role.
+    logical_definition: >
+      LA1: RetailerRole(x) → AgentRole(x) ∧ ∃y,p,r,r1,r2,m,f
+      ((BusinessOrganization(y) ∨ Person(y)) ∧ roleOf(x, y) ∧ BuyerRole(r) ∧
+      hasRole(y, r) ∧ BuyingBusinessProcess(p) ∧ hasRealization(r, p) ∧
+      MaterialProductRole(r1) ∧ SupplierRole(r2) ∧ MaterialEntity(m) ∧
+      realizes(p, r1) ∧ roleOf(r1, m) ∧ realizes(p, r2) ∧ roleOf(r2, f) ∧
+      (Manufacturer(f) ∨ Wholesaler(f)));
+      LA2: RetailerRole(x) → AgentRole(x) ∧ ∃y,p,c,r1,r2,m
+      ((BusinessOrganization(y) ∨ Person(y)) ∧ roleOf(x, y) ∧
+      SupplyingBusinessProcess(p) ∧ agentIn(y, p) ∧ Customer(c) ∧
+      BuyerRole(r1) ∧ roleOf(r1, c) ∧ MaterialEntity(m) ∧
+      MaterialProductRole(r2) ∧ roleOf(r2, m) ∧ realizes(p, r1) ∧
+      realizes(p, r2));
+      LA3: RetailerRole(x) → AgentRole(x) ∧ ∃y,p,r,m
+      ((BusinessOrganization(y) ∨ Person(y)) ∧ roleOf(x, y) ∧
+      OfferingForSaleBusinessProcess(p) ∧ agentIn(y, p) ∧
+      MaterialProductRole(r) ∧ MaterialEntity(m) ∧ realizes(p, r) ∧
+      roleOf(r, m))
+
+
+  - label: Seaway
+    iri: "https://spec.industrialontologies.org/ontology/construct/Seaway"
+    parent_class: Three Dimensional Spatial Region
+    definition: >
+      three-dimensional spatial region that connects one specified location
+      to another on a body of water along which a watercraft may travel
+    synonyms:
+      - shipping lane
+    examples:
+      - The longest shipping route in the world is the route between Asia and the East Coast of South America with approximately 19,000 nautical miles (35,000 kilometers) and about 45 days to complete.
+    classification_conditions:
+      - The entity must be a Three Dimensional Spatial Region.
+    logical_definition: >
+      Seaway(x) → ThreeDimensionalSpatialRegion(x)
+    explanatory_note: >
+      A specific route that ocean liners take between ports to help
+      traffic flow and to avoid the most dangerous areas of the ocean.
+
+
+  - label: Service Consumer Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/ServiceConsumerRole"
+    parent_class: Customer Role
+    definition: >
+      customer role held by a person or business organization when it
+      receives and consumes a service
+    examples:
+      - An AT&T customer has a service consumer role when she makes a call using a phone plan provided by AT&T
+    classification_conditions:
+      - The role must be a Customer Role.
+    logical_definition: >
+      ServiceConsumerRole(x) → CustomerRole(x)
+
+
+  - label: Service Supply Chain System
+    iri: "https://spec.industrialontologies.org/ontology/construct/ServiceSupplyChain"
+    parent_class: Supply Chain System
+    definition: >
+      supply chain system that is formed to deliver some commercial services
+    examples:
+      - warranty service supply chain
+    classification_conditions:
+      - The entity must be a Supply Chain System.
+      - It must participate at some time in some Commercial Service.
+    logical_definition: >
+      ServiceSupplyChainSystem(x) ↔ SupplyChainSystem(x) ∧ ∃s
+      (CommercialService(s) ∧ participatesInAtSomeTime(x, s))
+
+
+  - label: Ship From Location
+    iri: "https://spec.industrialontologies.org/ontology/construct/ShipFromLocation"
+    parent_class: Geospatial Site
+    definition: >
+      geospatial location at which some dispatch process occurs
+    synonyms:
+      - Dispatch Location
+      - shipping point
+    examples:
+      - shipping dock, outbound staging area, Amazon FulFillment Center in San Marcos, TX
+    classification_conditions:
+      - The entity must be a Geospatial Site.
+      - The entity must have some Ship From Location Role.
+    logical_definition: >
+      ShipFromLocation(x) ↔ GeospatialSite(x) ∧ ∃r
+      (ShipFromLocationRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      The location from which material is sent.
+
+
+  - label: Ship From Location Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/ShipFromLocationRole"
+    parent_class: Location Role
+    definition: >
+      location role held by a geospatial site when it is the location at
+      which some dispatch process occurs
+    examples:
+      - role held by the site of a Walmart warehouse when it is the location from which a shipment initiates
+    classification_conditions:
+      - The role must be a Location Role.
+      - It must be the role of some Geospatial Site that is the site of some Shipment Preparation Process.
+    logical_definition: >
+      ShipFromLocationRole(x) → LocationRole(x) ∧ ∃g,p
+      (GeospatialSite(g) ∧ ShipmentPreparationProcess(p) ∧ isSiteOf(g, p) ∧
+      roleOf(x, g))
+
+
+  - label: Ship To Location
+    iri: "https://spec.industrialontologies.org/ontology/construct/ShipToLocation"
+    parent_class: Geospatial Site
+    definition: >
+      geospatial location in which some receiving process occurs
+    synonyms:
+      - receiving point
+    examples:
+      - my home's locations when it is used as the delivery point of an Amazon shipment
+      - A Boeing manufacturing facility in WA when it is used as the delivery point for a shipment of jet engines
+    classification_conditions:
+      - The entity must be a Geospatial Site.
+      - The entity must have some Ship To Location Role.
+    logical_definition: >
+      ShipToLocation(x) ↔ GeospatialSite(x) ∧ ∃r
+      (ShipToLocationRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      The physical location to which goods for transport are finally
+      delivered.
+
+
+  - label: Ship To Location Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/ShipToLocationRole"
+    parent_class: Location Role
+    definition: >
+      location role held by a geospatial site when it is the location at
+      which some receiving process occurs
+    examples:
+      - role held by the site of a Ford dealership when it is the delivery location for a shipment of cars from Ford
+    classification_conditions:
+      - The role must be a Location Role.
+      - It must be the role of some Geospatial Site that is the site of some Receiving Process.
+    logical_definition: >
+      ShipToLocationRole(x) → LocationRole(x) ∧ ∃g,p
+      (GeospatialSite(g) ∧ ReceivingProcess(p) ∧ isSiteOf(g, p) ∧
+      roleOf(x, g))
+
+
+  - label: Shipment
+    iri: "https://spec.industrialontologies.org/ontology/construct/Shipment"
+    parent_class: Material Entity
+    definition: >
+      collection of material entities delivered to a receiver's location
+      that have undergone the same dispatch and receipt processes
+    examples:
+      - Examples include truckload, vessel, 10 pallets of various items.
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - The entity must have some Shipment Role.
+    logical_definition: >
+      Shipment(x) ↔ MaterialEntity(x) ∧ ∃r (ShipmentRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      A grouping of logistic and transport units assembled and identified
+      by the seller (sender) of the goods, travelling under one dispatch
+      advice and/or Bill of Lading to one customer (recipient). A shipment
+      may contain one or more logistic units, and is prepared according to
+      some shipment plan, to be transported by some carrier and delivered
+      to some receiver.
+
+
+  - label: Shipment Plan Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/ShipmentPlanSpecification"
+    parent_class: Plan Specification
+    definition: >
+      plan specification that prescribes a shipment preparation process and
+      a transportation process
+    examples:
+      - a shipping plan that specifies the schedule for picking up a shipment of 1000 smartphones from a certain pick up location and transporting to a certain destination and also provides details of the shipping method (sea freight for example)
+    classification_conditions:
+      - The entity must be a Plan Specification.
+      - A Plan Specification that prescribes some Shipment Preparation Process is a Shipment Plan Specification.
+    logical_definition: >
+      PlanSpecification(x) ∧ ∃p (ShipmentPreparationProcess(p) ∧
+      prescribes(x, p)) → ShipmentPlanSpecification(x)
+
+
+  - label: Shipment Preparation Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/ShipmentPreparationProcess"
+    parent_class: Business Process
+    definition: >
+      business process in which some material entities are prepared to be
+      transported together to a receiver’s location.
+    synonyms:
+      - dispatch process
+    examples:
+      - A tile manufacturer's warehouse receives several order and generates a picking list for each order. Then the warehouse workers pick the tile boxes from the assigned inventory location. Warehouse workers then pack, label, and sort the products by carrier before moving them to the loading dock for shipping.
+    classification_conditions:
+      - The process must be a Business Process.
+      - It must have some Consignor as a participant at some time.
+      - It must have some Material Product as a participant at some time.
+      - It must have some Shipment as a specified output.
+    logical_definition: >
+      ShipmentPreparationProcess(x) → BusinessProcess(x) ∧ ∃c,m,s
+      (Consignor(c) ∧ MaterialProduct(m) ∧ Shipment(s) ∧
+      hasParticipantAtSomeTime(x, c) ∧ hasParticipantAtSomeTime(x, m) ∧
+      hasSpecifiedOutput(x, s))
+    explanatory_note: >
+      The activities related to preparation of an outgoing shipment for
+      transport. It often includes at least one picking, internal
+      movement, packaging, marking, labeling, weighing or loading process.
+
+
+  - label: Shipment Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/ShipmentRole"
+    parent_class: Traceable Resource Unit Role
+    definition: >
+      traceable resource unit role held by material entities when they
+      undergo the same dispatch and receipt processes as prescribed by a
+      bill of lading
+    examples:
+      - role held by a shipment of 5 Toyota Rav4s on an auto transport trailer that are intended to be delivered to a Toyota dealership
+    classification_conditions:
+      - The role must be a Traceable Resource Unit Role.
+      - It must be the role of some Material Entity that is the output of some Shipment Preparation Process.
+      - It can only be realized in Transport Processes.
+    logical_definition: >
+      ShipmentRole(x) → TraceableResourceUnitRole(x) ∧ ∃m,p
+      (MaterialEntity(m) ∧ ShipmentPreparationProcess(p) ∧ isOutputOf(m, p)
+      ∧ roleOf(x, m)) ∧ ∀y (hasRealization(x, y) → TransportProcess(y))
+
+
+  - label: Shipment State
+    iri: "https://spec.industrialontologies.org/ontology/construct/ShipmentState"
+    parent_class: Material State
+    definition: >
+      material state in which a shipment that participates in the state has
+      a condition that remains unchanged
+    examples:
+      - delayed state, in-transit state, delivered state
+    classification_conditions:
+      - The entity must be a Material State.
+    logical_definition: >
+      ShipmentState(x) → MaterialState(x)
+
+
+  - label: Consignor
+    iri: "https://spec.industrialontologies.org/ontology/construct/Shipper"
+    parent_class: Agent
+    definition: >
+      person or business organization that prepares and sends shipments for
+      transport
+    synonyms:
+      - Shipper
+    examples:
+      - an Amazon FulFillment Center when it prepares an ordered item for shipping
+    classification_conditions:
+      - The entity must be a Business Organization or a Person.
+      - The entity must have some Consignor Role.
+    logical_definition: >
+      Consignor(x) ↔ (BusinessOrganization(x) ∨ Person(x)) ∧ ∃r
+      (ConsignorRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      The originator of a shipment of freight, usually the seller. A
+      consignor can be a factory, distribution center or drop ship origin
+      location. In international shipping, the consignor is the exporter of
+      record. The class IRI is Shipper while its label is "consignor".
+
+
+  - label: Shipping Route
+    iri: "https://spec.industrialontologies.org/ontology/construct/ShippingRoute"
+    parent_class: Three Dimensional Spatial Region
+    definition: >
+      way (three-dimensional spatial region) that connects two or more
+      supply chain nodes along which some shipment travels during a
+      transport process
+    examples:
+      - the path along which an Amazon delivery truck drives to deliver a shipment
+    classification_conditions:
+      - The entity must be a Three Dimensional Spatial Region.
+    logical_definition: >
+      ShippingRoute(x) → ThreeDimensionalSpatialRegion(x)
+
+
+  - label: Storage Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/StorageCapability"
+    parent_class: Capability
+    definition: >
+      capability of an agent or a system that is realized in a storage
+      process
+    examples:
+      - Caterpilar's capability to store its manufactured trucks up to a certain number
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of some Agent or System.
+      - It must be realized in some Storage Process.
+    logical_definition: >
+      StorageCapability(x) → Capability(x) ∧ ∃y ((Agent(y) ∨
+      EngineeredSystem(y)) ∧ capabilityOf(x, y)) ∧ ∃p (StorageProcess(p) ∧
+      hasRealization(x, p))
+
+
+  - label: Storage Facility
+    iri: "https://spec.industrialontologies.org/ontology/construct/StorageFacility"
+    parent_class: Facility
+    definition: >
+      facility that is designed to store materials or goods
+    examples:
+      - Costco's Warehouse, Self-storage facility
+    classification_conditions:
+      - The entity must be a Facility.
+      - It must have some Storage Capability.
+    logical_definition: >
+      StorageFacility(x) → Facility(x) ∧ ∃c
+      (StorageCapability(c) ∧ hasCapability(x, c))
+
+
+  - label: Storage Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/StorageProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process of putting and keeping material entities in a
+      specified location for future use
+    examples:
+      - the process of storing cutting tools in a tool cabinet for future use
+      - the process of storing dishes in my kitchen cabinet
+      - the process of storing products by a retailer for selling them in the future
+    classification_conditions:
+      - The process must be a Planned Process.
+    logical_definition: >
+      StorageProcess(x) → PlannedProcess(x)
+    explanatory_note: >
+      This class refers to storage in a generic sense and is not limited
+      to industrial storage in a factory warehouse.
+
+
+  - label: Storage Service
+    iri: "https://spec.industrialontologies.org/ontology/construct/StorageService"
+    parent_class: Logistics Service
+    definition: >
+      logistics service that consists of at least one storage process
+    examples:
+      - 72 hour free storage service provided by Maersk for cargo before being transferred to trailers for onward distribution
+    classification_conditions:
+      - The entity must be a Logistics Service.
+      - It must have some Storage Process as an occurrent part.
+    logical_definition: >
+      StorageService(x) ↔ LogisticsService(x) ∧ ∃p
+      (StorageProcess(p) ∧ hasOccurrentPart(x, p))
+    explanatory_note: >
+      Logistics service in which an agent keeps a number of material
+      artifacts in a specified location to meet the storage needs of
+      another agent.
+
+
+  - label: Storage Service Provider Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/StorageServiceProviderRole"
+    parent_class: Logistics Service Provider Role
+    definition: >
+      logistics service provider role that is held by a person or business
+      organization when it provides a storage service
+    examples:
+      - DHL has a storage service provider role when it provides industrial warehousing and inventory management services to manufacturers
+    classification_conditions:
+      - The role must be a Logistics Service Provider Role.
+      - It must be the role of some Business Organization or Person that is an agent in some Storage Service.
+    logical_definition: >
+      StorageServiceProviderRole(x) ↔ LogisticsServiceProviderRole(x) ∧
+      ∃y,p ((BusinessOrganization(y) ∨ Person(y)) ∧ StorageService(p) ∧
+      agentIn(y, p) ∧ roleOf(x, y))
+
+
+  - label: Sublot
+    iri: "https://spec.industrialontologies.org/ontology/construct/Sublot"
+    parent_class: Material Entity
+    definition: >
+      material entity which has a sublot role
+    examples:
+      - Sublot of 140 antacid tablets filled from Lot #6754189 and packaged in a bottle
+      - sublot of antacid tablets contained in a box of 12 such bottles from the same lot
+      - sublot of tetrachloroethylene filled from Lot #PERC6227741 and contained in a 50L drum
+      - sublot of tetrachloroethylene contained in a pallet of 15 such drums from the same lot
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - The entity must have some Sublot Role.
+    logical_definition: >
+      Sublot(x) ↔ MaterialEntity(x) ∧ ∃r (SublotRole(r) ∧ hasRole(x, r))
+
+
+  - label: Sublot Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/SublotRole"
+    parent_class: Traceable Resource Unit Role
+    definition: >
+      traceable resource unit role held by a material entity when it is
+      part of a lot and is uniquely identifiable within that lot
+    examples:
+      - Role held by the sublot of 140 antacid tablets filled from Lot #6754189 and packaged in a bottle
+      - role held by the sublot of tablets in a box of 12 such bottles
+      - role held by the sublot of tetrachloroethylene in a 50L drum from Lot #PERC6227741
+      - role held by the sublot of tetrachloroethylene in a pallet of 15 such drums.
+    classification_conditions:
+      - The role must be a Traceable Resource Unit Role.
+      - It must be the role of some Material Entity that is a continuant part at some time of some Lot.
+    logical_definition: >
+      SublotRole(x) → TraceableResourceUnitRole(x) ∧ ∃y
+      (MaterialEntity(y) ∧ roleOf(x, y) ∧ ∃l (Lot(l) ∧
+      continuantPartOfAtSomeTime(y, l)))
+
+
+  - label: Supplier Evaluation Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/SupplierEvaluationProcess"
+    parent_class: Appraisal Process
+    definition: >
+      appraisal process that involves evaluating, assessing, estimating, or
+      judging the capabilities of a person or organization that is intended
+      to become a member of a supply chain
+    examples:
+      - Tesla evaluating the capabilities of a manufacturer of some battery component
+    classification_conditions:
+      - The process must be an Appraisal Process.
+      - It must have some Supplier as a participant at some time.
+    logical_definition: >
+      SupplierEvaluationProcess(x) → AppraisalProcess(x) ∧ ∃s
+      (Supplier(s) ∧ hasParticipantAtSomeTime(x, s))
+
+
+  - label: Supply Chain Agent
+    iri: "https://spec.industrialontologies.org/ontology/construct/SupplyChainAgent"
+    parent_class: Agent
+    definition: >
+      person or business organization who supplies material products or
+      commercial services to other agents in a supply chain
+    examples:
+      - a manufacturer in a supply chain
+      - a carrier in a supply chain
+      - a contractor who is responsible for on-site inspection of batches produced by a supplier of ventilator components
+    classification_conditions:
+      - The entity must be a Business Organization or a Person.
+      - The entity must have some Supply Chain Agent Role.
+    logical_definition: >
+      SupplyChainAgent(x) ↔ (BusinessOrganization(x) ∨ Person(x)) ∧ ∃r
+      (SupplyChainAgentRole(r) ∧ hasRole(x, r))
+
+
+  - label: Supply Chain Agent Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/SupplyChainAgentRole"
+    parent_class: Agent Role
+    definition: >
+      role held by an agent that is a part of a supply chain system when it
+      supplies material products or commercial services to other agents in
+      the supply chain system
+    examples:
+      - role held by a manufacturer in a supply chain
+      - role held by a carrier in a supply chain
+      - role held by a contractor who is responsible for on-site inspection of batches produced by a supplier of ventilator components
+    classification_conditions:
+      - The role must be an Agent Role.
+      - It must be realized in some Supply Chain Process.
+      - It must be the role of some Agent that is a member part at some time of some Group Of Suppliers.
+    logical_definition: >
+      SupplyChainAgentRole(x) ↔ AgentRole(x) ∧ ∃a,g,p (Agent(a) ∧
+      SupplyChainProcess(p) ∧ GroupOfSuppliers(g) ∧ hasRealization(x, p) ∧
+      memberPartOfAtSomeTime(a, g) ∧ roleOf(x, a))
+
+
+  - label: Supply Chain Node
+    iri: "https://spec.industrialontologies.org/ontology/construct/SupplyChainNode"
+    parent_class: Geospatial Site
+    definition: >
+      geospatial location that is the site of some supply chain process
+    examples:
+      - The location of a plant in which airbags are manufactured for Tesla cars
+      - The location of a warehouse in which car axels are stored before being shipped to the assembly plant
+    classification_conditions:
+      - The entity must be a Geospatial Site.
+      - The entity must have some Supply Chain Node Role.
+    logical_definition: >
+      SupplyChainNode(x) ↔ GeospatialSite(x) ∧ ∃r
+      (SupplyChainNodeRole(r) ∧ hasRole(x, r))
+
+
+  - label: Supply Chain Node Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/SupplyChainNodeRole"
+    parent_class: Location Role
+    definition: >
+      location role held by a geospatial site when it is the site of some
+      supply chain process
+    examples:
+      - role of the site of a factory operated by a supplier of Tesla
+      - role of the site of a storage facility where airbag packages are stored before being shipped to a Ford assembly plant
+    classification_conditions:
+      - The role must be a Location Role.
+      - It must be the role of some Geospatial Site that is the site of some Supply Chain Process.
+    logical_definition: >
+      SupplyChainNodeRole(x) ↔ LocationRole(x) ∧ ∃g,p
+      (GeospatialSite(g) ∧ SupplyChainProcess(p) ∧ isSiteOf(g, p) ∧
+      roleOf(x, g))
+
+
+  - label: Supply Chain Objective Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/SupplyChainObjectiveSpecification"
+    parent_class: Objective Specification
+    definition: >
+      objective specification that prescribes what the outcome of a supply
+      chain process should be
+    examples:
+      - an objective of a supply chain for manufacturing water pumps is to manufacture and deliver a batch of 100 water pumps per day in a given timeframe
+    classification_conditions:
+      - The entity must be an Objective Specification.
+      - An Objective Specification that is about some Supply Chain Process and prescribes some Capability, Process Characteristic or Continuant that is the output of a Process is a Supply Chain Objective Specification.
+    logical_definition: >
+      ObjectiveSpecification(x) ∧ ∃p (SupplyChainProcess(p) ∧ isAbout(x, p))
+      ∧ ∃c ((Capability(c) ∨ ProcessCharacteristic(c) ∨ (Continuant(c) ∧
+      ∃q (Process(q) ∧ isOutputOf(c, q)))) ∧ prescribes(x, c)) →
+      SupplyChainObjectiveSpecification(x)
+
+
+  - label: Supply Chain Plan Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/SupplyChainPlanSpecification"
+    parent_class: Plan Specification
+    definition: >
+      plan specification that has one or more supply chain objective
+      specifications as parts and that prescribes a supply chain process
+    examples:
+      - plan that describes the production volume and schedule for the supply chain created for production of Dell desktop computers
+    classification_conditions:
+      - The entity must be a Plan Specification.
+      - It must have, at all times, some Supply Chain Objective Specification as a continuant part.
+      - A Plan Specification that prescribes some Supply Chain Process is a Supply Chain Plan Specification.
+    logical_definition: >
+      LA1: SupplyChainPlanSpecification(x) → PlanSpecification(x) ∧ ∃o
+      (SupplyChainObjectiveSpecification(o) ∧ hasContinuantPartAtAllTimes(x,
+      o));
+      LA2: PlanSpecification(x) ∧ ∃p (SupplyChainProcess(p) ∧ prescribes(x,
+      p)) → SupplyChainPlanSpecification(x)
+
+
+  - label: Supply Chain Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/SupplyChainProcess"
+    parent_class: Business Process
+    definition: >
+      planned process in which a supply chain plan specification is
+      realized by a number of supply chain agents
+    examples:
+      - shipment of a batch of semi-finished assemblies from a tier-2 supplier to a tier-1 supplier
+      - inspection of a batch of parts before being shipped to the OEM
+      - heat treatment of a batch of gears to be used in a transmission assembly by a BMW supplier
+      - the process of transporting good from supplier 1 to supplier 2
+      - the product production process related to fulfillment of an order received from a tier-1 supplier
+    classification_conditions:
+      - The process must be a Business Process.
+      - It must have some Supply Chain Agent as a participant at some time.
+      - It must concretize at some time some Supply Chain Plan Specification.
+      - That Supply Chain Plan Specification must generically depend at some time on some Supply Chain Agent.
+    logical_definition: >
+      SupplyChainProcess(x) ↔ BusinessProcess(x) ∧ ∃s,p
+      (SupplyChainAgent(s) ∧ SupplyChainPlanSpecification(p) ∧
+      hasParticipantAtSomeTime(x, s) ∧ concretizesAtSomeTime(x, p) ∧
+      genericallyDependsOnAtSomeTime(p, s))
+
+
+  - label: Supply Chain System
+    iri: "https://spec.industrialontologies.org/ontology/construct/SupplyChainSystem"
+    parent_class: Engineered System
+    definition: >
+      engineered system composed of agents, facilities, machines, and
+      information systems that is designed to deliver products and services
+      to end customers through an engineered flow of information, material,
+      and cash
+    synonyms:
+      - Supply Chain
+    examples:
+      - the suppliers Ford Motor Company and their equipment, facilities, software systems, production systems, logistics systems that are collectively used and coordinated for production of a Ford F-150's engine
+    classification_conditions:
+      - The entity must be an Engineered System.
+      - It must participate at some time in some Commercial Service or Product Production Process.
+      - It must have some Group Of Suppliers as a member part at all times.
+      - It must be prescribed by some Supply Chain Plan Specification.
+    logical_definition: >
+      SupplyChainSystem(x) ↔ EngineeredSystem(x) ∧ ∃s ((CommercialService(s)
+      ∨ ProductProductionProcess(s)) ∧ participatesInAtSomeTime(x, s)) ∧ ∃g
+      (GroupOfSuppliers(g) ∧ hasMemberPartAtAllTimes(x, g)) ∧ ∃p
+      (SupplyChainPlanSpecification(p) ∧ prescribes(p, x))
+    explanatory_note: >
+      A system of organizations and business processes that are involved
+      in manufacture, distribution and maintenance of a product or asset,
+      comprising all agents, equipment, facilities, software, production
+      and logistics systems and other resources, governed by a set of
+      rules. A related notion is Supply Chain Infrastructure.
+
+
+  - label: Supply Chain Transport Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/SupplyChainTransportProcess"
+    parent_class: Supply Chain Process
+    definition: >
+      transport process which involves movement of goods between sending
+      trading party’s location and receiving trading party’s locations over
+      the public logistics pathway/infrastructure
+    examples:
+      - transporting semi-finished assemblies from one supplier to another
+    classification_conditions:
+      - The process must be a Supply Chain Process.
+      - It must have some Transport Process as an occurrent part that starts at some Supply Chain Node and ends at some Supply Chain Node.
+      - It must have some Shipment as a participant at all times.
+    logical_definition: >
+      SupplyChainTransportProcess(x) ↔ SupplyChainProcess(x) ∧ ∃p,n1,n2,s
+      (TransportProcess(p) ∧ hasOccurrentPart(x, p) ∧ SupplyChainNode(n1) ∧
+      SupplyChainNode(n2) ∧ startsAt(p, n1) ∧ endsAt(p, n2) ∧ Shipment(s) ∧
+      hasParticipantAtAllTimes(x, s))
+
+
+  - label: Supply Relationship
+    iri: "https://spec.industrialontologies.org/ontology/construct/SupplyRelationship"
+    parent_class: Specifically Dependent Continuant
+    definition: >
+      relationship that exists between two agents when one agent supplies a
+      product or service to another agent and that is prescribed by an
+      agreement
+    examples:
+      - the relationship between Continental and Ford Motor Company based on which Continental agrees to sell powertrain assemblies to Ford in certain volumes per year
+    classification_conditions:
+      - The entity must be a Specifically Dependent Continuant.
+      - It must specifically depend on some Customer Role.
+      - It must specifically depend on some Supplier Role.
+      - It must be prescribed by some Agreement.
+    logical_definition: >
+      SupplyRelationship(x) → SpecificallyDependentContinuant(x) ∧ ∃r1,r2,c
+      (CustomerRole(r1) ∧ SupplierRole(r2) ∧ Agreement(c) ∧
+      specificallyDependsOn(x, r1) ∧ specificallyDependsOn(x, r2) ∧
+      prescribedBy(x, c))
+
+
+  - label: System Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/SystemCapability"
+    parent_class: Capability
+    definition: >
+      capability that inheres in a system to the extent of the system's
+      capacity to realize it in some processes
+    examples:
+      - the capability of machine cell to manufacture precision parts with complex geometries
+      - the capability of food traceability system to identify the origin of the materials used in a food product
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of some System.
+    logical_definition: >
+      SystemCapability(x) ↔ Capability(x) ∧ ∃s
+      (System(s) ∧ capabilityOf(x, s))
+    explanatory_note: >
+      The ability of a system to execute a particular course of action or
+      achieve a desired effect, under a specified set of conditions.
+      Candidate IOF Core construct.
+
+
+  - label: Traceability
+    iri: "https://spec.industrialontologies.org/ontology/construct/Traceability"
+    parent_class: System Capability
+    definition: >
+      capability of a system to trace the history, application or location
+      of an object
+    examples:
+      - the ability of Land O'Lakes ERP system to identify the milk suppliers for specific batches of butter
+    classification_conditions:
+      - The entity must be a System Capability.
+    logical_definition: >
+      Traceability(x) → SystemCapability(x)
+
+
+  - label: Traceable Resource Unit
+    iri: "https://spec.industrialontologies.org/ontology/construct/TraceableResourceUnit"
+    parent_class: Material Entity
+    definition: >
+      material entity that is uniquely identified and there may be a need
+      to retrieve information about its history, application, or location
+      as it moves through a supply chain
+    synonyms:
+      - trace unit
+    examples:
+      - Examples of traceable objects include products (e.g., consumer goods, medicines, electronic devices), logistic units (e.g., palletised goods, parcels) and assets (e.g., trucks, vessels, trains, fork lifts).
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - The entity must have some Traceable Resource Unit Role.
+    logical_definition: >
+      TraceableResourceUnit(x) ↔ MaterialEntity(x) ∧ ∃r
+      (TraceableResourceUnitRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      A Traceable Resource Unit (TRU) is the unit that the company wants
+      to trace, or the unit on which the company records information in the
+      traceability system.
+
+
+  - label: Traceable Resource Unit Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/TraceableResourceUnitRole"
+    parent_class: Role
+    definition: >
+      role held by a number of uniquely identified material entities when
+      they participate in some supply chain processes or production
+      processes while some agent observes them and collects information
+      about them for future retrieval
+    examples:
+      - role of a shipment of corn when it is tracked by its producer
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Material Entity that is designated by some Identifier.
+      - That Material Entity must participate at some time in some Supply Chain Process or Product Production Process.
+      - That Material Entity must also participate at some time in some Observing Process.
+    logical_definition: >
+      TraceableResourceUnitRole(x) → Role(x) ∧ ∃m,p1,p2,d
+      (MaterialEntity(m) ∧ (ProductProductionProcess(p1) ∨
+      SupplyChainProcess(p1)) ∧ ObservingProcess(p2) ∧ Identifier(d) ∧
+      participatesInAtSomeTime(m, p1) ∧ participatesInAtSomeTime(m, p2) ∧
+      designatedBy(m, d) ∧ roleOf(x, m))
+
+
+  - label: Tracking Event
+    iri: "https://spec.industrialontologies.org/ontology/construct/TrackingEvent"
+    parent_class: Event
+    definition: >
+      event that has at least one traceable resource unit or equipment
+      (with which TRU comes into contact) or operator (that runs an
+      equipment with which TRU comes into contact with at some time) as
+      participant.
+    examples:
+      - a transport event during which materials are moved from one location to another
+      - a sampling event during which a sample is taken from a portion of raw material for quality tests
+    classification_conditions:
+      - The entity must be an Event.
+      - It must have some Traceable Resource Unit as a participant at some time.
+    logical_definition: >
+      TrackingEvent(x) → Event(x)
+    explanatory_note: >
+      An occurrence where information is captured representing history
+      relevant to a product's genealogy, including occurrences to product
+      or material and to equipment with which they came into contact.
+      Tracking event records are used to reconstruct material history
+      during analysis.
+
+
+  - label: Trailer
+    iri: "https://spec.industrialontologies.org/ontology/construct/Trailer"
+    parent_class: Container
+    definition: >
+      container that is unpowered and is pulled by a powered vehicle
+    examples:
+      - a carry-on trailer used at a farm
+    classification_conditions:
+      - The entity must be a Container.
+    logical_definition: >
+      Trailer(x) → Container(x) ∧ PieceOfTransportEquipment(x)
+
+
+  - label: Transport Equipment Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/TranspoortEquipmentRole"
+    parent_class: Equipment Role
+    definition: >
+      equipment role held by a material artifact when it is planned to be
+      involved in or is involved in carrying out some part of a transport
+      process
+    examples:
+      - role of my car that is used to transport goods to the buyer
+      - role of a mobile robot that navigates factory floors independently to transport materials
+    classification_conditions:
+      - The role must be an Equipment Role.
+      - It must be the role of some Material Entity that participates at some time in some Transport Process.
+    logical_definition: >
+      TransportEquipmentRole(x) → Role(x) ∧ ∃m,p (MaterialEntity(m) ∧
+      TransportProcess(p) ∧ participatesInAtSomeTime(m, p) ∧ roleOf(x, m))
+    explanatory_note: >
+      The class IRI is spelled "TranspoortEquipmentRole" in the RDF.
+
+
+  - label: Transport Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/TransportProcess"
+    parent_class: Material Location Change Process
+    definition: >
+      material location change process involving the movement of material
+      entities from one location to another as part of a planned logistics
+      process
+    synonyms:
+      - act of shipping
+    examples:
+      - the process during which a truck transports shipments from a shipper's location to a receiver's location
+    classification_conditions:
+      - The process must be a Material Location Change Process.
+      - It must have some Piece Of Transport Equipment as a participant at some time.
+    logical_definition: >
+      TransportProcess(x) → MaterialLocationChangeProcess(x) ∧ ∃e
+      (PieceOfTransportEquipment(e) ∧ hasParticipantAtSomeTime(x, e))
+
+
+  - label: Transportation Business Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/TransportationBusinessFunction"
+    parent_class: Business Function
+    definition: >
+      business function that is realized in a transportation service
+    examples:
+      - the function of Maersk to provide transportation service
+    classification_conditions:
+      - The entity must be a Business Function.
+      - It must be realized in some Transportation Service.
+    logical_definition: >
+      TransportationBusinessFunction(x) ↔ BusinessFunction(x) ∧ ∃s
+      (TransportationService(s) ∧ hasRealization(x, s))
+    explanatory_note: >
+      Business function that is realized in a location change process
+      involving the movement of material entities by some piece of
+      transport equipment.
+
+
+  - label: Transportation Service
+    iri: "https://spec.industrialontologies.org/ontology/construct/TransportationService"
+    parent_class: Logistics Service
+    definition: >
+      logistics service that consists of at least one transport process
+    examples:
+      - rail freight shipping service
+      - fluid handling and hauling services for water, polluted water, or oil
+    classification_conditions:
+      - The entity must be a Logistics Service.
+      - It must have some Transport Process as an occurrent part.
+    logical_definition: >
+      TransportationService(x) ↔ LogisticsService(x) ∧ ∃p
+      (TransportProcess(p) ∧ hasOccurrentPart(x, p))
+    explanatory_note: >
+      Logistics service in which an agent changes the location of some
+      material entities to satisfy the transportation needs of another
+      agent.
+
+
+  - label: Transportation Service Provider Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/TransportationServiceProviderRole"
+    parent_class: Logistics Service Provider Role
+    definition: >
+      logistics service provider role that is held by a business
+      organization or person when it provides a transportation service
+    synonyms:
+      - Carrier Role
+    examples:
+      - role of Jack when he uses his personal vehicle to deliver Amazon packages
+      - role of IKEA when it uses its own trucks to deliver furniture to customers
+    classification_conditions:
+      - The role must be a Logistics Service Provider Role.
+      - It must be the role of some Business Organization or Person that is an agent in some Transportation Service.
+    logical_definition: >
+      TransportationServiceProviderRole(x) ↔
+      LogisticsServiceProviderRole(x) ∧ ∃y,p ((BusinessOrganization(y) ∨
+      Person(y)) ∧ TransportationService(p) ∧ agentIn(y, p) ∧ roleOf(x, y))
+
+
+  - label: Travel Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/TravelProcess"
+    parent_class: Material Location Change Process
+    definition: >
+      material location change process wherein one or more persons move
+      between geographical locations
+    examples:
+      - the process of travelling from New York to Philadelphia by train
+    classification_conditions:
+      - The process must be a Material Location Change Process.
+      - It must have some Person or Group Of Persons as a participant at some time.
+      - It must move that participant from one Site to another, with the participant located in the first Site at the start and in the second Site at the end.
+    logical_definition: >
+      TravelProcess(x) → MaterialLocationChangeProcess(x) ∧ ∃y,t,t1,t2,s,s1,z,z1
+      ((Person(y) ∨ GroupOfPersons(y)) ∧ TemporalInstant(t) ∧
+      TemporalInstant(t1) ∧ TemporalRegion(t2) ∧ IndependentContinuant(s) ∧
+      IndependentContinuant(s1) ∧ Site(z) ∧ Site(z1) ∧
+      hasParticipantAtSomeTime(x, y) ∧ firstInstantOf(t, t2) ∧
+      lastInstantOf(t1, t2) ∧ occupiesTemporalRegion(x, t2) ∧ existsAt(s, t)
+      ∧ existsAt(s1, t1) ∧ locatedInAtAllTimes(s, z) ∧
+      locatedInAtAllTimes(s1, z1) ∧ locationOfAtAllTimes(s, y) ∧
+      locationOfAtAllTimes(s1, y))
+
+
+  - label: Wagon
+    iri: "https://spec.industrialontologies.org/ontology/construct/Wagon"
+    parent_class: Container
+    definition: >
+      container in a rail transport system used for carrying cargo or
+      passengers
+    examples:
+      - freight wagons, freight cars
+    classification_conditions:
+      - The entity must be a Container.
+    logical_definition: >
+      Wagon(x) → Container(x) ∧ PieceOfTransportEquipment(x)
+
+
+  - label: Warehousing Plan Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/WarehousingPlanSpecification"
+    parent_class: Plan Specification
+    definition: >
+      plan specification that prescribes a warehousing process
+    examples:
+      - plan that describes the receiving, counting, storage, picking, packing, and shipping procedure at the Amazon Fulfillment Center in San Marcos, TX
+    classification_conditions:
+      - The entity must be a Plan Specification.
+      - A Plan Specification that prescribes some Warehousing Process is a Warehousing Plan Specification.
+    logical_definition: >
+      PlanSpecification(x) ∧ ∃p (WarehousingProcess(p) ∧ prescribes(x, p)) →
+      WarehousingPlanSpecification(x)
+    explanatory_note: >
+      A warehousing plan may include plans for flow of material, handling
+      and transportation method and equipment, inventory management and
+      environmental condition.
+
+
+  - label: Warehousing Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/WarehousingProcess"
+    parent_class: Business Process
+    definition: >
+      business process of storing products (material products) in a storage
+      facility for future use
+    examples:
+      - the process of counting and storing a shipment of external hard drives at an Amazon Fulfillment Center
+    classification_conditions:
+      - The process must be a Business Process.
+      - It must occur in some Storage Facility.
+      - It must have some Storage Process as an occurrent part.
+      - It must be prescribed by some Warehousing Plan Specification.
+    logical_definition: >
+      WarehousingProcess(x) ↔ BusinessProcess(x) ∧ ∃p,w,f
+      (StorageProcess(p) ∧ WarehousingPlanSpecification(w) ∧
+      StorageFacility(f) ∧ occursIn(x, f) ∧ hasOccurrentPart(x, p) ∧
+      prescribedBy(x, w))
+
+
+  - label: Wholesaler
+    iri: "https://spec.industrialontologies.org/ontology/construct/Wholesaler"
+    parent_class: Agent
+    definition: >
+      person or business organization that buys products from distributors
+      and resells them to retailers or other business organizations
+    examples:
+      - Sysco (The biggest wholesale company in America), Alibaba
+    classification_conditions:
+      - The entity must be an Agent.
+      - The entity must have some Wholesaler Role.
+    logical_definition: >
+      Wholesaler(x) ↔ (BusinessOrganization(x) ∨ Person(x)) ∧ ∃r
+      (WholesalerRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      A distributor that sells products to a retailer. A wholesaler sells
+      in bulk quantities, allowing the retailer a lower price than for
+      single items.
+
+
+  - label: Wholesaler Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/WholesalerRole"
+    parent_class: Agent Role
+    definition: >
+      role held by a person or business organization when it buys some
+      product from a distributor and resells them to retailers
+    examples:
+      - role of Sysco when it sells food products in large quantities to out-of-home dining businesses
+    classification_conditions:
+      - The role must be an Agent Role.
+      - It must be the role of some Business Organization or Person.
+      - That Business Organization or Person must be an agent in some Selling Business Process that realizes a Material Product Role.
+      - It must also be the agent in some Supplying Business Process that realizes a Buyer Role of a Retailer and a Material Product Role.
+      - It must also have a Buyer Role realized in a Buying Business Process whose Supplier Role is the role of a Distributor.
+    logical_definition: >
+      LA1: WholesalerRole(x) → AgentRole(x) ∧ ∃y,p,r,m
+      ((BusinessOrganization(y) ∨ Person(y)) ∧ roleOf(x, y) ∧
+      OfferingForSaleBusinessProcess(p) ∧ MaterialProductRole(r) ∧
+      MaterialEntity(m) ∧ agentIn(y, p) ∧ realizes(p, r) ∧ roleOf(r, m));
+      LA2: WholesalerRole(x) → AgentRole(x) ∧ ∃y,p,e,r1,r2,m
+      ((BusinessOrganization(y) ∨ Person(y)) ∧ roleOf(x, y) ∧
+      SupplyingBusinessProcess(p) ∧ agentIn(y, p) ∧ Retailer(e) ∧
+      BuyerRole(r1) ∧ roleOf(r1, e) ∧ MaterialEntity(m) ∧
+      MaterialProductRole(r2) ∧ roleOf(r2, m) ∧ realizes(p, r1) ∧
+      realizes(p, r2));
+      LA3: WholesalerRole(x) → AgentRole(x) ∧ ∃y,p,r,r1,r2,m,d
+      ((BusinessOrganization(y) ∨ Person(y)) ∧ roleOf(x, y) ∧ BuyerRole(r) ∧
+      hasRole(y, r) ∧ BuyingBusinessProcess(p) ∧ hasRealization(r, p) ∧
+      MaterialProductRole(r1) ∧ SupplierRole(r2) ∧ MaterialEntity(m) ∧
+      Distributor(d) ∧ realizes(p, r1) ∧ roleOf(r1, m) ∧ realizes(p, r2) ∧
+      roleOf(r2, d))
+
+
+relationships:
+
+  - label: Agent In
+    iri: "https://spec.industrialontologies.org/ontology/construct/agentIn"
+    definition: >
+      relationship from an agent to a process where the agent participates
+      in the process and materially causes the occurrence of the process
+      (plays a causal role).
+    synonyms:
+      - performer in
+    examples:
+      - The operator that runs a manual milling machine is 'agent in' the milling process
+      - the driver of a truck is 'agent in' a transportation process
+    domain:
+      - Agent
+    range:
+      - Process
+    inverse: Has Agent
+    extraction_constraints:
+      - Subject must be an Agent.
+      - Object must be a Process.
+      - Carrier must be the agent in a Transport Process that has a Cargo as a participant.
+      - Consignor must be the agent in a Consigning Process and a Shipment Preparation Process.
+      - Logistics service providers must be agents in their Logistics Service, Freight Forwarding Service, Packaging Service, Storage Service or Transportation Service.
+      - The relationship direction is Agent → Process.
+
+
+  - label: Has Agent
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasAgent"
+    definition: >
+      relation that holds between a process and agent when the agent
+      participates in the process and plays a causal role
+    examples:
+      - a transportation service 'has agent' transportation service provider
+      - a manual assembly process 'has agent' assembly operator
+    domain:
+      - Process
+    range:
+      - Agent
+    inverse: Agent In
+    extraction_constraints:
+      - Subject must be a Process.
+      - Object must be an Agent.
+      - A Transport Process that moves Cargo must have a Carrier as its agent.
+      - The relationship direction is Process → Agent.
+
+
+  - label: Depends On Buyer
+    iri: "https://spec.industrialontologies.org/ontology/construct/dependsOnBuyer"
+    definition: >
+      relation from a supply relationship to a buyer (the bearer), in which
+      the relationship mediates between the buyer and some supplier and
+      some product or service
+    examples:
+      - the supply relationship for supplying Bridgestone Tire Model ABC by Bridgestone (supplier) to Ford (customer) depends on Ford
+    domain:
+      - Supply Relationship
+    range:
+      - Customer
+    extraction_constraints:
+      - Subject must be a Supply Relationship.
+      - Object must be a Customer.
+      - The relationship direction is Supply Relationship → Customer.
+
+
+  - label: Depends On Product
+    iri: "https://spec.industrialontologies.org/ontology/construct/dependsOnProduct"
+    definition: >
+      relation from a supply relationship to a product (the bearer), in
+      which the relationship mediates between the product and some supplier
+      and customer
+    examples:
+      - the supply relationship for supplying Bridgestone Tire Model ABC by Bridgestone (supplier) to Ford (customer) depends on Tire Model ABC
+    domain:
+      - Supply Relationship
+    range:
+      - Material Product
+    extraction_constraints:
+      - Subject must be a Supply Relationship.
+      - Object must be a Material Product.
+      - The relationship direction is Supply Relationship → Material Product.
+
+
+  - label: Depends On Supplier
+    iri: "https://spec.industrialontologies.org/ontology/construct/dependsOnSupplier"
+    definition: >
+      relation from a supply relationship to a supplier (the bearer), in
+      which the relationship mediates between the supplier and some
+      customer and some product or service
+    examples:
+      - the supply relationship for supplying Bridgestone Tire Model ABC by Bridgestone (supplier) to Ford (customer) depends on Bridgestone Co.
+    domain:
+      - Supply Relationship
+    range:
+      - Supplier
+    extraction_constraints:
+      - Subject must be a Supply Relationship.
+      - Object must be a Supplier.
+      - The relationship direction is Supply Relationship → Supplier.
+
+
+  - label: Ends At
+    iri: "https://spec.industrialontologies.org/ontology/construct/endsAt"
+    definition: >
+      relationship from a process to a spatial region or site whenever the
+      spatial region or site is the location in which the process ends
+    examples:
+      - a transportation process ends at the site of the loading bay of a plant
+    domain:
+      - Process
+    range:
+      - Spatial Region
+      - Site
+    extraction_constraints:
+      - Subject must be a Process.
+      - Object must be a Spatial Region or Site.
+      - A Transport Process in a Supply Chain Transport Process must end at a Supply Chain Node.
+      - The relationship direction is Process → Spatial Region or Site.
+
+
+  - label: Starts At
+    iri: "https://spec.industrialontologies.org/ontology/construct/startsAt"
+    definition: >
+      relationship from a process to a spatial region or site whenever the
+      spatial region or site is the location in which the process starts
+    examples:
+      - this transportation process starts at the site of this storage facility
+    domain:
+      - Process
+    range:
+      - Spatial Region
+      - Site
+    extraction_constraints:
+      - Subject must be a Process.
+      - Object must be a Spatial Region or Site.
+      - A Transport Process in a Supply Chain Transport Process must start at a Supply Chain Node.
+      - The relationship direction is Process → Spatial Region or Site.
+
+
+  - label: Occurs At
+    iri: "https://spec.industrialontologies.org/ontology/construct/occursAt"
+    definition: >
+      relationship from a process to a spatial region or site whenever the
+      spatial region or site is the location in which the process unfolds
+    examples:
+      - a casting process occurs at the site of foundry
+      - a flying process (of an airplane) occurs at a specified air corridor
+    domain:
+      - Process
+    range:
+      - Spatial Region
+      - Site
+    inverse: Is Site Of
+    extraction_constraints:
+      - Subject must be a Process.
+      - Object must be a Spatial Region or Site.
+      - The relationship direction is Process → Spatial Region or Site.
+
+
+  - label: Is Site Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/isSiteOf"
+    definition: >
+      relationship between a site or spatial region and a process when the
+      process occurs at the site or spatial region
+    examples:
+      - a plant site 'is site of' some production process
+      - a warehouse is the site of some storage process
+    domain:
+      - Spatial Region
+      - Site
+    range:
+      - Process
+    inverse: Occurs At
+    extraction_constraints:
+      - Subject must be a Spatial Region or Site.
+      - Object must be a Process.
+      - A Ship From Location Role holder must be the site of a Shipment Preparation Process.
+      - A Ship To Location Role holder must be the site of a Receiving Process.
+      - A Supply Chain Node Role holder must be the site of a Supply Chain Process.
+      - The relationship direction is Site → Process.
+
+
+  - label: Occurs On
+    iri: "https://spec.industrialontologies.org/ontology/construct/occursOn"
+    definition: >
+      relation which holds between some processual entity and some temporal
+      region whenever the duration of the processual entity is contained by
+      the temporal region
+    examples:
+      - a machining process occurs on a temporal interval between 10:00 AM and 10:05 AM
+    domain:
+      - Process
+    range:
+      - Temporal Region
+    extraction_constraints:
+      - Subject must be a Process.
+      - Object must be a Temporal Region.
+      - The relationship direction is Process → Temporal Region.
+
+
+  - label: Has Text Value
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasTextValue"
+    definition: >
+      relationship between an information entity and a string representation
+    examples:
+      - the 'name identifier' of Ford has text value "Ford Motor Company"
+    domain:
+      - Information Content Entity
+    range:
+      - String
+    extraction_constraints:
+      - Subject must be an Information Content Entity.
+      - Object must be a text string.
+      - The relationship direction is Information Content Entity → String.
+
+
+  - label: Holds
+    iri: "https://spec.industrialontologies.org/ontology/construct/holds"
+    definition: >
+      relationship between an agent and a material entity when the agent
+      physically keeps or carries the material entity
+    synonyms:
+      - has custody of
+    examples:
+      - Amazon holds (has custody of) a shipment when it is out for delivery but not delivered yet.
+    domain:
+      - Agent
+    range:
+      - Material Entity
+    extraction_constraints:
+      - Subject must be an Agent.
+      - Object must be a Material Entity.
+      - Holding does not necessarily imply ownership.
+      - The relationship direction is Agent → Material Entity.
+
+
+  - label: Initiates Relationship
+    iri: "https://spec.industrialontologies.org/ontology/construct/initiatesRelationship"
+    definition: >
+      relation between an event and a relational specifically dependent
+      continuant where the event establishes (originates) the relational
+      specifically dependent continuant as a mediator among several other
+      entities
+    examples:
+      - the contract signing event initiates a supply relationship between BMW and its tire supplier company
+    domain:
+      - Event
+    range:
+      - Relational Specifically Dependent Continuant
+    inverse: Relationship Initiated By
+    extraction_constraints:
+      - Subject must be an Event.
+      - Object must be a Relational Specifically Dependent Continuant such as a Supply Relationship.
+      - The relationship direction is Event → Relationship.
+
+
+  - label: Relationship Initiated By
+    iri: "https://spec.industrialontologies.org/ontology/construct/relationshipInitiatedBy"
+    definition: >
+      relation between a relational specifically dependent continuant and
+      an event where the event establishes (originates) the relational
+      specifically dependent continuant as a mediator among several other
+      entities
+    examples:
+      - a supply relationship between Apple and its chip supplier is initiated by an event during which a contract is signed by both parties
+    domain:
+      - Relational Specifically Dependent Continuant
+    range:
+      - Event
+    inverse: Initiates Relationship
+    extraction_constraints:
+      - Subject must be a Relational Specifically Dependent Continuant such as a Supply Relationship.
+      - Object must be an Event.
+      - The relationship direction is Relationship → Event.
+
+
+  - label: Is Supplied By At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/isSuppliedByAtSomeTime"
+    definition: >
+      relationship between a commercial service or product and a supplier
+      when the service or product is provided by a supplier to a customer
+    examples:
+      - a phone plan is supplied by AT&T for an agreed upon period of time
+    domain:
+      - Commercial Service
+      - Material Product
+    range:
+      - Supplier
+    extraction_constraints:
+      - Subject must be a Commercial Service or Material Product.
+      - Object must be a Supplier.
+      - It follows the chain: product → Supply Relationship → supplier role bearer.
+      - The relationship direction is Product or Service → Supplier.
+
+
+  - label: Is Supplied To At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/isSuppliedToAtSomeTime"
+    definition: >
+      relationship between a commercial service or product and a customer
+      when the customer buys the product or service from a supplier
+    examples:
+      - engine blocks are supplied to Toyota (by a specified supplier) for a given period of time
+      - on-site jet engine inspection service is provided to American Airlines (by a specific contractor)
+    domain:
+      - Commercial Service
+      - Material Product
+    range:
+      - Customer
+    extraction_constraints:
+      - Subject must be a Commercial Service or Material Product.
+      - Object must be a Customer.
+      - The relationship direction is Product or Service → Customer.
+
+
+  - label: Supplies To At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/suppliesToAtSomeTime"
+    definition: >
+      relationship between a supplier and a customer when the supplier
+      sells a product or service to a customer
+    examples:
+      - a supplier of airbag systems supplies airbags to Honda
+    domain:
+      - Supplier
+    range:
+      - Customer
+    extraction_constraints:
+      - Subject must be a Supplier.
+      - Object must be a Customer.
+      - The relationship direction is Supplier → Customer.
+
+
+  - label: Owns
+    iri: "https://spec.industrialontologies.org/ontology/construct/owns"
+    definition: >
+      relationship from a person or business organization to an independent
+      continuant when the agent holds the independent continuant as legal
+      property
+    examples:
+      - Southwest Airline owns its airplanes, I own my car
+    domain:
+      - Business Organization
+      - Person
+    range:
+      - Independent Continuant
+    inverse: Owned By
+    extraction_constraints:
+      - Subject must be a Business Organization or Person.
+      - Object must be an Independent Continuant.
+      - A Consignor must own the Shipment that is the specified output of its Shipment Preparation Process.
+      - The relationship direction is Owner → Owned Entity.
+
+
+  - label: Owned By
+    iri: "https://spec.industrialontologies.org/ontology/construct/ownedBy"
+    definition: >
+      relationship from a material entity to a person or business
+      organization when the material entity is held by the person or
+      business organization as legal property
+    examples:
+      - my personal laptop computer is owned by me
+      - the airplane operated by Southwest Airlines is owned by Southwest Airlines
+    domain:
+      - Material Entity
+    range:
+      - Business Organization
+      - Person
+    inverse: Owns
+    extraction_constraints:
+      - Subject must be a Material Entity.
+      - Object must be a Business Organization or Person.
+      - The relationship direction is Owned Entity → Owner.
+
+
+  - label: Has Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasRole"
+    definition: >
+      relationship from an entity to a role that it holds
+    domain:
+      - Business Organization
+      - Person
+      - Agent
+      - Material Entity
+      - Geospatial Site
+    range:
+      - Role
+    inverse: Role Of
+    extraction_constraints:
+      - A Business Organization or Person must have the matching agent role to be a Carrier, Consignee, Consignor, Distributor, Freight Forwarder, Retailer, Wholesaler or Supply Chain Agent.
+      - A Material Entity must have the matching role to be a Cargo, Load, Logistic Unit, Lot, Material Trade Item, Shipment, Sublot or Traceable Resource Unit.
+      - A Geospatial Site must have the matching location role to be a Geospatial Location, Ship From Location, Ship To Location or Supply Chain Node.
+      - The relationship direction is Role Bearer → Role.
+
+
+  - label: Role Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/roleOf"
+    definition: >
+      relationship from a role to the entity that holds it
+    domain:
+      - Role
+    range:
+      - Business Organization
+      - Person
+      - Material Entity
+      - Geospatial Site
+    inverse: Has Role
+    extraction_constraints:
+      - Agent roles such as Consignee Role, Consignor Role and Retailer Role must be the role of a Business Organization or Person.
+      - Material roles such as Cargo Role, Load Role, Lot Role and Shipment Role must be the role of a Material Entity.
+      - Location roles must be the role of a Geospatial Site.
+      - The relationship direction is Role → Role Bearer.
+
+
+  - label: Prescribes
+    iri: "https://spec.industrialontologies.org/ontology/construct/prescribes"
+    definition: >
+      relationship from a specification to the process, role or entity it
+      prescribes
+    domain:
+      - Bill Of Lading
+      - Purchase Order
+      - Packaging Plan Specification
+      - Shipment Plan Specification
+      - Warehousing Plan Specification
+      - Supply Chain Plan Specification
+      - Supply Chain Objective Specification
+      - Location Identification Scheme
+    range:
+      - Consignor Role
+      - Transportation Service Provider Role
+      - Buyer Role
+      - Supplier Role
+      - Packaging Process
+      - Shipment Preparation Process
+      - Warehousing Process
+      - Supply Chain Process
+      - Identifier
+    inverse: Prescribed By
+    extraction_constraints:
+      - Bill Of Lading must prescribe a Consignor Role and a Transportation Service Provider Role.
+      - Purchase Order must prescribe a Buyer Role and a Supplier Role.
+      - Packaging Plan Specification must prescribe a Packaging Process.
+      - Shipment Plan Specification must prescribe a Shipment Preparation Process.
+      - Warehousing Plan Specification must prescribe a Warehousing Process.
+      - Supply Chain Plan Specification must prescribe a Supply Chain Process.
+      - Location Identification Scheme must prescribe an Identifier that designates a Geospatial Location.
+      - The relationship direction is Specification → Prescribed Entity.
+
+
+  - label: Prescribed By
+    iri: "https://spec.industrialontologies.org/ontology/construct/prescribedBy"
+    definition: >
+      relationship from an entity to the specification that prescribes it
+    domain:
+      - Packaging Process
+      - Warehousing Process
+      - Supply Chain System
+      - Supply Relationship
+      - Global Location Number
+    range:
+      - Packaging Plan Specification
+      - Warehousing Plan Specification
+      - Supply Chain Plan Specification
+      - Agreement
+      - Location Identification Scheme
+    inverse: Prescribes
+    extraction_constraints:
+      - Packaging Process must be prescribed by a Packaging Plan Specification.
+      - Warehousing Process must be prescribed by a Warehousing Plan Specification.
+      - Supply Chain System must be prescribed by a Supply Chain Plan Specification.
+      - Supply Relationship must be prescribed by an Agreement.
+      - Global Location Number must be prescribed by the GS1 GLN Specifications scheme.
+      - The relationship direction is Prescribed Entity → Specification.
+
+
+  - label: Is About
+    iri: "https://spec.industrialontologies.org/ontology/construct/isAbout"
+    definition: >
+      relationship from an information content entity to the entity it is
+      about
+    domain:
+      - Advance Shipment Notice
+      - Bill Of Lading
+      - Purchase Order
+      - Supply Chain Objective Specification
+    range:
+      - Shipment
+      - Consignor
+      - Consignee
+      - Supplier
+      - Buyer
+      - Consigning Process
+      - Buying Business Process
+      - Supply Chain Process
+    extraction_constraints:
+      - Advance Shipment Notice must be about a Shipment, a Supplier or Consignor, and a Buyer or Consignee.
+      - Bill Of Lading must be about a Consigning Process.
+      - Purchase Order must be about a Buying Business Process.
+      - Supply Chain Objective Specification must be about a Supply Chain Process.
+      - The relationship direction is Information Content Entity → Subject Entity.
+
+
+  - label: Describes
+    iri: "https://spec.industrialontologies.org/ontology/construct/describes"
+    definition: >
+      relationship from an information content entity to the entity it
+      describes
+    domain:
+      - Packing List
+    range:
+      - Logistic Unit
+    extraction_constraints:
+      - Packing List must describe at least one Logistic Unit.
+      - The relationship direction is Packing List → Logistic Unit.
+
+
+  - label: Designates
+    iri: "https://spec.industrialontologies.org/ontology/construct/designates"
+    definition: >
+      relationship from an identifier to the single entity that it
+      designates
+    domain:
+      - Identifier
+      - Container Identifier
+      - Lot Identifier
+      - Global Location Number
+    range:
+      - Container
+      - Lot
+      - Material Entity
+      - Business Organization
+      - Geospatial Location
+    inverse: Designated By
+    extraction_constraints:
+      - Container Identifier must designate a Container.
+      - Lot Identifier must designate a Lot.
+      - Global Location Number must designate a Business Organization or Geospatial Location.
+      - The relationship direction is Identifier → Designated Entity.
+
+
+  - label: Designated By
+    iri: "https://spec.industrialontologies.org/ontology/construct/designatedBy"
+    definition: >
+      relationship from an entity to the identifier that designates it
+    domain:
+      - Lot
+      - Logistic Unit
+      - Material Entity
+    range:
+      - Lot Identifier
+      - Identifier
+    inverse: Designates
+    extraction_constraints:
+      - Lot must be designated by a Lot Identifier.
+      - Logistic Unit and Traceable Resource Unit must be designated by an Identifier.
+      - The relationship direction is Designated Entity → Identifier.
+
+
+  - label: Is Output Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/isOutputOf"
+    definition: >
+      relationship from an output to the process that produced it
+    domain:
+      - Advance Shipment Notice
+      - Shipment
+    range:
+      - Shipment Preparation Process
+    extraction_constraints:
+      - Advance Shipment Notice must be the output of a Shipment Preparation Process.
+      - The Material Entity holding a Shipment Role must be the output of a Shipment Preparation Process.
+      - The relationship direction is Output → Process.
+
+
+  - label: Has Specified Output
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasSpecifiedOutput"
+    definition: >
+      relationship from a process to an entity that it is specified to produce
+    domain:
+      - Shipment Preparation Process
+      - Supply Chain Process
+    range:
+      - Shipment
+      - Material Product
+    inverse: Is Specified Output Of
+    extraction_constraints:
+      - Shipment Preparation Process must have a Shipment as a specified output.
+      - A Supply Chain Process of a Manufacturing Supply Chain System must have a Material Product as a specified output.
+      - The relationship direction is Process → Output.
+
+
+  - label: Is Specified Output Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/isSpecifiedOutputOf"
+    definition: >
+      relationship from an output to the process that is specified to
+      produce it
+    domain:
+      - Shipment
+    range:
+      - Shipment Preparation Process
+    inverse: Has Specified Output
+    extraction_constraints:
+      - A Shipment owned by a Consignor must be the specified output of a Shipment Preparation Process.
+      - The relationship direction is Output → Process.
+
+
+  - label: Participates In At Some Time
+    iri: "http://purl.obolibrary.org/obo/BFO_0000056"
+    definition: >
+      relationship from an entity to a process in which it participates at
+      some time
+    domain:
+      - Material Entity
+      - Business Organization
+      - Person
+      - Supply Chain System
+    range:
+      - Process
+      - Transport Process
+      - Receiving Process
+      - Manufacturing Process
+      - Supply Chain Process
+      - Commercial Service
+    inverse: Has Participant At Some Time
+    extraction_constraints:
+      - A Material Entity with a Cargo Role must participate in a Transport Process.
+      - A Business Organization or Person with a Consignee Role must participate in a Receiving Process.
+      - A Material Entity with a Lot Role must participate in a Manufacturing Process.
+      - A Material Entity with a Traceable Resource Unit Role must participate in a Supply Chain Process or Product Production Process.
+      - A Service Supply Chain System must participate in a Commercial Service.
+      - The relationship direction is Participant → Process.
+
+
+  - label: Has Participant At Some Time
+    iri: "http://purl.obolibrary.org/obo/BFO_0000057"
+    definition: >
+      relationship from a process to an entity that participates in it at
+      some time
+    domain:
+      - Packaging Process
+      - Freight Forwarding Process
+      - Shipment Preparation Process
+      - Supply Chain Process
+      - Transport Process
+      - Supplier Evaluation Process
+      - Tracking Event
+      - Material Location Change Process
+    range:
+      - Material Product
+      - Freight Forwarder
+      - Shipment
+      - Consignor
+      - Supply Chain Agent
+      - Piece Of Transport Equipment
+      - Supplier
+      - Traceable Resource Unit
+      - Carrier
+    inverse: Participates In At Some Time
+    extraction_constraints:
+      - Packaging Process must have a Material Product as a participant.
+      - Freight Forwarding Process must have a Freight Forwarder and a Shipment as participants.
+      - Shipment Preparation Process must have a Consignor and a Material Product as participants.
+      - Supply Chain Process must have a Supply Chain Agent as a participant.
+      - Transport Process must have a Piece Of Transport Equipment as a participant.
+      - Supplier Evaluation Process must have a Supplier as a participant.
+      - Tracking Event must have a Traceable Resource Unit as a participant.
+      - The relationship direction is Process → Participant.
+
+
+  - label: Has Participant At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000167"
+    definition: >
+      relationship from a process to an entity that participates in it at
+      all times
+    domain:
+      - Supply Chain Transport Process
+    range:
+      - Shipment
+    extraction_constraints:
+      - Supply Chain Transport Process must have a Shipment as a participant.
+      - The relationship direction is Process → Participant.
+
+
+  - label: Realizes
+    iri: "http://purl.obolibrary.org/obo/BFO_0000055"
+    definition: >
+      relationship from a process to a role or function that it realizes
+    domain:
+      - Selling Business Process
+      - Supplying Business Process
+      - Buying Business Process
+      - Offering For Sale Business Process
+    range:
+      - Material Product Role
+      - Buyer Role
+      - Supplier Role
+    inverse: Realized In
+    extraction_constraints:
+      - A Selling, Supplying or Offering For Sale Business Process in the Distributor, Retailer and Wholesaler Role definitions must realize a Material Product Role.
+      - A Supplying Business Process in those definitions must realize a Buyer Role of the downstream party.
+      - A Buying Business Process in those definitions must realize a Supplier Role of the upstream party.
+      - The relationship direction is Process → Role.
+
+
+  - label: Realized In
+    iri: "http://purl.obolibrary.org/obo/BFO_0000054"
+    definition: >
+      relationship from a role, capability or function to the process in
+      which it is realized
+    domain:
+      - Shipment Role
+      - Production Capability
+      - Storage Capability
+      - Supply Chain Agent Role
+      - Freight Forwarding Business Function
+      - Transportation Business Function
+    range:
+      - Transport Process
+      - Product Production Process
+      - Storage Process
+      - Supply Chain Process
+      - Freight Forwarding Service
+      - Transportation Service
+    inverse: Realizes
+    extraction_constraints:
+      - Shipment Role can only be realized in a Transport Process.
+      - Production Capability must be realized in a Product Production Process.
+      - Storage Capability must be realized in a Storage Process.
+      - Supply Chain Agent Role must be realized in a Supply Chain Process.
+      - Freight Forwarding Business Function must be realized in a Freight Forwarding Service.
+      - Transportation Business Function must be realized in a Transportation Service.
+      - The relationship direction is Role, Capability or Function → Process.
+
+
+  - label: Has Occurrent Part
+    iri: "http://purl.obolibrary.org/obo/BFO_0000117"
+    definition: >
+      relationship from a process to a process that is a part of it
+    domain:
+      - Logistics Process
+      - Logistics Service
+      - Freight Forwarding Service
+      - Packaging Service
+      - Storage Service
+      - Transportation Service
+      - Manufacturing Service
+      - Warehousing Process
+      - Supply Chain Transport Process
+    range:
+      - Receiving Process
+      - Shipment Preparation Process
+      - Storage Process
+      - Freight Forwarding Process
+      - Packaging Process
+      - Transport Process
+      - Manufacturing Process
+    inverse: Occurrent Part Of
+    extraction_constraints:
+      - Logistics Process must have a Receiving Process, Shipment Preparation Process, Storage Process, Freight Forwarding Process or Transport Process as an occurrent part.
+      - Freight Forwarding Service must have a Freight Forwarding Process as an occurrent part.
+      - Packaging Service must have a Packaging Process as an occurrent part.
+      - Storage Service must have a Storage Process as an occurrent part.
+      - Transportation Service must have a Transport Process as an occurrent part.
+      - Manufacturing Service must have a Manufacturing Process as an occurrent part.
+      - Warehousing Process must have a Storage Process as an occurrent part.
+      - Supply Chain Transport Process must have a Transport Process as an occurrent part.
+      - The relationship direction is Whole Process → Part Process.
+
+
+  - label: Occurrent Part Of
+    iri: "http://purl.obolibrary.org/obo/BFO_0000132"
+    definition: >
+      relationship from a process to a process of which it is a part
+    domain:
+      - Arrival Process
+      - Departure Process
+    range:
+      - Transport Process
+      - Travel Process
+    inverse: Has Occurrent Part
+    extraction_constraints:
+      - Arrival Process and Departure Process must be an occurrent part of a Transport Process or Travel Process.
+      - The relationship direction is Part Process → Whole Process.
+
+
+  - label: Precedes
+    iri: "http://purl.obolibrary.org/obo/BFO_0000063"
+    definition: >
+      relationship from a process to a process that occurs after it
+    domain:
+      - Shipment Preparation Process
+    range:
+      - Arrival Process
+    inverse: Preceded By
+    extraction_constraints:
+      - The Shipment Preparation Process that outputs an Advance Shipment Notice must precede an Arrival Process in which the Shipment participates.
+      - The relationship direction is Earlier → Later.
+
+
+  - label: Occurs In
+    iri: "http://purl.obolibrary.org/obo/BFO_0000066"
+    definition: >
+      relationship from a process to the entity in which it occurs
+    domain:
+      - Warehousing Process
+    range:
+      - Storage Facility
+    extraction_constraints:
+      - Warehousing Process must occur in a Storage Facility.
+      - The relationship direction is Process → Storage Facility.
+
+
+  - label: Has Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasCapability"
+    definition: >
+      relationship from an entity to a capability that it bears
+    domain:
+      - Factory
+      - Storage Facility
+    range:
+      - Production Capability
+      - Storage Capability
+    inverse: Capability Of
+    extraction_constraints:
+      - Factory must have a Production Capability.
+      - Storage Facility must have a Storage Capability.
+      - The relationship direction is Capability Bearer → Capability.
+
+
+  - label: Capability Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/capabilityOf"
+    definition: >
+      relationship from a capability to the entity that bears it
+    domain:
+      - Production Capability
+      - Storage Capability
+      - System Capability
+    range:
+      - Agent
+      - System
+      - Engineered System
+    inverse: Has Capability
+    extraction_constraints:
+      - Production Capability and Storage Capability must be the capability of an Agent or System.
+      - System Capability must be the capability of a System.
+      - The relationship direction is Capability → Capability Bearer.
+
+
+  - label: Has Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasFunction"
+    definition: >
+      relationship from an entity to a function that it bears
+    domain:
+      - Integrated Carrier Business Organization
+    range:
+      - Freight Forwarding Business Function
+      - Transportation Business Function
+    extraction_constraints:
+      - Integrated Carrier Business Organization must have both a Freight Forwarding Business Function and a Transportation Business Function.
+      - The relationship direction is Function Bearer → Function.
+
+
+  - label: Acts On Behalf Of At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/actsOnBehalfOfAtSomeTime"
+    definition: >
+      relationship from an agent to an organization or agent on whose
+      behalf it acts at some time
+    domain:
+      - Business Organization
+      - Person
+    range:
+      - Consignee
+      - Consignor
+    extraction_constraints:
+      - A Business Organization or Person with a Freight Forwarder Role must act on behalf of a Consignee or Consignor.
+      - The relationship direction is Acting Agent → Represented Agent.
+
+
+  - label: Has Member Part At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000172"
+    definition: >
+      relationship from a whole to an entity that is a member part of it at
+      all times
+    domain:
+      - Group Of Suppliers
+      - Industry
+      - Supply Chain System
+    range:
+      - Business Organization
+      - Group Of Suppliers
+    extraction_constraints:
+      - Group Of Suppliers can only have Business Organizations with a Supplier Role as member parts.
+      - Industry can only have Business Organizations as member parts.
+      - Supply Chain System must have a Group Of Suppliers as a member part.
+      - The relationship direction is Whole → Member Part.
+
+
+  - label: Member Part Of At Some Time
+    iri: "http://purl.obolibrary.org/obo/BFO_0000129"
+    definition: >
+      relationship from a member part to the aggregate it is a member of at
+      some time
+    domain:
+      - Agent
+    range:
+      - Group Of Suppliers
+    extraction_constraints:
+      - The Agent holding a Supply Chain Agent Role must be a member part of a Group Of Suppliers.
+      - The relationship direction is Member Part → Whole.
+
+
+  - label: Has Continuant Part At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000110"
+    definition: >
+      relationship from a continuant to a continuant that is part of it at
+      all times
+    domain:
+      - Bill Of Lading
+      - Supply Chain Plan Specification
+      - Material Handling Plan
+    range:
+      - Information Content Entity
+      - Supply Chain Objective Specification
+    extraction_constraints:
+      - Bill Of Lading must have Information Content Entities as continuant parts that prescribe its consigning process, consignor role and transportation service provider role.
+      - Supply Chain Plan Specification must have a Supply Chain Objective Specification as a continuant part.
+      - The relationship direction is Whole → Part.
+
+
+  - label: Continuant Part Of At Some Time
+    iri: "http://purl.obolibrary.org/obo/BFO_0000176"
+    definition: >
+      relationship from a continuant to a continuant of which it is a part
+      at some time
+    domain:
+      - Material Trade Item
+      - Material Entity
+    range:
+      - Logistic Unit
+      - Lot
+    extraction_constraints:
+      - Material Trade Item must be a continuant part of a Logistic Unit.
+      - The Material Entity with a Sublot Role must be a continuant part of a Lot.
+      - The relationship direction is Part → Whole.
+
+
+  - label: Specifically Depends On
+    iri: "http://purl.obolibrary.org/obo/BFO_0000195"
+    definition: >
+      relationship from a dependent entity to the entity on which it
+      specifically depends
+    domain:
+      - Supply Relationship
+    range:
+      - Customer Role
+      - Supplier Role
+    extraction_constraints:
+      - Supply Relationship must specifically depend on a Customer Role and a Supplier Role.
+      - The relationship direction is Dependent Entity → Bearer or Role.
+
+
+  - label: Specifically Depended On By
+    iri: "http://purl.obolibrary.org/obo/BFO_0000194"
+    definition: >
+      relationship from an entity to a dependent entity that specifically
+      depends on it
+    domain:
+      - Supplier Role
+    range:
+      - Supply Relationship
+    extraction_constraints:
+      - The Supplier Role of a member of a Group Of Suppliers must be specifically depended on by a Supply Relationship.
+      - The relationship direction is Bearer or Role → Dependent Entity.
+
+
+  - label: Concretizes At Some Time
+    iri: "http://purl.obolibrary.org/obo/BFO_0000059"
+    definition: >
+      relationship from a process or quality to the information entity that
+      it concretizes at some time
+    domain:
+      - Supply Chain Process
+    range:
+      - Supply Chain Plan Specification
+    extraction_constraints:
+      - Supply Chain Process must concretize a Supply Chain Plan Specification.
+      - The relationship direction is Process → Plan Specification.
+
+
+  - label: Generically Depends On At Some Time
+    iri: "http://purl.obolibrary.org/obo/BFO_0000084"
+    definition: >
+      relationship from an entity to an entity on which it generically
+      depends at some time
+    domain:
+      - Supply Chain Plan Specification
+    range:
+      - Supply Chain Agent
+    extraction_constraints:
+      - The Supply Chain Plan Specification concretized by a Supply Chain Process must generically depend on a Supply Chain Agent.
+      - The relationship direction is Information Entity → Entity.

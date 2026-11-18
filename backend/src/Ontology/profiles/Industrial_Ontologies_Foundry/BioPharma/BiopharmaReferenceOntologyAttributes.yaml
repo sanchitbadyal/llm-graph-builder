@@ -1,0 +1,1260 @@
+profile:
+  id: biopharma-reference-ontology-attributes-complete
+  ontology_artifact: biopharmareferenceontologyattributes
+  description: >-
+    Complete profile generated from BiopharmaReferenceOntologyAttributes.rdf; all named classes and properties declared in the RDF artifact are represented here.
+  include_ancestors: true
+  include_compatible_properties: true
+
+
+imports:
+- iri: https://spec.industrialontologies.org/ontology/biopharma/ReferenceOntologyCandidates/
+  label: Reference Ontology Candidates
+  note: Imported ontology; referenced classes and properties are defined there, not redeclared in this
+    module.
+- iri: https://spec.industrialontologies.org/ontology/core/Core/
+  label: IOF Core
+  note: Imported ontology; referenced classes and properties are defined there, not redeclared in this
+    module.
+
+
+entities:
+  - label: Adhesion
+    iri: "https://spec.industrialontologies.org/ontology/construct/Adhesion"
+    parent_class: Relational Quality
+    definition: >
+      relational quality of two material entities that is the extent to
+      which those entities are held together through interactions at their
+      contacting surfaces
+    examples:
+      - protein formulation residue adhering to a vial wall
+      - cells adhering to a microcarrier surface
+      - a label adhesive adhering to a syringe barrel
+    classification_conditions:
+      - The entity must be a Relational Quality.
+      - It must be the quality of at least two distinct Material Entities.
+    logical_definition: >
+      Adhesion(x) → RelationalQuality(x) ∧ ∃m1,m2 (MaterialEntity(m1) ∧
+      MaterialEntity(m2) ∧ m1 ≠ m2 ∧ qualityOf(x, m1) ∧ qualityOf(x, m2))
+
+
+  - label: Age
+    iri: "https://spec.industrialontologies.org/ontology/construct/Age"
+    parent_class: Quality
+    definition: >
+      quality of a material entity determined by the elapsed time since a
+      specified reference event associated with that material entity
+    examples:
+      - Age of a raw material lot assessed relative to its manufacture date
+      - Age of a prepared buffer assessed relative to its preparation time
+      - Age of a cell culture assessed relative to thaw or inoculation according to the applicable convention
+      - Age of a drug substance batch assessed relative to production or fill date
+      - Age of a single-use assembly assessed relative to manufacture or sterilization date
+    classification_conditions:
+      - The entity must be a Quality.
+      - It must be the quality of some Material Entity.
+    logical_definition: >
+      Age(x) → Quality(x) ∧ ∃m (MaterialEntity(m) ∧ qualityOf(x, m))
+    explanatory_note: >
+      Age is the quality itself, while an age value, such as "14 days" or
+      "6 months", is an information content entity or value expression that
+      describes it. The starting point depends on the kind of bearer and the
+      domain convention, for example manufacture date, thaw date, birth,
+      creation, preparation or assembly.
+
+
+  - label: Aggregate State
+    iri: "https://spec.industrialontologies.org/ontology/construct/AggregateState"
+    parent_class: Quality
+    definition: >
+      quality of a material entity that is the physical state in which that
+      material entity exists, such as solid, liquid, gaseous, or plasma
+    synonyms:
+      - state of matter
+    examples:
+      - the solid aggregate state of sodium chloride crystals
+      - the liquid aggregate state of a buffer solution
+      - the gaseous aggregate state of cleanroom air
+      - the plasma aggregate state of an ionized gas
+      - the solid aggregate state of powdered cell culture medium
+    classification_conditions:
+      - The entity must be a Quality.
+      - It must be the quality of some Material Entity.
+    logical_definition: >
+      AggregateState(x) → Quality(x) ∧ ∃m
+      (MaterialEntity(m) ∧ qualityOf(x, m))
+
+
+  - label: Amorphous Structure
+    iri: "https://spec.industrialontologies.org/ontology/construct/AmorphousStructure"
+    parent_class: Physical Structure
+    definition: >
+      physical structure that inheres in a solid material entity by virtue
+      of the material entity lacking the long-range order characteristic of
+      a crystalline structure
+    examples:
+      - the amorphous structure of a lyophilized protein formulation cake
+      - the amorphous structure of spray-dried lactose
+      - the amorphous structure of an amorphous solid dispersion containing a poorly soluble drug substance
+      - the amorphous structure of glass
+    classification_conditions:
+      - The entity must be a Physical Structure.
+      - It must be the quality of some Material Entity that has some Solid Aggregate State.
+      - It cannot also be a Crystalline Structure or a Semi-Crystalline Structure.
+    logical_definition: >
+      AmorphousStructure(x) → PhysicalStructure(x) ∧ ∃m,s
+      (MaterialEntity(m) ∧ qualityOf(x, m) ∧ SolidAggregateState(s) ∧
+      hasQuality(m, s))
+
+
+  - label: Area
+    iri: "https://spec.industrialontologies.org/ontology/construct/Area"
+    parent_class: Physical Size
+    definition: >
+      physical size that is the two-dimensional spatial extent of a bearer
+      over a particular surface
+    examples:
+      - Surface area of a chromatography resin bead
+      - Cross-sectional area of a tubing lumen
+      - Membrane area of a filtration device
+      - Contact area of a single-use bag surface exposed to process material
+      - Surface area of a powder particle
+    classification_conditions:
+      - The entity must be a Physical Size.
+    logical_definition: >
+      Area(x) → PhysicalSize(x)
+
+
+  - label: Color
+    iri: "https://spec.industrialontologies.org/ontology/construct/Color"
+    parent_class: Optical Quality
+    definition: >
+      optical quality characterized by hue, saturation, and intensity
+    examples:
+      - yellow color of phenol red in acidified cell culture medium
+      - reddish-orange color of phenol red in medium near physiological pH
+      - pink or purple color of phenol red in alkaline medium
+      - Yellow discoloration of a formulation sample during stability testing
+      - Brown color of a degraded raw material solution
+      - Color of a cell culture medium lot assessed during visual inspection
+    classification_conditions:
+      - The entity must be an Optical Quality.
+    logical_definition: >
+      Color(x) → OpticalQuality(x)
+
+
+  - label: Compositional Homogeneity
+    iri: "https://spec.industrialontologies.org/ontology/construct/CompositionalHomogeneity"
+    parent_class: Homogeneity
+    definition: >
+      homogeneity inhering in a material entity by virtue of the extent to
+      which one or more constituents of that material entity are uniformly
+      distributed throughout that material entity
+    examples:
+      - Compositional homogeneity of a prepared culture medium lot, where its dissolved constituents are uniformly distributed throughout the lot
+      - Compositional homogeneity of a buffer preparation, where the buffer components and salts are uniformly distributed throughout the prepared solution
+      - Compositional homogeneity of a powdered cell culture medium blend, where the intended powder constituents are uniformly distributed throughout the blend
+    classification_conditions:
+      - The entity must be a Homogeneity.
+      - It must be the quality of some Material Entity.
+      - Every entity on which its magnitude has a basis in a bearer part must be a Material Entity that the bearer is made of at some time.
+    logical_definition: >
+      CompositionalHomogeneity(x) → Homogeneity(x) ∧ ∃m (MaterialEntity(m) ∧
+      qualityOf(x, m) ∧ ∀y (hasMagnitudeBasisInBearerPart(x, y) →
+      (MaterialEntity(y) ∧ isMadeOfAtSomeTime(m, y))))
+
+
+  - label: Count
+    iri: "https://spec.industrialontologies.org/ontology/construct/Count"
+    parent_class: Quality
+    definition: >
+      quality of a material entity that is the number of discrete sites or
+      material entities of a particular kind that are present as parts of
+      that material entity
+    examples:
+      - the viable cell count of a cell population
+      - the particle count of a liquid drug product sample
+      - the bead count of a microcarrier population
+      - the colony count of a microbial colony population growing on an agar plate
+      - the unit count of a manufactured lot
+      - the vial count in a packaging batch
+      - the pore count per square micrometer of a filter membrane
+    classification_conditions:
+      - The entity must be a Quality.
+      - It must be the quality of some Material Entity.
+    logical_definition: >
+      Count(x) → Quality(x) ∧ ∃m (MaterialEntity(m) ∧ qualityOf(x, m))
+
+
+  - label: Crystalline Structure
+    iri: "https://spec.industrialontologies.org/ontology/construct/CrystallineStructure"
+    parent_class: Physical Structure
+    definition: >
+      physical structure that inheres in a solid material entity by virtue
+      of the material entity having material parts arranged in a highly
+      ordered, long-range periodic lattice
+    examples:
+      - the crystalline structure of sodium chloride crystals
+      - the crystalline structure of a crystalline drug substance lot
+      - the crystalline structure of mannitol in a lyophilized formulation
+      - the crystalline structure of lactose monohydrate powder
+    classification_conditions:
+      - The entity must be a Physical Structure.
+      - It must be the quality of some Material Entity that has some Solid Aggregate State.
+      - It cannot also be an Amorphous Structure or a Semi-Crystalline Structure.
+    logical_definition: >
+      CrystallineStructure(x) → PhysicalStructure(x) ∧ ∃m,s
+      (MaterialEntity(m) ∧ qualityOf(x, m) ∧ SolidAggregateState(s) ∧
+      hasQuality(m, s))
+
+
+  - label: Density
+    iri: "https://spec.industrialontologies.org/ontology/construct/Density"
+    parent_class: Relational Quality
+    definition: >
+      relational quality that is the magnitude of a particular quality per
+      unit size of the bearer
+    examples:
+      - the number density of cells in a culture fluid
+      - the number density of particles in cleanroom air
+      - the mass density of a buffer solution
+      - the radiant energy density in the interior of an irradiation chamber
+    classification_conditions:
+      - The entity must be a Relational Quality.
+    logical_definition: >
+      Density(x) → RelationalQuality(x)
+
+
+  - label: Diameter
+    iri: "https://spec.industrialontologies.org/ontology/construct/Diameter"
+    parent_class: Length
+    definition: >
+      length that is the straight-line spatial extent through the center of
+      a circular or spherical bearer, measured between two opposite
+      boundary points
+    examples:
+      - Diameter of a chromatography resin bead
+      - Diameter of a spherical protein aggregate particle
+      - Diameter of a tubing lumen in a single-use assembly
+      - Diameter of a filter pore
+      - Diameter of a bioreactor vessel
+      - Diameter of a circular chromatography column bed
+    classification_conditions:
+      - The entity must be a Length.
+    logical_definition: >
+      Diameter(x) → Length(x)
+
+
+  - label: Electric Charge
+    iri: "https://spec.industrialontologies.org/ontology/construct/ElectricCharge"
+    parent_class: Electrical Quality
+    definition: >
+      electrical quality of a material entity by virtue of which that
+      material entity exerts or experiences electric force in an electric
+      field
+    examples:
+      - the electric charge of a sodium ion
+      - the surface electric charge of a chromatography resin particle
+    classification_conditions:
+      - The entity must be an Electrical Quality.
+    logical_definition: >
+      ElectricCharge(x) → ElectricalQuality(x)
+
+
+  - label: Electrical Conductivity
+    iri: "https://spec.industrialontologies.org/ontology/construct/ElectricalConductivity"
+    parent_class: Electrical Quality
+    definition: >
+      electrical quality that is the extent to which the material entity
+      conducts electric charge in response to an electric field
+    examples:
+      - Electrical conductivity of a chromatography buffer measured before column equilibration
+      - Electrical conductivity of purified water used for buffer preparation
+      - Electrical conductivity of a cell culture medium lot during release testing
+    classification_conditions:
+      - The entity must be an Electrical Quality.
+    logical_definition: >
+      ElectricalConductivity(x) → ElectricalQuality(x)
+
+
+  - label: Electrical Quality
+    iri: "https://spec.industrialontologies.org/ontology/construct/ElectricalQuality"
+    parent_class: Quality
+    definition: >
+      quality that inheres in a material entity by virtue of how that
+      material entity interacts with electric charge or electric fields
+    examples:
+      - the electric charge of a particle
+      - the surface charge of a chromatography resin particle
+      - the zeta potential of a colloidal suspension
+      - the electric potential of an electrode
+      - the relative permittivity of a dielectric material
+    classification_conditions:
+      - The entity must be a Quality.
+      - It must be the quality of some Material Entity.
+    logical_definition: >
+      ElectricalQuality(x) → Quality(x) ∧ ∃m
+      (MaterialEntity(m) ∧ qualityOf(x, m))
+
+
+  - label: Fluid Aggregate State
+    iri: "https://spec.industrialontologies.org/ontology/construct/FluidAggregateState"
+    parent_class: Aggregate State
+    definition: >
+      aggregate state of a material entity in which the material entity
+      lacks a fixed shape and can undergo continuous deformation under
+      shear, including liquid, gaseous, and plasma aggregate states
+    examples:
+      - liquid aggregate state of a buffer solution
+      - the liquid aggregate state of a cell culture medium solution
+      - the gaseous aggregate state of cleanroom air
+      - the gaseous aggregate state of oxygen in a gas supply line
+      - the plasma aggregate state of an ionized gas
+    classification_conditions:
+      - The entity must be an Aggregate State.
+    logical_definition: >
+      FluidAggregateState(x) → AggregateState(x)
+
+
+  - label: Fraction
+    iri: "https://spec.industrialontologies.org/ontology/construct/Fraction"
+    parent_class: Ratio
+    definition: >
+      ratio of a material entity that is determined by the magnitude of a
+      quality of a specified part of that material entity relative to the
+      magnitude of a quality of the same kind of that material entity as a
+      whole
+    examples:
+      - the mass fraction of glucose in a powdered medium
+      - the molar fraction of oxygen in a gas mixture
+      - the volume fraction of ethanol in an aqueous solution
+      - the solids fraction of a slurry
+      - the volume fraction of gas in a foam
+      - the mass fraction of water molecules in a lyophilized drug product cake
+    classification_conditions:
+      - The entity must be a Ratio.
+      - It must be the quality of some Material Entity.
+    logical_definition: >
+      Fraction(x) → Ratio(x) ∧ ∃m (MaterialEntity(m) ∧ qualityOf(x, m))
+
+
+  - label: Gaseous Aggregate State
+    iri: "https://spec.industrialontologies.org/ontology/construct/GaseousAggregateState"
+    parent_class: Fluid Aggregate State
+    definition: >
+      fluid aggregate state of a material entity in which the material
+      entity has no fixed shape or fixed volume and tends to expand to fill
+      the available volume of its container
+    examples:
+      - the gaseous aggregate state of cleanroom air
+      - the gaseous aggregate state of oxygen in a gas supply line
+      - the gaseous aggregate state of carbon dioxide in a bioreactor headspace
+    classification_conditions:
+      - The entity must be a Fluid Aggregate State.
+    logical_definition: >
+      GaseousAggregateState(x) → FluidAggregateState(x)
+
+
+  - label: Granule Form
+    iri: "https://spec.industrialontologies.org/ontology/construct/GranuleForm"
+    parent_class: Particulate Form
+    definition: >
+      particulate form that inheres in a material entity by virtue of the
+      material entity being physically organized as discrete aggregate
+      units composed of smaller bound solid particles
+    examples:
+      - the granule form of granulated cell culture medium
+      - the granule form of an excipient after wet granulation
+      - the granule form of a dried buffer blend prepared to reduce dusting
+    classification_conditions:
+      - The entity must be a Particulate Form.
+    logical_definition: >
+      GranuleForm(x) → ParticulateForm(x)
+
+
+  - label: Homogeneity
+    iri: "https://spec.industrialontologies.org/ontology/construct/Homogeneity"
+    parent_class: Quality
+    definition: >
+      quality of a material entity that is the extent to which a particular
+      constituent of that material entity, or a particular quality of that
+      material entity, is uniformly distributed throughout that material
+      entity
+    examples:
+      - Homogeneity of glucose concentration throughout a prepared culture medium lot
+      - Homogeneity of pH throughout a reconstituted buffer preparation
+      - Homogeneity of trace element distribution throughout a powdered cell culture medium blend
+      - Homogeneity of particle size distribution in a dry powder mixture
+      - Homogeneity of osmolality across sublots of a prepared medium batch
+      - Homogeneity of optical density in a well-mixed cell suspension
+    classification_conditions:
+      - The entity must be a Quality.
+      - It must be the quality of some Material Entity.
+    logical_definition: >
+      Homogeneity(x) → Quality(x) ∧ ∃m (MaterialEntity(m) ∧ qualityOf(x, m))
+    explanatory_note: >
+      Homogeneity is always relative to what is being evaluated, such as a
+      particular analyte, particle size fraction, moisture content, pH,
+      osmolality or optical density. When it concerns a quality, what is
+      evaluated is the uniformity of that quality's values across the
+      material. The same material can be homogeneous with respect to one
+      constituent or quality and heterogeneous with respect to another.
+
+
+  - label: Length
+    iri: "https://spec.industrialontologies.org/ontology/construct/Length"
+    parent_class: Physical Size
+    definition: >
+      physical size that is the one-dimensional spatial extent of a bearer
+      between two boundary points along a particular direction
+    examples:
+      - Length of a tubing segment in a single-use assembly
+      - Length of a chromatography column bed
+      - Length of a fiber or filament in a raw material sample
+      - Length of a needle used in a filling operation
+      - Length of a particle measured along its longest dimension
+      - Length of a bioreactor probe inserted into a vessel
+    classification_conditions:
+      - The entity must be a Physical Size.
+    logical_definition: >
+      Length(x) → PhysicalSize(x)
+
+
+  - label: Liquid Aggregate State
+    iri: "https://spec.industrialontologies.org/ontology/construct/LiquidAggregateState"
+    parent_class: Fluid Aggregate State
+    definition: >
+      fluid aggregate state of a material entity in which the material
+      entity has no fixed shape, conforms to the shape of its container,
+      and has an approximately fixed volume
+    examples:
+      - the liquid aggregate state of a buffer solution
+      - the liquid aggregate state of a cell culture medium solution
+      - the liquid aggregate state of purified water
+    classification_conditions:
+      - The entity must be a Fluid Aggregate State.
+    logical_definition: >
+      LiquidAggregateState(x) → FluidAggregateState(x)
+
+
+  - label: Mass
+    iri: "https://spec.industrialontologies.org/ontology/construct/Mass"
+    parent_class: Quality
+    definition: >
+      quality of a material entity determined by the amount of matter in
+      that material entity
+    examples:
+      - Mass of a raw material lot recorded during incoming material receipt
+      - Mass of sodium chloride weighed during buffer preparation
+      - Mass of powdered cell culture medium dispensed for media preparation
+      - Mass of a filled drug product vial measured during fill-weight verification
+    classification_conditions:
+      - The entity must be a Quality.
+      - It must be the quality of some Material Entity.
+    logical_definition: >
+      Mass(x) → Quality(x) ∧ ∃m (MaterialEntity(m) ∧ qualityOf(x, m))
+
+
+  - label: Mass Density
+    iri: "https://spec.industrialontologies.org/ontology/construct/MassDensity"
+    parent_class: Density
+    definition: >
+      density of a material entity that is the mass of that material entity
+      per unit size of that material entity
+    examples:
+      - mass density of purified water
+      - the mass density of a buffer solution
+      - the mass density of a cell culture medium
+      - the mass density of a protein formulation
+    classification_conditions:
+      - The entity must be a Density.
+    logical_definition: >
+      MassDensity(x) → Density(x)
+
+
+  - label: Mass Fraction
+    iri: "https://spec.industrialontologies.org/ontology/construct/MassFraction"
+    parent_class: Fraction
+    definition: >
+      fraction of a material entity that is determined by the mass of a
+      specified part of that material entity relative to the total mass of
+      the material entity
+    examples:
+      - the mass fraction of glucose in a powdered medium
+      - the mass fraction of sodium chloride in a buffer formulation
+      - the mass fraction of water molecules in a lyophilized drug product cake
+    classification_conditions:
+      - The entity must be a Fraction.
+      - It must be the quality of some Material Entity.
+      - Every bearer part on which its magnitude has a basis must be a Material Entity that is a proper continuant part of that Material Entity at some time.
+    logical_definition: >
+      MassFraction(x) → Fraction(x) ∧ ∃m (MaterialEntity(m) ∧ qualityOf(x, m)
+      ∧ ∀p (hasMagnitudeBasisInBearerPart(x, p) → (MaterialEntity(p) ∧
+      properContinuantPartOfAtSomeTime(p, m))))
+
+
+  - label: Material Form
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialForm"
+    parent_class: Quality
+    definition: >
+      quality that inheres in a material entity by virtue of how the
+      material entity or its material parts are physically organized at a
+      macroscopic scale
+    examples:
+      - the powder form of a dry cell culture medium
+      - the granular form of a granulated dry cell culture medium
+      - the cake form of a lyophilized drug product
+      - the caked form of a moisture-exposed powder blend
+      - the compacted form of a powder blend
+      - the pelletized form of a processed material
+      - the bead form of a chromatography resin
+    classification_conditions:
+      - The entity must be a Quality.
+      - It must be the quality of some Material Entity.
+    logical_definition: >
+      MaterialForm(x) → Quality(x) ∧ ∃m (MaterialEntity(m) ∧ qualityOf(x, m))
+
+
+  - label: Morphological Quality
+    iri: "https://spec.industrialontologies.org/ontology/construct/MorphologicalQuality"
+    parent_class: Quality
+    definition: >
+      quality inhering in the bearer by virtue of the bearer's size or shape
+      or structure
+    examples:
+      - Particle size of particles in a powdered raw material
+      - Particle shape of particles in a dry media powder
+      - Granule morphology of a granulated culture medium
+      - Cell morphology of cells observed during cultivation
+      - Aggregate morphology of protein particles in a formulation
+      - Crystal morphology of a crystalline excipient or salt
+      - Physical structure of granules in a granulated culture medium
+      - Physical shape of crystals in a crystalline raw material
+    classification_conditions:
+      - The entity must be a Quality.
+    logical_definition: >
+      MorphologicalQuality(x) → Quality(x)
+
+
+  - label: Net Electric Charge
+    iri: "https://spec.industrialontologies.org/ontology/construct/NetElectricCharge"
+    parent_class: Electric Charge
+    definition: >
+      electric charge that is the overall electric charge of a material
+      entity
+    examples:
+      - the net electric charge of a protein molecule at pH 5.5
+    classification_conditions:
+      - The entity must be an Electric Charge.
+    logical_definition: >
+      NetElectricCharge(x) → ElectricCharge(x)
+    explanatory_note: >
+      Net electric charge is equal to the algebraic sum of all positive and
+      negative electric charges borne by that entity.
+
+
+  - label: Number Density
+    iri: "https://spec.industrialontologies.org/ontology/construct/NumberDensity"
+    parent_class: Density
+    definition: >
+      density that is the number of countable entities per unit size
+    examples:
+      - the number density of cells in a culture fluid
+      - the number density of particles in cleanroom air
+      - the number density of viable cells in a cell suspension
+    classification_conditions:
+      - The entity must be a Density.
+    logical_definition: >
+      NumberDensity(x) → Density(x)
+
+
+  - label: Number Fraction
+    iri: "https://spec.industrialontologies.org/ontology/construct/NumberFraction"
+    parent_class: Fraction
+    definition: >
+      fraction of a material entity that is determined by the count of
+      specified parts of that material entity relative to the total count
+      of relevant parts of that material entity
+    examples:
+      - the viable cell fraction of a cell population
+      - the nonviable cell fraction of a cell population
+      - the particle fraction of subvisible particles above a specified size threshold in a particle population
+      - the fraction of beads with attached cells in a microcarrier population
+      - the rejected unit fraction in a manufactured unit lot
+    classification_conditions:
+      - The entity must be a Fraction.
+    logical_definition: >
+      NumberFraction(x) → Fraction(x)
+
+
+  - label: Optical Quality
+    iri: "https://spec.industrialontologies.org/ontology/construct/OpticalQuality"
+    parent_class: Quality
+    definition: >
+      quality that inheres in a material entity by virtue of how that
+      material entity interacts with light
+    examples:
+      - Color of a cell culture medium lot
+      - Clarity of a buffer preparation
+      - Turbidity of a process intermediate
+      - Opacity of a suspension
+      - Absorbance of a protein solution at 280 nm
+      - Fluorescence of a labeled assay reagent
+      - Light scattering of protein aggregate particles in a formulation sample
+      - Visual appearance of a drug product solution during inspection
+    classification_conditions:
+      - The entity must be a Quality.
+      - It must be the quality of some Material Entity.
+    logical_definition: >
+      OpticalQuality(x) → Quality(x) ∧ ∃m
+      (MaterialEntity(m) ∧ qualityOf(x, m))
+
+
+  - label: Particle Size Distribution
+    iri: "https://spec.industrialontologies.org/ontology/construct/ParticleSizeDistribution"
+    parent_class: Quality
+    definition: >
+      quality of a particle population that is the distribution of physical
+      sizes of the particles in that population
+    examples:
+      - Particle size distribution of a powdered cell culture media lot reported as D10, D50, and D90 values from laser diffraction
+      - Particle size distribution of a granulated media formulation reported as the percentage of particles within predefined size intervals
+      - Particle size distribution of an excipient powder reported as retained mass fraction on a series of sieves
+      - Particle size distribution of an excipient powder used in formulation, assessed to support flowability, mixing performance, and dose uniformity
+    classification_conditions:
+      - The entity must be a Quality.
+      - It must be the quality of some Material Entity that has some Particulate Form.
+    logical_definition: >
+      ParticleSizeDistribution(x) → Quality(x) ∧ ∃m
+      (MaterialEntity(m) ∧ qualityOf(x, m) ∧ ∃f (ParticulateForm(f) ∧
+      hasQuality(m, f)))
+    explanatory_note: >
+      Particle size distribution describes a population-level morphological
+      quality, not the size of a single particle. It may be represented as
+      size-frequency or cumulative distribution data, or as percentile
+      descriptors such as D10, D50 and D90. A mean particle size alone does
+      not fully characterize the distribution.
+
+
+  - label: Particulate Form
+    iri: "https://spec.industrialontologies.org/ontology/construct/ParticulateForm"
+    parent_class: Material Form
+    definition: >
+      material form that inheres in a material entity by virtue of being
+      physically organized at a macroscopic scale as a collection of
+      discrete solid particles or particle aggregates
+    examples:
+      - the powder form of powdered cell culture medium
+      - the granule form of granulated medium
+      - the bead form of chromatography resin
+      - the pelletized form of a pelletized raw material
+      - the particulate form of spray-dried excipient particles
+    classification_conditions:
+      - The entity must be a Material Form.
+      - It must be the quality of some Material Entity that has some Solid Aggregate State.
+    logical_definition: >
+      ParticulateForm(x) → MaterialForm(x) ∧ ∃m,s
+      (MaterialEntity(m) ∧ qualityOf(x, m) ∧ SolidAggregateState(s) ∧
+      hasQuality(m, s))
+    explanatory_note: >
+      Particulate form inheres in a material entity physically organized as
+      discrete solid particles or particle aggregates, such as a powder,
+      granule, bead or pellet material. A liquid mixture containing
+      suspended particles, such as a slurry or suspension, is not
+      classified as having particulate form merely because it contains
+      particles; the form may inhere in the suspended solid material while
+      the whole mixture is classified by its mixture type.
+
+
+  - label: Particulate Load
+    iri: "https://spec.industrialontologies.org/ontology/construct/ParticulateLoad"
+    parent_class: Quality
+    definition: >
+      quality of a material entity that is the extent to which particulate
+      matter is present in the material entity
+    examples:
+      - Particulate load of a drug product sample measured as the number of subvisible particles per mL
+      - Particulate load of a buffer preparation assessed before filtration
+      - Particulate load of a process intermediate after a hold step
+      - Particulate load of a cell culture medium lot assessed during release testing
+      - Particulate load of a formulation sample assessed by visual inspection for visible particles
+      - Particulate load of purified water monitored as part of water-system quality control
+    classification_conditions:
+      - The entity must be a Quality.
+      - It must be the quality of some Material Entity.
+      - Every bearer part on which its magnitude has a basis must be a Material Entity that is a continuant part of that Material Entity at some time and has some Particulate Form.
+    logical_definition: >
+      ParticulateLoad(x) → Quality(x) ∧ ∃m (MaterialEntity(m) ∧ qualityOf(x, m)
+      ∧ ∀p (hasMagnitudeBasisInBearerPart(x, p) → (MaterialEntity(p) ∧
+      continuantPartOfAtSomeTime(p, m) ∧ ∃f (ParticulateForm(f) ∧
+      hasQuality(p, f)))))
+
+
+  - label: Photostability
+    iri: "https://spec.industrialontologies.org/ontology/construct/Photostability"
+    parent_class: Stability
+    definition: >
+      stability that is the capability of a material entity to resist change
+      in one or more of its attributes during light exposure
+    examples:
+      - Photostability of a protein formulation exposed to visible or ultraviolet light
+      - Photostability of a cell culture medium lot during storage in a translucent container
+      - Photostability of a buffer or reagent exposed to laboratory lighting
+      - Photostability of a light-sensitive excipient or vitamin-containing formulation
+    classification_conditions:
+      - The entity must be a Stability.
+    logical_definition: >
+      Photostability(x) → Stability(x)
+
+
+  - label: Physical Shape
+    iri: "https://spec.industrialontologies.org/ontology/construct/PhysicalShape"
+    parent_class: Morphological Quality
+    definition: >
+      morphological quality inhering in a bearer by virtue of the bearer's
+      ratios of distances between its geometric features
+    examples:
+      - Spherical shape of chromatography resin beads
+      - Elongated shape of fiber-like particles in a raw material sample
+      - Irregular shape of powder particles in a dry cell culture media blend
+      - Rounded granule shape in a granulated culture medium
+      - Needle-like crystal shape in a crystalline excipient or salt
+      - Spherical or irregular shape of protein aggregate particles in a formulation sample
+    classification_conditions:
+      - The entity must be a Morphological Quality.
+    logical_definition: >
+      PhysicalShape(x) → MorphologicalQuality(x)
+    explanatory_note: >
+      Examples of geometric features include points, edges, surfaces and
+      holes.
+
+
+  - label: Physical Size
+    iri: "https://spec.industrialontologies.org/ontology/construct/PhysicalSize"
+    parent_class: Morphological Quality
+    definition: >
+      morphological quality that is the spatial extent of the bearer in one
+      or more spatial dimensions
+    examples:
+      - Surface area of a chromatography resin bead
+      - Cross-sectional area of a tubing lumen
+      - Length of a tubing segment in a single-use assembly
+      - Length of a chromatography column bed
+      - Volume of a process intermediate collected after filtration
+      - Internal volume of a single-use bag
+    classification_conditions:
+      - The entity must be a Morphological Quality.
+    logical_definition: >
+      PhysicalSize(x) → MorphologicalQuality(x)
+
+
+  - label: Physical Structure
+    iri: "https://spec.industrialontologies.org/ontology/construct/PhysicalStructure"
+    parent_class: Morphological Quality
+    definition: >
+      morphological quality that inheres in a material entity by virtue of
+      the relative positions, arrangement, and connectivity of the material
+      parts within that entity
+    examples:
+      - Physical structure of a granulated culture medium by virtue of the arrangement of powder particles within granules
+      - Physical structure of a crystalline excipient by virtue of its crystal lattice organization
+      - Physical structure of a chromatography resin bead by virtue of its porous internal organization
+    classification_conditions:
+      - The entity must be a Morphological Quality.
+      - It must be the quality of some Material Entity.
+    logical_definition: >
+      PhysicalStructure(x) → MorphologicalQuality(x) ∧ ∃m
+      (MaterialEntity(m) ∧ qualityOf(x, m))
+    explanatory_note: >
+      This quality concerns the organization of parts (spatial arrangement
+      and connectivity) at whatever granularity is relevant, e.g.
+      anatomical regions, microstructure, particle packing or macromolecular
+      conformation.
+
+
+  - label: Porosity
+    iri: "https://spec.industrialontologies.org/ontology/construct/Porosity"
+    parent_class: Volume Fraction
+    definition: >
+      volume fraction that is determined by the pore or void volume of a
+      material entity relative to the total volume of that material entity
+    examples:
+      - the porosity of a chromatography resin bed
+      - the porosity of a filter membrane
+      - the porosity of a lyophilized drug product cake
+      - the porosity of a packed powder bed
+      - the porosity of a porous ceramic support
+    classification_conditions:
+      - The entity must be a Volume Fraction.
+      - It must be the quality of some Material Entity.
+      - Every bearer part on which its magnitude has a basis must be a Site that is a proper continuant part of that Material Entity at some time.
+    logical_definition: >
+      Porosity(x) → VolumeFraction(x) ∧ ∃m (MaterialEntity(m) ∧ qualityOf(x, m)
+      ∧ ∀s (hasMagnitudeBasisInBearerPart(x, s) → (Site(s) ∧
+      properContinuantPartOfAtSomeTime(s, m))))
+
+
+  - label: Powder Form
+    iri: "https://spec.industrialontologies.org/ontology/construct/PowderForm"
+    parent_class: Particulate Form
+    definition: >
+      particulate form that inheres in a material entity by virtue of being
+      physically organized as dry, finely divided, discrete solid particles
+    examples:
+      - the powder form of dried cell culture medium
+      - the powder form of a powdered excipient lot
+      - the powder form of spray-dried lactose
+      - the powder form of a powdered buffer component
+    classification_conditions:
+      - The entity must be a Particulate Form.
+    logical_definition: >
+      PowderForm(x) → ParticulateForm(x)
+
+
+  - label: Pressure
+    iri: "https://spec.industrialontologies.org/ontology/construct/Pressure"
+    parent_class: Relational Quality
+    definition: >
+      relational quality of a material entity that is the amount of normal
+      force exerted by that material entity per unit area across a surface,
+      boundary, or interface
+    examples:
+      - the pressure of compressed air against the inner surface of a supply line
+      - the pressure of gas in a bioreactor headspace
+      - the pressure of liquid at the inlet of a chromatography column
+      - the pressure of steam in an autoclave chamber
+    classification_conditions:
+      - The entity must be a Relational Quality.
+      - It must be the quality of some Material Entity.
+    logical_definition: >
+      Pressure(x) → RelationalQuality(x) ∧ ∃m
+      (MaterialEntity(m) ∧ qualityOf(x, m))
+
+
+  - label: Quality Homogeneity
+    iri: "https://spec.industrialontologies.org/ontology/construct/QualityHomogeneity"
+    parent_class: Homogeneity
+    definition: >
+      homogeneity inhering in a material entity by virtue of the extent to
+      which one or more qualities of that material entity are uniformly
+      distributed throughout that material entity
+    examples:
+      - Quality homogeneity of pH throughout a prepared buffer lot after mixing
+      - Quality homogeneity of osmolality throughout a cell culture medium lot before release for use
+      - Quality homogeneity of electrical conductivity throughout a chromatography buffer preparation
+    classification_conditions:
+      - The entity must be a Homogeneity.
+      - It must be the quality of some Material Entity.
+      - It must specifically depend on some Quality that is also a quality of that same Material Entity.
+    logical_definition: >
+      QualityHomogeneity(x) → Homogeneity(x) ∧ ∃m,q
+      (MaterialEntity(m) ∧ Quality(q) ∧ qualityOf(x, m) ∧
+      specificallyDependsOn(x, q) ∧ qualityOf(q, m))
+
+
+  - label: Radius
+    iri: "https://spec.industrialontologies.org/ontology/construct/Radius"
+    parent_class: Length
+    definition: >
+      length that is the straight-line spatial extent from the center of a
+      circular or spherical bearer to one of its boundary points
+    examples:
+      - Radius of a chromatography resin bead
+      - Radius of a spherical protein aggregate particle
+      - Radius of a filter pore
+      - Radius of a tubing lumen in a single-use assembly
+      - Radius of a circular chromatography column bed
+      - Radius of a bioreactor vessel cross-section
+    classification_conditions:
+      - The entity must be a Length.
+    logical_definition: >
+      Radius(x) → Length(x)
+
+
+  - label: Ratio
+    iri: "https://spec.industrialontologies.org/ontology/construct/Ratio"
+    parent_class: Relational Quality
+    definition: >
+      relational quality that is determined by the magnitude of one quality
+      relative to the magnitude of another quality of the same kind
+    examples:
+      - the mass fraction of glucose in a dry powder medium
+      - the volume fraction of gas in a foam
+      - the porosity of a chromatography resin bed
+      - the viable cell fraction of a cell suspension
+    classification_conditions:
+      - The entity must be a Relational Quality.
+    logical_definition: >
+      Ratio(x) → RelationalQuality(x)
+
+
+  - label: Semi-Crystalline Structure
+    iri: "https://spec.industrialontologies.org/ontology/construct/SemiCrystallineStructure"
+    parent_class: Physical Structure
+    definition: >
+      physical structure that inheres in a solid material entity by virtue
+      of that entity having both crystalline regions and amorphous regions
+      interspersed as structural parts
+    examples:
+      - the semi-crystalline structure of polyethylene
+      - the semi-crystalline structure of polypropylene
+      - the semi-crystalline structure of a polymer film containing crystalline lamellae and amorphous regions
+      - the semi-crystalline structure of a partially crystallized excipient
+    classification_conditions:
+      - The entity must be a Physical Structure.
+      - It must be the quality of some Material Entity that has some Solid Aggregate State.
+      - That Material Entity must have, at all times, two distinct Material Entities as proper continuant parts.
+      - One of those parts must have some Amorphous Structure and the other must have some Crystalline Structure.
+      - It cannot also be an Amorphous Structure or a Crystalline Structure.
+    logical_definition: >
+      SemiCrystallineStructure(x) → PhysicalStructure(x) ∧ ∃m,s,a,c,as,cs
+      (MaterialEntity(m) ∧ qualityOf(x, m) ∧ SolidAggregateState(s) ∧
+      hasQuality(m, s) ∧ MaterialEntity(a) ∧ MaterialEntity(c) ∧ a ≠ c ∧
+      properContinuantPartOfAtAllTimes(a, m) ∧
+      properContinuantPartOfAtAllTimes(c, m) ∧ AmorphousStructure(as) ∧
+      hasQuality(a, as) ∧ CrystallineStructure(cs) ∧ hasQuality(c, cs))
+
+
+  - label: Solid Aggregate State
+    iri: "https://spec.industrialontologies.org/ontology/construct/SolidAggregateState"
+    parent_class: Aggregate State
+    definition: >
+      aggregate state of a material entity in which the constituent
+      material parts are sufficiently constrained in their relative motion
+      that the material entity has a definite volume and resists
+      continuous, fluid-like flow
+    examples:
+      - the solid aggregate state of sodium chloride crystals
+      - the solid aggregate state of powdered cell culture medium
+      - the solid aggregate state of granular cell culture medium
+      - the solid aggregate state of a lyophilized drug product
+    classification_conditions:
+      - The entity must be an Aggregate State.
+    logical_definition: >
+      SolidAggregateState(x) → AggregateState(x)
+    explanatory_note: >
+      Solid aggregate state should be distinguished from particulate flow.
+      A powder, granulated material or bead population may flow as a bulk
+      material because its discrete solid units can rearrange during
+      pouring, shaking, mixing or transfer; this does not mean the material
+      bears a fluid aggregate state. Fluid-like flow refers to continuous
+      deformation of a material as a connected liquid, gas or plasma.
+
+
+  - label: Specific Surface Area
+    iri: "https://spec.industrialontologies.org/ontology/construct/SpecificSurfaceArea"
+    parent_class: Quality
+    definition: >
+      quality of a solid material entity that is its total surface area per
+      unit mass
+    examples:
+      - powdered cell culture medium with high specific surface area
+      - porous chromatography resin particles with high specific surface area
+      - mesoporous silica with high specific surface area to support palladium to be used as catalyst in the hydrogenation of carbon dioxide
+      - activated carbon with high available surface for adsorption
+    classification_conditions:
+      - The entity must be a Quality.
+      - It must be the quality of some Material Entity that has some Solid Aggregate State.
+    logical_definition: >
+      SpecificSurfaceArea(x) → Quality(x) ∧ ∃m,s
+      (MaterialEntity(m) ∧ qualityOf(x, m) ∧ SolidAggregateState(s) ∧
+      hasQuality(m, s))
+
+
+  - label: Stability
+    iri: "https://spec.industrialontologies.org/ontology/construct/Stability"
+    parent_class: Capability
+    definition: >
+      capability of a material entity to resist change in one or more of its
+      attributes during a particular process
+    examples:
+      - Stability of a drug substance batch during refrigerated storage
+      - Stability of a formulated drug product during accelerated stability testing
+      - Stability of a cell culture medium lot during storage at 2–8 °C
+      - Stability of a buffer preparation during a defined hold interval
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of some Material Entity.
+    logical_definition: >
+      Stability(x) → Capability(x) ∧ ∃m
+      (MaterialEntity(m) ∧ capabilityOf(x, m))
+
+
+  - label: Sterile Material State
+    iri: "https://spec.industrialontologies.org/ontology/construct/SterileMaterialState"
+    parent_class: Material State
+    definition: >
+      material state in which a participating material entity is free of
+      viable microorganisms
+    examples:
+      - the sterile material state of culture medium after filtration through a sterilizing-grade membrane filter
+      - the sterile material state of a stainless-steel bioreactor vessel after steam sterilization
+      - the sterile material state of glassware after autoclaving
+    classification_conditions:
+      - The entity must be a Material State.
+    logical_definition: >
+      SterileMaterialState(x) → MaterialState(x)
+    explanatory_note: >
+      Sterile material state applies when the condition that remains
+      unchanged is that the material entity is free of viable
+      microorganisms. It may apply to process materials, vessels, equipment
+      parts, containers, closures, filters, tubing assemblies, fluid
+      pathways or other product-contact materials expected to remain
+      sterile. In regulated manufacturing, sterile status is typically
+      established through validated sterilization or aseptic processing
+      controls and sterility assurance, not direct demonstration of the
+      absence of every microorganism. It should be distinguished from clean
+      or disinfected state, which may reduce bioburden without rendering the
+      entity free of viable microorganisms.
+
+
+  - label: Temperature
+    iri: "https://spec.industrialontologies.org/ontology/construct/Temperature"
+    parent_class: Quality
+    definition: >
+      quality of a material entity whose magnitude characterizes the average
+      thermal energy per microscopic degree of freedom of that material
+      entity
+    examples:
+      - the temperature of cell culture medium in a bioreactor
+      - the temperature of a buffer during preparation
+      - the temperature of a formulation during refrigerated storage
+    classification_conditions:
+      - The entity must be a Quality.
+      - It must be the quality of some Material Entity.
+    logical_definition: >
+      Temperature(x) → Quality(x) ∧ ∃m (MaterialEntity(m) ∧ qualityOf(x, m))
+    explanatory_note: >
+      The relevant microscopic degrees of freedom may include translational,
+      rotational, vibrational, electronic and collective modes, depending on
+      the material. Temperature is related to average thermal energy per
+      degree of freedom but is not identical with total internal energy or
+      with average translational kinetic energy.
+
+
+  - label: Thermal Stability
+    iri: "https://spec.industrialontologies.org/ontology/construct/ThermalStability"
+    parent_class: Stability
+    definition: >
+      stability that is the capability of a material entity to resist change
+      in one or more of its attributes during exposure to a particular
+      temperature condition
+    examples:
+      - Thermal stability of a drug substance batch during refrigerated storage
+      - Thermal stability of a protein formulation during accelerated stability testing at elevated temperature
+      - Thermal stability of a cell culture medium lot during storage at 2–8 °C
+      - Thermal stability of a process intermediate during a defined room-temperature hold
+    classification_conditions:
+      - The entity must be a Stability.
+    logical_definition: >
+      ThermalStability(x) → Stability(x)
+
+
+  - label: Viscosity
+    iri: "https://spec.industrialontologies.org/ontology/construct/Viscosity"
+    parent_class: Quality
+    definition: >
+      quality of a fluid that is its resistance to shear deformation,
+      manifested as internal friction opposing relative motion between
+      adjacent parts of the fluid
+    examples:
+      - cell culture medium has low viscosity at 37 °C
+      - concentrated monoclonal antibody formulation has elevated viscosity at 20 °C to 25 °C
+      - glycerol-containing cryopreservation medium has higher viscosity at low temperature
+      - chromatography buffer has viscosity relevant to column pressure drop
+    classification_conditions:
+      - The entity must be a Quality.
+      - It must be the quality of some Material Entity that has some Fluid Aggregate State.
+    logical_definition: >
+      Viscosity(x) → Quality(x) ∧ ∃m (MaterialEntity(m) ∧ qualityOf(x, m) ∧ ∃s
+      (FluidAggregateState(s) ∧ hasQuality(m, s)))
+    explanatory_note: >
+      Viscosity is grounded in interactions among constituents of a fluid,
+      reflecting solvent-solute interactions, concentration, molecular
+      association or aggregation, and the size and shape of dissolved or
+      suspended entities. For a Newtonian fluid it is constant with respect
+      to shear rate under specified conditions. For non-Newtonian fluids
+      apparent viscosity may vary with shear rate, shear stress or duration
+      of shear. In bioprocessing it affects mixing, shear on cells or
+      particles, pumpability, pressure drop and filtration, and can be
+      managed by adjusting temperature or formulation composition.
+
+
+  - label: Volume
+    iri: "https://spec.industrialontologies.org/ontology/construct/Volume"
+    parent_class: Physical Size
+    definition: >
+      physical size that is the three-dimensional spatial extent of a bearer
+    examples:
+      - Volume of a buffer preparation in a mixing vessel
+      - Volume of cell culture medium in a bioreactor
+      - Volume of a process intermediate collected after filtration
+      - Internal volume of a single-use bag
+      - Working volume of a bioreactor vessel
+      - Volume of a drug product fill in a vial
+    classification_conditions:
+      - The entity must be a Physical Size.
+    logical_definition: >
+      Volume(x) → PhysicalSize(x)
+
+
+  - label: Volume Fraction
+    iri: "https://spec.industrialontologies.org/ontology/construct/VolumeFraction"
+    parent_class: Fraction
+    definition: >
+      fraction of a material entity that is determined by the volume of a
+      specified material entity or site that is a continuant part of that
+      material entity relative to the total volume of that material entity
+    examples:
+      - the volume fraction of gas bubbles in a foam
+      - the volume fraction of ethanol in an aqueous solution
+      - the volume fraction of solids in a slurry
+      - the volume fraction of oil droplets in an emulsion
+      - the volume fraction of liquid phase in a two-phase material
+    classification_conditions:
+      - The entity must be a Fraction.
+    logical_definition: >
+      VolumeFraction(x) → Fraction(x)
+
+
+relationships:
+
+  - label: Has Magnitude Basis In Bearer Part
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasMagnitudeBasisInBearerPart"
+    definition: >
+      relation from a quality to a material entity or site that is a
+      continuant part of the quality's bearer and provides a basis for the
+      magnitude of that quality
+    examples:
+      - the humidity of a gas has magnitude basis in water molecules that are parts of the gas
+      - the viable cell density of a cell culture material has magnitude basis in viable cells that are parts of the culture material
+      - the aluminum fraction of a material has magnitude basis in elemental aluminum that is part of the material
+      - the porosity of a solid material has magnitude basis in pore sites that are parts of the material
+    domain:
+      - Quality
+    range:
+      - Site
+      - Material Entity
+    extraction_constraints:
+      - Subject must be a Quality.
+      - Object must be a Site or a Material Entity that is a part of the quality's bearer.
+      - A bearer part provides a basis for the magnitude when the magnitude depends at least in part on the presence, amount, state, structure, arrangement or distribution of parts of that kind; it is not the sole basis.
+      - Mass Fraction, Compositional Homogeneity and Particulate Load restrict the related parts to Material Entities; Porosity restricts them to Sites.
+      - The relationship direction is Quality → Bearer Part.
+
+
+  - label: Quality Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/qualityOf"
+    definition: >
+      relationship from a quality to the entity that bears it
+    domain:
+      - Quality
+      - Electrical Quality
+      - Optical Quality
+      - Physical Structure
+      - Homogeneity
+      - Fraction
+      - Pressure
+    range:
+      - Material Entity
+    inverse: Has Quality
+    extraction_constraints:
+      - Subject must be a Quality.
+      - Object must be a Material Entity.
+      - Adhesion must be the quality of at least two distinct Material Entities.
+      - Crystalline Structure, Amorphous Structure and Semi-Crystalline Structure must be the quality of a Material Entity with a Solid Aggregate State.
+      - Viscosity must be the quality of a Material Entity with a Fluid Aggregate State.
+      - The relationship direction is Quality → Quality Bearer.
+
+
+  - label: Has Quality
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasQuality"
+    definition: >
+      relationship from an entity to a quality that it bears
+    domain:
+      - Material Entity
+    range:
+      - Solid Aggregate State
+      - Fluid Aggregate State
+      - Particulate Form
+      - Amorphous Structure
+      - Crystalline Structure
+      - Compositional Homogeneity
+    inverse: Quality Of
+    extraction_constraints:
+      - Subject must be a Material Entity.
+      - Object must be a Quality.
+      - A Material Entity with an Amorphous, Crystalline or Semi-Crystalline Structure must have a Solid Aggregate State.
+      - A Material Entity with a Particle Size Distribution must have a Particulate Form.
+      - The relationship direction is Quality Bearer → Quality.
+
+
+  - label: Capability Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/capabilityOf"
+    definition: >
+      relationship from a capability to the entity that bears it
+    domain:
+      - Stability
+    range:
+      - Material Entity
+    extraction_constraints:
+      - Stability must be the capability of a Material Entity.
+      - The relationship direction is Capability → Capability Bearer.
+
+
+  - label: Is Made Of At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/isMadeOfAtSomeTime"
+    definition: >
+      relationship from a material entity to a material entity of which it
+      is made at some time
+    domain:
+      - Material Entity
+    range:
+      - Material Entity
+    extraction_constraints:
+      - The bearer of a Compositional Homogeneity must be made of each Material Entity that provides the basis for its magnitude.
+      - The relationship direction is Whole → Constituent.
+
+
+  - label: Proper Continuant Part Of At Some Time
+    iri: "http://purl.obolibrary.org/obo/BFO_0000175"
+    definition: >
+      relationship from a continuant to a continuant of which it is a
+      proper part at some time
+    domain:
+      - Material Entity
+      - Site
+    range:
+      - Material Entity
+    extraction_constraints:
+      - The bearer part of a Mass Fraction must be a Material Entity that is a proper continuant part of the bearer at some time.
+      - The bearer part of a Porosity must be a Site that is a proper continuant part of the bearer at some time.
+      - The relationship direction is Part → Whole.
+
+
+  - label: Has Proper Continuant Part At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000111"
+    definition: >
+      relationship from a continuant to a continuant that is a proper part
+      of it at all times
+    domain:
+      - Material Entity
+    range:
+      - Material Entity
+    extraction_constraints:
+      - A Material Entity with a Semi-Crystalline Structure must have two distinct Material Entities as proper continuant parts, one with an Amorphous Structure and one with a Crystalline Structure.
+      - The relationship direction is Whole → Proper Part.
+
+
+  - label: Specifically Depends On
+    iri: "http://purl.obolibrary.org/obo/BFO_0000195"
+    definition: >
+      relationship from a dependent entity to the entity on which it
+      specifically depends
+    domain:
+      - Quality Homogeneity
+    range:
+      - Quality
+    extraction_constraints:
+      - Quality Homogeneity must specifically depend on a Quality of the same Material Entity.
+      - The relationship direction is Quality Homogeneity → Quality.

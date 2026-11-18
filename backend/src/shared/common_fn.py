@@ -293,6 +293,116 @@ def save_graphDocuments_in_neo4j(graph: Neo4jGraph, graph_document_list: List[Gr
                raise
    logging.error("Failed to execute query after maximum retries due to persistent deadlocks.")
    raise RuntimeError("Query execution failed after multiple retries due to deadlock.")
+
+
+def save_ontology_hierarchy_in_neo4j(graph: Neo4jGraph, graph_document_list: List[GraphDocument]):
+    """Project extracted classes and their RDF subclass hierarchy into Neo4j."""
+    entity_rows = []
+    hierarchy_rows = []
+    for document in graph_document_list:
+        for node in document.nodes:
+            properties = getattr(node, "properties", {}) or {}
+            class_iri = properties.get("ontology_class_iri")
+            parent_iris = properties.get("ontology_parent_iris") or []
+            if not class_iri:
+                continue
+            entity_rows.append({
+                "entity_id": str(node.id),
+                "class_iri": str(class_iri),
+                "class_label": str(properties.get("ontology_class_label", node.type)),
+                "class_profile": str(properties.get("ontology_class_profile", "")),
+            })
+            child_iri = str(class_iri)
+            parent_labels = list(properties.get("parent_classes") or [])
+            parent_profiles = list(properties.get("ontology_parent_profiles") or [])
+            for index, parent_iri in enumerate(reversed(parent_iris)):
+                parent_label = parent_labels[len(parent_labels) - index - 1] if parent_labels else str(parent_iri)
+                parent_profile = parent_profiles[len(parent_profiles) - index - 1] if parent_profiles else ""
+                hierarchy_rows.append({
+                    "child_iri": child_iri,
+                    "parent_iri": str(parent_iri),
+                    "parent_label": parent_label,
+                    "parent_profile": parent_profile,
+                })
+                child_iri = str(parent_iri)
+
+    hierarchy_rows = [row for row in hierarchy_rows if row["child_iri"] != row["parent_iri"]]
+
+    if not entity_rows:
+        return
+    graph.query(
+        """
+        UNWIND $entity_rows AS row
+        MATCH (entity:__Entity__ {id: row.entity_id})
+        MERGE (ontology_class:__OntologyClass {iri: row.class_iri})
+        SET ontology_class.label = row.class_label,
+            ontology_class.ontology_profile = row.class_profile
+        MERGE (entity)-[:INSTANCE_OF]->(ontology_class)
+        """,
+        params={"entity_rows": entity_rows},
+    )
+    if hierarchy_rows:
+        graph.query(
+            """
+            UNWIND $entity_rows AS row
+            MATCH (class:__OntologyClass {iri: row.class_iri})
+            OPTIONAL MATCH (class)-[old:SUBCLASS_OF]->()
+            DELETE old
+            """,
+            params={"entity_rows": entity_rows},
+        )
+        graph.query(
+            """
+            UNWIND $hierarchy_rows AS row
+            MATCH (child:__OntologyClass {iri: row.child_iri})
+            MERGE (parent:__OntologyClass {iri: row.parent_iri})
+            SET parent.label = row.parent_label,
+                parent.ontology_profile = row.parent_profile
+            MERGE (child)-[:SUBCLASS_OF]->(parent)
+            """,
+            params={"hierarchy_rows": hierarchy_rows},
+        )
+
+
+def save_ontology_catalog_in_neo4j(graph: Neo4jGraph, catalog_rows):
+    """Persist the complete local ontology catalog independently of extraction."""
+    graph.query(
+        """
+        MATCH (c:__OntologyClass)-[r:SUBCLASS_OF]->(c)
+        DELETE r
+        """
+    )
+    if not catalog_rows:
+        return
+    classes = {}
+    for row in catalog_rows:
+        classes[row["child_iri"]] = {
+            "iri": row["child_iri"], "label": row["child_label"],
+            "ontology_profile": row.get("child_profile", ""),
+        }
+        if row.get("parent_iri"):
+            classes[row["parent_iri"]] = {
+            "iri": row["parent_iri"], "label": row["parent_label"],
+            "ontology_profile": row.get("parent_profile", ""),
+        }
+    graph.query(
+        """
+        UNWIND $classes AS row
+        MERGE (c:__OntologyClass {iri: row.iri})
+        SET c.label = row.label, c.ontology_profile = row.ontology_profile
+        """,
+        params={"classes": list(classes.values())},
+    )
+    graph.query(
+        """
+        UNWIND $rows AS row
+        MATCH (child:__OntologyClass {iri: row.child_iri})
+        MATCH (parent:__OntologyClass {iri: row.parent_iri})
+        MERGE (child)-[:SUBCLASS_OF]->(parent)
+        """,
+        params={"rows": [row for row in catalog_rows
+                          if row.get("parent_iri") and row["child_iri"] != row["parent_iri"]]},
+    )
            
 def handle_backticks_nodes_relationship_id_type(graph_document_list:List[GraphDocument]):
   def normalize_neo4j_type(value: str, *, uppercase: bool = False) -> str:

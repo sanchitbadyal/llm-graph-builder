@@ -1,0 +1,493 @@
+profile:
+  id: biopharma-manufacturing-system-organization-complete
+  ontology_artifact: manufacturingsystemorganization
+  description: >-
+    Biopharma Manufacturing System Organization profile generated from the
+    biopharma ManufacturingSystemOrganization.rdf artifact; all named classes
+    and properties declared in the RDF artifact are represented here.
+  include_ancestors: true
+  include_compatible_properties: true
+
+
+entities:
+  - label: Control Module
+    iri: "https://spec.industrialontologies.org/ontology/construct/ControlModule"
+    parent_class: Object Aggregate
+    definition: >
+      object aggregate that is a lowest level grouping that can carry out
+      basic control
+    examples:
+      - a control valve module that manages the operation of a single control valve, including opening, closing, and positioning the valve based on a given setpoint or control signal
+      - a motor starter module, which is responsible for starting, stopping, and monitoring the status of the motor of a pump or an agitator, and includes the logic for interlocks, overload protection, and feedback signals
+      - a level control module that monitors the level inside a tank and provides an alarm or initiates control actions when a certain level is reached
+    classification_conditions:
+      - The entity must be an Object Aggregate.
+    logical_definition: >
+      ControlModule(x) → ObjectAggregate(x)
+    explanatory_note: >
+      A control module can consider a person as its member. For example, a
+      human operator can open and close valves.
+
+
+  - label: Enterprise
+    iri: "https://spec.industrialontologies.org/ontology/construct/Enterprise"
+    parent_class: Business Organization
+    definition: >
+      business organization that is at the highest level of decision-making
+      and control to achieve the common mission, goals, and objectives of
+      manufacturing or providing products or services by coordinating one
+      or more physical sites
+    examples:
+      - oil and gas company that explores, extracts, refines, and distributes petroleum products
+      - aerospace alliance that produces aircraft components, assembles them into final products and provides services to these aircraft
+      - multinational automotive manufacturer
+      - pharmaceutical company that develops, manufactures, and supplies prescription medicines, vaccines, and animal health products
+    classification_conditions:
+      - The entity must be a Business Organization.
+      - It cannot also be a Physical Area, Physical Site, Work Center or Work Unit.
+    logical_definition: >
+      Enterprise(x) → BusinessOrganization(x)
+    explanatory_note: >
+      ISA-95 and ISA-88 business organization that coordinates the
+      operation of one or more physical sites or areas
+
+
+  - label: Equipment Module
+    iri: "https://spec.industrialontologies.org/ontology/construct/EquipmentModule"
+    parent_class: Engineered System
+    definition: >
+      engineered system typically centered around a piece of equipment that
+      carries out some phase
+    examples:
+      - a heating or cooling system of a reactor or bioreactor that includes the reactor’s jacket, temperature sensors, control valves, and the control logic needed to regulate the heating or cooling process
+      - an agitator system in a mixing tank, which consists of the agitator, its motor, the speed controller, associated sensors, and the control logic that manages starting, stopping, and speed adjustment
+      - a liquids dosing system of a mixer, blender, or reactor that includes pumps, flowmeters, valves, and control logic to ensure accurate dosing
+      - a solids dosing system of a mixer, blender, or reactor that includes feeders, a weigh tank, valves, and control logic to ensure accurate dosing
+      - a CIP (Clean-In-Place) skid that automates the cleaning of equipment and piping in a process cell, including tanks for fluids, pumps, valves, sensors, and control logic to sequence cleaning steps
+      - a venting system of a reactor or vessel that includes pressure sensors, vent valves, and the logic to safely evacuate the unit as needed
+    classification_conditions:
+      - The entity must be an Engineered System.
+      - It must have some Piece Of Equipment as a member part at all times.
+      - An Engineered System that is carrier of some Recipe Phase at some time, is a member part of some Physical Unit at some time, and has some Piece Of Equipment as a member part at all times is an Equipment Module.
+    logical_definition: >
+      LA1: EquipmentModule(x) → EngineeredSystem(x) ∧ ∃y
+      (PieceOfEquipment(y) ∧ hasMemberPartAtAllTimes(x, y));
+      LA2: EngineeredSystem(x) ∧ ∃a (isCarrierOfAtSomeTime(x, a) ∧
+      RecipePhase(a)) ∧ ∃b (memberPartOfAtSomeTime(x, b) ∧
+      PhysicalUnit(b)) ∧ ∃c (hasMemberPartAtAllTimes(x, c) ∧
+      PieceOfEquipment(c)) → EquipmentModule(x)
+    explanatory_note: >
+      ISA88: functional group of equipment that can carry out a number of
+      specific minor processing activities
+
+
+  - label: Physical Area
+    iri: "https://spec.industrialontologies.org/ontology/construct/PhysicalArea"
+    parent_class: Object Aggregate
+    definition: >
+      object aggregate that is a physical, geographical, or logical grouping
+      of one or more work centers or work units within a physical site
+    examples:
+      - dock area of an oil terminal
+      - fuselage assembly area of an aircraft factory
+      - ground testing area of a facility that performs maintenance, repair, and overhaul services on an aircraft line
+      - liquid effluent treatment plant that is part of an antibiotic manufacturing facility
+      - utilities area of an oral liquids manufacturing plant
+    classification_conditions:
+      - The entity must be an Object Aggregate.
+      - Every member part it has at some time must be a Work Center or a Work Unit.
+      - It must be a member part of some Physical Site at all times.
+      - It cannot also be an Enterprise, Physical Site, Work Center or Work Unit.
+    logical_definition: >
+      PhysicalArea(x) → ObjectAggregate(x) ∧ ∀y
+      (hasMemberPartAtSomeTime(x, y) → (WorkCenter(y) ∨ WorkUnit(y))) ∧
+      ∃z (PhysicalSite(z) ∧ memberPartOfAtAllTimes(x, z))
+    explanatory_note: >
+      1) The boundaries (scope) of the area are typically determined by
+      business/organizational criteria and not technical criteria.
+      2) Within the manufacturing domain, area typically serves as a way to
+      organize manufacturing operations (ISA95 operation) within a site.
+
+
+  - label: Physical Site
+    iri: "https://spec.industrialontologies.org/ontology/construct/PhysicalSite"
+    parent_class: Object Aggregate
+    definition: >
+      object aggregate that is a physical, geographical, or logical grouping
+      of physical areas, work centers or work units determined by the
+      enterprise
+    examples:
+      - refinery located in Houston, TX, which belongs to an oil and gas company
+      - oil terminal located at the coast of Houston, TX, which belongs to an oil and gas company
+      - factory that produces an aircraft line and belongs to an aerospace alliance
+      - facility that performs maintenance, repair, and overhaul services on an aircraft line and belongs to an aerospace alliance
+      - antibiotic production facility that belongs to a pharmaceutical company
+      - oral liquids manufacturing plant that belongs to a pharmaceutical company
+      - factory that produces SUV cars and belongs to a multinational automotive manufacturer
+      - proving ground facility where a multinational automotive manufacturer tests its vehicles
+    classification_conditions:
+      - The entity must be an Object Aggregate.
+      - Every member part it has at some time must be a Physical Area, Work Center or Work Unit.
+      - It must be prescribed by some Information Content Entity.
+      - That Information Content Entity must generically depend on some Enterprise at some time.
+      - It cannot also be an Enterprise, Physical Area, Work Center or Work Unit.
+    logical_definition: >
+      PhysicalSite(x) → ObjectAggregate(x) ∧ ∀y
+      (hasMemberPartAtSomeTime(x, y) → (PhysicalArea(y) ∨ WorkCenter(y) ∨
+      WorkUnit(y))) ∧ ∃i,e (InformationContentEntity(i) ∧
+      prescribedBy(x, i) ∧ Enterprise(e) ∧
+      genericallyDependsOnAtSomeTime(i, e))
+    explanatory_note: >
+      1) A geographical location and the main manufacturing capability
+      typically define a physical site. 2) A site usually has a
+      manufacturing capability associated with a particular family of
+      products. 3) The boundaries (scope) of the site are typically
+      determined by business/organizational criteria and not technical
+      criteria.
+
+
+  - label: Physical Unit
+    iri: "https://spec.industrialontologies.org/ontology/construct/PhysicalUnit"
+    parent_class: Work Unit
+    definition: >
+      work unit that carries out an operation or unit procedure
+    examples:
+      - a vessel that can carry out a fermentation
+      - a ribbon blender, double cone blender, or V blender that can perform a variety of blending or mixing operations
+      - an evaporative crystallizer or cooling crystallizer
+      - a spray dryer or tray dryer
+      - a shell and tube heat exchanger
+      - a distillation tower
+      - a fixed-bed catalytic reactor
+      - a flash unit
+    classification_conditions:
+      - The entity must be a Work Unit.
+      - It cannot have any other Physical Unit as a member part at some time.
+      - A Work Unit that is carrier of some Recipe Operation or Recipe Unit Procedure at some time is a Physical Unit.
+    logical_definition: >
+      LA1: PhysicalUnit(x) → WorkUnit(x) ∧ ¬∃y (PhysicalUnit(y) ∧
+      hasMemberPartAtSomeTime(x, y));
+      LA2: WorkUnit(x) ∧ ∃y (isCarrierOfAtSomeTime(x, y) ∧
+      (RecipeOperation(y) ∨ RecipeUnitProcedure(y))) → PhysicalUnit(x)
+    explanatory_note: >
+      1) ISA-88: collection of associated equipment modules and/or control
+      modules that can carry out one or more major processing activities.
+      2) In rare cases, a unit can carry out an entire procedure. Since a
+      procedure is associated with process cell, this should be modeled as
+      a process cell having a single unit as its member part and then
+      carrying a procedure.
+
+
+  - label: Process Cell
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProcessCell"
+    parent_class: Work Center
+    definition: >
+      work center that is required for carrying out some control recipe
+    examples:
+      - equipment involved in the production of chocolate paste, including mixers, calendaring and conching equipment, as well as dosing and weighing systems and control equipment
+      - a polyvinyl chloride (PVC) batch production process cell containing several batch reactors, venting and steam stripping units, and spray dryers
+      - a medicine pills production cell including blending units with feeders, granulation units, drying units, grinders, tableting presses, and coaters
+    classification_conditions:
+      - The entity must be a Work Center.
+      - It must have some Physical Unit as a member part at all times.
+      - A Work Center that is carrier of some Control Recipe at some time is a Process Cell.
+    logical_definition: >
+      LA1: ProcessCell(x) → WorkCenter(x) ∧ ∃y (PhysicalUnit(y) ∧
+      hasMemberPartAtAllTimes(x, y));
+      LA2: WorkCenter(x) ∧ ∃y (isCarrierOfAtSomeTime(x, y) ∧
+      ControlRecipe(y)) → ProcessCell(x)
+    explanatory_note: >
+      ISA88: logical grouping of equipment that includes the equipment
+      required for production of one or more batches
+
+
+  - label: Production Line
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProductionLine"
+    parent_class: Work Center
+    definition: >
+      work center dedicated to the manufacture of a specific product or
+      product family in which the member work units are organized in a
+      sequential manner
+    examples:
+      - an automotive assembly line having a series of workstations or work cells where car bodies move along a conveyor, and at each station, specific components—such as engines, doors, or seats—are installed by workers and/or robots
+      - a smartphone model production line that includes stations or work cells for mounting circuit boards, installing screens, assembling casings, and performing quality checks
+      - a washing machine production line where the chassis is assembled, components like motors, drums, pipes, and electronic circuits are installed, and the final product is tested and packaged
+      - a candy production line composed of an oven or cooker, forming machines, a cooling tunnel, wrapping machines, and packaging machines
+    classification_conditions:
+      - The entity must be a Work Center.
+    logical_definition: >
+      ProductionLine(x) → WorkCenter(x)
+
+
+  - label: Production Unit
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProductionUnit"
+    parent_class: Work Center
+    definition: >
+      work center within a broader production system that has specific tasks
+      allocated to it
+    examples:
+      - a hydrochloric acid production unit, consisting of a combustion chamber where hydrogen and chlorine react, a cooling system to condense the HCl gas, and an absorption tower where the gas is dissolved in water to form hydrochloric acid
+      - a styrene production unit via catalytic dehydrogenation of ethylbenzene, which includes preheating units, a catalytic reactor, and a separation train comprising a liquid-vapor separator and two distillation towers
+      - a toluene hydrodealkylation production unit that converts toluene into benzene and methane by reacting it with hydrogen in the presence of a catalyst at high temperatures, comprising a furnace, chemical reactor, flash unit, separation columns, compressor, and multiple heat exchangers
+    classification_conditions:
+      - The entity must be a Work Center.
+    logical_definition: >
+      ProductionUnit(x) → WorkCenter(x)
+
+
+  - label: Storage Unit
+    iri: "https://spec.industrialontologies.org/ontology/construct/StorageUnit"
+    parent_class: Work Unit
+    definition: >
+      work unit that is a member part of a storage zone
+    examples:
+      - a tank in a tank farm
+      - a silo in a silo farm
+      - a storage bay or rack in a warehouse or depot
+      - a designated surface in a holding area intended for the storage of a particular product or family of products, such as logs within a certain diameter range and conicity
+    classification_conditions:
+      - The entity must be a Work Unit.
+      - The entity must be a member part of some Storage Zone at all times.
+    logical_definition: >
+      StorageUnit(x) ↔ WorkUnit(x) ∧ ∃y (StorageZone(y) ∧
+      memberPartOfAtAllTimes(x, y))
+    explanatory_note: >
+      ISA 95: Work unit that is part of a storage zone that is a designated
+      physical space and/or equipment. Work unit that is a subdivision of a
+      storage zone
+
+
+  - label: Storage Zone
+    iri: "https://spec.industrialontologies.org/ontology/construct/StorageZone"
+    parent_class: Work Center
+    definition: >
+      work center dedicated to the storage of materials or equipment
+    examples:
+      - a tank farm dedicated to gasoline storage
+      - a silo farm devoted to the storage of different grains
+      - a warehouse or depot intended for the storage of a family of products
+      - a holding area in an open space intended for the storage of bulk products, such as iron ore, coal, or logs
+    classification_conditions:
+      - The entity must be a Work Center.
+    logical_definition: >
+      StorageZone(x) → WorkCenter(x)
+    explanatory_note: >
+      The capability of the storage zone may include the movement of
+      materials from one work center to another work center within or
+      between enterprises. The ISA-95 specifies that a storage zone can
+      either be a designated physical space or equipment for storage of
+      equipment or material. Within the IOF/BFO framework a physical space
+      would be fiat object part, while the equipment is represented by the
+      same IOF Concept - piece of equipment.
+
+
+  - label: Work Cell
+    iri: "https://spec.industrialontologies.org/ontology/construct/WorkCell"
+    parent_class: Work Unit
+    definition: >
+      work unit that is a member part of a production line and is used to
+      manufacture some material parts that share manufacturing requirements
+    examples:
+      - an automotive assembly line with a series of workstations or work cells where car bodies move along a conveyor, and at each station, specific components—such as engines, doors, or seats—are installed by workers and/or robots
+      - a smartphone production line that includes stations or work cells for mounting circuit boards, installing screens, assembling casings, and performing quality checks
+      - a washing machine production line having a series of workstations or work cells where the chassis is assembled, components such as motors, drums, pipes, and electronic circuits are installed, and the final product is tested and packaged
+      - a candy production line composed of an oven or cooker, a work cell of forming machines, a cooling tunnel, as well as work cells of wrapping machines, and packaging machines
+    classification_conditions:
+      - The entity must be a Work Unit.
+      - It must be a member part of some Production Line at some time.
+    logical_definition: >
+      WorkCell(x) → WorkUnit(x) ∧ ∃y (ProductionLine(y) ∧
+      memberPartOfAtSomeTime(x, y))
+    explanatory_note: >
+      1) ISA95: work unit within a production line that consists of
+      equipment grouped together to produce a family of parts having
+      similar manufacturing requirements. 2) While production lines can be
+      used in discrete or continuous manufacturing - work cells are only
+      considered as parts of production lines that are used for discrete
+      manufacturing
+
+
+  - label: Work Center
+    iri: "https://spec.industrialontologies.org/ontology/construct/WorkCenter"
+    parent_class: Object Aggregate
+    definition: >
+      object aggregate that has piece of equipment or agent as its member
+      parts
+    examples:
+      - process cell
+      - production line
+      - production unit
+      - storage zone
+    classification_conditions:
+      - The entity must be an Object Aggregate.
+      - Every member part it has at some time must be an Agent or a Piece Of Equipment.
+      - It must have some Capability.
+      - That Capability must have some Agent or Piece Of Equipment as its material basis at some time.
+      - It cannot also be an Enterprise, Physical Area, Physical Site or Work Unit.
+    logical_definition: >
+      WorkCenter(x) → ObjectAggregate(x) ∧ ∀y (hasMemberPartAtSomeTime(x, y)
+      → (Agent(y) ∨ PieceOfEquipment(y))) ∧ ∃c,z (Capability(c) ∧
+      hasCapability(x, c) ∧ (Agent(z) ∨ PieceOfEquipment(z)) ∧
+      hasMaterialBasisAtSomeTime(c, z))
+    explanatory_note: >
+      1) A work center's capabilities are determined by one or more of its
+      constituent members, which is formally represented using the 'has
+      material basis' axiom. 2) Work centers are typically within (member
+      parts of) a physical area or physical site, reflecting their spatial
+      and organizational context.
+
+
+  - label: Work Unit
+    iri: "https://spec.industrialontologies.org/ontology/construct/WorkUnit"
+    parent_class: Object Aggregate
+    definition: >
+      object aggregate that is a member of a work center
+    examples:
+      - physical unit
+      - storage unit
+      - work cell
+    classification_conditions:
+      - The entity must be an Object Aggregate.
+      - The entity must be a member part of some Work Center at all times.
+      - It cannot also be an Enterprise, Physical Area, Physical Site or Work Center.
+    logical_definition: >
+      WorkUnit(x) ↔ ObjectAggregate(x) ∧ ∃y (WorkCenter(y) ∧
+      memberPartOfAtAllTimes(x, y))
+    explanatory_note: >
+      ISA 95: any element in the equipment hierarchy under the work center
+
+
+relationships:
+
+  - label: Has Member Part At Some Time
+    iri: "http://purl.obolibrary.org/obo/BFO_0000115"
+    definition: >
+      relationship from an aggregate to an entity that is a member part of it
+      at some time
+    domain:
+      - Physical Area
+      - Physical Site
+      - Work Center
+    range:
+      - Work Center
+      - Work Unit
+      - Physical Area
+      - Agent
+      - Piece Of Equipment
+    inverse: Member Part Of At Some Time
+    extraction_constraints:
+      - Physical Area can only have Work Centers or Work Units as member parts.
+      - Physical Site can only have Physical Areas, Work Centers or Work Units as member parts.
+      - Work Center can only have Agents or Pieces Of Equipment as member parts.
+      - The relationship direction is Whole → Member Part.
+
+
+  - label: Member Part Of At Some Time
+    iri: "http://purl.obolibrary.org/obo/BFO_0000129"
+    definition: >
+      relationship from a member part to the aggregate it is a member of at
+      some time
+    domain:
+      - Work Cell
+    range:
+      - Production Line
+    inverse: Has Member Part At Some Time
+    extraction_constraints:
+      - Work Cell must be a member part of some Production Line.
+      - The relationship direction is Member Part → Whole.
+
+
+  - label: Has Member Part At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000172"
+    definition: >
+      relationship from a whole to an entity that is a member part of it at
+      all times
+    domain:
+      - Equipment Module
+      - Process Cell
+    range:
+      - Piece Of Equipment
+      - Physical Unit
+    inverse: Member Part Of At All Times
+    extraction_constraints:
+      - Equipment Module must have some Piece Of Equipment as a member part.
+      - Process Cell must have some Physical Unit as a member part.
+      - The relationship direction is Whole → Member Part.
+
+
+  - label: Member Part Of At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000173"
+    definition: >
+      relationship from a member part to the aggregate it is a member of at
+      all times
+    domain:
+      - Physical Area
+      - Storage Unit
+      - Work Unit
+    range:
+      - Physical Site
+      - Storage Zone
+      - Work Center
+    inverse: Has Member Part At All Times
+    extraction_constraints:
+      - Physical Area must be a member part of some Physical Site.
+      - Storage Unit must be a member part of some Storage Zone.
+      - Work Unit must be a member part of some Work Center.
+      - The relationship direction is Member Part → Whole.
+
+
+  - label: Prescribed By
+    iri: "https://spec.industrialontologies.org/ontology/construct/prescribedBy"
+    definition: >
+      relationship from an entity to the information content entity that
+      prescribes it
+    domain:
+      - Physical Site
+    range:
+      - Information Content Entity
+    inverse: Prescribes
+    extraction_constraints:
+      - Physical Site must be prescribed by some Information Content Entity that generically depends on an Enterprise.
+      - The relationship direction is Physical Site → Information Content Entity.
+
+
+  - label: Generically Depends On At Some Time
+    iri: "http://purl.obolibrary.org/obo/BFO_0000084"
+    definition: >
+      relationship from an entity to an entity on which it generically
+      depends at some time
+    domain:
+      - Information Content Entity
+    range:
+      - Enterprise
+    extraction_constraints:
+      - The Information Content Entity that prescribes a Physical Site must generically depend on an Enterprise.
+      - The relationship direction is Information Content Entity → Enterprise.
+
+
+  - label: Has Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasCapability"
+    definition: >
+      relationship from an entity to a capability that it bears
+    domain:
+      - Work Center
+    range:
+      - Capability
+    extraction_constraints:
+      - Work Center must have some Capability.
+      - The relationship direction is Work Center → Capability.
+
+
+  - label: Has Material Basis At Some Time
+    iri: "http://purl.obolibrary.org/obo/BFO_0000218"
+    definition: >
+      relationship from a capability to the material entity that is its
+      material basis at some time
+    domain:
+      - Capability
+    range:
+      - Agent
+      - Piece Of Equipment
+    extraction_constraints:
+      - A Capability of a Work Center must have an Agent or Piece Of Equipment as its material basis.
+      - The relationship direction is Capability → Material Basis.

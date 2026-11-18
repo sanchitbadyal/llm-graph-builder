@@ -1,0 +1,1571 @@
+profile:
+  id: biopharma-parameter-complete
+  ontology_artifact: biopharmaparameter
+  description: >-
+    Complete profile generated from BiopharmaParameter.rdf; all named classes and properties declared in the RDF artifact are represented here.
+  include_ancestors: true
+  include_compatible_properties: true
+
+
+imports:
+- iri: https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaMaterial/
+  label: Biopharma Material
+  note: Imported ontology; referenced classes and properties are defined there, not redeclared in this
+    module.
+- iri: https://spec.industrialontologies.org/ontology/202603/biopharma/ReferenceOntologyCandidates/
+  label: Reference Ontology Candidates
+  note: Imported ontology; referenced classes and properties are defined there, not redeclared in this
+    module.
+- iri: https://spec.industrialontologies.org/ontology/202603/biopharma/TargetsLimitsRanges/
+  label: Targets Limits Ranges
+  note: Imported ontology; referenced classes and properties are defined there, not redeclared in this
+    module.
+- iri: https://spec.industrialontologies.org/ontology/202603/core/Core/
+  label: IOF Core
+  note: Imported ontology; referenced classes and properties are defined there, not redeclared in this
+    module.
+
+
+entities:
+  - label: Agitation Rate
+    iri: "https://spec.industrialontologies.org/ontology/construct/AgitationRate"
+    parent_class: Rate Process Profile
+    definition: >
+      rate process profile at which imposed motion is applied to agitate a
+      material
+    examples:
+      - an agitation rate of 500 revolutions per minute applied by an impeller in a stirred gas-fermentation vessel
+      - an agitation rate of 120 revolutions per minute applied by a stir bar during buffer preparation
+      - an agitation rate of 30 rocking cycles per minute applied by a rocking bioreactor platform
+      - an agitation rate of 180 shaking cycles per minute applied by an orbital shaker during flask cultivation
+    classification_conditions:
+      - The entity must be a Rate Process Profile.
+    logical_definition: >
+      AgitationRate(x) → RateProcessProfile(x)
+    explanatory_note: >
+      Agitation rate is the rate of imposed mechanical motion used to stir,
+      mix, shake, rock, or otherwise agitate a material. It should be
+      distinguished from the resulting degree of mixing, gas transfer,
+      bubble size distribution, mass transfer performance, or product
+      yield, which are not themselves agitation rates. It may be expressed
+      in revolutions per minute, cycles per minute, hertz, strokes per
+      minute, or another unit appropriate to the motion.
+
+
+  - label: Biological Activity
+    iri: "https://spec.industrialontologies.org/ontology/construct/BiologicalActivity"
+    parent_class: Capability
+    definition: >
+      capability of a drug substance, drug product, or relevant process
+      intermediate material to achieve a defined biological effect
+    examples:
+      - the target-binding biological activity of a monoclonal antibody drug product
+      - the neutralizing biological activity of an antibody drug substance
+      - the enzymatic biological activity of an enzyme therapeutic
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of some Material Product or Process Intermediate Material.
+    logical_definition: >
+      BiologicalActivity(x) → Capability(x) ∧ ∃m
+      ((MaterialProduct(m) ∨ ProcessIntermediateMaterial(m)) ∧
+      capabilityOf(x, m))
+    explanatory_note: >
+      Biological activity is the capability to produce the biological effect
+      being evaluated. It should be distinguished from drug potency:
+      biological activity is the capability, while drug potency is the
+      quality that characterizes the degree to which that biological
+      activity is exhibited.
+
+
+  - label: Biomass Specific Productivity
+    iri: "https://spec.industrialontologies.org/ontology/construct/BiomassSpecificProductivity"
+    parent_class: Manufacturing Process Productivity
+    definition: >
+      manufacturing process productivity whose magnitude is normalized by
+      biomass mass
+    examples:
+      - recombinant protein mass produced per hour per gram dry cell weight during microbial fermentation
+      - enzyme activity units produced per hour per gram biomass during an E. coli expression process
+    classification_conditions:
+      - The entity must be a Manufacturing Process Productivity.
+    logical_definition: >
+      BiomassSpecificProductivity(x) → ManufacturingProcessProductivity(x)
+    explanatory_note: >
+      Biomass mass is commonly quantified as dry cell mass (e.g., dry cell
+      weight), but may use other conventions (e.g., wet cell mass) when
+      specified. It may be the total biomass mass or, when specified,
+      viable biomass mass.
+
+
+  - label: Biomolecule Primary Structure
+    iri: "https://spec.industrialontologies.org/ontology/construct/BiomoleculePrimaryStructure"
+    parent_class: Quality
+    definition: >
+      quality of a DNA, RNA, peptide, or protein molecule that is determined
+      by the linear order of its nucleotide or amino acid residues
+    examples:
+      - the primary structure of a monoclonal antibody heavy chain
+      - the primary structure of a phosphorylated peptide
+      - the primary structure of a methylated DNA molecule
+      - the primary structure of an mRNA molecule
+      - the primary structure of a protein variant with a single amino acid substitution
+    classification_conditions:
+      - The entity must be a Quality.
+      - It must be the quality of some Deoxyribonucleic Acid, Ribonucleic Acid, Peptide or Protein.
+      - It must concretize some Biological Sequence at all times.
+      - That Biological Sequence must generically depend on the same molecule at some time.
+    logical_definition: >
+      BiomoleculePrimaryStructure(x) → Quality(x) ∧ ∃m,s
+      ((DeoxyribonucleicAcid(m) ∨ RibonucleicAcid(m) ∨ Peptide(m) ∨
+      Protein(m)) ∧ qualityOf(x, m) ∧ BiologicalSequence(s) ∧
+      concretizesAtAllTimes(x, s) ∧ genericallyDependsOnAtSomeTime(s, m))
+    explanatory_note: >
+      Biomolecule primary structure may be described together with covalent
+      modifications of particular residues, such as methylation or
+      phosphorylation; these modifications do not change the linear residue
+      order.
+
+
+  - label: Carbon Dioxide Evolution Rate
+    iri: "https://spec.industrialontologies.org/ontology/construct/CarbonDioxideEvolutionRate"
+    parent_class: Rate Process Profile
+    definition: >
+      rate process profile at which carbon dioxide is produced by cells
+      within a cell culture
+    examples:
+      - carbon dioxide evolution rate of a CHO fed-batch culture calculated from exhaust gas carbon dioxide concentration and gas flow rate
+    classification_conditions:
+      - The entity must be a Rate Process Profile.
+      - It must be the process profile of some Process.
+      - That Process must have some Cell Culture as a participant at some time.
+    logical_definition: >
+      CarbonDioxideEvolutionRate(x) → RateProcessProfile(x) ∧ ∃p
+      (Process(p) ∧ processProfileOf(x, p) ∧ ∃c (CellCulture(c) ∧
+      hasParticipantAtSomeTime(p, c)))
+
+
+  - label: Cell Culture Doubling Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellCultureDoublingTime"
+    parent_class: Temporal Interval
+    definition: >
+      temporal interval over which the size of a cell population doubles
+    examples:
+      - the cell culture doubling time of a CHO cell population during seed train expansion
+      - the cell culture doubling time calculated from viable cell density measurements during exponential growth
+      - the cell culture doubling time of an E. coli culture during fermentation
+    classification_conditions:
+      - The entity must be a Temporal Interval.
+    logical_definition: >
+      CellCultureDoublingTime(x) → TemporalInterval(x)
+
+
+  - label: Cell Population Growth Rate
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellPopulationGrowthRate"
+    parent_class: Population Growth Rate
+    definition: >
+      population growth rate of a cell population with respect to change in
+      its number of cells
+    examples:
+      - cell population growth rate of a CHO cell population during fed-batch cultivation
+      - viable cell population growth rate during seed train expansion
+    classification_conditions:
+      - The entity must be a Population Growth Rate.
+      - It must have some Cell Population as a participant at some time.
+    logical_definition: >
+      CellPopulationGrowthRate(x) → PopulationGrowthRate(x) ∧ ∃c
+      (CellPopulation(c) ∧ hasParticipantAtSomeTime(x, c))
+
+
+  - label: Cell Specific Productivity
+    iri: "https://spec.industrialontologies.org/ontology/construct/CellSpecificProductivity"
+    parent_class: Manufacturing Process Productivity
+    definition: >
+      manufacturing process productivity whose magnitude is normalized by
+      cell amount, typically viable cell amount
+    examples:
+      - monoclonal antibody mass produced per viable cell per day during a CHO fed-batch culture
+      - recombinant protein amount produced per cell per hour during a mammalian cell culture process
+    classification_conditions:
+      - The entity must be a Manufacturing Process Productivity.
+    logical_definition: >
+      CellSpecificProductivity(x) → ManufacturingProcessProductivity(x)
+
+
+  - label: Critical Material Attribute
+    iri: "https://spec.industrialontologies.org/ontology/construct/CriticalMaterialAttribute"
+    parent_class: Input Material Attribute
+    definition: >
+      quality or capability that is prescribed by an input critical material
+      attribute specification
+    synonyms:
+      - CMA
+    examples:
+      - manganese concentration in a chemically defined medium whose variation can affect glycosylation of the output material
+      - glucose concentration in a feed medium whose variation can affect glycan profile of the output material
+    classification_conditions:
+      - The entity must be a Quality or a Capability.
+      - It must be prescribed by some Input Critical Material Attribute Specification.
+    logical_definition: >
+      CriticalMaterialAttribute(x) ↔ (Quality(x) ∨ Capability(x)) ∧ ∃s
+      (InputCriticalMaterialAttributeSpecification(s) ∧ prescribedBy(x, s))
+    explanatory_note: >
+      Formalized as a defined class by referring to its specification class;
+      it exists primarily for modeling and implementation convenience.
+
+
+  - label: Critical Process Parameter
+    iri: "https://spec.industrialontologies.org/ontology/construct/CriticalProcessParameter"
+    parent_class: Process Parameter
+    definition: >
+      process profile or temporal region or quality prescribed by a critical
+      process parameter specification
+    synonyms:
+      - CPP
+    examples:
+      - pH during the viral inactivation process
+      - temperature during the fermentation process
+      - agitation speed during the cell culture mixing step
+    classification_conditions:
+      - The entity must be a Temporal Region, a Process Profile or a Quality.
+      - It must be prescribed by some Critical Process Parameter Specification.
+    logical_definition: >
+      CriticalProcessParameter(x) ↔ ∃s
+      (CriticalProcessParameterSpecification(s) ∧ prescribedBy(x, s)) ∧
+      (TemporalRegion(x) ∨ ProcessProfile(x) ∨ Quality(x))
+    explanatory_note: >
+      Formalized as a defined class by referring to its specification class;
+      it exists primarily for modeling and implementation convenience.
+
+
+  - label: Critical Process Parameter Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/CriticalProcessParameterSpecification"
+    parent_class: Process Parameter Specification
+    definition: >
+      process parameter specification that prescribes a variable which has
+      an impact on a critical quality attribute
+    examples:
+      - pH specification for the viral inactivation process, due to its impact on the viral clearance capability of the intermediate
+      - temperature specification for the fermentation process, which affects product titer and impurity levels
+      - agitation speed specification for the cell culture mixing step, where excessive shear stress can impact cell viability and product quality
+    classification_conditions:
+      - The entity must be a Process Parameter Specification.
+      - It must be about some Critical Quality Attribute Specification.
+      - It cannot also be a Key Process Parameter Specification.
+    logical_definition: >
+      CriticalProcessParameterSpecification(x) →
+      ProcessParameterSpecification(x) ∧ ∃y
+      (CriticalQualityAttributeSpecification(y) ∧ isAbout(x, y))
+    explanatory_note: >
+      From ICH: a process parameter whose variability has an impact on a
+      critical quality attribute and, therefore, should be monitored or
+      controlled to ensure the process obtains the desired quality.
+
+
+  - label: Critical Quality Attribute
+    iri: "https://spec.industrialontologies.org/ontology/construct/CriticalQualityAttribute"
+    parent_class: Quality Attribute
+    definition: >
+      quality or capability prescribed by a critical quality attribute
+      specification
+    synonyms:
+      - CQA
+    examples:
+      - host-cell protein impurity level in the clarified lysate
+      - aggregate content in the purified monoclonal antibody
+      - endotoxin level in the filled drug product
+      - glycan composition of the monoclonal antibody drug substance
+    classification_conditions:
+      - The entity must be a Quality or a Capability.
+      - It must be prescribed by some Critical Quality Attribute Specification.
+    logical_definition: >
+      CriticalQualityAttribute(x) ↔ (Quality(x) ∨ Capability(x)) ∧ ∃s
+      (CriticalQualityAttributeSpecification(s) ∧ prescribedBy(x, s))
+    explanatory_note: >
+      Formalized as a defined class by referring to its specification class;
+      it exists primarily for modeling and implementation convenience.
+
+
+  - label: Critical Quality Attribute Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/CriticalQualityAttributeSpecification"
+    parent_class: Quality Attribute Specification
+    definition: >
+      quality attribute specification that prescribes some quality,
+      capability, constitution, or composition deemed critical to ensuring
+      the safety, efficacy, or performance of a material product
+    examples:
+      - host-cell protein impurity specification in the clarified lysate
+      - aggregate level specification for the purified monoclonal antibody
+      - endotoxin level specification for the filled drug product
+      - glycan profile specification for the monoclonal antibody drug substance
+    classification_conditions:
+      - The entity must be a Quality Attribute Specification.
+    logical_definition: >
+      CriticalQualityAttributeSpecification(x) →
+      QualityAttributeSpecification(x)
+    explanatory_note: >
+      From ICH: a critical quality attribute is a physical, chemical,
+      biological or microbiological property or characteristic that should
+      be within an appropriate limit, range, or distribution to ensure the
+      desired product quality. Deviations beyond defined limits have
+      significant adverse impacts on product quality and mandate stringent
+      control, monitoring and validation. Critical quality attributes are
+      measured on both final products and intermediate materials.
+
+
+  - label: Culture Split Ratio
+    iri: "https://spec.industrialontologies.org/ontology/construct/CultureSplitRatio"
+    parent_class: Ratio
+    definition: >
+      ratio of a source cell culture to one or more resulting cell cultures
+      established from that source culture during passaging
+    synonyms:
+      - subculturing ratio
+    examples:
+      - 1:3 culture split ratio in which one flask of cell culture is divided to establish three resulting flasks
+      - 1:5 culture split ratio in which one part of source cell culture is transferred according to a passaging protocol and fresh medium is added to establish the resulting culture
+      - 1:10 culture split ratio used during suspension-cell passaging to reduce culture density for continued growth
+      - 1:2 culture split ratio in which a recovered culture is divided to establish two resulting cultures
+    classification_conditions:
+      - The entity must be a Ratio.
+    logical_definition: >
+      CultureSplitRatio(x) → Ratio(x)
+
+
+  - label: Dissolution Rate
+    iri: "https://spec.industrialontologies.org/ontology/construct/DissolutionRate"
+    parent_class: Rate Process Profile
+    definition: >
+      rate process profile at which a solute dissolves in a solvent
+    examples:
+      - dissolution rate of sodium chloride in water during buffer preparation
+      - dissolution rate of powdered cell culture medium in water during media preparation
+      - dissolution rate of sucrose in an aqueous reaction mixture
+      - dissolution rate of an active pharmaceutical ingredient during formulation development
+    classification_conditions:
+      - The entity must be a Rate Process Profile.
+      - It must have some Solute as a participant at some time.
+      - It must be the process profile of some Process that has some Solvent as a participant at some time.
+    logical_definition: >
+      DissolutionRate(x) → RateProcessProfile(x) ∧ ∃s (Solute(s) ∧
+      hasParticipantAtSomeTime(x, s)) ∧ ∃p (Process(p) ∧
+      processProfileOf(x, p) ∧ ∃v (Solvent(v) ∧
+      hasParticipantAtSomeTime(p, v)))
+    explanatory_note: >
+      Dissolution rate describes how fast a solute enters solution under
+      defined conditions and is typically expressed as an amount (or
+      concentration) dissolved per unit time. It is a time-dependent
+      behavior that precedes attainment of the solubility limit. The
+      observed rate depends on surface area and physical form, solute-solvent
+      interactions, temperature, mixing/agitation, mass-transfer factors, and
+      the driving force to saturation.
+
+
+  - label: Drug Potency
+    iri: "https://spec.industrialontologies.org/ontology/construct/DrugPotency"
+    parent_class: Quality
+    definition: >
+      quality of a drug substance, drug product, or relevant process
+      intermediate material that is the quantitative degree of its
+      biological activity
+    examples:
+      - the drug potency of a monoclonal antibody drug product determined by a cell-based neutralization assay
+      - the drug potency of an enzyme therapeutic drug substance determined by an enzymatic activity assay
+      - the drug potency of a cytokine drug product determined by a receptor-mediated bioassay
+      - the drug potency of a vaccine antigen lot determined by an immunological potency assay
+    classification_conditions:
+      - The entity must be a Quality.
+      - It must be the quality of some Material Product or Process Intermediate Material.
+      - It must specifically depend on some Biological Activity that is the capability of that same material.
+    logical_definition: >
+      DrugPotency(x) → Quality(x) ∧ ∃m,a
+      ((MaterialProduct(m) ∨ ProcessIntermediateMaterial(m)) ∧
+      qualityOf(x, m) ∧ BiologicalActivity(a) ∧ capabilityOf(a, m) ∧
+      specificallyDependsOn(x, a))
+    explanatory_note: >
+      According to ICH Q6B, a relevant validated potency assay should
+      ordinarily be part of the specification for a biotechnological or
+      biological drug substance or drug product. Potency should be
+      distinguished from a simple determination of product quantity because
+      it characterizes the degree of the relevant biological activity.
+
+
+  - label: Flow Rate
+    iri: "https://spec.industrialontologies.org/ontology/construct/FlowRate"
+    parent_class: Rate Process Profile
+    definition: >
+      rate process profile at which material is transported across a
+      specified surface or boundary
+    examples:
+      - mass flow rate of air supplied to a bioreactor sparger
+      - mass flow rate of carbon dioxide in an exhaust gas stream
+      - volumetric flow rate of buffer through a chromatography column
+      - volumetric flow rate of permeate through an ultrafiltration membrane
+    classification_conditions:
+      - The entity must be a Rate Process Profile.
+      - It must have some Material Entity as a participant at some time.
+    logical_definition: >
+      FlowRate(x) → RateProcessProfile(x) ∧ ∃m
+      (MaterialEntity(m) ∧ hasParticipantAtSomeTime(x, m))
+
+
+  - label: Input Critical Material Attribute Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/InputCriticalMaterialAttributeSpecification"
+    parent_class: Input Material Attribute Specification
+    definition: >
+      input material attribute specification that prescribes some quality,
+      capability, constitution, or composition whose variation can have a
+      significant impact on the quality of the output material
+    synonyms:
+      - CMA specification
+    examples:
+      - the CMA specification for manganese concentration in a chemically defined medium when variation in manganese concentration can affect glycosylation of the output material
+      - the CMA specification for glucose concentration in a feed medium when variation in glucose concentration can affect glycan profile of the output material
+      - the CMA specification for culture medium osmolality when variation in osmolality can affect charge variant profile or aggregation level of the output material
+    classification_conditions:
+      - The entity must be an Input Material Attribute Specification.
+    logical_definition: >
+      InputCriticalMaterialAttributeSpecification(x) →
+      InputMaterialAttributeSpecification(x)
+
+
+  - label: Input Material Attribute
+    iri: "https://spec.industrialontologies.org/ontology/construct/InputMaterialAttribute"
+    parent_class: Specifically Dependent Continuant
+    definition: >
+      quality or capability that is prescribed by an input material
+      attribute specification
+    examples:
+      - pH of a buffer used for elution
+      - vitamin concentration of a cell culture medium used in a production culture process
+    classification_conditions:
+      - The entity must be a Quality or a Capability.
+      - It must be prescribed by some Input Material Attribute Specification.
+    logical_definition: >
+      InputMaterialAttribute(x) ↔ (Quality(x) ∨ Capability(x)) ∧ ∃s
+      (InputMaterialAttributeSpecification(s) ∧ prescribedBy(x, s))
+    explanatory_note: >
+      Formalized as a defined class by referring to its specification class;
+      it exists primarily for modeling and implementation convenience.
+
+
+  - label: Input Material Attribute Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/InputMaterialAttributeSpecification"
+    parent_class: Input Specification
+    definition: >
+      input specification that prescribes some quality, capability,
+      constitution, or composition of an input material that can have an
+      impact on process performance or on the quality of the output material
+    examples:
+      - the input material attribute specification for pH of a buffer used as an input material
+      - the input material attribute specification for osmolality of a culture medium used as an input material
+      - the input material attribute specification for glucose concentration in a feed medium
+    classification_conditions:
+      - The entity must be an Input Specification.
+      - It must prescribe some Quality or Capability.
+      - That Quality or Capability must inhere in a Raw Material, Process Intermediate Material or Production Consumable, or in a Material Entity that is a continuant part at all times of one of them.
+    logical_definition: >
+      InputMaterialAttributeSpecification(x) → InputSpecification(x) ∧ ∃a
+      (prescribes(x, a) ∧ (Quality(a) ∨ Capability(a)) ∧ ∃m
+      (inheresIn(a, m) ∧ ((RawMaterial(m) ∨ ProcessIntermediateMaterial(m)
+      ∨ ProductionConsumable(m)) ∨ (MaterialEntity(m) ∧ ∃w
+      (continuantPartOfAtAllTimes(m, w) ∧ (RawMaterial(w) ∨
+      ProcessIntermediateMaterial(w) ∨ ProductionConsumable(w)))))))
+    explanatory_note: >
+      Input materials can be raw materials, process intermediate materials,
+      or production consumables.
+
+
+  - label: Key Performance Indicator
+    iri: "https://spec.industrialontologies.org/ontology/construct/KeyPerformanceIndicator"
+    parent_class: Performance Indicator
+    definition: >
+      process profile, temporal region, quality or process characteristic
+      prescribed by a key performance indicator specification
+    synonyms:
+      - KPI
+    examples:
+      - average deviation rate per production step due to CPP excursions
+      - yield consistency over successive purification runs
+      - final harvest titer for a specific production batch
+      - Viral clearance log reduction amount for the purification step
+      - batch release time within the specified regulatory window
+    classification_conditions:
+      - The entity must be a Temporal Region, Process Profile, Quality or Process Characteristic.
+      - It must be prescribed by some Key Performance Indicator Specification.
+    logical_definition: >
+      KeyPerformanceIndicator(x) ↔ ∃s
+      (KeyPerformanceIndicatorSpecification(s) ∧ prescribedBy(x, s)) ∧
+      (TemporalRegion(x) ∨ ProcessProfile(x) ∨ Quality(x) ∨
+      ProcessCharacteristic(x))
+    explanatory_note: >
+      Formalized as a defined class by referring to its specification class;
+      it exists primarily for modeling and implementation convenience.
+
+
+  - label: Key Performance Indicator Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/KeyPerformanceIndicatorSpecification"
+    parent_class: Performance Indicator Specification
+    definition: >
+      performance indicator specification that prescribes a measurable
+      characteristic whose measurements reflect effectiveness with respect
+      to some objective determined as important by a person or organization
+    examples:
+      - final harvest titer specification for the production batch, measured in pooled harvested cell culture fluid at completion of harvest, with a target range of 3.5 to 5.0 grams per liter
+      - viral clearance log reduction value specification for the purification step, calculated from the viral loads measured before and after the step, with a target of at least 4.0
+      - batch release cycle time specification for the production batch, measured from completion of manufacturing to authorization of the batch for release, with a target of no more than 10 calendar days
+    classification_conditions:
+      - The entity must be a Performance Indicator Specification.
+    logical_definition: >
+      KeyPerformanceIndicatorSpecification(x) →
+      PerformanceIndicatorSpecification(x)
+    explanatory_note: >
+      Per ISO 22400 a good KPI meets certain criteria, and its
+      specification should include context such as timing, audience,
+      production methodology and notes. In biopharmaceutical manufacturing
+      some KPIs are process-focused and related to CQAs and influenced by
+      CPPs, providing evidence of process consistency. Others address
+      operational performance, such as throughput, cycle time, equipment
+      utilization or schedule adherence.
+
+
+  - label: Key Process Parameter
+    iri: "https://spec.industrialontologies.org/ontology/construct/KeyProcessParameter"
+    parent_class: Process Parameter
+    definition: >
+      process profile, temporal region, or quality prescribed by a key
+      process parameter specification
+    synonyms:
+      - KPP
+    examples:
+      - temperature during media hold
+      - buffer addition flow rate during diafiltration
+    classification_conditions:
+      - The entity must be a Temporal Region, a Process Profile or a Quality.
+      - It must be prescribed by some Key Process Parameter Specification.
+    logical_definition: >
+      KeyProcessParameter(x) ↔ ∃s (KeyProcessParameterSpecification(s) ∧
+      prescribedBy(x, s)) ∧ (TemporalRegion(x) ∨ ProcessProfile(x) ∨
+      Quality(x))
+    explanatory_note: >
+      Formalized as a defined class by referring to its specification class;
+      it exists primarily for modeling and implementation convenience.
+
+
+  - label: Key Process Parameter Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/KeyProcessParameterSpecification"
+    parent_class: Process Parameter Specification
+    definition: >
+      process parameter specification that prescribes a variable which must
+      be tightly controlled to ensure process consistency and that does not
+      directly impact any critical quality attribute
+    examples:
+      - temperature specification for media hold, which is necessary to prevent microbial growth without affecting downstream CQAs
+      - flow rate specification for diafiltration buffer addition, important for maintaining steady-state conditions but not directly impacting product purity
+    classification_conditions:
+      - The entity must be a Process Parameter Specification.
+      - It cannot also be a Critical Process Parameter Specification.
+    logical_definition: >
+      KeyProcessParameterSpecification(x) → ProcessParameterSpecification(x)
+
+
+  - label: Manufacturing Process Productivity
+    iri: "https://spec.industrialontologies.org/ontology/construct/ManufacturingProcessProductivity"
+    parent_class: Rate Process Profile
+    definition: >
+      rate process profile at which process intermediate material or
+      material product is produced in a manufacturing process under
+      specified conditions
+    examples:
+      - monoclonal antibody mass produced per day during a fed-batch manufacturing process
+      - recombinant enzyme activity units produced per hour during a microbial fermentation process
+    classification_conditions:
+      - The entity must be a Rate Process Profile.
+      - It must have some Process Intermediate Material or Material Product as a participant at some time.
+      - It must be the process profile of some Manufacturing Process that has that same material as a specified output.
+    logical_definition: >
+      ManufacturingProcessProductivity(x) → RateProcessProfile(x) ∧ ∃m,p
+      ((ProcessIntermediateMaterial(m) ∨ MaterialProduct(m)) ∧
+      ManufacturingProcess(p) ∧ hasParticipantAtSomeTime(x, m) ∧
+      processProfileOf(x, p) ∧ hasSpecifiedOutput(p, m))
+    explanatory_note: >
+      Manufacturing process productivity concerns production of process
+      intermediate material or material product per unit time. It should be
+      distinguished from labor productivity, equipment effectiveness,
+      process yield, resource efficiency, and economic productivity.
+
+
+  - label: Mass Flow Rate
+    iri: "https://spec.industrialontologies.org/ontology/construct/MassFlowRate"
+    parent_class: Flow Rate
+    definition: >
+      flow rate whose magnitude is determined by the mass of material
+      transported across the specified surface or boundary per unit of
+      elapsed time
+    examples:
+      - mass flow rate of air supplied to a bioreactor sparger
+      - mass flow rate of carbon dioxide in an exhaust gas stream
+      - mass flow rate of buffer through a chromatography column
+      - mass flow rate of liquid feed through a process line
+    classification_conditions:
+      - The entity must be a Flow Rate.
+    logical_definition: >
+      MassFlowRate(x) → FlowRate(x)
+
+
+  - label: Metabolite Uptake Rate
+    iri: "https://spec.industrialontologies.org/ontology/construct/MetaboliteUptakeRate"
+    parent_class: Rate Process Profile
+    definition: >
+      rate process profile at which a metabolite is taken up by cells within
+      a cell culture
+    examples:
+      - glucose uptake rate by a CHO cell population during fed-batch cultivation
+      - glutamine uptake rate by a mammalian cell culture during early growth phase
+      - amino acid uptake rate by a cell population during a nutrient-limited culture process
+    classification_conditions:
+      - The entity must be a Rate Process Profile.
+      - It must be the process profile of some Process that has some Cell Culture as a participant at some time.
+      - It must have some Molecular Entity as a participant at some time.
+    logical_definition: >
+      MetaboliteUptakeRate(x) → RateProcessProfile(x) ∧ ∃p (Process(p) ∧
+      processProfileOf(x, p) ∧ ∃c (CellCulture(c) ∧
+      hasParticipantAtSomeTime(p, c))) ∧ ∃me (MolecularEntity(me) ∧
+      hasParticipantAtSomeTime(x, me))
+
+
+  - label: Normalized Flow Rate
+    iri: "https://spec.industrialontologies.org/ontology/construct/NormalizedFlowRate"
+    parent_class: Flow Rate
+    definition: >
+      flow rate whose magnitude is expressed relative to a specified
+      reference quantity
+    examples:
+      - permeate flow rate normalized to membrane area during ultrafiltration, expressed as L m⁻² h⁻¹
+      - a perfusion culture operated at 1 VVD, meaning one working volume of medium is exchanged over one day
+    classification_conditions:
+      - The entity must be a Flow Rate.
+    logical_definition: >
+      NormalizedFlowRate(x) → FlowRate(x)
+    explanatory_note: >
+      The reference quantity used for normalization may be, for example,
+      membrane area, working volume, or cell amount, so units differ.
+      Normalization here does not mean conversion of a gas flow rate to
+      standard temperature and pressure conditions.
+
+
+  - label: Oxygen Uptake Rate
+    iri: "https://spec.industrialontologies.org/ontology/construct/OxygenUptakeRate"
+    parent_class: Rate Process Profile
+    definition: >
+      rate process profile at which oxygen is consumed by cells within a
+      cell culture
+    examples:
+      - oxygen uptake rate of a CHO cell culture during fed-batch cultivation
+      - oxygen uptake rate of an E. coli fermentation during exponential growth
+    classification_conditions:
+      - The entity must be a Rate Process Profile.
+      - It must have some Dioxygen Molecule as a participant at some time.
+      - It must be the process profile of some Process that has some Cell Culture as a participant at some time.
+    logical_definition: >
+      OxygenUptakeRate(x) → RateProcessProfile(x) ∧ ∃o
+      (DioxygenMolecule(o) ∧ hasParticipantAtSomeTime(x, o)) ∧ ∃p
+      (Process(p) ∧ processProfileOf(x, p) ∧ ∃c (CellCulture(c) ∧
+      hasParticipantAtSomeTime(p, c)))
+
+
+  - label: Performance Indicator
+    iri: "https://spec.industrialontologies.org/ontology/construct/PerformanceIndicator"
+    parent_class: Entity
+    definition: >
+      process profile, temporal region, quality or process characteristic
+      prescribed by a performance indicator specification
+    examples:
+      - Yearly sales, monthly throughput, quarterly overall equipment effectiveness, 12-month on-time delivery percentage.
+    classification_conditions:
+      - The entity must be a Temporal Region, Process Profile, Quality or Process Characteristic.
+      - It must be prescribed by some Performance Indicator Specification.
+    logical_definition: >
+      PerformanceIndicator(x) ↔ ∃s (PerformanceIndicatorSpecification(s) ∧
+      prescribedBy(x, s)) ∧ (TemporalRegion(x) ∨ ProcessProfile(x) ∨
+      Quality(x) ∨ ProcessCharacteristic(x))
+    explanatory_note: >
+      Formalized as a defined class by referring to its specification class;
+      it exists primarily for modeling and implementation convenience.
+
+
+  - label: Performance Indicator Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/PerformanceIndicatorSpecification"
+    parent_class: Information Content Entity
+    definition: >
+      information content entity that prescribes some measurable
+      characteristic whose measurements reflect the effectiveness of an
+      agent, planned process, organization, or piece of equipment with
+      respect to a particular objective
+    examples:
+      - annual sales revenue specification for the organization for the applicable fiscal year, with a target of at least USD 10 million
+      - monthly production throughput specification for the manufacturing line, expressed as conforming units completed per operating hour, with a target range of 120 to 150 units per hour
+      - quarterly overall equipment effectiveness specification for the production line, calculated as availability multiplied by performance multiplied by quality, with a target of at least 85 percent
+      - rolling 12-month on-time delivery percentage specification for customer orders, calculated from orders delivered on or before the committed delivery date relative to the applicable orders in the reporting period, with a target of at least 95 percent
+    classification_conditions:
+      - The entity must be an Information Content Entity.
+      - It must prescribe some Temporal Region, Quality, Process Profile or Process Characteristic.
+      - It must be about some Objective Specification.
+    logical_definition: >
+      PerformanceIndicatorSpecification(x) → InformationContentEntity(x) ∧ ∃y
+      ((TemporalRegion(y) ∨ Quality(y) ∨ ProcessProfile(y) ∨
+      ProcessCharacteristic(y)) ∧ prescribes(x, y)) ∧ ∃z
+      (ObjectiveSpecification(z) ∧ isAbout(x, z))
+    explanatory_note: >
+      Performance indicators are measurable, goal-oriented and actionable,
+      and typically specific, achievable, relevant and time-bound. A
+      performance indicator differs from a process parameter in that it is
+      typically not directly controllable; it often reflects the combined
+      effect of multiple process parameters. For example, production yield
+      is a performance indicator influenced by temperature, pH and
+      agitation speed.
+
+
+  - label: Planned Process Yield
+    iri: "https://spec.industrialontologies.org/ontology/construct/PlannedProcessYield"
+    parent_class: Process Characteristic
+    definition: >
+      process characteristic that is the ratio of a specified output
+      quantity produced in a planned process to a specified reference
+      quantity associated with that planned process
+    examples:
+      - the yield of a purification step calculated as purified protein mass relative to protein mass loaded onto the column
+      - the yield of a synthesis process calculated as actual product amount relative to theoretical product amount
+      - the yield of a harvest process calculated as recovered product amount relative to product amount present before harvest
+    classification_conditions:
+      - The entity must be a Process Characteristic.
+      - It must be the process characteristic of some Planned Process.
+      - That Planned Process must have some Material Entity as a specified output.
+    logical_definition: >
+      PlannedProcessYield(x) → ProcessCharacteristic(x) ∧ ∃p
+      (PlannedProcess(p) ∧ processCharacteristicOf(x, p) ∧ ∃o
+      (MaterialEntity(o) ∧ hasSpecifiedOutput(p, o)))
+    explanatory_note: >
+      The reference quantity is a quantity associated with a participant in
+      the planned process, such as an input, starting-material, limiting
+      component, theoretical output, expected output or intermediate
+      quantity. Yield should be distinguished from the output quantity
+      itself: 8 g of purified protein is an output quantity, whereas 80%
+      yield relates that output to a reference quantity.
+
+
+  - label: Population Growth Rate
+    iri: "https://spec.industrialontologies.org/ontology/construct/PopulationGrowthRate"
+    parent_class: Rate Process Profile
+    definition: >
+      rate process profile that captures change in the size of a population
+      per unit of elapsed time
+    examples:
+      - population growth rate of a CHO cell population during fed-batch cultivation
+      - population growth rate of an E. coli population during exponential growth
+      - viable cell population growth rate during seed train expansion
+      - microbial population growth rate during fermentation
+    classification_conditions:
+      - The entity must be a Rate Process Profile.
+    logical_definition: >
+      PopulationGrowthRate(x) → RateProcessProfile(x)
+
+
+  - label: Process Parameter
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProcessParameter"
+    parent_class: Entity
+    definition: >
+      process profile or temporal region or quality prescribed by a process
+      parameter specification
+    examples:
+      - agitation speed during the mixing process in a cell culture step
+      - incubation time of the cell expansion process
+      - temperature during the fermentation process
+      - flow rate during the loading phase of a chromatography process
+      - pH of the solution in the neutralization process
+      - residence time in the viral inactivation process
+    classification_conditions:
+      - The entity must be a Temporal Region, a Process Profile or a Quality.
+      - It must be prescribed by some Process Parameter Specification.
+    logical_definition: >
+      ProcessParameter(x) ↔ ∃s (ProcessParameterSpecification(s) ∧
+      prescribedBy(x, s)) ∧ (TemporalRegion(x) ∨ ProcessProfile(x) ∨
+      Quality(x))
+    explanatory_note: >
+      Formalized as a defined class by referring to its specification class;
+      it exists primarily for modeling and implementation convenience.
+
+
+  - label: Process Parameter Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProcessParameterSpecification"
+    parent_class: Information Content Entity
+    definition: >
+      information content entity that prescribes a monitorable or
+      controllable variable associated with some planned process
+    examples:
+      - agitation speed specification for the mixing process in a cell culture step
+      - incubation time specification for the cell expansion process
+      - temperature specification for the fermentation process
+      - flow rate specification for the loading phase of a chromatography process
+      - pH specification for the neutralization process in buffer preparation
+      - residence time specification for the viral inactivation process
+    classification_conditions:
+      - The entity must be an Information Content Entity.
+      - It must be a continuant part of some Plan Specification at all times.
+      - It must prescribe some Temporal Region, Process Profile or Quality.
+      - It cannot also be a Quality Attribute Specification.
+    logical_definition: >
+      ProcessParameterSpecification(x) → InformationContentEntity(x) ∧ ∃y
+      (PlanSpecification(y) ∧ continuantPartOfAtAllTimes(x, y)) ∧ ∃z
+      ((TemporalRegion(z) ∨ ProcessProfile(z) ∨ Quality(z)) ∧
+      prescribes(x, z))
+    explanatory_note: >
+      Process parameters must be specified with their target value or
+      acceptable range, and may be critical or non-critical. They describe
+      and control the conditions under which a process operates, and are
+      typically specified in process documentation or recipes. They may be
+      process profiles (e.g., agitation speed, flow rate), temporal regions
+      (e.g., incubation time, residence time) or qualities (e.g.,
+      temperature, pH, pressure). Not process parameter specifications are
+      a raw-material specification, a specification of the amount of glucose
+      to add to a bioreactor (an input specification), and the model number
+      or type of a chromatography column.
+
+
+  - label: Product Titer
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProductTiter"
+    parent_class: Concentration
+    definition: >
+      concentration of a process intermediate material or material product
+      that is determined by the amount of a target product in that process
+      intermediate material or material product per unit volume
+    examples:
+      - titer of 3.2 g/L monoclonal antibody in a cell culture harvest on day 14
+      - titer of 2.8 g/L monoclonal antibody in a clarified harvest after depth filtration
+      - titer of 12 g/L monoclonal antibody in a protein A eluate after elution
+    classification_conditions:
+      - The entity must be a Concentration.
+      - It must be the quality of some Process Intermediate Material or Material Product.
+    logical_definition: >
+      ProductTiter(x) → Concentration(x) ∧ ∃m
+      ((ProcessIntermediateMaterial(m) ∨ MaterialProduct(m)) ∧
+      qualityOf(x, m))
+    explanatory_note: >
+      Here the target product is the specified substance of interest for the
+      manufacturing objective. Product titer is evaluated at a specified
+      time point and may vary over time due to dilution, degradation or
+      changes in process volume. Process material means material being
+      transformed in a manufacturing process, not raw materials or
+      consumables.
+
+
+  - label: Protein Secondary Structure
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProteinSecondaryStructure"
+    parent_class: Physical Structure
+    definition: >
+      physical structure of a protein that is the local three-dimensional
+      arrangement of segments of its polypeptide backbone, commonly
+      characterized by recurring backbone hydrogen-bonding patterns
+    examples:
+      - the alpha-helical secondary structure of a protein
+      - the beta-sheet secondary structure of an antibody domain
+      - the turn structure connecting two beta strands in a protein
+      - the loop structure in an enzyme active-site region
+      - the altered secondary structure of a protein after thermal stress
+    classification_conditions:
+      - The entity must be a Physical Structure.
+      - It must be the quality of some Protein.
+    logical_definition: >
+      ProteinSecondaryStructure(x) → PhysicalStructure(x) ∧ ∃p
+      (Protein(p) ∧ qualityOf(x, p))
+
+
+  - label: Protein Tertiary Structure
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProteinTertiaryStructure"
+    parent_class: Physical Structure
+    definition: >
+      physical structure of a protein that is the overall three-dimensional
+      arrangement arising from the conformation of its polypeptide chain,
+      including the spatial organization of its secondary structure
+      elements relative to one another
+    examples:
+      - the folded three-dimensional structure of a single-domain antibody molecule
+      - the folded structure of an antibody-derived single-chain variable fragment
+      - the folded structure of a recombinant human growth hormone molecule
+      - the folded three-dimensional structure of an erythropoietin molecule stabilized by disulfide bonds and glycosylation
+      - the compact globular structure of a myoglobin molecule
+      - the beta-barrel structure of a green fluorescent protein molecule
+    classification_conditions:
+      - The entity must be a Physical Structure.
+      - It must be the quality of some Protein.
+    logical_definition: >
+      ProteinTertiaryStructure(x) → PhysicalStructure(x) ∧ ∃p
+      (Protein(p) ∧ qualityOf(x, p))
+
+
+  - label: Quality Attribute
+    iri: "https://spec.industrialontologies.org/ontology/construct/QualityAttribute"
+    parent_class: Specifically Dependent Continuant
+    definition: >
+      quality or capability that is prescribed by a quality attribute
+      specification
+    examples:
+      - content uniformity of the dosage units in a batch
+      - level of degradation products in the formulation
+      - residual solvent level in the final product
+      - dissolution capability of a dosage form
+      - moisture content of the drug product
+      - microbial load in the final product
+      - color of the tablet or capsule
+      - shape of the dosage form
+      - size of the finished unit
+      - odor of the drug product
+    classification_conditions:
+      - The entity must be a Quality or a Capability.
+      - It must be prescribed by some Quality Attribute Specification.
+    logical_definition: >
+      QualityAttribute(x) ↔ (Quality(x) ∨ Capability(x)) ∧ ∃s
+      (QualityAttributeSpecification(s) ∧ prescribedBy(x, s))
+    explanatory_note: >
+      Formalized as a defined class by referring to its specification class;
+      it exists primarily for modeling and implementation convenience. Not a
+      quality attribute is the yield of a protein purification step.
+
+
+  - label: Quality Attribute Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/QualityAttributeSpecification"
+    parent_class: Output Objective Specification
+    definition: >
+      output objective specification that prescribes some quality,
+      capability, constitution, or composition that a material product or
+      process intermediate material must possess in order to satisfy
+      predefined quality requirements
+    examples:
+      - content uniformity specification
+      - degradation product specification
+      - residual solvent specification
+      - drug release specification
+      - dissolution specification
+      - moisture content specification
+      - microbial limit specification
+      - color specification
+      - shape specification
+      - size specification
+      - odor specification
+    classification_conditions:
+      - The entity must be an Output Objective Specification.
+      - It must prescribe some Quality or Capability.
+      - That Quality or Capability must inhere in some Process Intermediate Material or Material Product, or in a Material Entity that is a continuant part at all times of one.
+      - It cannot also be a Process Parameter Specification.
+    logical_definition: >
+      QualityAttributeSpecification(x) → OutputObjectiveSpecification(x) ∧ ∃q,m
+      ((Quality(q) ∨ Capability(q)) ∧ (ProcessIntermediateMaterial(m) ∨
+      MaterialProduct(m)) ∧ ((∃z (MaterialEntity(z) ∧
+      continuantPartOfAtAllTimes(z, m) ∧ inheresIn(q, z))) ∨
+      inheresIn(q, m)) ∧ prescribes(x, q))
+    explanatory_note: >
+      Attributes can be critical or not critical. In pharma, criticality is
+      primarily based on the severity of harm to the patient should the
+      product fall outside the acceptable range; probability of occurrence,
+      detectability or controllability does not affect criticality. These
+      specifications may refer to intrinsic properties (pH, viscosity),
+      capabilities (binding affinity), or the identity and proportion of
+      components (glycoforms, excipients, host cell proteins); for
+      composition the quality should inhere in the specific component. Not
+      a quality attribute specification is a purification yield of at least
+      70%, which is a process performance constraint.
+
+
+  - label: Rate Process Profile
+    iri: "https://spec.industrialontologies.org/ontology/construct/RateProcessProfile"
+    parent_class: Process Profile
+    definition: >
+      process profile that captures variation in an attribute of a process
+      or one of its participants per unit of elapsed time
+    examples:
+      - glucose consumption rate during a fed-batch cell culture process
+      - product formation rate during a fermentation process
+      - biomass formation rate during microbial cultivation
+      - feed addition rate during a material feeding process
+      - number of Tetra Pak cartons filled per hour by a packaging line
+      - rate of potable water output from a water treatment plant
+    classification_conditions:
+      - The entity must be a Process Profile.
+    logical_definition: >
+      RateProcessProfile(x) → ProcessProfile(x)
+    explanatory_note: >
+      An attribute captured by a rate process profile may itself be
+      represented by another process profile, as when an acceleration
+      profile captures variation in a speed profile per unit of elapsed
+      time.
+
+
+  - label: Specific Cell Population Growth Rate
+    iri: "https://spec.industrialontologies.org/ontology/construct/SpecificCellPopulationGrowthRate"
+    parent_class: Cell Population Growth Rate
+    definition: >
+      cell population growth rate whose magnitude is normalized by the size
+      of that cell population
+    examples:
+      - specific growth rate of an E. coli population during exponential growth
+      - specific cell population growth rate of a CHO cell population during seed train expansion
+      - specific growth rate calculated from viable cell density measurements over a defined interval
+    classification_conditions:
+      - The entity must be a Cell Population Growth Rate.
+    logical_definition: >
+      SpecificCellPopulationGrowthRate(x) → CellPopulationGrowthRate(x)
+
+
+  - label: Total Material Added
+    iri: "https://spec.industrialontologies.org/ontology/construct/TotalMaterialAdded"
+    parent_class: Process Characteristic
+    definition: >
+      process characteristic that is the total quantity of a particular
+      material that is added during a particular process
+    examples:
+      - a viral inactivation process has total material added of 0.5 L acid solution from a single bolus addition for pH adjustment
+      - a production culture process has total material added of 73 g galactose from multiple bolus additions during the production phase
+      - a chromatography column equilibration process has total material added of 6 column volumes of equilibration buffer
+    classification_conditions:
+      - The entity must be a Process Characteristic.
+      - It must be the process characteristic of some Planned Process.
+    logical_definition: >
+      TotalMaterialAdded(x) → ProcessCharacteristic(x) ∧ ∃p
+      (PlannedProcess(p) ∧ processCharacteristicOf(x, p))
+    explanatory_note: >
+      Total material added is evaluated over one or more material addition
+      events. The material may be supplied in a single addition, multiple
+      bolus additions or continuous feeding, and may be expressed as mass,
+      volume, amount of substance or another quantity. It should be
+      distinguished from addition rate or feed rate.
+
+
+  - label: Vessel Volumes Per Day
+    iri: "https://spec.industrialontologies.org/ontology/construct/VesselVolumesPerDay"
+    parent_class: Normalized Flow Rate
+    definition: >
+      normalized flow rate whose magnitude is the volume of medium
+      exchanged per day relative to the working volume
+    synonyms:
+      - VVD
+    examples:
+      - a perfusion culture operated at 1 VVD, meaning one working volume of medium is exchanged over one day
+      - a 2 L working-volume bioreactor with 2 L of medium exchanged per day, corresponding to 1 VVD
+      - a perfusion process reported as 0.5 VVD when the daily exchanged medium volume is half of the working volume
+    classification_conditions:
+      - The entity must be a Normalized Flow Rate.
+    logical_definition: >
+      VesselVolumesPerDay(x) → NormalizedFlowRate(x)
+    explanatory_note: >
+      VVD is typically the total medium exchange normalized by working
+      volume. In some uses it is computed only from the spent-medium outlet
+      flow, excluding sampling, bleed or other removal streams. That
+      narrower accounting can underestimate the true total exchange and
+      mislead comparisons unless the boundary is made explicit.
+
+
+  - label: Volumetric Flow Rate
+    iri: "https://spec.industrialontologies.org/ontology/construct/VolumetricFlowRate"
+    parent_class: Flow Rate
+    definition: >
+      flow rate whose magnitude is determined by the volume of material
+      transported across the specified surface or boundary per unit of
+      elapsed time
+    examples:
+      - volumetric flow rate of buffer through a chromatography column
+      - volumetric flow rate of permeate through an ultrafiltration membrane
+      - volumetric flow rate of liquid feed through a process line
+    classification_conditions:
+      - The entity must be a Flow Rate.
+    logical_definition: >
+      VolumetricFlowRate(x) → FlowRate(x)
+
+
+  - label: Volumetric Productivity
+    iri: "https://spec.industrialontologies.org/ontology/construct/VolumetricProductivity"
+    parent_class: Manufacturing Process Productivity
+    definition: >
+      manufacturing process productivity whose magnitude is normalized by a
+      specified reference volume of process material
+    examples:
+      - monoclonal antibody mass produced per liter of culture working volume per day during a CHO fed-batch process
+      - recombinant protein mass produced per liter of microbial fermentation volume per hour
+      - viral vector genome copies produced per liter of culture volume per day
+      - enzyme activity units produced per liter of culture working volume per hour
+    classification_conditions:
+      - The entity must be a Manufacturing Process Productivity.
+    logical_definition: >
+      VolumetricProductivity(x) → ManufacturingProcessProductivity(x)
+    explanatory_note: >
+      In upstream biopharma manufacturing the process volume is typically
+      the culture working volume.
+
+
+  - label: Working Volume
+    iri: "https://spec.industrialontologies.org/ontology/construct/WorkingVolume"
+    parent_class: Volume
+    definition: >
+      volume that is a quality of process material and that is the volume
+      occupied by that process material in a vessel during a planned process
+    examples:
+      - the 120 L working volume of a CHO cell culture in a 250 L bioreactor during a fed-batch cultivation process
+      - the 3 L working volume of buffer in a mixing vessel during buffer preparation
+    classification_conditions:
+      - The entity must be a Volume.
+      - It must be the quality of some Material Entity.
+      - That Material Entity must participate in some Planned Process at some time.
+    logical_definition: >
+      WorkingVolume(x) → Volume(x) ∧ ∃m (MaterialEntity(m) ∧ qualityOf(x, m)
+      ∧ ∃p (PlannedProcess(p) ∧ participatesInAtSomeTime(m, p)))
+    explanatory_note: >
+      Working volume is the actual volume of process material present in a
+      vessel during a planned process. It should be distinguished from
+      working volume capacity (a capacity of the vessel) and total vessel
+      volume (a geometric volume). For example, a bioreactor may have a
+      total vessel volume of 250 L, a working volume capacity of 50-200 L,
+      and a working volume of 120 L during a particular cultivation.
+
+
+  - label: Yield Per Biomass
+    iri: "https://spec.industrialontologies.org/ontology/construct/YieldPerBiomass"
+    parent_class: Planned Process Yield
+    definition: >
+      planned process yield that characterizes the quantity of a specified
+      material output produced in a planned process relative to the quantity
+      of biomass formed in that planned process
+    examples:
+      - the yield per biomass of a microbial fermentation calculated as recombinant protein mass produced per gram of biomass formed
+      - the yield per biomass of an E. coli enzyme expression process calculated as enzyme activity units recovered per gram dry cell weight
+      - the yield per biomass of a yeast production process calculated as product mass produced per biomass amount accumulated during cultivation
+    classification_conditions:
+      - The entity must be a Planned Process Yield.
+    logical_definition: >
+      YieldPerBiomass(x) → PlannedProcessYield(x)
+
+
+  - label: Yield Per Substrate
+    iri: "https://spec.industrialontologies.org/ontology/construct/YieldPerSubstrate"
+    parent_class: Planned Process Yield
+    definition: >
+      planned process yield that characterizes the quantity of a specified
+      material output produced in a planned process relative to the
+      quantity of a specified substrate consumed in that planned process
+    examples:
+      - the yield per substrate of a microbial fermentation calculated as recombinant protein mass produced per gram of glucose consumed
+      - the yield per substrate of a levansucrase reaction calculated as levan mass produced per gram of sucrose consumed
+      - the yield per substrate of an E. coli enzyme expression process calculated as enzyme activity units recovered per gram of glycerol consumed
+    classification_conditions:
+      - The entity must be a Planned Process Yield.
+      - It must be the process characteristic of some Planned Process.
+      - That Planned Process must have some Material Entity as an input.
+    logical_definition: >
+      YieldPerSubstrate(x) → PlannedProcessYield(x) ∧ ∃p,m
+      (PlannedProcess(p) ∧ MaterialEntity(m) ∧ processCharacteristicOf(x, p)
+      ∧ hasInput(p, m))
+
+
+relationships:
+
+  - label: Has Performance Indicator
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasPerformanceIndicator"
+    definition: >
+      relation between an agent, planned process, organization, or piece of
+      equipment and a performance indicator indicating that measurements of
+      the indicator are used to evaluate the effectiveness of that entity
+      with respect to a particular objective
+    examples:
+      - manufacturing organization has performance indicator 12-month on-time delivery percentage
+      - sales organization has performance indicator yearly sales
+      - production culture process has performance indicator product titer
+      - chromatography purification process has performance indicator product recovery
+    domain:
+      - Agent
+      - Organization
+      - Piece Of Equipment
+      - Planned Process
+    range:
+      - Performance Indicator
+    inverse: Is Performance Indicator Of
+    extraction_constraints:
+      - Subject must be an Agent, Organization, Piece Of Equipment or Planned Process.
+      - Object must be a Performance Indicator.
+      - The relationship direction is Evaluated Entity → Performance Indicator.
+
+
+  - label: Is Performance Indicator Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/isPerformanceIndicatorOf"
+    definition: >
+      relation between a performance indicator and an agent, planned
+      process, organization, or piece of equipment indicating that
+      measurements of the indicator are used to evaluate the effectiveness
+      of that entity with respect to a particular objective
+    examples:
+      - 12-month on-time delivery percentage is performance indicator of a manufacturing organization
+      - yearly sales is performance indicator of a sales organization
+      - product titer is performance indicator of a production culture process
+      - product recovery is performance indicator of a chromatography purification process
+    domain:
+      - Performance Indicator
+    range:
+      - Agent
+      - Organization
+      - Piece Of Equipment
+      - Planned Process
+    inverse: Has Performance Indicator
+    extraction_constraints:
+      - Subject must be a Performance Indicator.
+      - Object must be an Agent, Organization, Piece Of Equipment or Planned Process.
+      - The relationship direction is Performance Indicator → Evaluated Entity.
+
+
+  - label: Has Process Parameter
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasProcessParameter"
+    definition: >
+      relation between a planned process and a process parameter indicating
+      that the parameter is monitored or controlled during the execution of
+      that planned process
+    examples:
+      - cell culture expansion process has process parameter pH
+      - production culture process has process parameter temperature
+      - production phase has process parameter agitation speed
+    domain:
+      - Planned Process
+    range:
+      - Process Parameter
+    inverse: Is Process Parameter Of
+    extraction_constraints:
+      - Subject must be a Planned Process.
+      - Object must be a Process Parameter.
+      - The Plan Specification that prescribes the Planned Process must include the matching Process Parameter Specification as a continuant part.
+      - The relationship direction is Planned Process → Process Parameter.
+
+
+  - label: Is Process Parameter Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/isProcessParameterOf"
+    definition: >
+      relation between a process parameter and a planned process indicating
+      that the parameter is monitored or controlled during the execution of
+      that planned process
+    examples:
+      - pH is process parameter of a cell culture expansion process
+      - temperature is process parameter of a production culture process
+      - agitation speed is process parameter of a production phase
+    domain:
+      - Process Parameter
+    range:
+      - Planned Process
+    inverse: Has Process Parameter
+    extraction_constraints:
+      - Subject must be a Process Parameter.
+      - Object must be a Planned Process.
+      - The relationship direction is Process Parameter → Planned Process.
+
+
+  - label: Prescribes
+    iri: "https://spec.industrialontologies.org/ontology/construct/prescribes"
+    definition: >
+      relationship from a specification to the entity it prescribes
+    domain:
+      - Process Parameter Specification
+      - Critical Process Parameter Specification
+      - Key Process Parameter Specification
+      - Quality Attribute Specification
+      - Critical Quality Attribute Specification
+      - Input Material Attribute Specification
+      - Input Critical Material Attribute Specification
+      - Performance Indicator Specification
+      - Key Performance Indicator Specification
+    range:
+      - Temporal Region
+      - Process Profile
+      - Quality
+      - Capability
+      - Process Characteristic
+    inverse: Prescribed By
+    extraction_constraints:
+      - Process Parameter Specification must prescribe a Temporal Region, Process Profile or Quality.
+      - Quality Attribute Specification must prescribe a Quality or Capability that inheres in a Material Product or Process Intermediate Material.
+      - Input Material Attribute Specification must prescribe a Quality or Capability that inheres in a Raw Material, Process Intermediate Material or Production Consumable.
+      - Performance Indicator Specification must prescribe a Temporal Region, Quality, Process Profile or Process Characteristic.
+      - The relationship direction is Specification → Prescribed Entity.
+
+
+  - label: Prescribed By
+    iri: "https://spec.industrialontologies.org/ontology/construct/prescribedBy"
+    definition: >
+      relationship from an entity to the specification that prescribes it
+    domain:
+      - Process Parameter
+      - Critical Process Parameter
+      - Key Process Parameter
+      - Quality Attribute
+      - Critical Quality Attribute
+      - Input Material Attribute
+      - Critical Material Attribute
+      - Performance Indicator
+      - Key Performance Indicator
+    range:
+      - Process Parameter Specification
+      - Critical Process Parameter Specification
+      - Key Process Parameter Specification
+      - Quality Attribute Specification
+      - Critical Quality Attribute Specification
+      - Input Material Attribute Specification
+      - Input Critical Material Attribute Specification
+      - Performance Indicator Specification
+      - Key Performance Indicator Specification
+    inverse: Prescribes
+    extraction_constraints:
+      - Process Parameter must be prescribed by a Process Parameter Specification.
+      - Critical Process Parameter must be prescribed by a Critical Process Parameter Specification.
+      - Key Process Parameter must be prescribed by a Key Process Parameter Specification.
+      - Quality Attribute must be prescribed by a Quality Attribute Specification.
+      - Critical Quality Attribute must be prescribed by a Critical Quality Attribute Specification.
+      - Input Material Attribute must be prescribed by an Input Material Attribute Specification.
+      - Critical Material Attribute must be prescribed by an Input Critical Material Attribute Specification.
+      - Performance Indicator must be prescribed by a Performance Indicator Specification.
+      - Key Performance Indicator must be prescribed by a Key Performance Indicator Specification.
+      - The relationship direction is Prescribed Entity → Specification.
+
+
+  - label: Is About
+    iri: "https://spec.industrialontologies.org/ontology/construct/isAbout"
+    definition: >
+      relationship from an information content entity to the entity it is
+      about
+    domain:
+      - Critical Process Parameter Specification
+      - Performance Indicator Specification
+    range:
+      - Critical Quality Attribute Specification
+      - Objective Specification
+    extraction_constraints:
+      - Critical Process Parameter Specification must be about a Critical Quality Attribute Specification.
+      - Performance Indicator Specification must be about an Objective Specification.
+      - The relationship direction is Information Content Entity → Subject Entity.
+
+
+  - label: Quality Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/qualityOf"
+    definition: >
+      relationship from a quality to the entity that bears it
+    domain:
+      - Biomolecule Primary Structure
+      - Drug Potency
+      - Product Titer
+      - Protein Secondary Structure
+      - Protein Tertiary Structure
+      - Working Volume
+    range:
+      - Deoxyribonucleic Acid
+      - Ribonucleic Acid
+      - Peptide
+      - Protein
+      - Material Product
+      - Process Intermediate Material
+      - Material Entity
+    extraction_constraints:
+      - Biomolecule Primary Structure must be the quality of a Deoxyribonucleic Acid, Ribonucleic Acid, Peptide or Protein.
+      - Drug Potency must be the quality of a Material Product or Process Intermediate Material.
+      - Product Titer must be the quality of a Material Product or Process Intermediate Material.
+      - Protein Secondary Structure and Protein Tertiary Structure must be the quality of a Protein.
+      - Working Volume must be the quality of a Material Entity that participates in a Planned Process.
+      - The relationship direction is Quality → Quality Bearer.
+
+
+  - label: Capability Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/capabilityOf"
+    definition: >
+      relationship from a capability to the entity that bears it
+    domain:
+      - Biological Activity
+    range:
+      - Material Product
+      - Process Intermediate Material
+    extraction_constraints:
+      - Biological Activity must be the capability of a Material Product or Process Intermediate Material.
+      - The relationship direction is Capability → Capability Bearer.
+
+
+  - label: Process Profile Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/processProfileOf"
+    definition: >
+      relationship from a process profile to the process it is a profile of
+    domain:
+      - Carbon Dioxide Evolution Rate
+      - Dissolution Rate
+      - Manufacturing Process Productivity
+      - Metabolite Uptake Rate
+      - Oxygen Uptake Rate
+    range:
+      - Process
+      - Manufacturing Process
+    extraction_constraints:
+      - Carbon Dioxide Evolution Rate, Metabolite Uptake Rate and Oxygen Uptake Rate must be the process profile of a Process that has a Cell Culture as a participant.
+      - Dissolution Rate must be the process profile of a Process that has a Solvent as a participant.
+      - Manufacturing Process Productivity must be the process profile of a Manufacturing Process that has a Material Product or Process Intermediate Material as a specified output.
+      - The relationship direction is Process Profile → Process.
+
+
+  - label: Process Characteristic Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/processCharacteristicOf"
+    definition: >
+      relationship from a process characteristic to the process that has it
+    domain:
+      - Planned Process Yield
+      - Total Material Added
+      - Yield Per Substrate
+    range:
+      - Planned Process
+    extraction_constraints:
+      - Planned Process Yield must be a process characteristic of a Planned Process that has a specified output.
+      - Total Material Added must be a process characteristic of a Planned Process.
+      - Yield Per Substrate must be a process characteristic of a Planned Process that has an input.
+      - The relationship direction is Process Characteristic → Planned Process.
+
+
+  - label: Has Participant At Some Time
+    iri: "http://purl.obolibrary.org/obo/BFO_0000057"
+    definition: >
+      relationship from a process or profile to an entity that participates
+      in it at some time
+    domain:
+      - Carbon Dioxide Evolution Rate
+      - Cell Population Growth Rate
+      - Dissolution Rate
+      - Flow Rate
+      - Manufacturing Process Productivity
+      - Metabolite Uptake Rate
+      - Oxygen Uptake Rate
+      - Process
+    range:
+      - Cell Culture
+      - Cell Population
+      - Solute
+      - Solvent
+      - Material Entity
+      - Molecular Entity
+      - Dioxygen Molecule
+      - Material Product
+      - Process Intermediate Material
+    inverse: Participates In At Some Time
+    extraction_constraints:
+      - Cell Population Growth Rate must have a Cell Population as a participant.
+      - Dissolution Rate must have a Solute as a participant, and its Process must have a Solvent as a participant.
+      - Flow Rate must have a Material Entity as a participant.
+      - Manufacturing Process Productivity must have a Material Product or Process Intermediate Material as a participant.
+      - Metabolite Uptake Rate must have a Molecular Entity as a participant.
+      - Oxygen Uptake Rate must have a Dioxygen Molecule as a participant.
+      - The relationship direction is Process or Profile → Participant.
+
+
+  - label: Participates In At Some Time
+    iri: "http://purl.obolibrary.org/obo/BFO_0000056"
+    definition: >
+      relationship from an entity to a process in which it participates at
+      some time
+    domain:
+      - Material Entity
+    range:
+      - Planned Process
+    inverse: Has Participant At Some Time
+    extraction_constraints:
+      - The Material Entity whose quality is a Working Volume must participate in a Planned Process.
+      - The relationship direction is Participant → Process.
+
+
+  - label: Has Specified Output
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasSpecifiedOutput"
+    definition: >
+      relationship from a process to an entity that it is specified to produce
+    domain:
+      - Manufacturing Process
+      - Planned Process
+    range:
+      - Material Product
+      - Process Intermediate Material
+      - Material Entity
+    inverse: Is Specified Output Of
+    extraction_constraints:
+      - A Manufacturing Process whose productivity is measured must have a Material Product or Process Intermediate Material as a specified output.
+      - A Planned Process with a Planned Process Yield must have a Material Entity as a specified output.
+      - The relationship direction is Process → Output.
+
+
+  - label: Has Input
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasInput"
+    definition: >
+      relationship from a process to an entity that is an input of it
+    domain:
+      - Planned Process
+    range:
+      - Material Entity
+    extraction_constraints:
+      - A Planned Process with a Yield Per Substrate must have a Material Entity as an input.
+      - The relationship direction is Process → Input.
+
+
+  - label: Inheres In
+    iri: "http://purl.obolibrary.org/obo/BFO_0000197"
+    definition: >
+      relationship from a quality or capability to the entity that bears it
+    domain:
+      - Quality
+      - Capability
+    range:
+      - Material Product
+      - Process Intermediate Material
+      - Raw Material
+      - Production Consumable
+      - Material Entity
+    extraction_constraints:
+      - The Quality or Capability prescribed by a Quality Attribute Specification must inhere in a Material Product or Process Intermediate Material, or in a Material Entity that is a continuant part of one.
+      - The Quality or Capability prescribed by an Input Material Attribute Specification must inhere in a Raw Material, Process Intermediate Material or Production Consumable, or in a Material Entity that is a continuant part of one.
+      - The relationship direction is Quality or Capability → Bearer.
+
+
+  - label: Continuant Part Of At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000177"
+    definition: >
+      relationship from a continuant to a continuant of which it is a part
+      at all times
+    domain:
+      - Process Parameter Specification
+      - Material Entity
+    range:
+      - Plan Specification
+      - Raw Material
+      - Process Intermediate Material
+      - Production Consumable
+      - Material Product
+    extraction_constraints:
+      - Process Parameter Specification must be a continuant part of a Plan Specification.
+      - A Material Entity bearing a prescribed quality can be a continuant part of a Raw Material, Process Intermediate Material, Production Consumable or Material Product.
+      - The relationship direction is Part → Whole.
+
+
+  - label: Concretizes At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000164"
+    definition: >
+      relationship from a quality to the information entity that it
+      concretizes at all times
+    domain:
+      - Biomolecule Primary Structure
+    range:
+      - Biological Sequence
+    extraction_constraints:
+      - Biomolecule Primary Structure must concretize a Biological Sequence.
+      - The relationship direction is Quality → Biological Sequence.
+
+
+  - label: Specifically Depends On
+    iri: "http://purl.obolibrary.org/obo/BFO_0000195"
+    definition: >
+      relationship from a dependent entity to the entity on which it
+      specifically depends
+    domain:
+      - Drug Potency
+    range:
+      - Biological Activity
+    extraction_constraints:
+      - Drug Potency must specifically depend on a Biological Activity that is a capability of the same material.
+      - The relationship direction is Drug Potency → Biological Activity.

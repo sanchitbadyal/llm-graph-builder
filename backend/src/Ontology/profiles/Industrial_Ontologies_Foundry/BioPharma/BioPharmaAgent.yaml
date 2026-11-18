@@ -1,0 +1,243 @@
+imports:
+  - iri: "https://spec.industrialontologies.org/ontology/202603/core/Core/"
+    label: IOF Core
+    note: >
+      owl:imports declared by this ontology. Classes such as Agent, Agent Role,
+      Identifier, Person, Organization, Engineered System, Manufacturing Process,
+      Capability and Piece of Equipment are defined there, not in this module.
+
+
+profile:
+  id: biopharma-agent-complete
+  ontology_artifact: BiopharmaAgent
+  ontology_iri: "https://spec.industrialontologies.org/ontology/biopharma/BiopharmaAgent/"
+  version_iri: "https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaAgent/"
+  title: Biopharma Agent Ontology
+  description: >-
+    Complete profile generated from the Biopharma Agent RDF; all named classes
+    declared in the RDF artifact are represented here. The module covers agents
+    (actors) in biopharmaceutical manufacturing: people, engineered systems and
+    organizations. This RDF declares no new properties; the relationships listed
+    below are those referenced in its class axioms.
+  include_ancestors: true
+  include_compatible_properties: true
+
+
+entities:
+  - label: Agent Identification
+    iri: "https://spec.industrialontologies.org/ontology/construct/AgentIdentification"
+    parent_class: Identifier
+    alternative_labels:
+      - agent identifier
+    definition: >
+      identifier for a person, group of persons, or engineered system with an
+      agent role
+    examples:
+      - Contractor ID code used to reference a quality audit team in batch release documentation
+      - Employee ID badge number assigned to a technician responsible for operating a bioreactor
+    classification_conditions:
+      - The entity must be an Identifier.
+      - It must designate some Agent.
+    logical_definition: >
+      AgentIdentification(x) ↔ Identifier(x) ∧ ∃y(Agent(y) ∧ designates(x, y))
+
+
+  - label: Manufacturing Operator
+    iri: "https://spec.industrialontologies.org/ontology/construct/ManufacturingOperator"
+    parent_class: Agent
+    definition: >
+      person or engineered system with a manufacturing operator role
+    examples:
+      - trained person that uses thawing equipment to initiate the thawing of a vial retrieved from liquid nitrogen storage
+      - a skid-mounted dosing unit with integrated sensors and actuators that controls a solid feeder to dispense a specified amount of Benzoyl Peroxide into a polymerization reactor as part of a PVC resin production process
+      - a person who is planned to operate a centrifuge during a cell harvest step in a biomanufacturing process
+    classification_conditions:
+      - The entity must be a Person or an Engineered System.
+      - The entity must have some Manufacturing Operator Role.
+    logical_definition: >
+      ManufacturingOperator(x) ↔ (Person(x) ∨ EngineeredSystem(x)) ∧ ∃r
+      (ManufacturingOperatorRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      See the expanded definition under the corresponding role class. The term
+      is formalized here as a defined class by referring to its corresponding
+      role class and exists primarily for ontological modeling and
+      implementation convenience.
+
+
+  - label: Manufacturing Operator Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/ManufacturingOperatorRole"
+    parent_class: Agent Role
+    definition: >
+      agent role held by a person or engineered system when it uses, controls,
+      or is planned to use or control one or more pieces of equipment to carry
+      out some manufacturing process
+    examples:
+      - role of a trained person that uses thawing equipment to initiate the thawing of a vial retrieved from liquid nitrogen storage
+      - role held by a skid-mounted dosing unit with integrated sensors and actuators when it controls a solid feeder to dispense a specified amount of Benzoyl Peroxide into a polymerization reactor as part of a PVC resin production process
+      - role held by a person who is planned to operate a centrifuge during a cell harvest step
+    classification_conditions:
+      - The role must be an Agent Role.
+      - It must be the role of some Engineered System or Person.
+      - It can only be realized in Manufacturing Processes.
+      - Each such Manufacturing Process must realize some Capability that is the capability of some Piece of Equipment.
+      - Each such Manufacturing Process must have the role bearer as a participant.
+    logical_definition: >
+      ManufacturingOperatorRole(x) → AgentRole(x) ∧ ∃y((EngineeredSystem(y) ∨
+      Person(y)) ∧ roleOf(x, y) ∧ ∀z(hasRealization(x, z) →
+      (ManufacturingProcess(z) ∧ ∃c∃e(Capability(c) ∧ PieceOfEquipment(e) ∧
+      capabilityOf(c, e) ∧ realizes(z, c)) ∧ hasParticipantAtSomeTime(z, y))))
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs to define necessary and sufficient
+      conditions. Namely, patterns for using or controlling the equipment need
+      to be developed further.
+
+
+  - label: Validator
+    iri: "https://spec.industrialontologies.org/ontology/construct/Validator"
+    parent_class: Agent
+    definition: >
+      person, organization, or engineered system with a validator role
+    examples:
+      - Head of the Process and Product Control Laboratory who signs the gas chromatography analysis of a PVC lot, confirming its conformance to specification criteria
+      - Quality Assurance Department that issues in-process control reports for production batches based on automated test results and predefined acceptance criteria, without requiring individual sign-off
+    classification_conditions:
+      - The entity must be a Person, an Organization or an Engineered System.
+      - The entity must have some Validator Role.
+    logical_definition: >
+      Validator(x) ↔ (Person(x) ∨ Organization(x) ∨ EngineeredSystem(x)) ∧ ∃r
+      (ValidatorRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      See the expanded definition under the corresponding role class. The term
+      is formalized here as a defined class by referring to its corresponding
+      role class and exists primarily for ontological modeling and
+      implementation convenience.
+
+
+  - label: Validator Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/ValidatorRole"
+    parent_class: Agent Role
+    definition: >
+      agent role held by a person, organization, or engineered system when it
+      assesses the conformance or acceptability of an information artifact,
+      material entity, or planned process against specified criteria
+    examples:
+      - role held by the Head of the Process and Product Control Laboratory when they sign the gas chromatography analysis of a PVC lot, confirming its conformance to specification criteria
+      - role held by a Quality Assurance Department when it issues in-process control reports for production batches based on automated test results and predefined acceptance criteria, without requiring individual sign-off
+    classification_conditions:
+      - The role must be an Agent Role.
+      - It must be the role of some Engineered System, Organization or Person.
+    logical_definition: >
+      ValidatorRole(x) → AgentRole(x) ∧ ∃y((EngineeredSystem(y) ∨
+      Organization(y) ∨ Person(y)) ∧ roleOf(x, y))
+    is_primitive: true
+    primitive_rationale: >
+      There are insufficient constructs to create necessary and sufficient
+      conditions. Namely, a full set of constructs for representing assessing
+      the conformance or acceptability of all the entities in the definition
+      are lacking.
+
+
+relationships:
+  # Referenced in class axioms; defined in imported modules, not declared in this RDF.
+
+  - label: Designates
+    iri: "https://spec.industrialontologies.org/ontology/construct/designates"
+    domain:
+      - Agent Identification
+    range:
+      - Agent
+    extraction_constraints:
+      - Agent Identification must designate some Agent.
+      - The relationship direction is Identifier → Designated Entity.
+
+
+  - label: Has Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasRole"
+    definition: >
+      relationship from an entity to a role that it holds
+    domain:
+      - Manufacturing Operator
+      - Validator
+    range:
+      - Manufacturing Operator Role
+      - Validator Role
+    inverse: Role Of
+    extraction_constraints:
+      - Manufacturing Operator must have a Manufacturing Operator Role.
+      - Validator must have a Validator Role.
+      - The relationship direction is Role Bearer → Role.
+
+
+  - label: Role Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/roleOf"
+    definition: >
+      relationship from a role to the entity that holds it
+    domain:
+      - Manufacturing Operator Role
+      - Validator Role
+    range:
+      - Engineered System
+      - Organization
+      - Person
+    inverse: Has Role
+    extraction_constraints:
+      - Manufacturing Operator Role must be the role of an Engineered System or a Person.
+      - Validator Role must be the role of an Engineered System, an Organization or a Person.
+      - The relationship direction is Role → Role Bearer.
+
+
+  - label: Realized In
+    iri: "http://purl.obolibrary.org/obo/BFO_0000054"
+    definition: >
+      relationship from a role to the process in which it is realized
+    domain:
+      - Manufacturing Operator Role
+    range:
+      - Manufacturing Process
+    inverse: Realizes
+    extraction_constraints:
+      - Manufacturing Operator Role can only be realized in a Manufacturing Process.
+      - The relationship direction is Role → Process.
+
+
+  - label: Realizes
+    iri: "http://purl.obolibrary.org/obo/BFO_0000055"
+    definition: >
+      relationship from a process to the realizable entity it realizes
+    domain:
+      - Manufacturing Process
+    range:
+      - Capability
+    inverse: Realized In
+    extraction_constraints:
+      - The Manufacturing Process in which a Manufacturing Operator Role is realized must realize some Capability.
+      - The relationship direction is Process → Realizable Entity.
+
+
+  - label: Has Participant
+    iri: "http://purl.obolibrary.org/obo/BFO_0000057"
+    definition: >
+      relationship from a process to an entity that participates in it
+    domain:
+      - Manufacturing Process
+    range:
+      - Engineered System
+      - Person
+    inverse: Participates In
+    extraction_constraints:
+      - The Manufacturing Process in which a Manufacturing Operator Role is realized must have some Engineered System or Person as a participant.
+      - The relationship direction is Process → Participant.
+
+
+  - label: Capability Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/capabilityOf"
+    definition: >
+      relationship from a capability to the entity that bears it
+    domain:
+      - Capability
+    range:
+      - Piece of Equipment
+    extraction_constraints:
+      - The Capability realized by a Manufacturing Process must be the capability of some Piece of Equipment.
+      - The relationship direction is Capability → Capability Bearer.

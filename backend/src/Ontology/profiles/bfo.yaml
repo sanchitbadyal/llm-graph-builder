@@ -1,0 +1,746 @@
+imports: []
+# BFO 2020 declares no owl:imports.
+
+profile:
+  id: bfo-2020-core
+  ontology_artifact: BFO
+  ontology_iri: "http://purl.obolibrary.org/obo/bfo.owl"
+  version_iri: "http://purl.obolibrary.org/obo/bfo/2020/bfo-core.owl"
+  title: BFO 2020
+  description: >-
+    Basic Formal Ontology implemented in the Web Ontology Language (OWL 2) with direct semantics.
+  license: "https://creativecommons.org/licenses/by/4.0/"
+  contributors: [Mathias Brochhausen, Ron Rudnicki, Janna Hastings, Leonard Jacuzzo, Randall Dipert, Barry Smith, Larry Hunter, Stefan Schulz, Werner Ceusters, Jonathan Bona, Robert Rovetto, Albert Goldfain, Yongqun "Oliver" He, Bjoern Peters, Melanie Courtot, Alan Ruttenberg, Bill Duncan, Ludger Jansen, Thomas Bittner, Chris Mungall, Jie Zheng, John Beverley, Mauricio Almeida, Mark Ressler, Mark Jensen, Neil Otte, David Osumi-Sutherland, Pierre Grenon, James A. Overton, Fabian Neuhaus]
+  include_ancestors: true
+  include_compatible_properties: true
+
+entities:
+  - label: entity
+    iri: "http://purl.obolibrary.org/obo/BFO_0000001"
+    identifier: 001-BFO
+    parent_class: null
+    definition: "(Elucidation) An entity is anything that exists or has existed or will exist"
+    examples: ["Julius Caesar; the Second World War; your body mass index; Verdi's Requiem"]
+
+  - label: continuant
+    iri: "http://purl.obolibrary.org/obo/BFO_0000002"
+    identifier: 008-BFO
+    parent_class: entity
+    definition: "(Elucidation) A continuant is an entity that persists, endures, or continues to exist through time while maintaining its identity"
+    examples: ["A human being; a tennis ball; a cave; a region of space; someone's temperature"]
+    classification_conditions:
+      - Every continuant part of a continuant is a continuant.
+      - Disjoint with occurrent.
+    logical_definition: "Continuant(x) → Entity(x) ∧ ∀y(continuantPartOf(x,y) → Continuant(y)) ∧ ¬Occurrent(x)"
+
+  - label: occurrent
+    iri: "http://purl.obolibrary.org/obo/BFO_0000003"
+    identifier: 077-BFO
+    parent_class: entity
+    definition: "(Elucidation) An occurrent is an entity that unfolds itself in time or it is the start or end of such an entity or it is a temporal or spatiotemporal region"
+    examples: ["As for process, history, process boundary, spatiotemporal region, zero-dimensional temporal region, one-dimensional temporal region, temporal interval, temporal instant."]
+
+  - label: independent continuant
+    iri: "http://purl.obolibrary.org/obo/BFO_0000004"
+    identifier: 017-BFO
+    parent_class: continuant
+    definition: "b is an independent continuant =Def b is a continuant & there is no c such that b specifically depends on c or b generically depends on c"
+    examples: ["An atom; a molecule; an organism; a heart; a chair; the bottom right portion of a human torso; a leg; the interior of your mouth; a spatial region; an orchestra"]
+    classification_conditions:
+      - Every continuant part of an independent continuant is an independent continuant.
+      - Pairwise disjoint with specifically dependent continuant and generically dependent continuant.
+    logical_definition: "IndependentContinuant(x) → Continuant(x) ∧ ∀y(continuantPartOf(x,y) → IndependentContinuant(y))"
+
+  - label: spatial region
+    iri: "http://purl.obolibrary.org/obo/BFO_0000006"
+    identifier: 035-BFO
+    parent_class: immaterial entity
+    definition: "(Elucidation) A spatial region is a continuant entity that is a continuant part of the spatial projection of a portion of spacetime at a given time"
+    examples: ["As for zero-dimensional spatial region, one-dimensional spatial region, two-dimensional spatial region, three-dimensional spatial region"]
+    classification_conditions:
+      - Every continuant part of a spatial region is a spatial region.
+      - Pairwise disjoint with site and continuant fiat boundary.
+    logical_definition: "SpatialRegion(x) → ImmaterialEntity(x) ∧ ∀y(continuantPartOf(x,y) → SpatialRegion(y))"
+
+  - label: temporal region
+    iri: "http://purl.obolibrary.org/obo/BFO_0000008"
+    identifier: 100-BFO
+    parent_class: occurrent
+    definition: "(Elucidation) A temporal region is an occurrent over which processes can unfold"
+    examples: ["As for zero-dimensional temporal region and one-dimensional temporal region"]
+    classification_conditions:
+      - Every occurrent part and temporal part of a temporal region is a temporal region.
+      - Pairwise disjoint with spatiotemporal region, process and process boundary.
+    logical_definition: "TemporalRegion(x) → Occurrent(x) ∧ ∀y(occurrentPartOf(x,y) → TemporalRegion(y)) ∧ ∀y(temporalPartOf(x,y) → TemporalRegion(y))"
+
+  - label: two-dimensional spatial region
+    iri: "http://purl.obolibrary.org/obo/BFO_0000009"
+    identifier: 039-BFO
+    parent_class: spatial region
+    definition: "(Elucidation) A two-dimensional spatial region is a spatial region that is a whole consisting of a surface together with zero or more surfaces which may have spatial regions of lower dimension as parts"
+    examples: ["The surface of a sphere-shaped part of space; an infinitely thin plane in space"]
+    classification_conditions:
+      - Has continuant part only two-dimensional, zero-dimensional or one-dimensional spatial regions.
+      - Pairwise disjoint with zero-, one- and three-dimensional spatial regions.
+    logical_definition: "TwoDSpatialRegion(x) → SpatialRegion(x) ∧ ∀y(hasContinuantPart(x,y) → (TwoDSpatialRegion(y) ∨ ZeroDSpatialRegion(y) ∨ OneDSpatialRegion(y)))"
+
+  - label: spatiotemporal region
+    iri: "http://purl.obolibrary.org/obo/BFO_0000011"
+    identifier: 095-BFO
+    parent_class: occurrent
+    definition: "(Elucidation) A spatiotemporal region is an occurrent that is an occurrent part of spacetime"
+    examples: ["The spatiotemporal region occupied by the development of a cancer tumour; the spatiotemporal region occupied by an orbiting satellite"]
+    explanatory_note: "'Spacetime' here refers to the maximal instance of the universal spatiotemporal region."
+    classification_conditions:
+      - Every occurrent part and temporal part of a spatiotemporal region is a spatiotemporal region.
+    logical_definition: "SpatiotemporalRegion(x) → Occurrent(x) ∧ ∀y(occurrentPartOf(x,y) → SpatiotemporalRegion(y)) ∧ ∀y(temporalPartOf(x,y) → SpatiotemporalRegion(y))"
+
+  - label: process
+    iri: "http://purl.obolibrary.org/obo/BFO_0000015"
+    identifier: 083-BFO
+    parent_class: occurrent
+    alternative_labels: [event]
+    definition: "(Elucidation) p is a process means p is an occurrent that has some temporal proper part and for some time t, p has some material entity as participant"
+    examples: ["An act of selling; the life of an organism; a process of sleeping; a process of cell-division; a beating of the heart; a process of meiosis; the taxiing of an aircraft; the programming of a computer"]
+    classification_conditions:
+      - Every has-occurrent-part, occurrent part and temporal part of a process is a process or process boundary (occurrent parts and temporal parts are processes).
+    logical_definition: "Process(x) → Occurrent(x) ∧ ∀y(hasOccurrentPart(x,y) → (Process(y) ∨ ProcessBoundary(y))) ∧ ∀y(occurrentPartOf(x,y) → Process(y)) ∧ ∀y(temporalPartOf(x,y) → Process(y))"
+
+  - label: disposition
+    iri: "http://purl.obolibrary.org/obo/BFO_0000016"
+    identifier: 062-BFO
+    parent_class: realizable entity
+    alternative_labels: [internally-grounded realizable entity]
+    definition: "(Elucidation) A disposition b is a realizable entity such that if b ceases to exist then its bearer is physically changed & b's realization occurs when and because this bearer is in some special physical circumstances & this realization occurs in virtue of the bearer's physical make-up"
+    examples: ["An atom of element X has the disposition to decay to an atom of element Y; the cell wall is disposed to transport cellular material through endocytosis and exocytosis; certain people have a predisposition to colon cancer; children are innately disposed to categorize objects in certain ways"]
+    classification_conditions:
+      - Disjoint with role.
+    logical_definition: "Disposition(x) → RealizableEntity(x) ∧ ¬Role(x)"
+
+  - label: realizable entity
+    iri: "http://purl.obolibrary.org/obo/BFO_0000017"
+    identifier: 058-BFO
+    parent_class: specifically dependent continuant
+    definition: "(Elucidation) A realizable entity is a specifically dependent continuant that inheres in some independent continuant which is not a spatial region & which is of a type some instances of which are realized in processes of a correlated type"
+    examples: ["The role of being a doctor; the role of this boundary to delineate where Utah and Colorado meet; the function of your reproductive organs; the disposition of your blood to coagulate; the disposition of this piece of metal to conduct electricity"]
+    classification_conditions:
+      - Disjoint with quality.
+    logical_definition: "RealizableEntity(x) → SpecificallyDependentContinuant(x) ∧ ¬Quality(x)"
+
+  - label: zero-dimensional spatial region
+    iri: "http://purl.obolibrary.org/obo/BFO_0000018"
+    identifier: 037-BFO
+    parent_class: spatial region
+    definition: "(Elucidation) A zero-dimensional spatial region is one or a collection of more than one spatially disjoint points in space"
+    examples: ["The spatial region occupied at some time instant by the North Pole"]
+    classification_conditions:
+      - Has continuant part only zero-dimensional spatial regions.
+    logical_definition: "ZeroDSpatialRegion(x) → SpatialRegion(x) ∧ ∀y(hasContinuantPart(x,y) → ZeroDSpatialRegion(y))"
+
+  - label: quality
+    iri: "http://purl.obolibrary.org/obo/BFO_0000019"
+    identifier: 055-BFO
+    parent_class: specifically dependent continuant
+    definition: "(Elucidation) A quality is a specifically dependent continuant that, in contrast to roles and dispositions, does not require any further process in order to be realized"
+    examples: ["The colour of a tomato; the ambient temperature of this portion of air; the length of the circumference of your waist; the shape of your nose; the shape of your nostril; the mass of this piece of gold"]
+
+  - label: specifically dependent continuant
+    iri: "http://purl.obolibrary.org/obo/BFO_0000020"
+    identifier: 050-BFO
+    parent_class: continuant
+    definition: "b is a specifically dependent continuant =Def b is a continuant & there is some independent continuant c which is not a spatial region & which is such that b specifically depends on c"
+    examples:
+      - "(with multiple bearers) John's love for Mary; the ownership relation between John and this statue; the relation of authority between John and his subordinates"
+      - "(with one bearer) The mass of this tomato; the pink colour of a medium rare piece of grilled filet mignon at its centre; the smell of this portion of mozzarella; the disposition of this fish to decay; the role of being a doctor; the function of this heart to pump blood; the shape of this hole"
+
+  - label: role
+    iri: "http://purl.obolibrary.org/obo/BFO_0000023"
+    identifier: 061-BFO
+    parent_class: realizable entity
+    alternative_labels: [externally-grounded realizable entity]
+    definition: "(Elucidation) A role b is a realizable entity such that b exists because there is some single bearer that is in some special physical, social, or institutional set of circumstances in which this bearer does not have to be & b is not such that, if it ceases to exist, then the physical make-up of the bearer is thereby changed"
+    examples: ["The priest role; the student role; the role of subject in a clinical trial; the role of a stone in marking a property boundary; the role of a boundary to demarcate two neighbouring administrative territories; the role of a building in serving as a military target"]
+
+  - label: fiat object part
+    iri: "http://purl.obolibrary.org/obo/BFO_0000024"
+    identifier: 027-BFO
+    parent_class: material entity
+    definition: "(Elucidation) A fiat object part b is a material entity & such that if b exists then it is continuant part of some object c & demarcated from the remainder of c by one or more fiat surfaces"
+    examples: ["The upper and lower lobes of the left lung; the dorsal and ventral surfaces of the body; the Western hemisphere of the Earth; the FMA:regional parts of an intact human body"]
+
+  - label: one-dimensional spatial region
+    iri: "http://purl.obolibrary.org/obo/BFO_0000026"
+    identifier: 038-BFO
+    parent_class: spatial region
+    definition: "(Elucidation) A one-dimensional spatial region is a whole consisting of a line together with zero or more lines which may have points as parts"
+    examples: ["An edge of a cube-shaped portion of space; a line connecting two points; two parallel lines extended in space"]
+    classification_conditions:
+      - Has continuant part only zero-dimensional or one-dimensional spatial regions.
+    logical_definition: "OneDSpatialRegion(x) → SpatialRegion(x) ∧ ∀y(hasContinuantPart(x,y) → (ZeroDSpatialRegion(y) ∨ OneDSpatialRegion(y)))"
+
+  - label: object aggregate
+    iri: "http://purl.obolibrary.org/obo/BFO_0000027"
+    identifier: 025-BFO
+    parent_class: material entity
+    definition: "(Elucidation) An object aggregate is a material entity consisting exactly of a plurality (≥1) of objects as member parts which together form a unit"
+    examples: ["The aggregate of the musicians in a symphony orchestra and their instruments; the aggregate of bearings in a constant velocity axle joint; the nitrogen atoms in the atmosphere; a collection of cells in a blood biobank"]
+    explanatory_note: "'Exactly' means that there are no parts of the object aggregate other than its member parts. The unit can, at certain times, consist of exactly one object, for example, when a wolf litter loses all but one of its pups, but it must at some time have a plurality of member parts."
+
+  - label: three-dimensional spatial region
+    iri: "http://purl.obolibrary.org/obo/BFO_0000028"
+    identifier: 040-BFO
+    parent_class: spatial region
+    definition: "(Elucidation) A three-dimensional spatial region is a whole consisting of a spatial volume together with zero or more spatial volumes which may have spatial regions of lower dimension as parts"
+    examples: ["A cube-shaped region of space; a sphere-shaped region of space; the region of space occupied by all and only the planets in the solar system at some point in time"]
+    classification_conditions:
+      - Has continuant part only spatial regions.
+    logical_definition: "ThreeDSpatialRegion(x) → SpatialRegion(x) ∧ ∀y(hasContinuantPart(x,y) → SpatialRegion(y))"
+
+  - label: site
+    iri: "http://purl.obolibrary.org/obo/BFO_0000029"
+    identifier: 034-BFO
+    parent_class: immaterial entity
+    definition: "(Elucidation) A site is a three-dimensional immaterial entity whose boundaries either (partially or wholly) coincide with the boundaries of one or more material entities or have locations determined in relation to some material entity"
+    examples: ["A hole in a portion of cheese; a rabbit hole; the Grand Canyon; the Piazza San Marco; the kangaroo-joey-containing hole of a kangaroo pouch; your left nostril (a fiat part - the opening - of your left nasal cavity); the lumen of your gut; the hold of a ship; the interior of the trunk of your car; hole in an engineered floor joist"]
+    classification_conditions:
+      - Every continuant part is a site or material entity.
+      - Has continuant part only sites or continuant fiat boundaries.
+      - Occupies spatial region only three-dimensional spatial regions.
+    logical_definition: "Site(x) → ImmaterialEntity(x) ∧ ∀y(continuantPartOf(x,y) → (Site(y) ∨ MaterialEntity(y))) ∧ ∀y(hasContinuantPart(x,y) → (Site(y) ∨ ContinuantFiatBoundary(y))) ∧ ∀y(occupiesSpatialRegion(x,y) → ThreeDSpatialRegion(y))"
+
+  - label: object
+    iri: "http://purl.obolibrary.org/obo/BFO_0000030"
+    identifier: 024-BFO
+    parent_class: material entity
+    definition: "(Elucidation) An object is a material entity which manifests causal unity & is of a type instances of which are maximal relative to the sort of causal unity manifested"
+    examples: ["An organism; a fish tank; a planet; a laptop; a valve; a block of marble; an ice cube"]
+    explanatory_note: "A description of three primary sorts of causal unity is provided in Basic Formal Ontology 2.0. Specification and User Guide"
+
+  - label: generically dependent continuant
+    iri: "http://purl.obolibrary.org/obo/BFO_0000031"
+    identifier: 074-BFO
+    parent_class: continuant
+    alternative_labels: [g-dependent continuant]
+    definition: "(Elucidation) A generically dependent continuant is an entity that exists in virtue of the fact that there is at least one of what may be multiple copies which is the content or the pattern that multiple copies would share"
+    examples: ["The pdf file on your laptop; the pdf file that is a copy thereof on my laptop; the sequence of this protein molecule; the sequence that is a copy thereof in that protein molecule; the content that is shared by a string of dots and dashes written on a page and the transmitted Morse code signal; the content of a sentence; an engineering blueprint"]
+
+  - label: function
+    iri: "http://purl.obolibrary.org/obo/BFO_0000034"
+    identifier: 064-BFO
+    parent_class: disposition
+    definition: "(Elucidation) A function is a disposition that exists in virtue of its bearer's physical make-up & this physical make-up is something the bearer possesses because it came into being either through evolution (in the case of natural biological entities) or through intentional design (in the case of artefacts) in order to realize processes of a certain sort"
+    examples: ["The function of a hammer to drive in nails; the function of a heart pacemaker to regulate the beating of a heart through electricity"]
+
+  - label: process boundary
+    iri: "http://purl.obolibrary.org/obo/BFO_0000035"
+    identifier: 084-BFO
+    parent_class: occurrent
+    definition: "p is a process boundary =Def p is a temporal part of a process & p has no proper temporal parts"
+    examples: ["The boundary between the 2nd and 3rd year of your life"]
+    classification_conditions:
+      - Every has-occurrent-part and has-temporal-part is a process boundary.
+      - Every occurrent part and temporal part is a process or process boundary.
+    logical_definition: "ProcessBoundary(x) → Occurrent(x) ∧ ∀y(hasOccurrentPart(x,y) → ProcessBoundary(y)) ∧ ∀y(hasTemporalPart(x,y) → ProcessBoundary(y)) ∧ ∀y(occurrentPartOf(x,y) → (Process(y) ∨ ProcessBoundary(y))) ∧ ∀y(temporalPartOf(x,y) → (Process(y) ∨ ProcessBoundary(y)))"
+
+  - label: one-dimensional temporal region
+    iri: "http://purl.obolibrary.org/obo/BFO_0000038"
+    identifier: 103-BFO
+    parent_class: temporal region
+    definition: "(Elucidation) A one-dimensional temporal region is a temporal region that is a whole that has a temporal interval and zero or more temporal intervals and temporal instants as parts"
+    examples: ["The temporal region during which a process occurs"]
+    classification_conditions:
+      - Disjoint with zero-dimensional temporal region.
+      - Has temporal part only one-dimensional temporal regions or zero-dimensional temporal regions.
+      - Temporal part of only one-dimensional temporal regions.
+    logical_definition: "OneDTemporalRegion(x) → TemporalRegion(x) ∧ ¬ZeroDTemporalRegion(x) ∧ ∀y(hasTemporalPart(x,y) → (OneDTemporalRegion(y) ∨ ZeroDTemporalRegion(y))) ∧ ∀y(temporalPartOf(x,y) → OneDTemporalRegion(y))"
+
+  - label: material entity
+    iri: "http://purl.obolibrary.org/obo/BFO_0000040"
+    identifier: 019-BFO
+    parent_class: independent continuant
+    definition: "(Elucidation) A material entity is an independent continuant that at all times at which it exists has some portion of matter as continuant part"
+    examples: ["A human being; the undetached arm of a human being; an aggregate of human beings"]
+    classification_conditions:
+      - Disjoint with immaterial entity.
+      - Every continuant part is a material entity.
+      - Has continuant part only sites, material entities or continuant fiat boundaries.
+    logical_definition: "MaterialEntity(x) → IndependentContinuant(x) ∧ ¬ImmaterialEntity(x) ∧ ∀y(continuantPartOf(x,y) → MaterialEntity(y)) ∧ ∀y(hasContinuantPart(x,y) → (Site(y) ∨ MaterialEntity(y) ∨ ContinuantFiatBoundary(y)))"
+
+  - label: continuant fiat boundary
+    iri: "http://purl.obolibrary.org/obo/BFO_0000140"
+    identifier: 029-BFO
+    parent_class: immaterial entity
+    definition: "(Elucidation) A continuant fiat boundary b is an immaterial entity that is of zero, one or two dimensions & such that there is no time t when b has a spatial region as continuant part & whose location is determined in relation to some material entity"
+    examples: ["As for fiat point, fiat line, fiat surface"]
+    classification_conditions:
+      - Location of only continuant fiat boundaries.
+      - Has continuant part only continuant fiat boundaries.
+    logical_definition: "ContinuantFiatBoundary(x) → ImmaterialEntity(x) ∧ ∀y(locationOf(x,y) → ContinuantFiatBoundary(y)) ∧ ∀y(hasContinuantPart(x,y) → ContinuantFiatBoundary(y))"
+
+  - label: immaterial entity
+    iri: "http://purl.obolibrary.org/obo/BFO_0000141"
+    identifier: 028-BFO
+    parent_class: independent continuant
+    definition: "b is an immaterial entity =Def b is an independent continuant which is such that there is no time t when it has a material entity as continuant part"
+    examples: ["As for fiat point, fiat line, fiat surface, site"]
+
+  - label: fiat line
+    iri: "http://purl.obolibrary.org/obo/BFO_0000142"
+    identifier: 032-BFO
+    parent_class: continuant fiat boundary
+    definition: "(Elucidation) A fiat line is a one-dimensional continuant fiat boundary that is continuous"
+    examples: ["The Equator; all geopolitical boundaries; all lines of latitude and longitude; the median sulcus of your tongue; the line separating the outer surface of the mucosa of the lower lip from the outer surface of the skin of the chin"]
+    classification_conditions:
+      - Has continuant part only fiat lines or fiat points.
+      - Pairwise disjoint with fiat surface and fiat point.
+    logical_definition: "FiatLine(x) → ContinuantFiatBoundary(x) ∧ ∀y(hasContinuantPart(x,y) → (FiatLine(y) ∨ FiatPoint(y)))"
+
+  - label: relational quality
+    iri: "http://purl.obolibrary.org/obo/BFO_0000145"
+    identifier: 057-BFO
+    parent_class: quality
+    definition: "b is a relational quality =Def b is a quality & there exists c and d such that c and d are not identical & b specifically depends on c & b specifically depends on d"
+    examples: ["A marriage bond; an instance of love; an obligation between one person and another"]
+
+  - label: fiat surface
+    iri: "http://purl.obolibrary.org/obo/BFO_0000146"
+    identifier: 033-BFO
+    parent_class: continuant fiat boundary
+    definition: "(Elucidation) A fiat surface is a two-dimensional continuant fiat boundary that is self-connected"
+    examples: ["The surface of the Earth; the plane separating the smoking from the non-smoking zone in a restaurant"]
+    classification_conditions:
+      - Has continuant part only continuant fiat boundaries.
+    logical_definition: "FiatSurface(x) → ContinuantFiatBoundary(x) ∧ ∀y(hasContinuantPart(x,y) → ContinuantFiatBoundary(y))"
+
+  - label: fiat point
+    iri: "http://purl.obolibrary.org/obo/BFO_0000147"
+    identifier: 031-BFO
+    parent_class: continuant fiat boundary
+    definition: "(Elucidation) A fiat point is a zero-dimensional continuant fiat boundary that consists of a single point"
+    examples: ["The geographic North Pole; the quadripoint where the boundaries of Colorado, Utah, New Mexico and Arizona meet; the point of origin of some spatial coordinate system"]
+    classification_conditions:
+      - Has continuant part only fiat points.
+    logical_definition: "FiatPoint(x) → ContinuantFiatBoundary(x) ∧ ∀y(hasContinuantPart(x,y) → FiatPoint(y))"
+
+  - label: zero-dimensional temporal region
+    iri: "http://purl.obolibrary.org/obo/BFO_0000148"
+    identifier: 102-BFO
+    parent_class: temporal region
+    definition: "(Elucidation) A zero-dimensional temporal region is a temporal region that is a whole consisting of one or more separated temporal instants as parts"
+    examples: ["A temporal region that is occupied by a process boundary; the moment at which a finger is detached in an industrial accident"]
+    classification_conditions:
+      - Has temporal part only zero-dimensional temporal regions.
+    logical_definition: "ZeroDTemporalRegion(x) → TemporalRegion(x) ∧ ∀y(hasTemporalPart(x,y) → ZeroDTemporalRegion(y))"
+
+  - label: history
+    iri: "http://purl.obolibrary.org/obo/BFO_0000182"
+    identifier: 138-BFO
+    parent_class: process
+    definition: "(Elucidation) A history is a process that is the sum of the totality of processes taking place in the spatiotemporal region occupied by the material part of a material entity"
+    examples: ["The life of an organism from the beginning to the end of its existence"]
+
+  - label: temporal interval
+    iri: "http://purl.obolibrary.org/obo/BFO_0000202"
+    identifier: 155-BFO
+    parent_class: one-dimensional temporal region
+    definition: "(Elucidation) A temporal interval is a one-dimensional temporal region that is continuous, thus without gaps or breaks"
+    examples: ["The year 2018."]
+    explanatory_note: "A one-dimensional temporal region can include as parts not only temporal intervals but also temporal instants separated from other parts by gaps."
+
+  - label: temporal instant
+    iri: "http://purl.obolibrary.org/obo/BFO_0000203"
+    identifier: 209-BFO
+    parent_class: zero-dimensional temporal region
+    definition: "(Elucidation) A temporal instant is a zero-dimensional temporal region that has no proper temporal part"
+    examples: ["The millennium"]
+
+general_axioms:
+  - "AllDisjointClasses: independent continuant, specifically dependent continuant, generically dependent continuant"
+  - "AllDisjointClasses: spatial region, site, continuant fiat boundary"
+  - "AllDisjointClasses: temporal region, spatiotemporal region, process, process boundary"
+  - "AllDisjointClasses: two-dimensional spatial region, zero-dimensional spatial region, one-dimensional spatial region, three-dimensional spatial region"
+  - "AllDisjointClasses: fiat line, fiat surface, fiat point"
+
+relationships:
+  # Parent hierarchy notes (rdfs:subPropertyOf) are given in `sub_property_of`.
+  # "continuant-not-spatial" = independent continuant and not spatial region.
+
+  - label: has realization
+    iri: "http://purl.obolibrary.org/obo/BFO_0000054"
+    identifier: 206-BFO
+    alternative_labels: [realized in]
+    definition: "b has realization c =Def c realizes b"
+    examples: ["As for realizes"]
+    domain: [realizable entity]
+    range: [process]
+    inverse: realizes
+
+  - label: realizes
+    iri: "http://purl.obolibrary.org/obo/BFO_0000055"
+    identifier: 059-BFO
+    definition: "(Elucidation) realizes is a relation between a process b and realizable entity c such that c inheres in some d & for all t, if b has participant d then c exists & the type instantiated by b is correlated with the type instantiated by c"
+    examples: ["A balding process realizes a disposition to go bald; a studying process realizes a student role; a process of pumping blood realizes the pumping function of a heart"]
+    domain: [process]
+    range: [realizable entity]
+    inverse: has realization
+
+  - label: participates in
+    iri: "http://purl.obolibrary.org/obo/BFO_0000056"
+    identifier: 250-BFO
+    definition: "(Elucidation) participates in holds between some b that is either a specifically dependent continuant or generically dependent continuant or independent continuant that is not a spatial region & some process p such that b participates in p some way"
+    domain: [specifically dependent continuant, generically dependent continuant, "independent continuant and not spatial region"]
+    range: [process]
+    inverse: has participant
+    explanatory_note: &temporal_note "Users that require more sophisticated representations of time are encouraged to import a temporal extension of BFO-Core provided by the BFO development team. See documentation for guidance: <https://github.com/BFO-ontology/BFO-2020/tree/master/src/owl/profiles/temporal%20extensions>"
+
+  - label: has participant
+    iri: "http://purl.obolibrary.org/obo/BFO_0000057"
+    identifier: 248-BFO
+    definition: "p has participant c =Def c participates in p"
+    domain: [process]
+    range: [specifically dependent continuant, generically dependent continuant, "independent continuant and not spatial region"]
+    inverse: participates in
+    explanatory_note: *temporal_note
+
+  - label: is concretized by
+    iri: "http://purl.obolibrary.org/obo/BFO_0000058"
+    identifier: 258-BFO
+    definition: "c is concretized by b =Def b concretizes c"
+    domain: [generically dependent continuant]
+    range: [process, specifically dependent continuant]
+    inverse: concretizes
+    explanatory_note: *temporal_note
+
+  - label: concretizes
+    iri: "http://purl.obolibrary.org/obo/BFO_0000059"
+    identifier: 256-BFO
+    definition: "b concretizes c =Def b is a process or a specifically dependent continuant & c is a generically dependent continuant & there is some time t such that c is the pattern or content which b shares at t with actual or potential copies"
+    domain: [process, specifically dependent continuant]
+    range: [generically dependent continuant]
+    inverse: is concretized by
+    explanatory_note: *temporal_note
+
+  - label: preceded by
+    iri: "http://purl.obolibrary.org/obo/BFO_0000062"
+    identifier: 213-BFO
+    definition: "b preceded by c =Def b precedes c"
+    examples: ["The temporal region occupied by the second half of the match is preceded by the temporal region occupied by the first half of the match"]
+    domain: [occurrent]
+    range: [occurrent]
+    inverse: precedes
+    characteristics: [transitive]
+
+  - label: precedes
+    iri: "http://purl.obolibrary.org/obo/BFO_0000063"
+    identifier: 270-BFO
+    definition: "(Elucidation) precedes is a relation between occurrents o, o' such that if t is the temporal extent of o & t' is the temporal extent of o' then either the last instant of o is before the first instant of o' or the last instant of o is the first instant of o' & neither o nor o' are temporal instants"
+    examples: ["The temporal region occupied by Mary's birth precedes the temporal region occupied by Mary's death."]
+    domain: [occurrent]
+    range: [occurrent]
+    inverse: preceded by
+    characteristics: [transitive]
+    explanatory_note: "Each temporal region is its own temporal extent. The temporal extent of a spatiotemporal region is the temporal region it temporally projects onto. The temporal extent of a process or process boundary that occupies temporal region t is t. Precedes defines a strict partial order on occurrents."
+
+  - label: occurs in
+    iri: "http://purl.obolibrary.org/obo/BFO_0000066"
+    identifier: 143-BFO
+    definition: "b occurs in c =Def b is a process or a process boundary & c is a material entity or site & there exists a spatiotemporal region r & b occupies spatiotemporal region r & for all time t, if b exists at t then c exists at t & there exist spatial regions s and s' where b spatially projects onto s at t & c occupies spatial region s' at t & s is a continuant part of s' at t"
+    examples: ["A process of digestion occurs in the interior of an organism; a process of loading artillery rounds into a tank cannon occurs in the interior of the tank"]
+    domain: [process, process boundary]
+    range: [site, material entity]
+    inverse: environs
+
+  - label: generically depends on
+    iri: "http://purl.obolibrary.org/obo/BFO_0000084"
+    identifier: 252-BFO
+    alternative_labels: [g-depends on]
+    definition: "b generically depends on c =Def b is a generically dependent continuant & c is an independent continuant that is not a spatial region & at some time t there inheres in c a specifically dependent continuant which concretizes b at t"
+    domain: [generically dependent continuant]
+    range: ["independent continuant and not spatial region"]
+    inverse: is carrier of
+    explanatory_note: *temporal_note
+
+  - label: is carrier of
+    iri: "http://purl.obolibrary.org/obo/BFO_0000101"
+    identifier: 254-BFO
+    definition: "b is carrier of c =Def there is some time t such that c generically depends on b at t"
+    domain: ["independent continuant and not spatial region"]
+    range: [generically dependent continuant]
+    inverse: generically depends on
+    explanatory_note: *temporal_note
+
+  - label: exists at
+    iri: "http://purl.obolibrary.org/obo/BFO_0000108"
+    identifier: 118-BFO
+    definition: "(Elucidation) exists at is a relation between a particular and some temporal region at which the particular exists"
+    examples: ["First World War exists at 1914-1916; Mexico exists at January 1, 2000"]
+    domain: [entity]
+    range: [temporal region]
+
+  - label: has member part
+    iri: "http://purl.obolibrary.org/obo/BFO_0000115"
+    identifier: 230-BFO
+    definition: "b has member part c =Def c member part of b"
+    domain: [material entity]
+    range: [material entity]
+    inverse: member part of
+    sub_property_of: has continuant part
+    explanatory_note: *temporal_note
+
+  - label: has occurrent part
+    iri: "http://purl.obolibrary.org/obo/BFO_0000117"
+    identifier: 202-BFO
+    definition: "b has occurrent part c =Def c occurrent part of b"
+    examples: ["Mary's life has occurrent part Mary's 5th birthday"]
+    domain: [occurrent]
+    range: [occurrent]
+    inverse: occurrent part of
+    characteristics: [transitive]
+
+  - label: has temporal part
+    iri: "http://purl.obolibrary.org/obo/BFO_0000121"
+    identifier: 211-BFO
+    definition: "b has temporal part c =Def c temporal part of b"
+    examples: ["Your life has temporal part the first year of your life"]
+    domain: [occurrent]
+    range: [occurrent]
+    inverse: temporal part of
+    sub_property_of: has occurrent part
+    characteristics: [transitive]
+
+  - label: location of
+    iri: "http://purl.obolibrary.org/obo/BFO_0000124"
+    identifier: 236-BFO
+    definition: "b location of c =Def c located in b"
+    domain: ["independent continuant and not spatial region"]
+    range: ["independent continuant and not spatial region"]
+    inverse: located in
+    explanatory_note: *temporal_note
+
+  - label: material basis of
+    iri: "http://purl.obolibrary.org/obo/BFO_0000127"
+    identifier: 244-BFO
+    definition: "b material basis of c =Def c has material basis b"
+    domain: [material entity]
+    range: [disposition]
+    inverse: has material basis
+    explanatory_note: *temporal_note
+
+  - label: member part of
+    iri: "http://purl.obolibrary.org/obo/BFO_0000129"
+    identifier: 228-BFO
+    definition: "b member part of c =Def b is an object & c is a material entity & there is some time t such that b continuant part of c at t & there is a mutually exhaustive and pairwise disjoint partition of c into objects x1, ..., xn (for some n ≠ 1) with b = xi (for some 1 <= i <= n)"
+    domain: [material entity]
+    range: [material entity]
+    inverse: has member part
+    sub_property_of: continuant part of
+    explanatory_note: *temporal_note
+
+  - label: occurrent part of
+    iri: "http://purl.obolibrary.org/obo/BFO_0000132"
+    identifier: 003-BFO
+    definition: "(Elucidation) occurrent part of is a relation between occurrents b and c when b is part of c"
+    examples: ["Mary's 5th birthday is an occurrent part of Mary's life; the first set of the tennis match is an occurrent part of the tennis match"]
+    domain: [occurrent]
+    range: [occurrent]
+    inverse: has occurrent part
+    characteristics: [transitive]
+
+  - label: temporal part of
+    iri: "http://purl.obolibrary.org/obo/BFO_0000139"
+    identifier: 078-BFO
+    definition: "b temporal part of c =Def b occurrent part of c & (b and c are temporal regions) or (b and c are spatiotemporal regions & b temporally projects onto an occurrent part of the temporal region that c temporally projects onto) or (b and c are processes or process boundaries & b occupies a temporal region that is an occurrent part of the temporal region that c occupies)"
+    examples: ["Your heart beating from 4pm to 5pm today is a temporal part of the process of your heart beating; the 4th year of your life is a temporal part of your life, as is the process boundary which separates the 3rd and 4th years of your life; the first quarter of a game of football is a temporal part of the whole game"]
+    domain: [occurrent]
+    range: [occurrent]
+    inverse: has temporal part
+    sub_property_of: occurrent part of
+    characteristics: [transitive]
+
+  - label: temporally projects onto
+    iri: "http://purl.obolibrary.org/obo/BFO_0000153"
+    identifier: 080-BFO
+    definition: "(Elucidation) temporally projects onto is a relation between a spatiotemporal region s and some temporal region which is the temporal extent of s"
+    examples: ["The world line of a particle temporally projects onto the temporal region extending from the beginning to the end of the existence of the particle"]
+    domain: [spatiotemporal region]
+    range: [temporal region]
+    characteristics: [functional]
+
+  - label: located in
+    iri: "http://purl.obolibrary.org/obo/BFO_0000171"
+    identifier: 234-BFO
+    definition: "b located in c =Def b is an independent continuant & c is an independent & neither is a spatial region & there is some time t such that the spatial region which b occupies at t is continuant part of the spatial region which c occupies at t"
+    domain: ["independent continuant and not spatial region"]
+    range: ["independent continuant and not spatial region"]
+    inverse: location of
+    explanatory_note: *temporal_note
+
+  - label: continuant part of
+    iri: "http://purl.obolibrary.org/obo/BFO_0000176"
+    identifier: 221-BFO
+    definition: "b continuant part of c =Def b and c are continuants & there is some time t such that b and c exist at t & b part of c at t"
+    examples: ["Milk teeth continuant part of human; surgically removed tumour continuant part of organism"]
+    domain: [continuant]
+    range: [continuant]
+    inverse: has continuant part
+    explanatory_note: *temporal_note
+
+  - label: has continuant part
+    iri: "http://purl.obolibrary.org/obo/BFO_0000178"
+    identifier: 271-BFO
+    definition: "b has continuant part c =Def c continuant part of b"
+    domain: [continuant]
+    range: [continuant]
+    inverse: continuant part of
+    explanatory_note: *temporal_note
+
+  - label: environs
+    iri: "http://purl.obolibrary.org/obo/BFO_0000183"
+    identifier: 267-BFO
+    alternative_labels: [contains process]
+    definition: "b environs c =Def c occurs in b"
+    examples: ["Mouth environs process of mastication; city environs traffic"]
+    domain: [site, material entity]
+    range: [process, process boundary]
+    inverse: occurs in
+
+  - label: history of
+    iri: "http://purl.obolibrary.org/obo/BFO_0000184"
+    identifier: 144-BFO
+    definition: "(Elucidation) history of is a relation between history b and material entity c such that b is the unique history of c"
+    examples: ["This life is the history of this organism"]
+    domain: [history]
+    range: [material entity]
+    inverse: has history
+    characteristics: [functional, inverse functional]
+
+  - label: has history
+    iri: "http://purl.obolibrary.org/obo/BFO_0000185"
+    identifier: 145-BFO
+    definition: "b has history c =Def c history of b"
+    examples: ["This organism has history this life"]
+    domain: [material entity]
+    range: [history]
+    inverse: history of
+
+  - label: specifically depended on by
+    iri: "http://purl.obolibrary.org/obo/BFO_0000194"
+    identifier: 260-BFO
+    alternative_labels: [s-depended on by]
+    definition: "b specifically depended on by c =Def c specifically depends on b"
+    examples: ["Coloured object specifically depended on by colour"]
+    domain: [specifically dependent continuant, "independent continuant and not spatial region"]
+    range: [specifically dependent continuant]
+    inverse: bearer of
+
+  - label: specifically depends on
+    iri: "http://purl.obolibrary.org/obo/BFO_0000195"
+    identifier: 012-BFO
+    alternative_labels: [s-depends on]
+    definition: "(Elucidation) specifically depends on is a relation between a specifically dependent continuant b and specifically dependent continuant or independent continuant that is not a spatial region c such that b and c share no parts in common & b is of a nature such that at all times t it cannot exist unless c exists & b is not a boundary of c"
+    examples: ["A shape specifically depends on the shaped object; hue, saturation and brightness of a colour sample specifically depends on each other"]
+    domain: [specifically dependent continuant]
+    range: [specifically dependent continuant, "independent continuant and not spatial region"]
+    inverse: specifically depended on by
+    explanatory_note: "The analogue of specifically depends on for occurrents is has participant."
+
+  - label: bearer of
+    iri: "http://purl.obolibrary.org/obo/BFO_0000196"
+    identifier: 053-BFO
+    definition: "b bearer of c =Def c inheres in b"
+    examples: ["A patch of ink is the bearer of a colour quality; an organism is the bearer of a temperature quality"]
+    domain: ["independent continuant and not spatial region"]
+    range: [specifically dependent continuant]
+    inverse: inheres in
+    sub_property_of: specifically depended on by
+
+  - label: inheres in
+    iri: "http://purl.obolibrary.org/obo/BFO_0000197"
+    identifier: 051-BFO
+    definition: "b inheres in c =Def b is a specifically dependent continuant & c is an independent continuant that is not a spatial region & b specifically depends on c"
+    examples: ["A shape inheres in a shaped object; a mass inheres in a material entity"]
+    domain: [specifically dependent continuant]
+    range: ["independent continuant and not spatial region"]
+    inverse: bearer of
+    sub_property_of: specifically depends on
+
+  - label: occupies temporal region
+    iri: "http://purl.obolibrary.org/obo/BFO_0000199"
+    identifier: 132-BFO
+    definition: "p occupies temporal region t =Def p is a process or process boundary & the spatiotemporal region occupied by p temporally projects onto t"
+    examples: ["The Second World War occupies the temporal region September 1, 1939 - September 2, 1945"]
+    domain: [process, process boundary]
+    range: [temporal region]
+    characteristics: [functional]
+
+  - label: occupies spatiotemporal region
+    iri: "http://purl.obolibrary.org/obo/BFO_0000200"
+    identifier: 082-BFO
+    definition: "(Elucidation) occupies spatiotemporal region is a relation between a process or process boundary p and the spatiotemporal region s which is its spatiotemporal extent"
+    examples: ["A particle emitted by a nuclear reactor occupies the spatiotemporal region which is its trajectory"]
+    domain: [process, process boundary]
+    range: [spatiotemporal region]
+    characteristics: [functional]
+
+  - label: occupies spatial region
+    iri: "http://purl.obolibrary.org/obo/BFO_0000210"
+    identifier: 232-BFO
+    definition: "b occupies spatial region r =Def b is an independent continuant that is not a spatial region & r is a spatial region & there is some time t such that every continuant part of b occupies some continuant part of r at t and no continuant part of b occupies any spatial region that is not a continuant part of r at t"
+    domain: ["independent continuant and not spatial region"]
+    range: [spatial region]
+    explanatory_note: *temporal_note
+
+  - label: spatially projects onto
+    iri: "http://purl.obolibrary.org/obo/BFO_0000216"
+    identifier: 246-BFO
+    definition: "(Elucidation) spatially projects onto is a relation between some spatiotemporal region b and spatial region c such that at some time t, c is the spatial extent of b at t"
+    domain: [spatiotemporal region]
+    range: [spatial region]
+    explanatory_note: *temporal_note
+
+  - label: has material basis
+    iri: "http://purl.obolibrary.org/obo/BFO_0000218"
+    identifier: 242-BFO
+    definition: "b has material basis c =Def b is a disposition & c is a material entity & there is some d bearer of b & there is some time t such that c is a continuant part of d at t & d has disposition b because c is a continuant part of d at t"
+    domain: [disposition]
+    range: [material entity]
+    inverse: material basis of
+    explanatory_note: *temporal_note
+
+  - label: first instant of
+    iri: "http://purl.obolibrary.org/obo/BFO_0000221"
+    identifier: 268-BFO
+    definition: "t first instant of t' =Def t is a temporal instant & t' is a temporal region t' & t precedes all temporal parts of t' other than t"
+    examples: ["An hour starting at midnight yesterday has first instant midnight yesterday"]
+    domain: [temporal instant]
+    range: [temporal region]
+    inverse: has first instant
+
+  - label: has first instant
+    iri: "http://purl.obolibrary.org/obo/BFO_0000222"
+    identifier: 261-BFO
+    definition: "t has first instant t' =Def t' first instant of t"
+    examples: ["The first hour of a year has first instant midnight on December 31"]
+    domain: [temporal region]
+    range: [temporal instant]
+    inverse: first instant of
+    characteristics: [functional]
+
+  - label: last instant of
+    iri: "http://purl.obolibrary.org/obo/BFO_0000223"
+    identifier: 269-BFO
+    definition: "t last instant of t' =Def t is a temporal instant & t' is a temporal region & all temporal parts of t' other than t precede t"
+    examples: ["Last midnight is the last instant of yesterday"]
+    domain: [temporal instant]
+    range: [temporal region]
+    inverse: has last instant
+
+  - label: has last instant
+    iri: "http://purl.obolibrary.org/obo/BFO_0000224"
+    identifier: 215-BFO
+    definition: "t has last instant t' =Def t' last instant of t"
+    examples: ["The last hour of a year has last instant midnight December 31"]
+    domain: [temporal region]
+    range: [temporal instant]
+    inverse: last instant of
+    characteristics: [functional]

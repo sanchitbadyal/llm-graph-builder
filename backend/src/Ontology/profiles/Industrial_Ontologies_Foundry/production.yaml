@@ -1,125 +1,830 @@
 profile:
   id: production-planning-complete
-  ontology_artifact: production-planning
+  ontology_artifact: productionplanning
   description: >-
-    Complete profile generated from ProductionPlanning.rdf, with a project-specific Non-Conformance Record extension.
+    Complete profile generated from ProductionPlanning.rdf; all named classes and properties declared in the RDF artifact are represented here.
   include_ancestors: true
   include_compatible_properties: true
 
-groups:
-  ontology_classes:
-    - label: "Agential Capability"
-      iri: https://spec.industrialontologies.org/ontology/construct/AgentialCapability
-      parent: "Capability"
-      definition: "capability that is borne by an agent"
-    - label: "Changeover Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/ChangeoverProcess
-      parent: "Manufacturing Enterprise Process"
-      definition: "planned process that prepares a production resource to produce a different product or perform a different manufacturing operation"
-    - label: "Inspection Plan"
-      iri: https://spec.industrialontologies.org/ontology/construct/InspectionPlan
-      parent: "Plan Specification"
-      definition: "plan specification that prescribes how products are to be inspected, including the required resources and inspection sequence"
-    - label: "Machine"
-      iri: https://spec.industrialontologies.org/ontology/construct/Machine
-      parent: "Material Artifact"
-      definition: "material artifact that uses controlled mechanical, electrical, or fluid power to transform energy or material while performing a process"
-    - label: "Manufacturing Enterprise Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/ManufacturingEnterpriseProcess
-      parent: "Business Process"
-      definition: "business process that consists of at least one manufacturing process"
-    - label: "Manufacturing Operation"
-      iri: https://spec.industrialontologies.org/ontology/construct/ManufacturingOperation
-      parent: "Manufacturing Enterprise Process"
-      definition: "manufacturing enterprise process composed of process steps from the same product production process, with at least one manufacturing resource used in every step"
-    - label: "Material Handling Plan"
-      iri: https://spec.industrialontologies.org/ontology/construct/MaterialHandlingPlan
-      parent: "Plan Specification"
-      definition: "plan specification containing instructions that prescribe the movement of material between production machines"
-    - label: "Material Product Specification"
-      iri: https://spec.industrialontologies.org/ontology/construct/MaterialProductSpecification
-      parent: "Design Specification"
-      definition: "design specification that prescribes a material product"
-    - label: "Non-Conformance Record"
-      iri: http://example.org/ontology/production#NonConformanceRecord
-      parent: "Information Content Entity"
-      definition: "A record documenting a deviation from a specified requirement."
-    - label: "Operation Specification"
-      iri: https://spec.industrialontologies.org/ontology/construct/OperationSpecification
-      parent: "Action Specification"
-      definition: "action specification that prescribes a manufacturing operation and includes specifications for its process steps"
-    - label: "Operator"
-      iri: https://spec.industrialontologies.org/ontology/construct/Operator
-      parent: "Agent"
-      definition: "agent which has an operator role"
-    - label: "Operator Role"
-      iri: https://spec.industrialontologies.org/ontology/construct/OperatorRole
-      parent: "Agent Role"
-      definition: "role held by an agent when it possesses a skill that enables a capability of one or more pieces of equipment."
-    - label: "Process Plan"
-      iri: https://spec.industrialontologies.org/ontology/construct/ProcessPlan
-      parent: "Plan Specification"
-      definition: "plan specification that prescribes a product production process and includes specifications for its operations or process steps"
-    - label: "Process Step"
-      iri: https://spec.industrialontologies.org/ontology/construct/ProcessStep
-      parent: "Manufacturing Enterprise Process"
-      definition: "manufacturing enterprise process within a manufacturing operation that contains one manufacturing process and no smaller process steps"
-    - label: "Process Step Specification"
-      iri: https://spec.industrialontologies.org/ontology/construct/ProcessStepSpecification
-      parent: "Action Specification"
-      definition: "action specification that prescribes some process step"
-    - label: "Product Inspection Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/ProductInspectionProcess
-      parent: "Business Process"
-      definition: "business process that evaluates a product during or after production against specified requirements"
-    - label: "Product Production Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/ProductProductionProcess
-      parent: null
-    - label: "Production Machine"
-      iri: https://spec.industrialontologies.org/ontology/construct/ProductionMachine
-      parent: "Machine"
-      definition: "machine used as equipment in a manufacturing process"
-    - label: "Production Order"
-      iri: https://spec.industrialontologies.org/ontology/construct/ProductionOrder
-      parent: "Objective Specification"
-      definition: "objective specification stating the product and quantity to be produced and any applicable release, completion, or delivery requirements"
-    - label: "Production Plan"
-      iri: https://spec.industrialontologies.org/ontology/construct/ProductionPlan
-      parent: "Plan Specification"
-      definition: "plan specification that contains a set of production orders and prescribes how they are to be fulfilled"
-    - label: "Production Tool"
-      iri: https://spec.industrialontologies.org/ontology/construct/ProductionTool
-      parent: "Tool"
-      definition: "tool designed to be held, guided or affixed to enable execution of a manufacturing process"
-    - label: "Tool"
-      iri: https://spec.industrialontologies.org/ontology/construct/Tool
-      parent: "Material Artifact"
-      definition: "material artifact designed to be held, guided, or attached to help a person, machine, or mechanism perform a task"
-    - label: "Work-In-Progress Transfer Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/WorkInProgressTransferProcess
-      parent: "Material Location Change Process"
-      definition: "material location change process in which work in progress moves between production machines"
 
-type_sets:
-  capabilities: &capabilities [Capability, Agential Capability]
-  capability_bearers: &capability_bearers [Agent, Operator, Machine, Production Machine, Tool, Production Tool, Piece Of Equipment]
+entities:
+  - label: Agential Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/AgentialCapability"
+    parent_class: Capability
+    definition: >
+      capability that is borne by an agent
+    synonyms:
+      - skill
+    examples:
+      - making nice slides
+      - cooking Indian food
+      - changing tools on CNC machine
+      - NC programmer
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of some Agent.
+    logical_definition: >
+      AgentialCapability(x) ↔ (Capability(x) ∧ ∃y
+      (Agent(y) ∧ capabilityOf(x, y)))
+
+
+  - label: Changeover Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/ChangeoverProcess"
+    parent_class: Manufacturing Enterprise Process
+    definition: >
+      planned process that prepares a production resource to produce a
+      different product or perform a different manufacturing operation
+    examples:
+      - replacing the die for Toyota Camry engine hood by the die for Camry trunk hood
+      - replacing the fixture for the new part being machined
+      - cleaning the vessel of the mixer in food production when changing the product to be mixed
+    classification_conditions:
+      - The process must be a Manufacturing Enterprise Process.
+      - The process must be a Planned Process.
+    logical_definition: >
+      ChangeoverProcess(p) → PlannedProcess(p)
+    explanatory_note: >
+      The work required to change a specific machine, resource, work center,
+      or line from making the last good piece of item A to making the first
+      good piece of item B
+
+
+  - label: Inspection Plan
+    iri: "https://spec.industrialontologies.org/ontology/construct/InspectionPlan"
+    parent_class: Plan Specification
+    definition: >
+      plan specification that prescribes how products are to be inspected,
+      including the required resources and inspection sequence
+    examples:
+      - incoming-material inspection procedure for steel coils
+      - in-process dimensional inspection checklist for machined engine blocks
+      - sampling and testing protocol for a pharmaceutical batch
+      - final-product inspection plan for assembled pumps
+    classification_conditions:
+      - The entity must be a Plan Specification.
+      - A Plan Specification that prescribes some Product Inspection Process is an Inspection Plan.
+    logical_definition: >
+      PlanSpecification(x) ∧ ∃y (prescribes(x, y) ∧
+      ProductInspectionProcess(y)) → InspectionPlan(x)
+
+
+  - label: Machine
+    iri: "https://spec.industrialontologies.org/ontology/construct/Machine"
+    parent_class: Material Artifact
+    definition: >
+      material artifact that uses controlled mechanical, electrical, or
+      fluid power to transform energy or material while performing a process
+    examples:
+      - computer numerical control milling center
+      - 250-ton hydraulic press
+      - industrial ribbon blender
+      - plastic injection-molding unit
+      - centrifugal pump in a chemical-processing line, ventilator, CT scanner
+    classification_conditions:
+      - The entity must be a Material Artifact.
+    logical_definition: >
+      Machine(m) → MaterialArtifact(m)
+    explanatory_note: >
+      "physical artefact" emphasises that the entity is a concrete built
+      thing. "transforms energy or material" captures the notion of machines
+      doing work (e.g., moving parts, powering machining, mixing, conveying).
+      "guided mechanical, electrical or fluid power" points at a machine
+      having power, motion, and control. "performing one or more processes"
+      allows for generality (manufacturing, handling, processing, etc).
+
+
+  - label: Manufacturing Enterprise Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/ManufacturingEnterpriseProcess"
+    parent_class: Business Process
+    definition: >
+      business process that consists of at least one manufacturing process
+    examples:
+      - process of completing a truck assembly
+      - process for refining the crude oil into petrol
+      - process for production of frozen food items
+    classification_conditions:
+      - The process must be a Business Process.
+      - It must have some Manufacturing Process as an occurrent part.
+    logical_definition: >
+      ManufacturingEnterpriseProcess(p) → ∃m
+      (ManufacturingProcess(m) ∧ hasOccurrentPart(p, m))
+
+
+  - label: Manufacturing Operation
+    iri: "https://spec.industrialontologies.org/ontology/construct/ManufacturingOperation"
+    parent_class: Manufacturing Enterprise Process
+    definition: >
+      manufacturing enterprise process composed of process steps from the
+      same product production process, with at least one manufacturing
+      resource used in every step
+    examples:
+      - hole making in an engine block consisting of centering, drilling, reaming, and finishing on one machining center
+      - injection molding of a plastic housing consisting of mold closing, material injection, cooling, and part ejection
+    classification_conditions:
+      - The process must be a Manufacturing Enterprise Process.
+      - It must have some Material Entity as a participant at some time.
+      - That Material Entity must have some Equipment Role or Operator Role.
+      - It must have some Process Step as a proper occurrent part.
+      - Any two distinct Process Steps that are occurrent parts of it must each contain a Manufacturing Process, and those two Manufacturing Processes must share a participant that has an Equipment Role.
+    logical_definition: >
+      LA1: ManufacturingOperation(o) → ManufacturingEnterpriseProcess(o) ∧ ∃m
+      (MaterialEntity(m) ∧ hasParticipantAtSomeTime(o, m) ∧ ∃r
+      ((EquipmentRole(r) ∨ OperatorRole(r)) ∧ hasRole(m, r))) ∧ ∃s
+      (ProcessStep(s) ∧ hasProperOccurrentPart(o, s));
+      LA2: ProcessStep(x1) ∧ ProcessStep(x2) ∧ ManufacturingOperation(o) ∧
+      occurrentPartOfAtSomeTime(x1, o) ∧ occurrentPartOfAtSomeTime(x2, o) ∧
+      x1 ≠ x2 → ∃e,p1,p2,r1,r2 (ManufacturingProcess(p1) ∧
+      ManufacturingProcess(p2) ∧ occurrentPartOfAtSomeTime(p1, x1) ∧
+      occurrentPartOfAtSomeTime(p2, x2) ∧ hasParticipantAtSomeTime(p1, e) ∧
+      hasParticipantAtSomeTime(p2, e) ∧ hasRole(e, r1) ∧ hasRole(e, r2) ∧
+      EquipmentRole(r1) ∧ EquipmentRole(r2))
+    explanatory_note: >
+      An operation may consist of a single step and in such cases may
+      include the same information as that in the process specification.
+      However, in many situations, multiple steps are required to be
+      performed on a machine to produce a single feature or to achieve a
+      specific quality, geometric shape, or dimension of the designated
+      product or component. In such multi-step operations, the primary
+      equipment may require reconfiguration, including the attachment or
+      detachment of tools or accessories. Additionally, the material may need
+      to be repositioned or handled between steps, all of which are
+      considered integral parts of the operation.
+
+
+  - label: Material Handling Plan
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialHandlingPlan"
+    parent_class: Plan Specification
+    definition: >
+      plan specification containing instructions that prescribe the movement
+      of material between production machines
+    examples:
+      - batch-transfer schedule for moving chemicals from a reactor to a storage tank
+      - warehouse picking and delivery instructions for supplying components to an assembly line
+      - pallet-movement schedule for transporting finished products to shipping
+    classification_conditions:
+      - The entity must be a Plan Specification.
+      - A Plan Specification that has, at all times, some Action Specification as a continuant part, where that Action Specification prescribes some Work-In-Progress Transfer Process, is a Material Handling Plan.
+    logical_definition: >
+      PlanSpecification(x) ∧ ∃y,z (hasContinuantPartAtAllTimes(x, y) ∧
+      prescribes(y, z) ∧ WorkInProgressTransferProcess(z)) →
+      MaterialHandlingPlan(x)
+    explanatory_note: >
+      A specification (PlanSpecification) that prescribes one or more
+      material handling operations—sequences of actions, resource
+      allocations, and constraints—designed to govern the efficient, safe,
+      and controlled movement of materials or entities within production,
+      storage, or distribution contexts. The class is open to be further
+      constrained by different kinds of material handling types. At this
+      point only machine transfer process is included.
+
+
+  - label: Material Product Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialProductSpecification"
+    parent_class: Design Specification
+    definition: >
+      design specification that prescribes a material product
+    examples:
+      - engineering drawing specifying the geometry and tolerances of an aluminum bracket
+      - technical data sheet defining the composition and properties of a polymer resin
+      - formulation and packaging requirements for an industrial coating
+      - product specification requiring a tablet mass of 650 ± 10 milligrams
+    classification_conditions:
+      - The entity must be a Design Specification.
+      - Everything it prescribes must be a Material Product.
+      - A Design Specification that prescribes some Material Product is a Material Product Specification.
+    logical_definition: >
+      MaterialProductSpecification(x) → DesignSpecification(x) ∧ ∀y
+      (prescribes(x, y) → MaterialProduct(y));
+      DesignSpecification(d) ∧ ∃m (MaterialProduct(m) ∧ prescribes(d, m)) →
+      MaterialProductSpecification(d)
+    explanatory_note: >
+      specification of a product may contain a simple description of a
+      product to a detailed CAD design, including geometry, structure,
+      dimension, and tolerances. It may also contain reference to PLM system
+      entity.
+
+
+  - label: Operation Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/OperationSpecification"
+    parent_class: Action Specification
+    definition: >
+      action specification that prescribes a manufacturing operation and
+      includes specifications for its process steps
+    examples:
+      - machining work instruction specifying centering, drilling, reaming, and hole finishing
+      - injection-molding instruction specifying mold closing, polymer injection, cooling, and part ejection
+      - NC Program for machining a part on a lathe
+    classification_conditions:
+      - The entity must be an Action Specification.
+      - It cannot have a Process Plan or a Production Plan as a continuant part at all times.
+      - It cannot have another Operation Specification as a proper continuant part at all times.
+      - An Action Specification that has some Process Step Specification as a continuant part at all times and prescribes some Manufacturing Operation is an Operation Specification.
+    logical_definition: >
+      LA1: OperationSpecification(o) ∧ hasContinuantPartAtAllTimes(o, p) →
+      ¬ProcessPlan(p) ∧ ¬ProductionPlan(p);
+      LA2: OperationSpecification(o) ∧ hasProperContinuantPartAtAllTimes(o,
+      o') → ¬OperationSpecification(o');
+      LA3: ActionSpecification(o) ∧ ∃s (ProcessStepSpecification(s) ∧
+      hasContinuantPartAtAllTimes(o, s)) ∧ ∃p (ManufacturingOperation(p) ∧
+      prescribes(o, p)) → OperationSpecification(o)
+    explanatory_note: >
+      This part of the plan specifies one or many steps, each of which is to
+      be performed using one or more specific manufacturing resource in
+      parallel or consecutively.
+
+
+  - label: Operator
+    iri: "https://spec.industrialontologies.org/ontology/construct/Operator"
+    parent_class: Agent
+    definition: >
+      agent which has an operator role
+    examples:
+      - machinist running a CNC milling machine
+      - technician monitoring a chemical reactor
+      - production worker controlling an automated packaging line
+      - utility company operating an industrial wastewater-treatment facility
+    classification_conditions:
+      - The entity must be an Agent.
+      - The entity must have some Operator Role.
+    logical_definition: >
+      Operator(x) ↔ Agent(x) ∧ ∃y (OperatorRole(y) ∧ hasRole(x, y))
+
+
+  - label: Operator Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/OperatorRole"
+    parent_class: Agent Role
+    definition: >
+      role held by an agent when it possesses a skill that enables a
+      capability of one or more pieces of equipment.
+    examples:
+      - person as a CNC operator has an operator role of operating, maintaining, and utilizing the assigned CNC machine before, during, and after a manufacturing process
+    classification_conditions:
+      - The role must be an Agent Role.
+      - It must be the role of some Agent.
+      - That Agent must have some Agential Capability.
+      - That Agential Capability must enable some capability of some Piece Of Equipment.
+    logical_definition: >
+      OperatorRole(r) → AgentRole(r) ∧ ∃g (Agent(g) ∧ roleOf(r, g) ∧ ∃c
+      (AgentialCapability(c) ∧ hasCapability(g, c) ∧ ∃x (enables(c, x) ∧ ∃e
+      (PieceOfEquipment(e) ∧ capabilityOf(x, e)))))
+    explanatory_note: >
+      Relevant skills may enable a capability of a single piece of equipment
+      or the coordinated realization of capabilities of multiple pieces of
+      equipment, such as those operating together in a process cell or
+      production line. Enabling an equipment capability is not limited to
+      directly operating the equipment. A skill may enable the realization
+      of an equipment capability by allowing the agent to set up, start,
+      stop, monitor, adjust, or otherwise use the equipment; monitor and
+      control a process through the equipment; coordinate multiple pieces of
+      equipment; interpret equipment states, process conditions, alarms, and
+      outputs; respond to normal or abnormal conditions; inspect or assess
+      equipment condition or performance; or perform operator-level
+      cleaning, troubleshooting, or routine maintenance.
+
+
+  - label: Process Plan
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProcessPlan"
+    parent_class: Plan Specification
+    definition: >
+      plan specification that prescribes a product production process and
+      includes specifications for its operations or process steps
+    examples:
+      - IKEA instructions to assemble furniture such as tables and chairs
+      - a step-by-step recipe for preparing a cake
+    classification_conditions:
+      - The entity must be a Plan Specification.
+      - It must have, at all times, some Objective Specification as a proper continuant part.
+      - That Objective Specification must have, at all times, some Material Product Specification as a continuant part.
+      - It must be a proper continuant part, at all times, of some Production Plan.
+      - It cannot have another Process Plan as a proper continuant part at all times.
+      - It cannot have a Production Plan as a continuant part at all times.
+      - A Plan Specification that has some Operation Specification or Process Step Specification as a continuant part at all times and prescribes some Product Production Process is a Process Plan.
+    logical_definition: >
+      ProcessPlan(p) ↔ PlanSpecification(p) ∧ ∃o (ObjectiveSpecification(o) ∧
+      hasProperContinuantPartAtAllTimes(p, o) ∧ ∃m
+      (MaterialProductSpecification(m) ∧ hasContinuantPartAtAllTimes(o, m)))
+      ∧ ∃p' (ProductionPlan(p') ∧ properContinuantPartOfAtAllTimes(p, p'));
+      LA1: ProcessPlan(p) ∧ hasProperContinuantPartAtAllTimes(p, p') →
+      ¬ProcessPlan(p');
+      LA2: ProcessPlan(p) ∧ hasContinuantPartAtAllTimes(p, x) →
+      ¬ProductionPlan(x);
+      LA3: PlanSpecification(p) ∧ ∃s ((OperationSpecification(s) ∨
+      ProcessStepSpecification(s)) ∧ hasContinuantPartAtAllTimes(p, s)) ∧ ∃o
+      (ProductProductionProcess(o) ∧ prescribes(p, o)) → ProcessPlan(p)
+
+
+  - label: Process Step
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProcessStep"
+    parent_class: Manufacturing Enterprise Process
+    definition: >
+      manufacturing enterprise process within a manufacturing operation that
+      contains one manufacturing process and no smaller process steps
+    examples:
+      - drill hole, steps- centering, twist drilling, enlarging the hole, and finish the holes- these four steps each of them are process step
+    classification_conditions:
+      - The process must be a Manufacturing Enterprise Process.
+      - It must have some Manufacturing Process as an occurrent part at some time.
+      - Every Process Step that is an occurrent part of it at some time must be identical to it.
+    logical_definition: >
+      ProcessStep(x) → ManufacturingEnterpriseProcess(x) ∧ ∃p
+      (ManufacturingProcess(p) ∧ occurrentPartOfAtSomeTime(p, x)) ∧ ∀s
+      ((ProcessStep(s) ∧ occurrentPartOfAtSomeTime(s, x)) → s = x)
+    explanatory_note: >
+      Along with the instance of manufacturing process, process step may
+      also include instances of setup process and inspection process as
+      subprocesses.
+
+
+  - label: Process Step Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProcessStepSpecification"
+    parent_class: Action Specification
+    definition: >
+      action specification that prescribes some process step
+    examples:
+      - drilling instruction requiring a 10-millimeter hole to be drilled to a depth of 20 millimeters
+      - mixing instruction requiring a chemical batch to be agitated at 60 revolutions per minute for 10 minutes
+    classification_conditions:
+      - The entity must be an Action Specification.
+      - It cannot have a Process Plan, Production Plan or Operation Specification as a continuant part at all times.
+      - It cannot have another Process Step Specification as a proper continuant part at all times.
+      - An Action Specification that prescribes some Process Step is a Process Step Specification.
+    logical_definition: >
+      LA1: ProcessStepSpecification(s) ∧ hasContinuantPartAtAllTimes(s, x) →
+      ¬ProcessPlan(x) ∧ ¬ProductionPlan(x) ∧ ¬OperationSpecification(x);
+      LA2: ProcessStepSpecification(s) ∧
+      hasProperContinuantPartAtAllTimes(s, s') →
+      ¬ProcessStepSpecification(s');
+      LA3: ActionSpecification(s) ∧ ∃p (ProcessStep(p) ∧ prescribes(s, p)) →
+      ProcessStepSpecification(s)
+    explanatory_note: >
+      A process-step specification is the atomic instruction within a
+      process plan—the most specific, detailed, and direct component. It
+      defines required input materials, recipes, dimensions, tolerances,
+      attributes, and any necessary in-process handling or machine
+      configurations. In some cases, it may be as simple as a label or brief
+      instruction, such as "drill ten 0.45-inch holes in a 3' × 5' sheet."
+
+
+  - label: Product Inspection Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProductInspectionProcess"
+    parent_class: Business Process
+    definition: >
+      business process that evaluates a product during or after production
+      against specified requirements
+    examples:
+      - inspection of a bore of the engine block
+      - final inspection of the truck at the end of assembly line
+      - inspection of the PCB at the end of the fab line
+      - inspection of the quality of glass bottle
+      - visual inspection of defects on car body paint
+    classification_conditions:
+      - The process must be a Business Process.
+    logical_definition: >
+      ProductInspectionProcess(x) → BusinessProcess(x)
+
+
+  - label: Product Production Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProductProductionProcess"
+
+
+  - label: Production Machine
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProductionMachine"
+    parent_class: Machine
+    definition: >
+      machine used as equipment in a manufacturing process
+    examples:
+      - CNC (Computer Numerical Control) milling machines are widely used in manufacturing to precisely cut and shape various materials, including metal, plastic, and wood.
+    classification_conditions:
+      - The entity must be a Machine.
+      - It must have some Equipment Role.
+      - That Equipment Role must be realized only in Manufacturing Processes.
+      - A Machine that has such an Equipment Role is a Production Machine.
+    logical_definition: >
+      ProductionMachine(x) → Machine(x) ∧ ∃r (EquipmentRole(r) ∧ hasRole(x, r)
+      ∧ ∀p (realizes(p, r) → ManufacturingProcess(p)));
+      Machine(x) ∧ ∃r (hasRole(x, r) ∧ EquipmentRole(r) ∧ ∀p (realizes(p, r)
+      → ManufacturingProcess(p))) → ProductionMachine(x)
+
+
+  - label: Production Order
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProductionOrder"
+    parent_class: Objective Specification
+    definition: >
+      objective specification stating the product and quantity to be
+      produced and any applicable release, completion, or delivery
+      requirements
+    examples:
+      - order to produce 100 brackets
+    classification_conditions:
+      - The entity must be an Objective Specification.
+      - It must have, at all times, some Material Product Specification as a continuant part.
+      - An Objective Specification that is achieved at some time by a Planned Process that has some Product Production Process as an occurrent part is a Production Order.
+    logical_definition: >
+      LA1: ProductionOrder(o) → (ObjectiveSpecification(o) ∧ ∃m
+      (MaterialProductSpecification(m) ∧ hasContinuantPartAtAllTimes(o, m)));
+      LA2: ObjectiveSpecification(o) ∧ ∃p (PlannedProcess(p) ∧
+      isAchievedByAtSomeTime(o, p) ∧ ∃q (ProductProductionProcess(q) ∧
+      hasOccurrentPart(p, q))) → ProductionOrder(o)
+
+
+  - label: Production Plan
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProductionPlan"
+    parent_class: Plan Specification
+    definition: >
+      plan specification that contains a set of production orders and
+      prescribes how they are to be fulfilled
+    examples:
+      - Production of a batch of 1,000 plastic containers and 100 lids in one week
+      - production of 200 wooden chairs at the wood workshop to be completed by August 9
+      - In the first quarter of 2025, the sewing department will produce 500 shirts.
+    classification_conditions:
+      - The entity must be a Plan Specification.
+      - It must have, at all times, some Production Order as a proper continuant part.
+      - It cannot have another Production Plan as a proper continuant part at some time.
+      - A Plan Specification that prescribes some Planned Process that has some Product Production Process as an occurrent part is a Production Plan.
+    logical_definition: >
+      ProductionPlan(p) ↔ PlanSpecification(p) ∧ ∃o (ProductionOrder(o) ∧
+      hasProperContinuantPartAtAllTimes(p, o));
+      LA1: ProductionPlan(p) ∧ hasProperContinuantPartAtSomeTime(p, p') →
+      ¬ProductionPlan(p');
+      LA2: PlanSpecification(p) ∧ ∃q (PlannedProcess(q) ∧ prescribes(p, q) ∧
+      ∃o (ProductProductionProcess(o) ∧ hasOccurrentPart(q, o))) →
+      ProductionPlan(p)
+
+
+  - label: Production Tool
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProductionTool"
+    parent_class: Tool
+    definition: >
+      tool designed to be held, guided or affixed to enable execution of a
+      manufacturing process
+    examples:
+      - carbide insert 1/2 in end mill tool
+      - stamping die for Toyota hood panel
+      - dough-cutting die producing 50 portions per minute
+    classification_conditions:
+      - The entity must be a Tool.
+      - It must have some Equipment Role.
+      - That Equipment Role must be realized only in Manufacturing Processes.
+    logical_definition: >
+      ProductionTool(t) → ∃r (EquipmentRole(r) ∧ hasRole(t, r) ∧ ∀p
+      (hasRealization(r, p) → ManufacturingProcess(p)))
+    explanatory_note: >
+      "designed to be held, guided or affixed" distinguishes tools from
+      machines: often simpler, may require manual or machine guidance.
+      "facilitate execution of a task" covers uses ranging from hand-tools
+      (hammer, wrench) to machine-tools (cutting insert, fixture) in the
+      broader sense. By stating "by a human, machine or mechanism," the
+      definition remains flexible to tools used both manually and in
+      automated contexts.
+
+
+  - label: Tool
+    iri: "https://spec.industrialontologies.org/ontology/construct/Tool"
+    parent_class: Material Artifact
+    definition: >
+      material artifact designed to be held, guided, or attached to help a
+      person, machine, or mechanism perform a task
+    examples:
+      - adjustable wrench used to maintain a pump
+      - multimeter used to troubleshoot an electrical cabinet
+      - borescope used to inspect a pipeline
+      - calibration gauge used to verify a pressure sensor
+      - cleaning brush used to service processing equipment
+    classification_conditions:
+      - The entity must be a Material Artifact.
+    logical_definition: >
+      Tool(t) → MaterialArtifact(t)
+    explanatory_note: >
+      "designed to be held, guided or affixed" distinguishes tools from
+      machines: often simpler, may require manual or machine guidance.
+      "facilitate execution of a task" covers uses ranging from hand-tools
+      (hammer, wrench) to machine-tools (cutting insert, fixture) in the
+      broader sense. By stating "by a human, machine or mechanism," the
+      definition remains flexible to tools used both manually and in
+      automated contexts.
+
+
+  - label: Work-In-Progress Transfer Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/WorkInProgressTransferProcess"
+    parent_class: Material Location Change Process
+    definition: >
+      material location change process in which work in progress moves
+      between production machines
+    examples:
+      - moving a partially machined engine block from a milling center to a drilling center
+      - conveying molded plastic housings from an injection press to a trimming station
+      - pumping a 500-liter chemical batch from reactor R-01 to filter F-02
+    classification_conditions:
+      - The process must be a Material Location Change Process.
+      - The process must be a Planned Process.
+      - It must have some Material Entity as a participant at some time.
+      - It must occupy some Temporal Region with a first instant t and a last instant t1.
+      - There must be two Production Machines, one existing at t and one existing at t1.
+      - Each of the two Production Machines must be located in some Site at all times.
+      - Both Production Machines must be the location of the same Material Entity at all times.
+    logical_definition: >
+      WorkInProgressTransferProcess(x) ↔ PlannedProcess(x) ∧ ∃y,t,t1,t2,s,s1,z,z1
+      (MaterialEntity(y) ∧ TemporalInstant(t) ∧ TemporalInstant(t1) ∧
+      TemporalRegion(t2) ∧ ProductionMachine(s) ∧ ProductionMachine(s1) ∧
+      Site(z) ∧ Site(z1) ∧ hasParticipantAtSomeTime(x, y) ∧ firstInstantOf(t,
+      t2) ∧ lastInstantOf(t1, t2) ∧ occupiesTemporalRegion(x, t2) ∧
+      existsAt(s, t) ∧ existsAt(s1, t1) ∧ locatedInAtAllTimes(s, z) ∧
+      locatedInAtAllTimes(s1, z1) ∧ locationOfAtAllTimes(s, y) ∧
+      locationOfAtAllTimes(s1, y))
+
 
 relationships:
-  - label: "capability of"
-    type: CAPABILITY_OF
-    iri: https://spec.industrialontologies.org/ontology/construct/capabilityOf
-    domain: *capabilities
-    range: *capability_bearers
-    definition: "The capability is borne by this agent or piece of equipment."
-  - label: "enabled by"
-    type: ENABLED_BY
-    iri: https://spec.industrialontologies.org/ontology/construct/enabledBy
-    domain: *capabilities
-    range: *capabilities
-    definition: "relation from one capability to another capability such that associated performance of the first capability is made possible by another"
-  - label: "enables"
-    type: ENABLES
-    iri: https://spec.industrialontologies.org/ontology/construct/enables
-    domain: *capabilities
-    range: *capabilities
-    definition: "a capability enables another capability only if realization of the first capability implies realization of the second capability"
+
+  - label: Enables
+    iri: "https://spec.industrialontologies.org/ontology/construct/enables"
+    definition: >
+      a capability enables another capability only if realization of the
+      first capability implies realization of the second capability
+    examples:
+      - the cutting capability of an installed drill bit enables the hole-making capability of a drilling machine
+    domain:
+      - Capability
+    range:
+      - Capability
+    inverse: Enabled By
+    extraction_constraints:
+      - Subject must be a Capability.
+      - Object must be a Capability.
+      - The Agential Capability of an Operator Role holder enables a capability of a Piece Of Equipment.
+      - The relationship direction is Enabling Capability → Enabled Capability.
+
+
+  - label: Enabled By
+    iri: "https://spec.industrialontologies.org/ontology/construct/enabledBy"
+    definition: >
+      relation from one capability to another capability such that
+      associated performance of the first capability is made possible by
+      another
+    examples:
+      - the hole-making capability of a drilling machine is enabled by the cutting capability of the drill bit installed in the machine
+    domain:
+      - Capability
+    range:
+      - Capability
+    inverse: Enables
+    extraction_constraints:
+      - Subject must be a Capability.
+      - Object must be a Capability.
+      - The relationship direction is Enabled Capability → Enabling Capability.
+
+
+  - label: Capability Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/capabilityOf"
+    definition: >
+      relationship from a capability to the entity that bears it
+    domain:
+      - Capability
+      - Agential Capability
+    range:
+      - Agent
+      - Piece Of Equipment
+    inverse: Has Capability
+    extraction_constraints:
+      - Agential Capability must be the capability of an Agent.
+      - A Capability enabled by an Agential Capability must be the capability of a Piece Of Equipment.
+      - The relationship direction is Capability → Capability Bearer.
+
+
+  - label: Has Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasCapability"
+    definition: >
+      relationship from an entity to a capability that it bears
+    domain:
+      - Agent
+    range:
+      - Agential Capability
+    inverse: Capability Of
+    extraction_constraints:
+      - An Agent holding an Operator Role must have an Agential Capability.
+      - The relationship direction is Capability Bearer → Capability.
+
+
+  - label: Has Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasRole"
+    definition: >
+      relationship from an entity to a role that it holds
+    domain:
+      - Operator
+      - Machine
+      - Production Machine
+      - Production Tool
+      - Material Entity
+    range:
+      - Operator Role
+      - Equipment Role
+    inverse: Role Of
+    extraction_constraints:
+      - Operator must have an Operator Role.
+      - Production Machine must have an Equipment Role.
+      - Production Tool must have an Equipment Role.
+      - A Material Entity that participates in a Manufacturing Operation must have an Equipment Role or Operator Role.
+      - The relationship direction is Role Bearer → Role.
+
+
+  - label: Role Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/roleOf"
+    definition: >
+      relationship from a role to the entity that holds it
+    domain:
+      - Operator Role
+    range:
+      - Agent
+    inverse: Has Role
+    extraction_constraints:
+      - Operator Role must be the role of an Agent that has an Agential Capability.
+      - The relationship direction is Role → Role Bearer.
+
+
+  - label: Prescribes
+    iri: "https://spec.industrialontologies.org/ontology/construct/prescribes"
+    definition: >
+      relationship from a specification to the process or entity it prescribes
+    domain:
+      - Inspection Plan
+      - Material Handling Plan
+      - Material Product Specification
+      - Operation Specification
+      - Process Plan
+      - Process Step Specification
+      - Production Plan
+    range:
+      - Product Inspection Process
+      - Work-In-Progress Transfer Process
+      - Material Product
+      - Manufacturing Operation
+      - Product Production Process
+      - Process Step
+      - Planned Process
+    inverse: Prescribed By
+    extraction_constraints:
+      - Inspection Plan must prescribe a Product Inspection Process.
+      - Material Handling Plan must have a part that prescribes a Work-In-Progress Transfer Process.
+      - Material Product Specification must prescribe only Material Products.
+      - Operation Specification must prescribe a Manufacturing Operation.
+      - Process Plan must prescribe a Product Production Process.
+      - Process Step Specification must prescribe a Process Step.
+      - Production Plan must prescribe a Planned Process that has a Product Production Process as an occurrent part.
+      - The relationship direction is Specification → Prescribed Process or Entity.
+
+
+  - label: Has Occurrent Part
+    iri: "http://purl.obolibrary.org/obo/BFO_0000117"
+    definition: >
+      relationship from a process to a process that is a part of it
+    domain:
+      - Manufacturing Enterprise Process
+      - Planned Process
+    range:
+      - Manufacturing Process
+      - Product Production Process
+    extraction_constraints:
+      - Manufacturing Enterprise Process must have a Manufacturing Process as an occurrent part.
+      - A Planned Process that achieves a Production Order has a Product Production Process as an occurrent part.
+      - The relationship direction is Whole Process → Part Process.
+
+
+  - label: Has Proper Occurrent Part
+    iri: "http://purl.obolibrary.org/obo/BFO_0000118"
+    definition: >
+      relationship from a process to a process that is a proper part of it
+    domain:
+      - Manufacturing Operation
+    range:
+      - Process Step
+    extraction_constraints:
+      - Manufacturing Operation must have a Process Step as a proper occurrent part.
+      - The relationship direction is Whole Process → Part Process.
+
+
+  - label: Has Participant At Some Time
+    iri: "http://purl.obolibrary.org/obo/BFO_0000057"
+    definition: >
+      relationship from a process to an entity that participates in it at
+      some time
+    domain:
+      - Manufacturing Operation
+      - Work-In-Progress Transfer Process
+    range:
+      - Material Entity
+    extraction_constraints:
+      - Manufacturing Operation must have a Material Entity with an Equipment Role or Operator Role as a participant.
+      - Work-In-Progress Transfer Process must have a Material Entity as a participant.
+      - The relationship direction is Process → Participant.
+
+
+  - label: Has Continuant Part At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000110"
+    definition: >
+      relationship from a continuant to a continuant that is part of it at
+      all times
+    domain:
+      - Production Order
+      - Operation Specification
+      - Process Plan
+      - Material Handling Plan
+    range:
+      - Material Product Specification
+      - Process Step Specification
+      - Operation Specification
+      - Action Specification
+    extraction_constraints:
+      - Production Order must have a Material Product Specification as a continuant part.
+      - Operation Specification must have a Process Step Specification as a continuant part.
+      - Process Plan can have an Operation Specification or Process Step Specification as a continuant part.
+      - Material Handling Plan must have an Action Specification as a continuant part.
+      - The relationship direction is Whole → Part.
+
+
+  - label: Has Proper Continuant Part At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000111"
+    definition: >
+      relationship from a continuant to a continuant that is a proper part
+      of it at all times
+    domain:
+      - Process Plan
+      - Production Plan
+    range:
+      - Objective Specification
+      - Production Order
+    extraction_constraints:
+      - Process Plan must have an Objective Specification as a proper continuant part.
+      - Production Plan must have a Production Order as a proper continuant part.
+      - The relationship direction is Whole → Proper Part.
+
+
+  - label: Proper Continuant Part Of At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000137"
+    definition: >
+      relationship from a continuant to a continuant of which it is a proper
+      part at all times
+    domain:
+      - Process Plan
+    range:
+      - Production Plan
+    extraction_constraints:
+      - Process Plan must be a proper continuant part of a Production Plan.
+      - The relationship direction is Proper Part → Whole.
+
+
+  - label: Has Proper Continuant Part At Some Time
+    iri: "http://purl.obolibrary.org/obo/BFO_0000174"
+    definition: >
+      relationship from a continuant to a continuant that is a proper part
+      of it at some time
+    domain:
+      - Production Plan
+    range:
+      - Plan Specification
+    extraction_constraints:
+      - Production Plan cannot have another Production Plan as a proper continuant part.
+      - The relationship direction is Whole → Proper Part.
+
+
+  - label: Is Achieved By At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/isAchievedByAtSomeTime"
+    definition: >
+      relationship from an objective specification to a process that
+      achieves it at some time
+    domain:
+      - Production Order
+    range:
+      - Planned Process
+    extraction_constraints:
+      - Production Order is achieved by a Planned Process that has a Product Production Process as an occurrent part.
+      - The relationship direction is Objective Specification → Planned Process.
+
+
+  - label: Realized In
+    iri: "http://purl.obolibrary.org/obo/BFO_0000054"
+    definition: >
+      relationship from a role or realizable entity to the process in which
+      it is realized
+    domain:
+      - Equipment Role
+    range:
+      - Manufacturing Process
+    inverse: Realizes
+    extraction_constraints:
+      - The Equipment Role of a Production Machine or Production Tool can only be realized in Manufacturing Processes.
+      - The relationship direction is Role → Process.
+
+
+  - label: Realizes
+    iri: "http://purl.obolibrary.org/obo/BFO_0000055"
+    definition: >
+      relationship from a process to a role or realizable entity that it
+      realizes
+    domain:
+      - Manufacturing Process
+    range:
+      - Equipment Role
+    inverse: Realized In
+    extraction_constraints:
+      - Every Process that realizes the Equipment Role of a Production Machine or Production Tool must be a Manufacturing Process.
+      - The relationship direction is Process → Role.

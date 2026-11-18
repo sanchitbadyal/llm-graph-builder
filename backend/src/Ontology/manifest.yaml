@@ -1,7 +1,7 @@
 manifest:
   id: cabalmar-ontology-catalog
   version: 0.1.0
-  default_profile: manufacturing
+  default_profile: iof-core
   status: provisional
   policy: >-
     Local artifacts are catalogued by stable ontology IRI and version. External
@@ -17,25 +17,25 @@ artifacts:
     media_type: application/rdf+xml
     checksum: sha256:265adb7c5e022384d38fe473ccb070b7d6f6fb9b50c4528456fe0276b8c293ef
 
-  - id: business
-    iri: http://example.org/ontology/business
-    version: 0.1.0
-    path: business.owl
-    layer: business-core
-    media_type: application/rdf+xml
-    checksum: sha256:a171e19b4c5935c6088b06ea5cd601f16ad0528922779c8efb2a2776482425e1
-    imports:
-      - http://purl.obolibrary.org/obo/bfo.owl
+#  - id: business
+#    iri: http://example.org/ontology/business
+#    version: 0.1.0
+#    path: business.owl
+#    layer: business-core
+#    media_type: application/rdf+xml
+#    checksum: sha256:a171e19b4c5935c6088b06ea5cd601f16ad0528922779c8efb2a2776482425e1
+#    imports:
+#      - http://purl.obolibrary.org/obo/bfo.owl
 
-  - id: manufacturing
-    iri: http://example.org/ontology/manufacturing
-    version: 0.1.0
-    path: manufacturing.owl
-    layer: domain
-    media_type: application/rdf+xml
-    checksum: sha256:e42c5ba966bd58d065f2ef7833f9b961f44ff647692ef14e6f36cb74c9a3498d
-    imports:
-      - http://example.org/ontology/business
+#  - id: manufacturing
+#    iri: http://example.org/ontology/manufacturing
+#    version: 0.1.0
+#    path: manufacturing.owl
+#    layer: domain
+#    media_type: application/rdf+xml
+#    checksum: sha256:e42c5ba966bd58d065f2ef7833f9b961f44ff647692ef14e6f36cb74c9a3498d
+#    imports:
+#      - http://example.org/ontology/business
 
   - id: iof-annotation-vocabulary
     iri: https://spec.industrialontologies.org/ontology/core/meta/AnnotationVocabulary/
@@ -90,38 +90,188 @@ artifacts:
     iri: https://spec.industrialontologies.org/ontology/biopharma/ManufacturingSystemOrganization/
     version: "202603"
     version_iri: https://spec.industrialontologies.org/ontology/202603/biopharma/ManufacturingSystemOrganization/
-    path: ManufacturingSystemOrganization.rdf
+    path: ontologies/iof/biopharma/ManufacturingSystemOrganization.rdf
     layer: domain
     media_type: application/rdf+xml
     imports:
       - https://spec.industrialontologies.org/ontology/202603/core/Core/
 
-  - id: order-to-cash
-    iri: http://example.org/ontology/order-to-cash
-    version: 0.1.0
-    path: order-to-cash.owl
+  - id: supply-chain
+    iri: https://spec.industrialontologies.org/ontology/supplychain/SupplyChain/
+    version: "202603"
+    version_iri: https://spec.industrialontologies.org/ontology/202603/supplychain/SupplyChain/
+    path: ontologies/iof/SupplyChain.rdf
     layer: domain
     media_type: application/rdf+xml
-    checksum: sha256:647077800b4a71e3582fe5afb08d2d2b1e4d8f819c6584e164efcade6bf0d40c
     imports:
-      - http://example.org/ontology/manufacturing
+      - https://spec.industrialontologies.org/ontology/202603/core/Core/
 
-  - id: plant-fulfillment
-    iri: http://example.org/ontology/plant-fulfillment
-    version: 0.1.0
-    path: plant-fulfillment.owl
+  - id: reference-ontology-candidates
+    iri: https://spec.industrialontologies.org/ontology/biopharma/ReferenceOntologyCandidates/
+    version: "202603"
+    version_iri: https://spec.industrialontologies.org/ontology/202603/biopharma/ReferenceOntologyCandidates/
+    path: ontologies/iof/biopharma/ReferenceOntologyCandidates.rdf
     layer: domain
     media_type: application/rdf+xml
-    checksum: sha256:588712861b016567e1d787e7e0424e23c73ea276ee2de8772e9a94957c66c3e0
     imports:
-      - http://example.org/ontology/manufacturing
+      - https://spec.industrialontologies.org/ontology/202603/core/Core/
 
-  - id: revenue-recognition
-    iri: http://example.org/ontology/revenue-recognition
-    version: 0.1.0
-    path: revenue-recognition.owl
+  - id: biopharma-reference-ontology-attributes
+    iri: https://spec.industrialontologies.org/ontology/biopharma/BiopharmaReferenceOntologyAttributes/
+    version: "202603"
+    version_iri: https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaReferenceOntologyAttributes/
+    path: ontologies/iof/biopharma/BiopharmaReferenceOntologyAttributes.rdf
     layer: domain
     media_type: application/rdf+xml
-    checksum: sha256:845f2564927477e524adcbe427364b9eb625e1a2ab00ede9d9c21caeb39e5193
     imports:
-      - http://example.org/ontology/manufacturing
+      - https://spec.industrialontologies.org/ontology/202603/biopharma/ReferenceOntologyCandidates/
+      - https://spec.industrialontologies.org/ontology/202603/core/Core/
+
+  - id: molecular-entity
+    iri: https://spec.industrialontologies.org/ontology/biopharma/MolecularEntity/
+    version: "202603"
+    version_iri: https://spec.industrialontologies.org/ontology/202603/biopharma/MolecularEntity/
+    path: ontologies/iof/biopharma/MolecularEntity.rdf
+    layer: domain
+    media_type: application/rdf+xml
+    imports:
+      - https://spec.industrialontologies.org/ontology/202603/core/Core/
+
+  - id: targets-limits-ranges
+    iri: https://spec.industrialontologies.org/ontology/biopharma/TargetsLimitsRanges/
+    version: "202603"
+    version_iri: https://spec.industrialontologies.org/ontology/202603/biopharma/TargetsLimitsRanges/
+    path: ontologies/iof/biopharma/TargetsLimitsRanges.rdf
+    layer: domain
+    media_type: application/rdf+xml
+    imports:
+      - https://spec.industrialontologies.org/ontology/202603/biopharma/ReferenceOntologyCandidates/
+      - https://spec.industrialontologies.org/ontology/202603/core/Core/
+
+  - id: biopharma-agent
+    iri: https://spec.industrialontologies.org/ontology/biopharma/BiopharmaAgent/
+    version: "202603"
+    version_iri: https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaAgent/
+    path: ontologies/iof/biopharma/BiopharmaAgent.rdf
+    layer: domain
+    media_type: application/rdf+xml
+    imports:
+      - https://spec.industrialontologies.org/ontology/202603/core/Core/
+
+  - id: recipe
+    iri: https://spec.industrialontologies.org/ontology/biopharma/Recipe/
+    version: "202603"
+    version_iri: https://spec.industrialontologies.org/ontology/202603/biopharma/Recipe/
+    path: ontologies/iof/biopharma/Recipe.rdf
+    layer: domain
+    media_type: application/rdf+xml
+    imports:
+      - https://spec.industrialontologies.org/ontology/202603/biopharma/ManufacturingSystemOrganization/
+      - https://spec.industrialontologies.org/ontology/202603/biopharma/ReferenceOntologyCandidates/
+      - https://spec.industrialontologies.org/ontology/202603/core/Core/
+
+  - id: biopharma-equipment
+    iri: https://spec.industrialontologies.org/ontology/biopharma/BiopharmaEquipment/
+    version: "202603"
+    version_iri: https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaEquipment/
+    path: ontologies/iof/biopharma/BiopharmaEquipment.rdf
+    layer: domain
+    media_type: application/rdf+xml
+    imports:
+      - https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaReferenceOntologyAttributes/
+      - https://spec.industrialontologies.org/ontology/202603/biopharma/ReferenceOntologyCandidates/
+      - https://spec.industrialontologies.org/ontology/202603/core/Core/
+
+  - id: biopharma-material
+    iri: https://spec.industrialontologies.org/ontology/biopharma/BiopharmaMaterial/
+    version: "202603"
+    version_iri: https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaMaterial/
+    path: ontologies/iof/biopharma/BiopharmaMaterial.rdf
+    layer: domain
+    media_type: application/rdf+xml
+    imports:
+      - https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaReferenceOntologyAttributes/
+      - https://spec.industrialontologies.org/ontology/202603/biopharma/MolecularEntity/
+      - https://spec.industrialontologies.org/ontology/202603/biopharma/ReferenceOntologyCandidates/
+      - https://spec.industrialontologies.org/ontology/202603/core/Core/
+
+  - id: biopharma-parameter
+    iri: https://spec.industrialontologies.org/ontology/biopharma/BiopharmaParameter/
+    version: "202603"
+    version_iri: https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaParameter/
+    path: ontologies/iof/biopharma/BiopharmaParameter.rdf
+    layer: domain
+    media_type: application/rdf+xml
+    imports:
+      - https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaMaterial/
+      - https://spec.industrialontologies.org/ontology/202603/biopharma/ReferenceOntologyCandidates/
+      - https://spec.industrialontologies.org/ontology/202603/biopharma/TargetsLimitsRanges/
+      - https://spec.industrialontologies.org/ontology/202603/core/Core/
+
+  - id: biopharma-material-procurement-and-storage
+    iri: https://spec.industrialontologies.org/ontology/biopharma/BiopharmaMaterialProcurementAndStorage/
+    version: "202603"
+    version_iri: https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaMaterialProcurementAndStorage/
+    path: ontologies/iof/biopharma/BiopharmaMaterialProcurementAndStorage.rdf
+    layer: domain
+    media_type: application/rdf+xml
+    imports:
+      - https://spec.industrialontologies.org/ontology/202603/biopharma/ReferenceOntologyCandidates/
+      - https://spec.industrialontologies.org/ontology/202603/certification/Certification/
+      - https://spec.industrialontologies.org/ontology/202603/core/Core/
+      - https://spec.industrialontologies.org/ontology/202603/supplychain/SupplyChain/
+
+  - id: biopharma-monitoring-and-control
+    iri: https://spec.industrialontologies.org/ontology/biopharma/BiopharmaMonitoringAndControl/
+    version: "202603"
+    version_iri: https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaMonitoringAndControl/
+    path: ontologies/iof/biopharma/BiopharmaMonitoringAndControl.rdf
+    layer: domain
+    media_type: application/rdf+xml
+    imports:
+      - https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaParameter/
+      - https://spec.industrialontologies.org/ontology/202603/biopharma/ManufacturingSystemOrganization/
+      - https://spec.industrialontologies.org/ontology/202603/biopharma/ReferenceOntologyCandidates/
+
+  - id: biopharma-manufacturing-execution
+    iri: https://spec.industrialontologies.org/ontology/biopharma/BiopharmaManufacturingExecution/
+    version: "202603"
+    version_iri: https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaManufacturingExecution/
+    path: ontologies/iof/biopharma/BiopharmaManufacturingExecution.rdf
+    layer: domain
+    media_type: application/rdf+xml
+    imports:
+      - https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaEquipment/
+      - https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaMaterial/
+      - https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaMonitoringAndControl/
+      - https://spec.industrialontologies.org/ontology/202603/biopharma/Recipe/
+
+#  - id: order-to-cash
+#    iri: http://example.org/ontology/order-to-cash
+#    version: 0.1.0
+#    path: order-to-cash.owl
+#    layer: domain
+#    media_type: application/rdf+xml
+#    checksum: sha256:647077800b4a71e3582fe5afb08d2d2b1e4d8f819c6584e164efcade6bf0d40c
+#    imports:
+#      - http://example.org/ontology/manufacturing
+
+#  - id: plant-fulfillment
+#    iri: http://example.org/ontology/plant-fulfillment
+#    version: 0.1.0
+#    path: plant-fulfillment.owl
+#    layer: domain
+#    media_type: application/rdf+xml
+#    checksum: sha256:588712861b016567e1d787e7e0424e23c73ea276ee2de8772e9a94957c66c3e0
+#    imports:
+#      - http://example.org/ontology/manufacturing
+
+#  - id: revenue-recognition
+#    iri: http://example.org/ontology/revenue-recognition
+#    version: 0.1.0
+#    path: revenue-recognition.owl
+#    layer: domain
+#    media_type: application/rdf+xml
+#    checksum: sha256:845f2564927477e524adcbe427364b9eb625e1a2ab00ede9d9c21caeb39e5193
+#    imports:
+#      - http://example.org/ontology/manufacturing

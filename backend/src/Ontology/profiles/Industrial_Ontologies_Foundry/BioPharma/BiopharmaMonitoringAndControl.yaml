@@ -1,0 +1,751 @@
+imports:
+- iri: https://spec.industrialontologies.org/ontology/202603/biopharma/BiopharmaParameter/
+  label: Biopharma Parameter
+  note: Imported ontology; referenced classes and properties are defined there, not redeclared in this
+    module.
+- iri: https://spec.industrialontologies.org/ontology/202603/biopharma/ManufacturingSystemOrganization/
+  label: Manufacturing System Organization
+  note: Imported ontology; referenced classes and properties are defined there, not redeclared in this
+    module.
+- iri: https://spec.industrialontologies.org/ontology/202603/biopharma/ReferenceOntologyCandidates/
+  label: Reference Ontology Candidates
+  note: Imported ontology; referenced classes and properties are defined there, not redeclared in this
+    module.
+
+    
+profile:
+  id: biopharma-monitoring-and-control-complete
+  ontology_artifact: biopharmamonitoringandcontrol
+  description: >-
+    Complete profile generated from BiopharmaMonitoringAndControl.rdf; all named classes and properties declared in the RDF artifact are represented here.
+  include_ancestors: true
+  include_compatible_properties: true
+
+
+entities:
+  - label: Aliquoting Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/AliquotingProcess"
+    parent_class: Material Sampling Process
+    definition: >
+      material sampling process in which a homogeneous material entity is
+      subdivided into multiple portions of defined amount, each portion
+      representing the composition of the source
+    examples:
+      - aliquoting a well-mixed harvested cell culture fluid sample into labeled 5 mL portions for distribution across analytical laboratories
+      - division of a well-mixed serum sample into 1 mL cryovials for quality control testing and archiving
+    classification_conditions:
+      - The process must be a Material Sampling Process.
+      - It must have some Material Entity as an input.
+      - That input Material Entity must have some Compositional Homogeneity quality.
+      - It must have some Material Entity as a specified output.
+      - That output Material Entity must be a proper continuant part of the input at some time.
+      - That output Material Entity must have some Compositional Homogeneity quality.
+    logical_definition: >
+      AliquotingProcess(x) → MaterialSamplingProcess(x) ∧ ∃i,h,o1,h1
+      (MaterialEntity(i) ∧ CompositionalHomogeneity(h) ∧ hasInput(x, i) ∧
+      hasQuality(i, h) ∧ MaterialEntity(o1) ∧ hasSpecifiedOutput(x, o1) ∧
+      properContinuantPartOfAtSomeTime(o1, i) ∧
+      CompositionalHomogeneity(h1) ∧ hasQuality(o1, h1))
+    explanatory_note: >
+      Because the source material is assumed to be homogeneous, the
+      resulting aliquots represent the whole with negligible sampling error.
+      The process produces multiple portions that can be uniquely
+      identified, stored, or used independently.
+
+
+  - label: Atline Monitoring Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/AtlineMonitoringProcess"
+    parent_class: Monitoring Process
+    definition: >
+      monitoring process consisting of one or more measurement processes that
+      are preceded by a material sampling process, in which material
+      representing the entity of interest is collected from a process stream
+      or in-process material and transferred to analytical equipment located
+      within the same physical area
+    examples:
+      - Monitoring cell viability and concentration by measuring a freshly withdrawn bioreactor sample using a local analyzer within the same cleanroom suite
+    classification_conditions:
+      - The process must be a Monitoring Process.
+      - It must have some Material Sampling Process, some Material Location Change Process and some Measurement Process as occurrent parts.
+      - The Material Sampling Process must be an occurrent part of some Planned Process and must have some Material Sample as a specified output.
+      - The Material Location Change Process must have that Material Sample as a participant at all times.
+      - The Measurement Process must have that Material Sample as an input.
+      - The Material Sampling Process must precede the Material Location Change Process, which must precede the Measurement Process.
+      - The Measurement Process must occur in some Physical Area that environs that Planned Process.
+      - It cannot also be an Inline, Offline or Online Monitoring Process.
+    logical_definition: >
+      AtlineMonitoringProcess(x) → MonitoringProcess(x) ∧ ∃s,t,m,a,r,p
+      (MaterialSamplingProcess(s) ∧ MaterialLocationChangeProcess(t) ∧
+      MeasurementProcess(m) ∧ MaterialSample(a) ∧ PhysicalArea(r) ∧
+      PlannedProcess(p) ∧ hasOccurrentPart(x, s) ∧ hasOccurrentPart(x, t) ∧
+      hasOccurrentPart(x, m) ∧ occurrentPartOf(s, p) ∧
+      hasSpecifiedOutput(s, a) ∧ hasParticipantAtAllTimes(t, a) ∧
+      hasInput(m, a) ∧ precedes(s, t) ∧ precedes(t, m) ∧ occursIn(m, r) ∧
+      environs(r, p))
+    explanatory_note: >
+      At-line monitoring differs from on-line monitoring because on-line
+      sampling and measurement occur through analytical equipment connected
+      to process equipment, whereas an at-line material sample is brought to
+      separate analytical equipment. The physical area that environs the
+      planned process provides the operational boundary for proximity.
+
+
+  - label: Control Strategy
+    iri: "https://spec.industrialontologies.org/ontology/construct/ControlStrategy"
+    parent_class: Plan Specification
+    definition: >
+      plan specification consisting of one or more specifications of methods
+      and technologies that prescribe the monitoring or regulation of
+      process parameters, quality attributes, or process performance
+      indicators of a particular process and its resulting material product
+    synonyms:
+      - control plan specification
+      - integrated control strategy
+    examples:
+      - a control strategy for sterile filling that specifies filling-pump speed, line speed, and stopper-placement settings as process parameters; fill-volume and container-closure-integrity specifications as quality attribute specifications; and viable and nonviable particle monitoring, room pressure differential, and cleanroom temperature as facility and environmental controls
+      - A control strategy for fed-batch cell culture includes specifying a gas controller to regulate dissolved oxygen (process parameter), a pH control loop to maintain pH within range (process parameter), and monitoring of cell viability over time as a process performance indicator. It also specifies the glycosylation profile and aggregate levels as critical quality attributes and prescribes their periodic monitoring throughout the culture using off-line analysis.
+    classification_conditions:
+      - The entity must be a Plan Specification.
+      - It must have, at all times, some Process Parameter Specification, Quality Attribute Specification or Performance Indicator Specification as a continuant part.
+    logical_definition: >
+      ControlStrategy(x) → PlanSpecification(x) ∧ ∃y
+      ((ProcessParameterSpecification(y) ∨ QualityAttributeSpecification(y)
+      ∨ PerformanceIndicatorSpecification(y)) ∧
+      hasContinuantPartAtAllTimes(x, y))
+    explanatory_note: >
+      Per ICH: a planned set of controls, derived from current product and
+      process understanding, that assures process performance and product
+      quality. It can include parameters and attributes related to drug
+      substance and drug product materials and components, facility and
+      equipment operating conditions, in-process controls, finished product
+      specifications, and the associated methods and frequency of monitoring
+      and control.
+
+
+  - label: Inline Monitoring Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/InlineMonitoringProcess"
+    parent_class: Monitoring Process
+    definition: >
+      monitoring process consisting of one or more measurement processes that
+      use sensors or probes integrated with the process equipment to measure
+      an attribute without material removal or diversion before measurement
+    examples:
+      - Monitoring the evolution of pH and dissolved oxygen in a bioreactor through continuously operating in-situ probes during a cell culture run
+    classification_conditions:
+      - The process must be a Monitoring Process.
+      - It must have some Measurement Process as an occurrent part.
+      - It cannot have any Material Sampling Process as an occurrent part.
+      - It cannot also be an Atline, Offline or Online Monitoring Process.
+    logical_definition: >
+      InlineMonitoringProcess(x) → MonitoringProcess(x) ∧ ∃m
+      (MeasurementProcess(m) ∧ hasOccurrentPart(x, m)) ∧ ¬∃s
+      (MaterialSamplingProcess(s) ∧ hasOccurrentPart(x, s))
+    explanatory_note: >
+      In-line monitoring measures an attribute without removing or diverting
+      material. Sensors or probes may be located within equipment, mounted
+      directly in a process stream, or otherwise integrated with equipment
+      used in the associated planned process. It may be continuous,
+      periodic, or event-triggered.
+
+
+  - label: Material Aliquot
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialAliquot"
+    parent_class: Material Sample
+    definition: >
+      material entity that is the specified output of some aliquoting process
+    examples:
+      - a 2 mL portion of purified protein reference material contained in one of several labeled vials prepared from the same homogeneous bulk lot
+    classification_conditions:
+      - The entity must be a Material Sample.
+      - It must be the specified output of some Aliquoting Process.
+    logical_definition: >
+      MaterialAliquot(x) ↔ MaterialEntity(x) ∧ ∃s
+      (AliquotingProcess(s) ∧ isSpecifiedOutputOf(x, s))
+    explanatory_note: >
+      Aliquots are produced from a homogeneous source material, so each
+      aliquot is considered to represent the composition of the whole with
+      negligible sampling error. In practice, aliquots are typically
+      assigned unique identifiers (e.g., IDs, barcodes) to enable
+      independent use and traceability.
+
+
+  - label: Material Product Quality Plan
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialProductQualityPlan"
+    parent_class: Material Quality Plan
+    definition: >
+      material quality plan that prescribes the processes needed to ensure
+      that a material product meets the required quality objectives
+    examples:
+      - A material product quality plan for a particular chromatography resin prescribes synthesis process controls, intermediate and final QC testing, and release criteria to ensure the resin meets defined binding capacity, particle size distribution, and metal impurity limits. It includes in-process monitoring of pH and temperature during functionalization, validated leachables testing, and visual inspection.
+    classification_conditions:
+      - The entity must be a Material Quality Plan.
+      - It must have, at all times, some Quality Attribute Specification as a continuant part.
+      - It must have, at all times, some Plan Specification as a continuant part that prescribes some Measurement Process.
+      - It must prescribe some Planned Process that is preceded by, is an occurrent part of, or is temporally overlapped by some Product Production Process.
+    logical_definition: >
+      MaterialProductQualityPlan(x) → MaterialQualityPlan(x) ∧ ∃a
+      (PlanSpecification(a) ∧ hasContinuantPartAtAllTimes(x, a) ∧ ∃m
+      (MeasurementProcess(m) ∧ prescribes(a, m))) ∧ ∃q
+      (QualityAttributeSpecification(q) ∧ hasContinuantPartAtAllTimes(x, q))
+      ∧ ∃p,pp (PlannedProcess(p) ∧ ProductProductionProcess(pp) ∧
+      prescribes(x, p) ∧ (precededBy(p, pp) ∨ occurrentPartOf(p, pp) ∨
+      isTemporallyOverlappedBy(p, pp)))
+    explanatory_note: >
+      At least one process prescribed by some part of the quality plan has
+      to be a measurement process. The processes embedded in the quality
+      plan typically include testing, inspection and characterization, and
+      cover intermediates and not just final products.
+
+
+  - label: Material Quality Plan
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialQualityPlan"
+    parent_class: Plan Specification
+    definition: >
+      plan specification that prescribes the processes needed to ensure that
+      a raw material, process intermediate material, material product, or
+      production consumable meets the required quality objectives
+    examples:
+      - A material quality plan for a particular chromatography resin prescribes synthesis process controls, intermediate and final QC testing, and release criteria to ensure the resin meets defined binding capacity
+      - A material quality plan for incoming acetaminophen API prescribes supplier approval, receipt inspection, quarantine, CoA review, identity and composite QC testing, release criteria, status labeling, and batch documentation to ensure suitability before tablet production.
+    classification_conditions:
+      - The entity must be a Plan Specification.
+    logical_definition: >
+      MaterialQualityPlan(x) → PlanSpecification(x)
+
+
+  - label: Material Sample
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialSample"
+    parent_class: Material Entity
+    definition: >
+      material entity that is the specified output of a material sampling
+      process
+    examples:
+      - a 10 mL portion of bioreactor culture collected during mid-log phase for cell-viability analysis
+      - a portion of harvested supernatant contained in a labeled vial and taken from a chromatography pool for impurity testing
+      - a powder portion taken from the middle of an API drum for composition-uniformity testing
+      - a tablet selected from a production batch during compression for hardness testing
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - It must be the specified output of some Material Sampling Process.
+    logical_definition: >
+      MaterialSample(x) ↔ MaterialEntity(x) ∧ ∃s
+      (MaterialSamplingProcess(s) ∧ isSpecifiedOutputOf(x, s))
+
+
+  - label: Material Sampling Plan
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialSamplingPlan"
+    parent_class: Plan Specification
+    definition: >
+      plan specification that prescribes how, when and how often material
+      samples are to be taken
+    synonyms:
+      - sample plan
+      - sampling strategy
+    examples:
+      - Material sampling plan that prescribes in-process sampling on Days 5, 7, and 9 for glycan profiling of the expressed monoclonal antibody
+      - Material sampling plan that prescribes post-harvest sampling to assess product titer and host cell protein levels before downstream purification
+      - Material sampling plan that prescribes manual collection of 20 tablets per batch for disintegration and hardness testing in the QC lab
+      - Material sampling plan that prescribes taking an aliquot from every third eluate fraction during protein A chromatography for titer and impurity analysis (HCP and DNA)
+    classification_conditions:
+      - The entity must be a Plan Specification.
+      - It must prescribe some Material Sampling Process.
+    logical_definition: >
+      MaterialSamplingPlan(x) → PlanSpecification(x) ∧ ∃y
+      (MaterialSamplingProcess(y) ∧ prescribes(x, y))
+    explanatory_note: >
+      A documented strategy that defines how, when, and how often samples
+      are to be taken from materials, products, or processes for testing or
+      inspection. Key aspects include frequency (e.g., every batch or at
+      regular time intervals) and sample size.
+
+
+  - label: Material Sampling Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialSamplingProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process of selecting and collecting a limited amount or number
+      of some material entity in a manner which ensures it is representative
+      of the input material entity
+    examples:
+      - material sampling process in which a technician disinfects the sampling port of a 2000 L CHO cell culture bioreactor with 70% ethanol, withdraws 15 mL of culture using a sterile syringe, discards the first 5 mL, collects the remaining 10 mL into a labeled sterile vial, and seals it for downstream analysis
+      - material sampling process in which an operator manually collects 5 tablets from the compression chute using a stainless-steel scoop, places them into a labeled clean glass container, records the batch number and time, and seals the container for later analysis
+    classification_conditions:
+      - The process must be a Planned Process.
+      - It must have some Material Entity as an input.
+      - It must have some Material Entity as a specified output.
+      - It must be prescribed by some Material Sampling Plan.
+    logical_definition: >
+      MaterialSamplingProcess(x) → PlannedProcess(x) ∧ ∃m,s,p
+      (MaterialEntity(m) ∧ MaterialEntity(s) ∧ MaterialSamplingPlan(p) ∧
+      hasInput(x, m) ∧ hasSpecifiedOutput(x, s) ∧ prescribedBy(x, p))
+    explanatory_note: >
+      Sampling might involve conditioning (e.g., cooling, filtering, putting
+      in a specific container), preparing, and documenting the sample. It is
+      designed so that tests subsequently run on the sample are reliable and
+      representative. Not material sampling processes: transporting a
+      labeled sample vial in a cold box to the analytical lab; filling final
+      product into vials for distribution; measuring glucose concentration
+      in a sample with an analyzer after it has been sampled.
+
+
+  - label: Monitoring Plan
+    iri: "https://spec.industrialontologies.org/ontology/construct/MonitoringPlan"
+    parent_class: Plan Specification
+    definition: >
+      plan specification that prescribes some monitoring process
+    examples:
+      - A monitoring plan for the tablet compression process prescribes in-process testing of tablet samples every 30 minutes or every 50,000 tablets. It targets weight (540–560 mg), hardness (8–12 kp), thickness (4.8–5.2 mm), and disintegration time (<15 minutes). The responsible agents are the production operator and QC technician
+      - An environmental monitoring plan for the production area prescribes continuous monitoring of temperature (18–25 °C) and humidity (45–65%) using data loggers. The responsible agent is the facilities technician
+      - A bioreactor monitoring plan prescribes continuous monitoring of pH, dissolved oxygen, temperature, and agitation speed during a cell culture process.
+    classification_conditions:
+      - The entity must be a Plan Specification.
+      - It must prescribe some Monitoring Process.
+    logical_definition: >
+      MonitoringPlan(x) → PlanSpecification(x) ∧ ∃y
+      (MonitoringProcess(y) ∧ prescribes(x, y))
+    explanatory_note: >
+      A monitoring plan typically specifies the measurement frequency,
+      target metrics, and the responsible agent.
+
+
+  - label: Monitoring Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/MonitoringProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process that is a part of another planned process and that
+      consists of one or more observation or measurement processes in which
+      a particular attribute (specifically dependent continuant or temporal
+      region or process characteristic or process profile) of some entity of
+      interest is measured or observed
+    synonyms:
+      - process monitoring
+    examples:
+      - UV absorbance and conductivity monitoring during column loading
+      - continuous monitoring of temperature and humidity in a clean room
+      - tablet weight monitoring every 30 minutes during compression using an automated tablet-testing system
+      - During a fed-batch cell culture process, at-line nutrient monitoring is performed using a Nova BioProfile® FLEX analyzer to measure glucose, lactate, glutamine, and ammonia levels
+      - Flow rate is continuously monitored during tangential flow filtration to ensure consistent membrane performance
+    classification_conditions:
+      - The process must be a Planned Process.
+      - It must have some Measurement Process as an occurrent part.
+      - It must be an occurrent part of some other Planned Process.
+      - It must be prescribed by some Monitoring Plan.
+    logical_definition: >
+      MonitoringProcess(x) ↔ PlannedProcess(x) ∧ ∃m
+      (MeasurementProcess(m) ∧ hasOccurrentPart(x, m)) ∧ ∃p
+      (PlannedProcess(p) ∧ occurrentPartOf(x, p)) ∧ ∃mp
+      (MonitoringPlan(mp) ∧ prescribedBy(x, mp))
+    explanatory_note: >
+      Each monitoring process is an execution of a monitoring plan that
+      prescribes it. If a monitoring process monitors an attribute across
+      multiple process parts, it should be modeled as part of the larger
+      planned process that has those parts, and not automatically as part of
+      each monitored process part individually.
+
+
+  - label: Offline Monitoring Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/OfflineMonitoringProcess"
+    parent_class: Monitoring Process
+    definition: >
+      monitoring process consisting of one or more measurement processes that
+      are preceded by a material sampling process, in which material
+      representing the entity of interest is collected from a process stream
+      or in-process material and analyzed in a separate analytical area
+    examples:
+      - Monitoring host-cell protein and residual DNA levels by sending harvested or purified samples to a quality control laboratory for ELISA and qPCR testing performed on dedicated analytical platforms
+    classification_conditions:
+      - The process must be a Monitoring Process.
+      - It must have some Material Sampling Process, some Material Location Change Process and some Measurement Process as occurrent parts.
+      - The Material Sampling Process must be an occurrent part of some Planned Process and must have some Material Sample as a specified output.
+      - The Material Location Change Process must have that Material Sample as a participant at all times.
+      - The Measurement Process must have that Material Sample as an input.
+      - The Material Sampling Process must precede the Material Location Change Process, which must precede the Measurement Process.
+      - The Measurement Process must occur in some Physical Area that does not environ that Planned Process.
+      - It cannot also be an Atline, Inline or Online Monitoring Process.
+    logical_definition: >
+      OfflineMonitoringProcess(x) → MonitoringProcess(x) ∧ ∃s,t,m,a,r,p
+      (MaterialSamplingProcess(s) ∧ MaterialLocationChangeProcess(t) ∧
+      MeasurementProcess(m) ∧ MaterialSample(a) ∧ PhysicalArea(r) ∧
+      PlannedProcess(p) ∧ hasOccurrentPart(x, s) ∧ hasOccurrentPart(x, t) ∧
+      hasOccurrentPart(x, m) ∧ occurrentPartOf(s, p) ∧
+      hasSpecifiedOutput(s, a) ∧ hasParticipantAtAllTimes(t, a) ∧
+      hasInput(m, a) ∧ precedes(s, t) ∧ precedes(t, m) ∧ occursIn(m, r) ∧
+      ¬environs(r, p))
+    explanatory_note: >
+      Off-line monitoring differs from at-line monitoring because at-line
+      measurement is performed in a physical area that environs the planned
+      process during which sampling occurs, whereas off-line measurement is
+      performed outside such an area. The complete off-line monitoring
+      process may extend beyond the temporal boundaries of the planned
+      process during which sampling occurs.
+
+
+  - label: Online Monitoring Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/OnlineMonitoringProcess"
+    parent_class: Monitoring Process
+    definition: >
+      monitoring process consisting of one or more measurement processes that
+      are preceded by or temporally overlapped by a material sampling
+      process, in which material representing the entity of interest is
+      collected from a process stream or in-process material and measured
+      using analytical equipment connected to the process equipment
+    examples:
+      - monitoring glucose, lactate, and ammonium by automatically diverting a bioreactor sidestream through a connected Raman flow cell and then returning or discarding the analyzed material
+      - monitoring protein concentration during chromatography by diverting eluate through a connected UV flow cell
+    classification_conditions:
+      - The process must be a Monitoring Process.
+      - It must have some Material Sampling Process and some Measurement Process as occurrent parts.
+      - The Material Sampling Process must have some Material Sample as a specified output, and that Material Sample must be an input of the Measurement Process.
+      - The Material Sampling Process must precede or temporally overlap the Measurement Process.
+      - It cannot also be an Atline, Inline or Offline Monitoring Process.
+    logical_definition: >
+      OnlineMonitoringProcess(x) → MonitoringProcess(x) ∧ ∃s,m,a
+      (MaterialSamplingProcess(s) ∧ MeasurementProcess(m) ∧
+      MaterialSample(a) ∧ hasOccurrentPart(x, s) ∧ hasOccurrentPart(x, m) ∧
+      hasSpecifiedOutput(s, a) ∧ hasInput(m, a) ∧ (precedes(s, m) ∨
+      temporallyOverlaps(s, m)))
+    explanatory_note: >
+      Depending on the analytical arrangement, the sampled material may be
+      returned, discarded, consumed, diluted, or mixed with reagents.
+      On-line monitoring differs from in-line monitoring because in-line
+      monitoring has no material sampling process before measurement.
+      Electronic transmission of results does not by itself make a
+      monitoring process on-line.
+
+
+  - label: Retention Sample Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/RetentionSampleRole"
+    parent_class: Role
+    definition: >
+      role that is held by a material sample set aside for future testing,
+      examination, identification, or investigation
+    examples:
+      - the retention sample role borne by a separately identified portion of an incoming raw-material lot retained for future confirmatory analysis
+      - the retention sample role borne by a stored culture-medium lot sample retained for future identity, quality, or investigation testing
+      - the retention sample role borne by a finished-drug-product sample retained from a released batch for possible examination or confirmatory testing during shelf life
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Material Sample.
+    logical_definition: >
+      RetentionSampleRole(x) → Role(x) ∧ ∃s (MaterialSample(s) ∧ roleOf(x, s))
+    explanatory_note: >
+      Commonly includes requirements on retained quantity (e.g., enough for
+      confirmatory analyses) and on separate identification, packaging,
+      sealing, and storage.
+
+
+relationships:
+
+  - label: Has Monitored Attribute
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasMonitoredAttribute"
+    definition: >
+      relation from a monitoring process to a specifically dependent
+      continuant, temporal region, process profile, or process
+      characteristic that is measured or observed during the monitoring
+      process
+    examples:
+      - a pH monitoring process has monitored attribute the pH of a culture medium
+      - a cleanroom-temperature monitoring process has monitored attribute the temperature of the cleanroom air
+      - a bioreactor dissolved-oxygen monitoring process has monitored attribute the dissolved-oxygen concentration of the cell-culture material
+    domain:
+      - Monitoring Process
+    range:
+      - Specifically Dependent Continuant
+      - Temporal Region
+      - Process Profile
+      - Process Characteristic
+    extraction_constraints:
+      - Subject must be a Monitoring Process.
+      - Object must be a Specifically Dependent Continuant, Temporal Region, Process Profile or Process Characteristic.
+      - The relationship direction is Monitoring Process → Monitored Attribute.
+
+
+  - label: Has Input
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasInput"
+    definition: >
+      relationship from a process to an entity that is an input of it
+    domain:
+      - Material Sampling Process
+      - Aliquoting Process
+      - Measurement Process
+    range:
+      - Material Entity
+      - Material Sample
+    extraction_constraints:
+      - Material Sampling Process must have a Material Entity as an input.
+      - Aliquoting Process must have a compositionally homogeneous Material Entity as an input.
+      - A Measurement Process in an Atline, Offline or Online Monitoring Process must have a Material Sample as an input.
+      - The relationship direction is Process → Input.
+
+
+  - label: Has Specified Output
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasSpecifiedOutput"
+    definition: >
+      relationship from a process to an entity that it is specified to produce
+    domain:
+      - Material Sampling Process
+      - Aliquoting Process
+    range:
+      - Material Entity
+      - Material Sample
+    inverse: Is Specified Output Of
+    extraction_constraints:
+      - Material Sampling Process must have a Material Entity as a specified output.
+      - Aliquoting Process must have a compositionally homogeneous Material Entity as a specified output.
+      - The relationship direction is Process → Output.
+
+
+  - label: Is Specified Output Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/isSpecifiedOutputOf"
+    definition: >
+      relationship from an output to the process that is specified to
+      produce it
+    domain:
+      - Material Sample
+      - Material Aliquot
+    range:
+      - Material Sampling Process
+      - Aliquoting Process
+    inverse: Has Specified Output
+    extraction_constraints:
+      - Material Sample must be the specified output of a Material Sampling Process.
+      - Material Aliquot must be the specified output of an Aliquoting Process.
+      - The relationship direction is Output → Process.
+
+
+  - label: Prescribes
+    iri: "https://spec.industrialontologies.org/ontology/construct/prescribes"
+    definition: >
+      relationship from a specification to the process it prescribes
+    domain:
+      - Material Sampling Plan
+      - Monitoring Plan
+      - Material Product Quality Plan
+    range:
+      - Material Sampling Process
+      - Monitoring Process
+      - Planned Process
+      - Measurement Process
+    inverse: Prescribed By
+    extraction_constraints:
+      - Material Sampling Plan must prescribe a Material Sampling Process.
+      - Monitoring Plan must prescribe a Monitoring Process.
+      - Material Product Quality Plan must prescribe a Planned Process that is related to a Product Production Process, and one of its parts must prescribe a Measurement Process.
+      - The relationship direction is Specification → Prescribed Process.
+
+
+  - label: Prescribed By
+    iri: "https://spec.industrialontologies.org/ontology/construct/prescribedBy"
+    definition: >
+      relationship from a process to the specification that prescribes it
+    domain:
+      - Material Sampling Process
+      - Monitoring Process
+    range:
+      - Material Sampling Plan
+      - Monitoring Plan
+    inverse: Prescribes
+    extraction_constraints:
+      - Material Sampling Process must be prescribed by a Material Sampling Plan.
+      - Monitoring Process must be prescribed by a Monitoring Plan.
+      - The relationship direction is Process → Specification.
+
+
+  - label: Has Quality
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasQuality"
+    definition: >
+      relationship from an entity to a quality that it has
+    domain:
+      - Material Entity
+    range:
+      - Compositional Homogeneity
+    extraction_constraints:
+      - The input and the output of an Aliquoting Process must each have a Compositional Homogeneity quality.
+      - The relationship direction is Material Entity → Quality.
+
+
+  - label: Has Occurrent Part
+    iri: "http://purl.obolibrary.org/obo/BFO_0000117"
+    definition: >
+      relationship from a process to a process that is a part of it
+    domain:
+      - Monitoring Process
+      - Atline Monitoring Process
+      - Inline Monitoring Process
+      - Offline Monitoring Process
+      - Online Monitoring Process
+    range:
+      - Measurement Process
+      - Material Sampling Process
+      - Material Location Change Process
+    inverse: Occurrent Part Of
+    extraction_constraints:
+      - Monitoring Process must have a Measurement Process as an occurrent part.
+      - Atline, Offline and Online Monitoring Process must have a Material Sampling Process as an occurrent part.
+      - Atline and Offline Monitoring Process must also have a Material Location Change Process as an occurrent part.
+      - Inline Monitoring Process cannot have a Material Sampling Process as an occurrent part.
+      - The relationship direction is Whole Process → Part Process.
+
+
+  - label: Occurrent Part Of
+    iri: "http://purl.obolibrary.org/obo/BFO_0000132"
+    definition: >
+      relationship from a process to a process of which it is a part
+    domain:
+      - Monitoring Process
+      - Material Sampling Process
+    range:
+      - Planned Process
+    inverse: Has Occurrent Part
+    extraction_constraints:
+      - Monitoring Process must be an occurrent part of a Planned Process.
+      - In Atline and Offline Monitoring Process, the Material Sampling Process is an occurrent part of a Planned Process.
+      - The relationship direction is Part Process → Whole Process.
+
+
+  - label: Precedes
+    iri: "http://purl.obolibrary.org/obo/BFO_0000063"
+    definition: >
+      relationship from a process to a process that occurs after it
+    domain:
+      - Material Sampling Process
+      - Material Location Change Process
+    range:
+      - Material Location Change Process
+      - Measurement Process
+    inverse: Preceded By
+    extraction_constraints:
+      - In Atline and Offline Monitoring Process, the Material Sampling Process precedes the Material Location Change Process, which precedes the Measurement Process.
+      - In Online Monitoring Process, the Material Sampling Process precedes or temporally overlaps the Measurement Process.
+      - The relationship direction is Earlier → Later.
+
+
+  - label: Preceded By
+    iri: "http://purl.obolibrary.org/obo/BFO_0000062"
+    definition: >
+      relationship from a process to a process that occurs before it
+    domain:
+      - Planned Process
+    range:
+      - Product Production Process
+    inverse: Precedes
+    extraction_constraints:
+      - A Planned Process prescribed by a Material Product Quality Plan can be preceded by a Product Production Process.
+      - The relationship direction is Later → Earlier.
+
+
+  - label: Temporally Overlaps
+    iri: "https://spec.industrialontologies.org/ontology/construct/temporallyOverlaps"
+    definition: >
+      relationship from a process to a process whose time span it overlaps
+    domain:
+      - Material Sampling Process
+    range:
+      - Measurement Process
+    inverse: Is Temporally Overlapped By
+    extraction_constraints:
+      - In Online Monitoring Process, the Material Sampling Process can temporally overlap the Measurement Process.
+      - The relationship direction is Overlapping Process → Overlapped Process.
+
+
+  - label: Is Temporally Overlapped By
+    iri: "https://spec.industrialontologies.org/ontology/construct/isTemporallyOverlappedBy"
+    definition: >
+      relationship from a process to a process that overlaps its time span
+    domain:
+      - Planned Process
+    range:
+      - Product Production Process
+    inverse: Temporally Overlaps
+    extraction_constraints:
+      - A Planned Process prescribed by a Material Product Quality Plan can be temporally overlapped by a Product Production Process.
+      - The relationship direction is Overlapped Process → Overlapping Process.
+
+
+  - label: Has Continuant Part At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000110"
+    definition: >
+      relationship from a continuant to a continuant that is part of it at
+      all times
+    domain:
+      - Control Strategy
+      - Material Product Quality Plan
+    range:
+      - Process Parameter Specification
+      - Quality Attribute Specification
+      - Performance Indicator Specification
+      - Plan Specification
+    extraction_constraints:
+      - Control Strategy must have a Process Parameter Specification, Quality Attribute Specification or Performance Indicator Specification as a continuant part.
+      - Material Product Quality Plan must have a Quality Attribute Specification and a Plan Specification that prescribes a Measurement Process as continuant parts.
+      - The relationship direction is Whole → Part.
+
+
+  - label: Has Participant At All Times
+    iri: "http://purl.obolibrary.org/obo/BFO_0000167"
+    definition: >
+      relationship from a process to an entity that participates in it at
+      all times
+    domain:
+      - Material Location Change Process
+    range:
+      - Material Sample
+    extraction_constraints:
+      - In Atline and Offline Monitoring Process, the Material Location Change Process must have the Material Sample as a participant.
+      - The relationship direction is Process → Participant.
+
+
+  - label: Occurs In
+    iri: "http://purl.obolibrary.org/obo/BFO_0000066"
+    definition: >
+      relationship from a process to the entity in which it occurs
+    domain:
+      - Measurement Process
+    range:
+      - Physical Area
+    extraction_constraints:
+      - In Atline and Offline Monitoring Process, the Measurement Process must occur in a Physical Area.
+      - The relationship direction is Process → Physical Area.
+
+
+  - label: Environs
+    iri: "http://purl.obolibrary.org/obo/BFO_0000183"
+    definition: >
+      relationship from a physical area to a process that takes place within
+      its surroundings
+    domain:
+      - Physical Area
+    range:
+      - Planned Process
+    extraction_constraints:
+      - In Atline Monitoring Process, the Physical Area where the Measurement Process occurs must environ the Planned Process during which sampling occurs.
+      - In Offline Monitoring Process, that Physical Area must not environ that Planned Process.
+      - The relationship direction is Physical Area → Planned Process.
+
+
+  - label: Proper Continuant Part Of At Some Time
+    iri: "http://purl.obolibrary.org/obo/BFO_0000175"
+    definition: >
+      relationship from a continuant to a continuant of which it is a
+      proper part at some time
+    domain:
+      - Material Entity
+    range:
+      - Material Entity
+    extraction_constraints:
+      - The output of an Aliquoting Process must be a proper continuant part of its input.
+      - The relationship direction is Part → Whole.
+
+
+  - label: Role Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/roleOf"
+    definition: >
+      relationship from a role to the entity that holds it
+    domain:
+      - Retention Sample Role
+    range:
+      - Material Sample
+    inverse: Has Role
+    extraction_constraints:
+      - Retention Sample Role must be the role of a Material Sample.
+      - The relationship direction is Role → Role Bearer.

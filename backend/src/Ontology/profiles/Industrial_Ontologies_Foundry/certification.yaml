@@ -6,62 +6,475 @@ profile:
   include_ancestors: true
   include_compatible_properties: true
 
-groups:
-  ontology_classes:
-    - label: "Attesting Agent"
-      iri: https://spec.industrialontologies.org/ontology/construct/AttestingAgent
-      parent: "Agent"
-      definition: "agent that has an attesting agent role"
-    - label: "Attesting Agent Role"
-      iri: https://spec.industrialontologies.org/ontology/construct/AttestingAgentRole
-      parent: "Agent Role"
-      definition: "agent role held by an agent acting on behalf of some certifying body when it participates in an attesting process"
-    - label: "Attesting Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/AttestingProcess
-      parent: "Planned Process"
-      definition: "planned process to determine the value of one or more qualities, capabilities, and/or process characteristics of an entity of interest in order to verify that they satisfy some requirement specification prescribed by some standard"
-    - label: "Attestation Certificate"
-      iri: https://spec.industrialontologies.org/ontology/construct/Certificate
-      parent: "Information Content Entity"
-      definition: "information content entity that can serve as proof that one or more attesting processes took place to verify that one or more entities satisfy certain requirement specifications"
-    - label: "Certificate Granting Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/CertificateGrantingProcess
-      parent: "Planned Process"
-      definition: "planned process of granting a certificate for an entity of interest, preceded by the attestation of that entity"
-    - label: "Certifying Body"
-      iri: https://spec.industrialontologies.org/ontology/construct/CertifyingBody
-      parent: "Organization"
-      definition: "organization that has a certifying body role"
-    - label: "Certifying Body Role"
-      iri: https://spec.industrialontologies.org/ontology/construct/CertifyingBodyRole
-      parent: "Role"
-      definition: "role held by an organization that participates in some certificate granting process"
 
-type_sets:
-  certifiable: &certifiable [Material Product, Raw Material, Material Component, Material Artifact, Piece Of Equipment, Engineered System, Person, Organization, Planned Process, Manufacturing Process, Business Process, Capability]
+entities:
+  - label: Attesting Agent
+    iri: "https://spec.industrialontologies.org/ontology/construct/AttestingAgent"
+    parent_class: Agent
+    definition: >
+      agent that has an attesting agent role
+    classification_conditions:
+      - The entity must be an Agent.
+      - The entity must have some Attesting Agent Role.
+    logical_definition: >
+      AttestingAgent(x) ↔ (Agent(x) ∧ ∃r
+      (AttestingAgentRole(r) ∧ hasRole(x, r)))
+
+
+  - label: Attesting Agent Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/AttestingAgentRole"
+    parent_class: Agent Role
+    definition: >
+      agent role held by an agent acting on behalf of some certifying body
+      when it participates in an attesting process
+    classification_conditions:
+      - The role must be an Agent Role.
+      - The role must be held by some Agent.
+      - The Agent must act on behalf of some Certifying Body at some time.
+      - The Agent must participate in some Attesting Process at some time.
+      - The Attesting Process must realize the role.
+    logical_definition: >
+      AttestingAgentRole(x) ↔ (AgentRole(x) ∧ ∃ y,a,o
+      (Agent(y) ∧ roleOf(x, y) ∧ CertifyingBody(o) ∧
+      actsOnBehalfOfAtSomeTime(y, o) ∧ AttestingProcess(a) ∧
+      participatesInAtSomeTime(y, a) ∧ realizes(a, x)))
+
+
+  - label: Attesting Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/AttestingProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process to determine the value of one or more qualities,
+      capabilities, and/or process characteristics of an entity of
+      interest in order to verify that they satisfy some requirement
+      specification prescribed by some standard
+    classification_conditions:
+      - The process must be a Planned Process.
+      - It must have some Plan Specification that prescribes it.
+      - It must have a proper occurrent part that is a Measurement Process.
+      - The Measurement Process must have some specified output that is a Measurement Information Content Entity.
+      - The Measurement Information Content Entity must describe some Quality, Capability, or Process Characteristic.
+      - The described Quality or Capability must inhere in some Entity, or the Process Characteristic must be a process characteristic of some Entity.
+      - The Measurement Information Content Entity must satisfy some Requirement Specification.
+      - The Requirement Specification must be a proper continuant part of the Plan Specification.
+      - The process must have some Attesting Agent Role.
+    logical_definition: >
+      AttestingProcess(x) ↔ (PlannedProcess(x) ∧
+      ∃p (PlanSpecification(p) ∧ prescribedBy(x, p)) ∧
+      ∃m,z,a,e,r (MeasurementProcess(m) ∧
+      hasProperOccurrentPart(x, m) ∧
+      MeasurementInformationContentEntity(z) ∧
+      hasSpecifiedOutput(m, z) ∧
+      (Quality(a) ∨ Capability(a) ∨ ProcessCharacteristic(a)) ∧
+      describes(z, a) ∧ Entity(e) ∧
+      (((Quality(a) ∨ Capability(a)) → inheresIn(a, e)) ∧
+      (ProcessCharacteristic(a) → hasProcessCharacteristic(e, a))) ∧
+      (((Quality(a) ∨ Capability(a)) → hasParticipantAtSomeTime(x, e)) ∧
+      (ProcessCharacteristic(a) → hasProperOccurrentPart(x, e))) ∧
+      RequirementSpecification(r) ∧ satisfiesRequirement(z, r) ∧
+      properContinuantPartOf(r, p)))
+    explanatory_note: >
+      Verification of whether the attributes satisfy the requirements
+      is performed by measuring those attributes in a measurement process.
+    additional_owl_restrictions:
+      - property_iri: "http://purl.obolibrary.org/obo/BFO_0000055"
+        quantifier: some
+        filler: Attesting Agent Role
+
+
+  - label: Certificate
+    iri: "https://spec.industrialontologies.org/ontology/construct/Certificate"
+    parent_class: Information Content Entity
+    definition: >
+      information content entity that can serve as proof that one or more
+      attesting processes took place to verify that one or more entities
+      satisfy certain requirement specifications
+    classification_conditions:
+      - The entity must be an Information Content Entity.
+      - It must certify some Entity.
+      - The certified Entity must have some Disposition, Quality, or Process Characteristic.
+      - It must be the specified output of some Certificate Granting Process.
+      - It must satisfy some Requirement Specification.
+    logical_definition: >
+      Certificate(x) ↔ (InformationContentEntity(x) ∧
+      ∃p,e,a,r (CertificateGrantingProcess(p) ∧
+      isSpecifiedOutputOf(x, p) ∧ Entity(e) ∧
+      RequirementSpecification(r) ∧
+      (Quality(a) ∨ Capability(a) ∨ ProcessCharacteristic(a)) ∧
+      ((Quality(a) → hasQuality(e, a)) ∧
+      (Capability(a) → hasDisposition(e, a)) ∧
+      (ProcessCharacteristic(a) → hasProcessCharacteristic(e, a))) ∧
+      certifies(x, e) ∧ SatisfiesRequirement(a, r)))
+
+
+  - label: Certificate Granting Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/CertificateGrantingProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process of granting a certificate for an entity of interest,
+      preceded by the attestation of that entity
+    classification_conditions:
+      - The process must be a Planned Process.
+      - It must be preceded by some Attesting Process.
+      - It must have some Certificate as a specified output.
+      - It must be prescribed by some Plan Specification.
+      - The process must have some Certifying Body Role.
+    logical_definition: >
+      CertificateGrantingProcess(x) ↔ (PlannedProcess(x) ∧
+      ∃p,c,e,a (PlanSpecification(p) ∧ prescribedBy(x, p) ∧
+      Certificate(c) ∧ hasSpecifiedOutput(x, c) ∧
+      Entity(e) ∧ certifies(c, e) ∧
+      AttestingProcess(a) ∧ precededBy(x, a) ∧ attestsTo(a, c)))
+    additional_owl_restrictions:
+      - property_iri: "http://purl.obolibrary.org/obo/BFO_0000055"
+        quantifier: some
+        filler: Certifying Body Role
+
+
+  - label: Certifying Body
+    iri: "https://spec.industrialontologies.org/ontology/construct/CertifyingBody"
+    parent_class: Organization
+    definition: >
+      organization that has a certifying body role
+    classification_conditions:
+      - The entity must be an Organization.
+      - The entity must have some Certifying Body Role.
+    logical_definition: >
+      CertifyingBody(x) ↔ (Organization(x) ∧ ∃r
+      (CertifyingBodyRole(r) ∧ hasRole(x, r)))
+
+
+  - label: Certifying Body Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/CertifyingBodyRole"
+    parent_class: Role
+    definition: >
+      role held by an organization that participates in some
+      certificate granting process
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Organization.
+      - The Organization must participate in some Certificate Granting Process.
+      - The Certificate Granting Process must realize the role.
+    logical_definition: >
+      CertifyingBodyRole(x) ↔ (Role(x) ∧ ∃o,c
+      (Organization(o) ∧ hasRole(o, x) ∧
+      CertificateGrantingProcess(c) ∧ participatesIn(o, c) ∧
+      realizes(c, x)))
+
 
 relationships:
-  - label: "attests to"
-    type: ATTESTS_TO
-    iri: https://spec.industrialontologies.org/ontology/construct/attestsTo
-    domain: ["Attesting Process"]
-    range: ["Attestation Certificate"]
-    definition: "relationship from an attesting process to a certificate"
-  - label: "certificate granted by"
-    type: CERTIFICATE_GRANTED_BY
-    iri: https://spec.industrialontologies.org/ontology/construct/certificateGrantedBy
-    domain: ["Attestation Certificate"]
-    range: ["Certifying Body"]
-    definition: "relationship from a certificate to a certifying body that holds when the certifying body issues the certificate as a specified output of some certificate granting process"
-  - label: "certifies"
-    type: CERTIFIES
-    iri: https://spec.industrialontologies.org/ontology/construct/certifies
-    domain: ["Attestation Certificate"]
-    range: *certifiable
-    definition: "relationship from a certificate to an entity that holds when the certificate has been granted by a certifying body that has participated in a certificate granting process"
-  - label: "has certificate"
-    type: HAS_CERTIFICATE
-    iri: https://spec.industrialontologies.org/ontology/construct/hasCertificate
-    domain: *certifiable
-    range: ["Attestation Certificate"]
-    definition: "relationship from an entity to a certificate that holds when the certificate has been granted by a certifying body that has participated in a certificate granting process"
+
+  - label: Attests To
+    iri: "https://spec.industrialontologies.org/ontology/construct/attestsTo"
+    definition: >
+      relationship from an attesting process to a certificate
+    domain:
+      - Attesting Process
+    range:
+      - Certificate
+    extraction_constraints:
+      - Subject must be an Attesting Process.
+      - Object must be a Certificate.
+      - The relationship direction is Attesting Process → Certificate.
+
+
+  - label: Certificate Granted By
+    iri: "https://spec.industrialontologies.org/ontology/construct/certificateGrantedBy"
+    definition: >
+      relationship from a certificate to a certifying body that holds
+      when the certifying body issues the certificate as a specified
+      output of some certificate granting process
+    domain:
+      - Certificate
+    range:
+      - Certifying Body
+    extraction_constraints:
+      - Subject must be a Certificate.
+      - Object must be a Certifying Body.
+      - The relationship direction is Certificate → Certifying Body.
+
+
+  - label: Certifies
+    iri: "https://spec.industrialontologies.org/ontology/construct/certifies"
+    definition: >
+      relationship from a certificate to an entity that holds when
+      the certificate has been granted by a certifying body that has
+      participated in a certificate granting process
+    domain:
+      - Certificate
+    range:
+      - Entity
+    inverse: Has Certificate
+    extraction_constraints:
+      - Subject must be a Certificate.
+      - Object must be an Entity.
+      - The relationship direction is Certificate → Entity.
+
+
+  - label: Has Certificate
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasCertificate"
+    definition: >
+      relationship from an entity to a certificate that holds when
+      the certificate has been granted by a certifying body that has
+      participated in a certificate granting process
+    domain:
+      - Entity
+    range:
+      - Certificate
+    inverse: Certifies
+    extraction_constraints:
+      - Subject must be an Entity.
+      - Object must be a Certificate.
+      - The relationship direction is Entity → Certificate.
+
+
+  - label: Has Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasRole"
+    definition: >
+      relationship from an entity to a role that it holds
+    domain:
+      - Attesting Agent
+      - Certifying Body
+    range:
+      - Attesting Agent Role
+      - Certifying Body Role
+    inverse: Role Of
+    extraction_constraints:
+      - Attesting Agent must have an Attesting Agent Role.
+      - Certifying Body must have a Certifying Body Role.
+      - The relationship direction is Role Bearer → Role.
+
+
+  - label: Role Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/roleOf"
+    definition: >
+      relationship from a role to the entity that holds it
+    domain:
+      - Attesting Agent Role
+      - Certifying Body Role
+    range:
+      - Agent
+      - Organization
+    inverse: Has Role
+    extraction_constraints:
+      - Attesting Agent Role must be the role of an Agent.
+      - Certifying Body Role must be the role of an Organization.
+      - The relationship direction is Role → Role Bearer.
+
+
+  - label: Acts On Behalf Of At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/actsOnBehalfOfAtSomeTime"
+    definition: >
+      relationship from an agent to an organization on whose behalf it acts at some time
+    domain:
+      - Agent
+    range:
+      - Certifying Body
+    extraction_constraints:
+      - The Agent holding an Attesting Agent Role must act on behalf of a Certifying Body.
+      - The relationship direction is Agent → Certifying Body.
+
+
+  - label: Participates In
+    iri: "http://purl.obolibrary.org/obo/BFO_0000056"
+    definition: >
+      relationship from an entity to a process in which it participates
+    domain:
+      - Agent
+      - Organization
+    range:
+      - Attesting Process
+      - Certificate Granting Process
+    inverse: Has Participant
+    extraction_constraints:
+      - An Agent holding an Attesting Agent Role must participate in an Attesting Process.
+      - An Organization holding a Certifying Body Role must participate in a Certificate Granting Process.
+      - The relationship direction is Participant → Process.
+
+
+  - label: Realizes
+    iri: "http://purl.obolibrary.org/obo/BFO_0000055"
+    definition: >
+      relationship from a process to a role that it realizes
+    domain:
+      - Attesting Process
+      - Certificate Granting Process
+    range:
+      - Attesting Agent Role
+      - Certifying Body Role
+    inverse: Realized In
+    extraction_constraints:
+      - Attesting Process must realize an Attesting Agent Role.
+      - Certificate Granting Process must realize a Certifying Body Role.
+      - The relationship direction is Process → Role.
+
+
+  - label: Prescribed By
+    iri: "https://spec.industrialontologies.org/ontology/construct/prescribedBy"
+    definition: >
+      relationship from a process to the plan specification that prescribes it
+    domain:
+      - Attesting Process
+      - Certificate Granting Process
+    range:
+      - Plan Specification
+    inverse: Prescribes
+    extraction_constraints:
+      - Attesting Process must be prescribed by a Plan Specification.
+      - Certificate Granting Process must be prescribed by a Plan Specification.
+      - The relationship direction is Process → Plan Specification.
+
+
+  - label: Has Proper Occurrent Part
+    iri: "http://purl.obolibrary.org/obo/BFO_0000118"
+    definition: >
+      relationship from a process to a process that is a proper part of it
+    domain:
+      - Attesting Process
+    range:
+      - Measurement Process
+    extraction_constraints:
+      - Attesting Process must have a Measurement Process as a proper occurrent part.
+      - The relationship direction is Attesting Process → Measurement Process.
+
+
+  - label: Has Specified Output
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasSpecifiedOutput"
+    definition: >
+      relationship from a process to an entity that it is specified to produce
+    domain:
+      - Measurement Process
+      - Certificate Granting Process
+    range:
+      - Measurement Information Content Entity
+      - Certificate
+    inverse: Is Specified Output Of
+    extraction_constraints:
+      - Measurement Process must have a Measurement Information Content Entity as specified output.
+      - Certificate Granting Process must have a Certificate as specified output.
+      - The relationship direction is Process → Output.
+
+
+  - label: Is Specified Output Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/isSpecifiedOutputOf"
+    definition: >
+      relationship from an output to the process that is specified to produce it
+    domain:
+      - Certificate
+    range:
+      - Certificate Granting Process
+    inverse: Has Specified Output
+    extraction_constraints:
+      - Certificate must be the specified output of a Certificate Granting Process.
+      - The relationship direction is Certificate → Certificate Granting Process.
+
+
+  - label: Describes
+    iri: "https://spec.industrialontologies.org/ontology/construct/describes"
+    definition: >
+      relationship from an information content entity to the entity it describes
+    domain:
+      - Measurement Information Content Entity
+    range:
+      - Quality
+      - Capability
+      - Process Characteristic
+    extraction_constraints:
+      - Measurement Information Content Entity must describe a Quality, Capability, or Process Characteristic.
+      - The relationship direction is Measurement Information Content Entity → Quality, Capability, or Process Characteristic.
+
+
+  - label: Inheres In
+    iri: "http://purl.obolibrary.org/obo/BFO_0000197"
+    definition: >
+      relationship from a quality or capability to the entity that bears it
+    domain:
+      - Quality
+      - Capability
+    range:
+      - Entity
+    extraction_constraints:
+      - The Quality or Capability described by a Measurement Information Content Entity must inhere in an Entity.
+      - The relationship direction is Quality or Capability → Entity.
+
+
+  - label: Process Characteristic Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/processCharacteristicOf"
+    definition: >
+      relationship from a process characteristic to the entity that has it
+    domain:
+      - Process Characteristic
+    range:
+      - Entity
+    inverse: Has Process Characteristic
+    extraction_constraints:
+      - Process Characteristic must be a process characteristic of an Entity.
+      - The relationship direction is Process Characteristic → Entity.
+
+
+  - label: Has Process Characteristic
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasProcessCharacteristic"
+    definition: >
+      relationship from an entity to a process characteristic that it has
+    domain:
+      - Entity
+    range:
+      - Process Characteristic
+    inverse: Process Characteristic Of
+    extraction_constraints:
+      - A certified Entity can have a Process Characteristic.
+      - The relationship direction is Entity → Process Characteristic.
+
+
+  - label: Has Quality
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasQuality"
+    definition: >
+      relationship from an entity to a quality that it has
+    domain:
+      - Entity
+    range:
+      - Quality
+    extraction_constraints:
+      - A certified Entity can have a Quality.
+      - The relationship direction is Entity → Quality.
+
+
+  - label: Has Disposition
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasDisposition"
+    definition: >
+      relationship from an entity to a disposition that it has
+    domain:
+      - Entity
+    range:
+      - Disposition
+    extraction_constraints:
+      - A certified Entity can have a Disposition.
+      - The relationship direction is Entity → Disposition.
+
+
+  - label: Satisfies Requirement
+    iri: "https://spec.industrialontologies.org/ontology/construct/satisfiesRequirement"
+    definition: >
+      relationship from an entity to a requirement specification that it satisfies
+    domain:
+      - Certificate
+      - Measurement Information Content Entity
+    range:
+      - Requirement Specification
+    extraction_constraints:
+      - Certificate must satisfy a Requirement Specification.
+      - Measurement Information Content Entity of an Attesting Process must satisfy a Requirement Specification.
+      - The relationship direction is Certificate or Measurement Information Content Entity → Requirement Specification.
+
+
+  - label: Preceded By
+    iri: "http://purl.obolibrary.org/obo/BFO_0000062"
+    definition: >
+      relationship from a process to a process that occurs before it
+    domain:
+      - Certificate Granting Process
+    range:
+      - Attesting Process
+    extraction_constraints:
+      - Certificate Granting Process must be preceded by an Attesting Process.
+      - The relationship direction is Certificate Granting Process → Attesting Process.

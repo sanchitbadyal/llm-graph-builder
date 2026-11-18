@@ -1,0 +1,643 @@
+imports:
+- iri: "https://spec.industrialontologies.org/ontology/202603/core/Core/"
+  label: IOF Core
+  note: owl:imports declared by this ontology. Referenced classes and properties defined in IOF Core are imported,
+    not redeclared in this module.
+profile:
+  id: reference-ontology-candidates-complete
+  ontology_artifact: ReferenceOntologyCandidates
+  ontology_iri: "https://spec.industrialontologies.org/ontology/biopharma/ReferenceOntologyCandidates/"
+  version_iri: "https://spec.industrialontologies.org/ontology/202603/biopharma/ReferenceOntologyCandidates/"
+  title: Reference Ontology Candidates
+  description: Complete profile generated from the Reference Ontology Candidates RDF. The module serves as a staging
+    area for candidate constructs developed within the BMIC and proposed for inclusion in IOF reference ontologies
+    such as IOF Core. It contains cross-cutting concepts intended for broad reuse across industrial domains.
+  include_ancestors: true
+  include_compatible_properties: true
+entities:
+- label: acceptance criteria
+  iri: "https://spec.industrialontologies.org/ontology/construct/AcceptanceCriteria"
+  parent_class: Requirement Specification
+  definition: requirement specification that has as parts one or more limits, ranges, or other conditions used to
+    determine whether an entity is acceptable for a specified purpose
+  examples:
+  - An analytical specification for a drug substance has as part acceptance criteria requiring residual host cell
+    protein to be not more than 100 ng/mg protein
+  - A batch release specification has as part acceptance criteria requiring product purity to be at least 95 %
+  - A drug product specification has as part acceptance criteria requiring endotoxin to be not more than 0.25 EU/mL
+  - An acceptance criterion for PVC resin intended for general-purpose applications requires residual vinyl chloride
+    to be less than 1 ppm
+  - An acceptance criterion for drinking water requires lead concentration to be not more than 15 ppb.
+  classification_conditions:
+  - The entity must be a Requirement Specification.
+  - if x is an 'acceptance criteria' then x is a 'requirement specification'
+  logical_definition: AcceptanceCriteria(x) → RequirementSpecification(x)
+  explanatory_note: '1) In the ICH specifications (Q6B) context, acceptance criteria are defined as “numerical limits,
+    ranges, or other suitable measures for acceptance of the results of analytical procedures” (applying to drug
+    substance, drug product, or materials at other manufacturing stages).
+
+    2) In a process-validation context, protocols are expected to include tests and acceptance criteria for significant
+    processing steps, i.e., criteria used to judge whether process performance is acceptable.'
+  is_primitive: true
+  primitive_rationale: There are insufficient constructs to create necessary and sufficient conditions. In particular,
+    constructs for exhaustively representing conditions that are parts of acceptance criteria are missing.
+  adapted_from:
+  - "https://database.ich.org/sites/default/files/Q6B%20Guideline.pdf and https://www.fda.gov/files/drugs/published/Process-Validation--General-Principles-and-Practices.pdf"
+- label: manufacturing capability
+  iri: "https://spec.industrialontologies.org/ontology/construct/ManufacturingCapability"
+  parent_class: Capability
+  definition: capability of an agent or a piece of equipment that is realizable in a manufacturing process or its
+    part
+  examples:
+  - the capability of a technician to perform aseptic connections during a formulation procedure
+  - the capability of a mixing vessel to achieve uniform suspension of components during buffer preparation
+  - the capability of a fill-finish robot to accurately dispense liquid into vials
+  - capability of a cooling tunnel in a candy factory to drop the product temperature and stabilize the shape, making
+    the downstream wrapping operation possible
+  - kneading capacity of a blender that allows for obtaining a uniform paste of plastic compound able to be extruded
+  classification_conditions:
+  - The entity must be a Capability.
+  - 'LA1: if x is a ''capability'' and x is the ''capability of'' some ''agent'' or ''piece of equipment'' and x
+    ''has realization'' in some ''manufacturing process'' or in some ''occurrent part of'' a ''manufacturing process'',
+    then x is a ''manufacturing capability'''
+  - 'LA2: if x is a ''manufacturing capability'' then x is a ''capability'' that is the ''capability of'' some ''agent''
+    or some ''piece of equipment'''
+  logical_definition: LA1:Capability(x) ∧ ∃y((Agent(y) ∨ PieceOfEquipment(y)) ∧ capabilityOf(x, y)) ∧ ∃z(hasRealization(x,
+    z) ∧ (ManufacturingProcess(z) ∨ ∃p(ManufacturingProcess(p) ∧ occurrentPartOf(z, p)))) → ManufacturingCapability(x)
+    LA2:ManufacturingCapability(x) → Capability(x) ∧ ∃y((Agent(y) ∨ PieceOfEquipment(y)) ∧ capabilityOf(x,y))
+  is_primitive: true
+  primitive_rationale: This class is expected to remain primitive as it is difficult to find a set of mutually necessary
+    and sufficient conditions.
+  counter_examples:
+  - the capability of a chromatography system to analyze protein purity during analytical method development - realizable
+    in quality control or R&D, not in manufacturing
+  - the capability of a liquid handling robot to automate compound dispensing during a high-throughput screening
+    (HTS) assay in a clinical trial biomarker study
+- label: material addition process
+  iri: "https://spec.industrialontologies.org/ontology/construct/MaterialAdditionProcess"
+  parent_class: Planned Process
+  definition: planned process that physically introduces a material entity into or onto a material entity or site
+  examples:
+  - addition of a concentrated glucose-amino-acid feed solution during fed-batch mammalian cell culture to replenish
+    nutrients
+  - addition of a wash or elution buffer during chromatography
+  - addition of resuspended cells to fresh culture medium to initiate cultivation
+  - addition of polypropylene glycol during microbial fermentation for foam control
+  - sparging of air during mammalian cell culture to supply oxygen
+  - addition of aluminum sulfate solution during water treatment prior to flocculation
+  - addition of a phthalate plasticizer during PVC compounding
+  - addition of an internal standard solution to a sample before chromatographic analysis
+  classification_conditions:
+  - The entity must be a Planned Process.
+  - if x is a 'material addition process' then x is a 'planned process' that 'has input' some 'material entity'
+    that 'has role' some 'transferred material role', and 'has participant at some time' some 'site' or 'material
+    entity' that 'has role' some 'material addition target role'
+  logical_definition: MaterialAdditionProcess(x) → PlannedProcess(x) ∧ ∃m ∃mr (MaterialEntity(m) ∧ TransferredMaterialRole(mr)
+    ∧ hasInput(x, m) ∧ hasRole(m, mr)) ∧ ∃t ∃tr ((Site(t) ∨ MaterialEntity(t)) ∧ MaterialAdditionTargetRole(tr)
+    ∧ hasParticipantAtSomeTime(x, t) ∧ hasRole(t, tr))
+  explanatory_note: '1) A material addition process may occur as part of a broader planned process. Material put-away,
+    loading, unloading, or other material handling processes may include a material addition process as a part without
+    themselves being material addition processes.
+
+    2) In a material addition process, the material entity that is physically introduced is modeled as an input
+    bearing transferred material role, while the material entity or site into or onto which it is introduced bears
+    material addition target role.
+
+    3) The added entity may be bulk material, a discrete material entity, or a containerized material entity.'
+  is_primitive: true
+  primitive_rationale: There are insufficient constructs to create a set of necessary and sufficient conditions
+  adapted_from:
+  - "http://purl.allotrope.org/ontologies/process#AFP_0003743"
+- label: material addition target role
+  iri: "https://spec.industrialontologies.org/ontology/construct/MaterialAdditionTargetRole"
+  parent_class: Role
+  definition: role held by a material entity or site when a material entity is being, or is planned to be, physically
+    introduced into or onto it
+  examples:
+  - cell culture bearing material addition target role when feed medium is added to it during cultivation
+  - flask bearing material addition target role when a 5 g powder portion is added during solution preparation
+  - production bioreactor bearing material addition target role when fresh culture medium is charged to it before
+    cultivation
+  - sample solution bearing material addition target role when an internal standard is added prior to chromatographic
+    analysis
+  - chocolate paste bearing material addition target role when flavor essences are added during conching
+  - pre-treated water bearing material addition target role when gaseous chlorine is added during disinfection
+  classification_conditions:
+  - The entity must be a B F O 0000023.
+  - if x is a 'material addition target role' then x is a 'role' that is the 'role of' some 'material entity' or
+    some 'site'
+  logical_definition: MaterialAdditionTargetRole(x) → Role(x) ∧ ∃b ((MaterialEntity(b) ∨ Site(b)) ∧ roleOf(x, b))
+  explanatory_note: Material addition target role identifies the material entity or site into or onto which material
+    is physically introduced. Use this role for the target into or onto which material is physically introduced.
+    Do not use it for the material being introduced. The introduced material bears transferred material role.
+  is_primitive: true
+  primitive_rationale: There are insufficient constructs to create necessary and sufficient conditions.
+- label: material impurity
+  iri: "https://spec.industrialontologies.org/ontology/construct/MaterialImpurity"
+  parent_class: Material Entity
+  definition: material entity which has the material impurity role
+  examples:
+  - residual solvent remaining after chemical synthesis
+  - oxidation product formed during storage of a biologic
+  - trace contaminant present in a raw material lot
+  classification_conditions:
+  - The entity must be a Material Entity.
+  logical_definition: MaterialImpurity(x) ↔ MaterialEntity(x) ∧ ∃r(MaterialImpurityRole(r) ∧ hasRole(x,r))
+  explanatory_note: See expanded definition under the corresponding role class. The term is formalized here as a
+    defined class by referring to its corresponding role class and exists primarily for ontological modeling and
+    implementation convenience.
+- label: material impurity role
+  iri: "https://spec.industrialontologies.org/ontology/construct/MaterialImpurityRole"
+  parent_class: Role
+  definition: role of a material entity that is present within a process intermediate material, raw material, production
+    consumable, or material product and that is not included in the material composition defined for the relevant
+    stage of manufacture, handling, storage, or release
+  examples:
+  - material impurity role of residual solvent remaining after synthesis
+  - material impurity role of oxidation product formed during storage of a biologic
+  - material impurity role of a trace contaminant present in a raw material lot
+  classification_conditions:
+  - The entity must be a B F O 0000023.
+  - if x is a 'material impurity role' then x is a 'role' that is the 'role of' some 'material entity' that is a
+    'continuant part of at some time' some 'material product', 'process intermediate material', 'production consumable',
+    or 'raw material'
+  logical_definition: MaterialImpurityRole(x) → Role(x) ∧ ∃a∃b(roleOf(x,a) ∧ MaterialEntity(a) ∧ continuantPartOfAtSomeTime(a,b)
+    ∧ (MaterialProduct(b) ∨ ProcessIntermediateMaterial(b) ∨ ProductionConsumable(b) ∨ RawMaterial(b)))
+  explanatory_note: '1) A material entity bearing a material impurity role is a non-target constituent in the material
+    entity it is a part of arising from manufacturing, storage, handling, or use.
+
+    2) In pharmaceutical manufacturing, impurities are controlled because their presence or amount may affect product
+    quality, safety, efficacy, or stability. Acceptable levels may be established as part of the control strategy
+    based on the known or potential impact of the impurity, available qualification data, and the capability of
+    the manufacturing process to control its formation or removal. An impurity may be progressively reduced or cleared
+    across multiple manufacturing steps rather than controlled by a limit at every intermediate stage.
+
+    3) Bearing material impurity role does not imply that the impurity exceeds an acceptance criterion.'
+  is_primitive: true
+  primitive_rationale: There are insufficient constructs to create necessary and sufficient conditions. In particular
+    all the constructs necessary for representing not being a defined or specified part of the entity in question
+    are missing
+  adapted_from:
+  - "http://purl.allotrope.org/ontologies/role#AFRL_0000364 and http://purl.obolibrary.org/obo/CHEBI_143130 and\
+    \ https://database.ich.org/sites/default/files/Q6B%20Guideline.pdf"
+- label: material removal process
+  iri: "https://spec.industrialontologies.org/ontology/construct/MaterialRemovalProcess"
+  parent_class: Planned Process
+  definition: planned process in which a material entity is physically withdrawn from a material entity or site
+  examples:
+  - cell bleed during a perfusion culture process, in which a portion of cell-containing culture material is withdrawn
+    from the culture system
+  - product-containing harvest stream withdrawal during a perfusion culture process through a cell retention system
+  - permeate withdrawal during tangential flow filtration
+  - removal of unreacted vinyl chloride monomer from a PVC polymerization reactor by flashing and steam stripping
+  - retrieval of a pallet from a pallet racking storage system
+  - withdrawal of a culture sample from a bioreactor for subsequent analytical testing
+  - liquid sample withdrawal from a sample vial by aspiration for analytical measurement
+  classification_conditions:
+  - The entity must be a Planned Process.
+  - if x is a 'material removal process' then x is a 'planned process' that 'has participant at some time' some
+    'site' or 'material entity' that 'has role' some 'material withdrawal source role', and 'has specified output'
+    some 'material entity' that 'has role' some 'transferred material role'
+  logical_definition: MaterialRemovalProcess(x) → PlannedProcess(x) ∧ ∃s∃sr((Site(s) ∨ MaterialEntity(s)) ∧ MaterialWithdrawalSourceRole(sr)
+    ∧ hasParticipantAtSomeTime(x,s) ∧ hasRole(s,sr)) ∧ ∃m∃mr(MaterialEntity(m) ∧ TransferredMaterialRole(mr) ∧ hasSpecifiedOutput(x,m)
+    ∧ hasRole(m,mr))
+  explanatory_note: "1) A material removal process may occur as part of a broader planned process. Material picking,\
+    \ loading, unloading, sampling, harvest, clarification, purification, recovery, or transport processes may include\
+    \ a material removal process as a part without themselves being material removal processes. \n2) The withdrawn\
+    \ entity may be bulk material or a containerized material entity, such as a vial or bag containing material.\
+    \ \n3) Material removal process should also be distinguished from uses of “removal” that refer to reducing,\
+    \ separating, clearing, or inactivating something within a material stream, such as viral removal, impurity\
+    \ removal, or host-cell protein removal.\n4) In a material removal process, the material entity that is physically\
+    \ withdrawn is modeled as a specified output bearing transferred material role, while the material entity or\
+    \ site from which it is withdrawn bears material withdrawal source role."
+  is_primitive: true
+  primitive_rationale: There are insufficient constructs to create a set of necessary and sufficient conditions
+  adapted_from:
+  - "http://purl.allotrope.org/ontologies/process#AFP_0003574"
+- label: material transfer process
+  iri: "https://spec.industrialontologies.org/ontology/construct/MaterialTransferProcess"
+  parent_class: Material Location Change Process
+  definition: material location change process occurring within a single facility in which a material entity is
+    removed from one material entity or site and added to another as part of that material's processing, production,
+    assessment, or use as a consumable
+  examples:
+  - cryovial transfer process from cryostorage to a thawing device, in which a cryovial containing frozen cell material
+    is withdrawn from a cryostorage system and introduced into a thawing device
+  - Milli-Q water transfer process from a Milli-Q water production system into a vessel used for growth media reconstitution
+  - cell culture material transfer process from a weldable bottle to a bench-scale production bioreactor
+  - feed medium transfer process from a feed bag into a production bioreactor during fed-batch cultivation
+  - inoculum transfer process from a seed bioreactor or inoculum bag into a production bioreactor
+  - reconstituted orange juice transfer process from a mixing tank into a packaging line feed tank
+  - PVC compounding mixture transfer process from a blender into a twin-screw extruder hopper
+  classification_conditions:
+  - The entity must be a Material Location Change Process.
+  - if x is a 'material transfer process' then x is a 'material location change process' that 'has occurrent part'
+    some 'material removal process' r and some 'material addition process' a, where r 'has specified output' the
+    same 'material entity' m that a 'has input', and x is a 'proper occurrent part of' some 'planned process' p
+    that 'has participant at some time' m, and x, r, a, and p each 'occurs in' the same 'material entity' f
+  logical_definition: MaterialTransferProcess(x) → MaterialLocationChangeProcess(x) ∧ ∃r∃a∃m∃p∃f (MaterialRemovalProcess(r)
+    ∧ MaterialAdditionProcess(a) ∧ MaterialEntity(m) ∧ PlannedProcess(p) ∧ MaterialEntity(f) ∧ hasOccurrentPart(x,r)
+    ∧ hasOccurrentPart(x,a) ∧ hasSpecifiedOutput(r,m) ∧ hasInput(a,m) ∧ properOccurrentPartOf(x,p) ∧ hasParticipantAtSomeTime(p,m)
+    ∧ occursIn(x,f) ∧ occursIn(r,f) ∧ occursIn(a,f) ∧ occursIn(p,f))
+  explanatory_note: '1) A material transfer process represents the full movement of the same material entity from
+    one material entity or site to another and has a material removal process and a material addition process as
+    parts.
+
+    2) The material transfer process, its material removal and material addition parts, and the broader planned
+    process of which it is a part occur within the same facility. A facility may, for example, correspond to an
+    ISA PhysicalSite.
+
+    3) Use material transfer process when the movement is part of the material''s processing, production, assessment,
+    or use as a consumable, including when transfer failures such as loss, blockage, delay, misdirection, contamination,
+    or unintended change in material state are relevant.
+
+    4) Material movement performed solely for warehousing, inventory relocation, shipment, delivery, or other logistics
+    purposes is not a material transfer process, because it does not occur as part of the material''s processing,
+    production, assessment, or use as a consumable. Use the applicable material handling or transport process instead.
+
+    5) In the first-order logic axiom, the common facility is represented as a material entity because Facility
+    is not available in this module.'
+  is_primitive: true
+  primitive_rationale: This term is expected to remain primitive as the precision of requiring the same material
+    across the processes is difficult to express in OWL
+- label: material use process
+  iri: "https://spec.industrialontologies.org/ontology/construct/MaterialUseProcess"
+  parent_class: Planned Process
+  definition: planned process that is a part of a material entity lifecycle and which starts with a realization
+    of the capability of that material entity
+  examples:
+  - When a customer drives a car off from the dealership after purchasing the car, a material use process has started.
+    A container/lot of a chemical substance may be considered used when the seal is opened or when the first portion
+    is taken out from the container. The portion taken out from the container is also subjected to another material
+    use process
+  - The material use process of a light-duty delivery truck dedicated to last-mile delivery starts when the driver
+    drives it off from the dealership after purchasing it brand-new
+  - the material use of a baghouse fabric filter installed downstream of a cyclonic separator begins the first time
+    air containing very fine particles flows through it
+  classification_conditions:
+  - The entity must be a Planned Process.
+  - if x is a 'material use process', then x is a 'planned process' that 'has participant at all times' some 'material
+    entity' m, and 'has occurrent part' some 'planned process' p that both 'temporally starts' x and 'realizes'
+    a 'capability' c that 'specifically depends on' m
+  logical_definition: MaterialUseProcess(x) → PlannedProcess(x) ∧ ∃m∃p∃c(MaterialEntity(m) ∧ PlannedProcess(p) ∧
+    Capability(c) ∧ specificallyDependsOn(c, m) ∧ hasParticipantAtAllTimes(x, m) ∧ hasOccurrentPart(x, p) ∧ temporallyStartedBy(x,
+    p) ∧ realizes(p, c))
+  is_primitive: true
+  primitive_rationale: This term is expected to remain primitive because different kinds of material entities, use
+    processes, and business practices may have different definitions of when a material use process starts.
+- label: material withdrawal source role
+  iri: "https://spec.industrialontologies.org/ontology/construct/MaterialWithdrawalSourceRole"
+  parent_class: Role
+  definition: role held by a material entity or site when a material entity is being, or is planned to be, physically
+    withdrawn from it
+  examples:
+  - feed bag bearing material withdrawal source role when feed medium is taken from it for addition to a cell culture
+  - powder tank bearing material withdrawal source role when a 5 g powder portion is taken from it during solution
+    preparation
+  - cell culture bearing material withdrawal source role during a cell bleed process
+  - sample vial bearing material withdrawal source role when liquid sample is aspirated for analytical measurement
+  - weighing tank bearing material withdrawal source role when phthalate plasticizer is taken from it for addition
+    to a PVC blender
+  - chlorine gas cylinder bearing material withdrawal source role when chlorine is withdrawn for addition to pre-treated
+    water
+  classification_conditions:
+  - The entity must be a B F O 0000023.
+  - if x is a 'material withdrawal source role' then x is a 'role' that is the 'role of' some 'material entity'
+    or some 'site'
+  logical_definition: MaterialWithdrawalSourceRole(x) → Role(x) ∧ ∃b ((MaterialEntity(b) ∨ Site(b)) ∧ roleOf(x,
+    b))
+  explanatory_note: Material withdrawal source role identifies the material entity or site from which material is
+    physically withdrawn. Use this role for the source from which the material is physically being taken. Do not
+    use it for the material that is taken. The withdrawn material bears transferred material role.
+  is_primitive: true
+  primitive_rationale: There are insufficient constructs to create necessary and sufficient conditions.
+- label: process intermediate material
+  iri: "https://spec.industrialontologies.org/ontology/construct/ProcessIntermediateMaterial"
+  parent_class: Material Entity
+  definition: material entity which has the process intermediate material role
+  examples:
+  - Yoghurt held after fermentation and before finishing with flavorings and packaging
+  - Cocoa paste stored after conching and before molding and packaging
+  - Dried PVC resin stored before compounding with additives
+  - Harvested cell culture fluid held before primary clarification
+  - Protein A eluate stored before viral inactivation
+  - Concentrated bulk drug substance stored before final formulation and filling
+  classification_conditions:
+  - The entity must be a Material Entity.
+  logical_definition: ProcessIntermediateMaterial(x) ↔ MaterialEntity(x) ∧ ∃r(ProcessIntermediateMaterialRole(r)
+    ∧ hasRole(x, r))
+  counter_examples:
+  - Cocoa paste, which is produced by a Cocoa manufacturer, sold, and shipped in heated tanker trucks to other food
+    companies
+  - Dried PVC resin produced by Company ABC and sold in bags or big bags to other companies that manufacture PVC
+    pipes, different PVC compounds, etc.
+    
+- label: process intermediate material role
+  iri: "https://spec.industrialontologies.org/ontology/construct/ProcessIntermediateMaterialRole"
+  parent_class: Role
+  definition: role held by a material entity when it is an output of a manufacturing process and is input of a subsequent
+    manufacturing process or planned to be an input of a subsequent manufacturing process
+  examples:
+  - role of a yoghurt when held after fermentation for use in finishing and packaging
+  - role of a cocoa paste when stored after conching for use in molding and cooling
+  - role of a dried PVC resin when kept after drying for use in compounding
+  - role of a harvested cell culture fluid when held after bioreactor harvest for use in clarification
+  - role of a Protein A eluate when collected after chromatography for use in viral inactivation
+  - role of a bulk drug substance when stored after purification for use in formulation and filling
+  classification_conditions:
+  - The entity must be a B F O 0000023.
+  - if x is a 'process intermediate material role' then x is a 'role of' some 'material entity' such that every
+    'realization of' x is a 'manufacturing process' that 'has input' that same 'material entity', and either that
+    'material entity' 'is specified output of' some 'manufacturing process' that 'precedes' some 'manufacturing
+    process' of which that same 'material entity' 'is input', or that 'material entity' 'is specified output of'
+    some 'manufacturing process' that 'precedes' some 'manufacturing process' prescribed by a 'plan specification',
+    where that same 'material entity' is 'prescribed by' some 'input specification' that is 'continuant part of
+    at all times' that 'plan specification'
+  logical_definition: ProcessIntermediateMaterialRole(x) → Role(x) ∧ ∃a(roleOf(x,a) ∧ MaterialEntity(a) ∧ ∀y(hasRealization(x,y)
+    → (ManufacturingProcess(y) ∧ hasInput(y,a))) ∧ ((∃c∃b(isSpecifiedOutputOf(a,c) ∧ ManufacturingProcess(c) ∧ isInputOf(a,b)
+    ∧ ManufacturingProcess(b) ∧ precedes(c,b))) ∨ (∃d∃s∃p∃m(isSpecifiedOutputOf(a,d) ∧ ManufacturingProcess(d) ∧
+    prescribedBy(a,s) ∧ InputSpecification(s) ∧ continuantPartOfAtAllTimes(s,p) ∧ PlanSpecification(p) ∧ prescribes(p,m)
+    ∧ ManufacturingProcess(m) ∧ precedes(d,m)))))
+  is_primitive: true
+  primitive_rationale: There are insufficient constructs to define necessary and sufficient conditions.
+- label: production consumable
+  iri: "https://spec.industrialontologies.org/ontology/construct/ProductionConsumable"
+  parent_class: Consumable
+  definition: material entity which has the production consumable role
+  examples:
+  - Benzoyl Peroxide used as a free-radical initiator in vinyl chloride polymerization
+  - Deionized water used as a suspension medium in PVC polymerization and partially lost through evaporation
+  - High-speed steel drill bits used in drilling operations and consumed after 200–400 drilling cycles
+  - Single-use bioreactor bag used for mammalian cell culture and discarded after use
+  - sterile filter used for media sterilization and discarded after filtration
+  - Disposable depth filter used in harvest clarification and discarded post-use
+  classification_conditions:
+  - The entity must be a Consumable.
+  logical_definition: ProductionConsumable(x) ↔ Consumable(x) ∧ ∃r(ProductionConsumableRole(r) ∧ hasRole(x, r))
+  explanatory_note: See the expanded definition under the corresponding role class. The term is formalized here
+    as a defined class by referring to its corresponding role class and exists primarily for ontological modeling
+    and implementation convenience.
+  counter_examples:
+  - Water employed in the Steam Reforming Process of Methane. Steam reacts with Methane at very high temperature
+    in the presence of a Ni catalyst to produce Hydrogen and a CO/CO2 mixture. Though steam is fed in excess to
+    avoid the carbonization of the catalyst, and is partly lost, a certain amount of it is converted into Hydrogen.
+    Therefore, water plays a raw material role
+  - Water inside a closed-loop cooling system circuit that is part of a chemical reaction process. Since it is a
+    closed system, water is not lost through evaporation, and it does not need a chemical/biological treatment.
+    In consequence, it does not need to be recovered.
+- label: production consumable role
+  iri: "https://spec.industrialontologies.org/ontology/construct/ProductionConsumableRole"
+  parent_class: Consumable Role
+  definition: consumable role held by a material entity when it is planned to be, or is partially or fully consumed
+    in a process that is part of a product production process
+  examples:
+  - Benzoyl Peroxide in the role of a consumable in the polymerization of vinyl chloride
+  - Deionized water in the role of a consumable in PVC polymerization as a suspension medium
+  - Sterile filter in the role of a consumable in media sterilization
+  - Single-use bioreactor bag in the role of a consumable in mammalian cell culture
+  - Disposable depth filter in the role of a consumable in harvest clarification
+  classification_conditions:
+  - The entity must be a Consumable Role.
+  - if x is a 'production consumable role' then x is a 'consumable role', x 'has realization' only in some 'occurrent
+    part of' a 'product production process', and x is a 'role of' some 'material entity' that either is 'prescribed
+    by' some 'input specification' that is a 'continuant part of at all times' some 'plan specification' that 'prescribes'
+    some 'occurrent part of' a 'product production process', 'is input of' some 'occurrent part of' a 'product production
+    process', or 'has capability' some 'capability' that 'has realization' in some 'occurrent part of' a 'product
+    production process'
+  logical_definition: ProductionConsumableRole(x) → ConsumableRole(x) ∧ ∀y(hasRealization(x,y) → ∃z(occurrentPartOf(y,z)
+    ∧ ProductProductionProcess(z))) ∧ ∃a(roleOf(x,a) ∧ MaterialEntity(a) ∧ (∃b∃c∃d∃z(prescribedBy(a,b) ∧ InputSpecification(b)
+    ∧ continuantPartOfAtAllTimes(b,c) ∧ PlanSpecification(c) ∧ prescribes(c,d) ∧ occurrentPartOf(d,z) ∧ ProductProductionProcess(z))
+    ∨ ∃e∃z(isInputOf(a,e) ∧ occurrentPartOf(e,z) ∧ ProductProductionProcess(z)) ∨ ∃f∃g∃z(hasCapability(a,f) ∧ Capability(f)
+    ∧ hasRealization(f,g) ∧ occurrentPartOf(g,z) ∧ ProductProductionProcess(z))))
+  explanatory_note: '1. ''Used up'' in this context means that either a) the material entity no longer exists at
+    the end of the process or b) the material entity has reduced or lost capability as a result of the process.
+
+    2. In many cases, organizations monitor the number of hours or frequency with which such consumables are used.
+
+    3. Production consumables include resources that are typically not specified in recipes, not included in the
+    bill of materials, and not lot-tracked.'
+  is_primitive: true
+  primitive_rationale: There are insufficient constructs to define necessary and sufficient conditions. Specifically
+    constructs for representing partially consumed are missing.
+- label: transferred material role
+  iri: "https://spec.industrialontologies.org/ontology/construct/TransferredMaterialRole"
+  parent_class: Role
+  definition: role held by a material entity when it is being, or is planned to be, physically added to or withdrawn
+    from a material entity or site
+  examples:
+  - 5 g powder portion bearing transferred material role when it is taken from a powder tank and added to a flask
+  - 500 mL feed-medium portion bearing transferred material role when it is taken from a feed bag and added to a
+    cell culture
+  - 10 kg phthalate plasticizer bearing transferred material role when it is taken from a weighing tank and added
+    to a PVC blender
+  - 50 mL flavor essence bearing transferred material role when it is taken from a dosing tank and added to a conching
+    unit
+  - liquid sample portion bearing transferred material role when it is withdrawn from a sample vial for analytical
+    measurement
+  - cryovial bearing transferred material role when it is retrieved from cryostorage
+  classification_conditions:
+  - The entity must be a B F O 0000023.
+  - if x is a 'transferred material role' then x is a 'role' that is the 'role of' some 'material entity'
+  logical_definition: TransferredMaterialRole(x) → Role(x) ∧ ∃m (MaterialEntity(m) ∧ roleOf(x, m))
+  explanatory_note: '1) Transferred material role identifies the material entity that is physically added or withdrawn
+    in a planned process. The material may be bulk, discrete, or containerized.
+
+    2) The role may be used when only material addition or only material removal is represented. In a material transfer
+    process, the same material entity bearing transferred material role participates in both.
+
+    3) Transferred material role is distinct from cargo role and other roles associated specifically with transportation
+    or shipping. For those cases the appropriate role from the supply chain ontology should be used.'
+  is_primitive: true
+  primitive_rationale: There are insufficient constructs to create necessary and sufficient conditions.
+relationships:
+- label: Realized In
+  iri: "http://purl.obolibrary.org/obo/BFO_0000054"
+  domain:
+  - process intermediate material role
+  - production consumable role
+  extraction_constraints:
+  - process intermediate material role uses or is constrained by Realized In in its class axioms.
+  - production consumable role uses or is constrained by Realized In in its class axioms.
+- label: Realizes
+  iri: "http://purl.obolibrary.org/obo/BFO_0000055"
+  domain:
+  - material use process
+  extraction_constraints:
+  - material use process uses or is constrained by Realizes in its class axioms.
+- label: Has Participant
+  iri: "http://purl.obolibrary.org/obo/BFO_0000057"
+  domain:
+  - material addition process
+  - material removal process
+  - material transfer process
+  extraction_constraints:
+  - material addition process uses or is constrained by Has Participant in its class axioms.
+  - material removal process uses or is constrained by Has Participant in its class axioms.
+  - material transfer process uses or is constrained by Has Participant in its class axioms.
+- label: Has Occurrent Part
+  iri: "http://purl.obolibrary.org/obo/BFO_0000117"
+  domain:
+  - material transfer process
+  - material use process
+  extraction_constraints:
+  - material transfer process uses or is constrained by Has Occurrent Part in its class axioms.
+  - material use process uses or is constrained by Has Occurrent Part in its class axioms.
+- label: Occurrent Part Of
+  iri: "http://purl.obolibrary.org/obo/BFO_0000132"
+  domain:
+  - production consumable role
+  range:
+  - Product Production Process
+  extraction_constraints:
+  - production consumable role uses or is constrained by Occurrent Part Of in its class axioms.
+- label: Proper Occurrent Part Of
+  iri: "http://purl.obolibrary.org/obo/BFO_0000138"
+  domain:
+  - material transfer process
+  extraction_constraints:
+  - material transfer process uses or is constrained by Proper Occurrent Part Of in its class axioms.
+- label: Has Participant At All Times
+  iri: "http://purl.obolibrary.org/obo/BFO_0000167"
+  domain:
+  - material use process
+  range:
+  - Material Entity
+  extraction_constraints:
+  - material use process uses or is constrained by Has Participant At All Times in its class axioms.
+- label: Continuant Part Of
+  iri: "http://purl.obolibrary.org/obo/BFO_0000176"
+  domain:
+  - material impurity role
+  extraction_constraints:
+  - material impurity role uses or is constrained by Continuant Part Of in its class axioms.
+- label: Continuant Part Of At All Times
+  iri: "http://purl.obolibrary.org/obo/BFO_0000177"
+  domain:
+  - process intermediate material role
+  - production consumable role
+  extraction_constraints:
+  - process intermediate material role uses or is constrained by Continuant Part Of At All Times in its class axioms.
+  - production consumable role uses or is constrained by Continuant Part Of At All Times in its class axioms.
+- label: Specifically Depends On
+  iri: "http://purl.obolibrary.org/obo/BFO_0000195"
+  domain:
+  - material use process
+  range:
+  - Material Entity
+  extraction_constraints:
+  - material use process uses or is constrained by Specifically Depends On in its class axioms.
+- label: Capability Of
+  iri: "https://spec.industrialontologies.org/ontology/construct/capabilityOf"
+  domain:
+  - manufacturing capability
+  extraction_constraints:
+  - manufacturing capability uses or is constrained by capability Of in its class axioms.
+- label: Has Capability
+  iri: "https://spec.industrialontologies.org/ontology/construct/hasCapability"
+  domain:
+  - production consumable role
+  extraction_constraints:
+  - production consumable role uses or is constrained by has Capability in its class axioms.
+- label: Has Input
+  iri: "https://spec.industrialontologies.org/ontology/construct/hasInput"
+  domain:
+  - material addition process
+  - material transfer process
+  - process intermediate material role
+  range:
+  - Material Entity
+  extraction_constraints:
+  - material addition process uses or is constrained by has Input in its class axioms.
+  - material transfer process uses or is constrained by has Input in its class axioms.
+  - process intermediate material role uses or is constrained by has Input in its class axioms.
+- label: Has Role
+  iri: "https://spec.industrialontologies.org/ontology/construct/hasRole"
+  domain:
+  - material addition process
+  - material impurity
+  - material removal process
+  - material transfer process
+  - process intermediate material
+  - production consumable
+  range:
+  - material addition target role
+  - material impurity role
+  - material withdrawal source role
+  - process intermediate material role
+  - production consumable role
+  - transferred material role
+  extraction_constraints:
+  - material addition process uses or is constrained by has Role in its class axioms.
+  - material impurity uses or is constrained by has Role in its class axioms.
+  - material removal process uses or is constrained by has Role in its class axioms.
+  - material transfer process uses or is constrained by has Role in its class axioms.
+  - process intermediate material uses or is constrained by has Role in its class axioms.
+  - production consumable uses or is constrained by has Role in its class axioms.
+- label: Has Specified Output
+  iri: "https://spec.industrialontologies.org/ontology/construct/hasSpecifiedOutput"
+  domain:
+  - material removal process
+  - material transfer process
+  extraction_constraints:
+  - material removal process uses or is constrained by has Specified Output in its class axioms.
+  - material transfer process uses or is constrained by has Specified Output in its class axioms.
+- label: Is Input Of
+  iri: "https://spec.industrialontologies.org/ontology/construct/isInputOf"
+  domain:
+  - process intermediate material role
+  - production consumable role
+  range:
+  - Manufacturing Process
+  extraction_constraints:
+  - process intermediate material role uses or is constrained by is Input Of in its class axioms.
+  - production consumable role uses or is constrained by is Input Of in its class axioms.
+- label: Is Specified Output Of
+  iri: "https://spec.industrialontologies.org/ontology/construct/isSpecifiedOutputOf"
+  domain:
+  - process intermediate material role
+  range:
+  - Manufacturing Process
+  extraction_constraints:
+  - process intermediate material role uses or is constrained by is Specified Output Of in its class axioms.
+- label: Prescribed By
+  iri: "https://spec.industrialontologies.org/ontology/construct/prescribedBy"
+  domain:
+  - process intermediate material role
+  - production consumable role
+  extraction_constraints:
+  - process intermediate material role uses or is constrained by prescribed By in its class axioms.
+  - production consumable role uses or is constrained by prescribed By in its class axioms.
+- label: Prescribes
+  iri: "https://spec.industrialontologies.org/ontology/construct/prescribes"
+  domain:
+  - process intermediate material role
+  - production consumable role
+  range:
+  - Manufacturing Process
+  extraction_constraints:
+  - process intermediate material role uses or is constrained by prescribes in its class axioms.
+  - production consumable role uses or is constrained by prescribes in its class axioms.
+- label: Role Of
+  iri: "https://spec.industrialontologies.org/ontology/construct/roleOf"
+  domain:
+  - material addition target role
+  - material impurity role
+  - material withdrawal source role
+  - process intermediate material role
+  - production consumable role
+  - transferred material role
+  range:
+  - Material Entity
+  extraction_constraints:
+  - material addition target role uses or is constrained by role Of in its class axioms.
+  - material impurity role uses or is constrained by role Of in its class axioms.
+  - material withdrawal source role uses or is constrained by role Of in its class axioms.
+  - process intermediate material role uses or is constrained by role Of in its class axioms.
+  - production consumable role uses or is constrained by role Of in its class axioms.
+  - transferred material role uses or is constrained by role Of in its class axioms.
+- label: Temporally Started By
+  iri: "https://spec.industrialontologies.org/ontology/construct/temporallyStartedBy"
+  domain:
+  - material use process
+  extraction_constraints:
+  - material use process uses or is constrained by temporally Started By in its class axioms.
