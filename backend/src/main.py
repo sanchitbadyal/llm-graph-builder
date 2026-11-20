@@ -509,6 +509,14 @@ async def processing_source(credentials, params, pages, merged_file_path=None, i
 
       logging.info('Update the status as Processing')
       update_graph_chunk_processed = get_value_from_env("UPDATE_GRAPH_CHUNKS_PROCESSED",20,"int")
+      logging.info(
+          "Extraction chunk configuration: total_chunks=%s token_chunk_size=%s "
+          "chunk_overlap=%s chunks_to_combine=%s",
+          total_chunks,
+          params.token_chunk_size,
+          params.chunk_overlap,
+          params.chunks_to_combine,
+      )
       # selected_chunks = []
       is_cancelled_status = False
       job_status = "Completed"
@@ -519,6 +527,14 @@ async def processing_source(credentials, params, pages, merged_file_path=None, i
         if len(chunkId_chunkDoc_list) <= select_chunks_upto:
           select_chunks_upto = len(chunkId_chunkDoc_list)
         selected_chunks = chunkId_chunkDoc_list[i:select_chunks_upto]
+        logging.info(
+            "Processing chunk batch: batch_start=%s batch_end=%s "
+            "batch_chunks=%s chunks_to_combine=%s",
+            i,
+            select_chunks_upto,
+            len(selected_chunks),
+            params.chunks_to_combine,
+        )
         
         result = graphDb_data_Access.get_current_status_document_node(params.file_name)
         is_cancelled_status = result[0]['is_cancelled']
@@ -638,6 +654,11 @@ async def processing_chunks(chunkId_chunkDoc_list,graph,credentials,file_name,mo
       graph = create_graph_database_connection(credentials)
   else:
     graph = create_graph_database_connection(credentials)
+
+  # Preserve the source document ID through chunk combination and evidence
+  # projection so assertions do not fall back to unknown-document.
+  for item in chunkId_chunkDoc_list:
+    item["chunk_doc"].metadata.setdefault("source_document_id", file_name)
     
   start_update_embedding = time.time()
   create_chunk_embeddings( graph, chunkId_chunkDoc_list, file_name, embedding_provider, embedding_model)
@@ -789,6 +810,10 @@ async def processing_chunks(chunkId_chunkDoc_list,graph,credentials,file_name,mo
                 item["child_profile"] or ""
                 for item in hierarchy
             ]
+            properties["ontology_class_description"] = hierarchy[-1].get("child_description", "") if hierarchy else ""
+            properties["ontology_parent_descriptions"] = [
+                item.get("child_description", "") for item in hierarchy
+            ]
             properties["ontology_class_profile"] = (
                 hierarchy[-1]["parent_profile"] if hierarchy else ""
             )
@@ -827,6 +852,8 @@ async def processing_chunks(chunkId_chunkDoc_list,graph,credentials,file_name,mo
   save_graphDocuments_in_neo4j(graph, cleaned_graph_documents)
   if extraction_envelope.ontology_id:
       save_ontology_hierarchy_in_neo4j(graph, cleaned_graph_documents)
+      projected_entities = project_entity_metadata(graph, extraction_envelope)
+      logging.info("Ontology entity metadata projected to %s entities", projected_entities)
   if extraction_envelope.ontology_id and get_value_from_env("ONTOLOGY_GUIDED_EXTRACTION", "false", "bool"):
       projected_relationships = project_relationship_metadata(graph, cleaned_graph_documents, extraction_envelope)
       logging.info("Ontology provenance projected to %s relationships", projected_relationships)
@@ -890,7 +917,11 @@ def get_chunkId_chunkDoc_list(graph, file_name, pages, token_chunk_size, chunk_o
       raise LLMGraphBuilderException(f"Chunks are not created for {file_name}. Please re-upload file or reprocess the file with option Start From Beginning.")    
     else:
       for chunk in chunks:
-        chunk_doc = Document(page_content=chunk['text'], metadata={'id':chunk['id'], 'position':chunk['position']})
+        chunk_doc = Document(page_content=chunk['text'], metadata={
+            'id': chunk['id'],
+            'position': chunk['position'],
+            'page_number': chunk.get('page_number'),
+        })
         chunkId_chunkDoc_list.append({'chunk_id': chunk['id'], 'chunk_doc': chunk_doc})
       
       if retry_condition ==  START_FROM_LAST_PROCESSED_POSITION:

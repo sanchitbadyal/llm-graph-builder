@@ -103,6 +103,11 @@ def _local_rdf_graph() -> tuple[Graph, dict[str, str]]:
 def parent_relationships(class_iri: str) -> tuple[dict[str, str], ...]:
     """Return ordered root-to-class rdfs:subClassOf relationships."""
     graph, class_sources = _local_rdf_graph()
+    def description(node: URIRef) -> str:
+        values = list(graph.objects(node, RDFS.comment))
+        values.extend(value for predicate, value in graph.predicate_objects(node)
+                      if str(predicate).lower().endswith(('definition', 'definitiontext', 'description')))
+        return next((str(value) for value in values if str(value).strip()), "")
 
     def named_parents(class_node: URIRef) -> tuple[str, ...]:
         parents: set[str] = set()
@@ -139,6 +144,8 @@ def parent_relationships(class_iri: str) -> tuple[dict[str, str], ...]:
             "parent": str(parent),
             "parent_label": parent_label,
             "parent_profile": class_sources.get(str(parent)),
+            "child_description": description(current),
+            "parent_description": description(parent),
         })
         current = parent
     return tuple(reversed(chain))
@@ -147,6 +154,9 @@ def parent_relationships(class_iri: str) -> tuple[dict[str, str], ...]:
 def ontology_catalog() -> tuple[dict[str, str], ...]:
     """Return all named local classes and their named superclass edges."""
     graph, class_sources = _local_rdf_graph()
+    def description(node: URIRef) -> str:
+        return next((str(value) for predicate, value in graph.predicate_objects(node)
+                     if str(predicate).lower().endswith(('definition', 'definitiontext', 'description'))), "")
     classes = {subject for subject in graph.subjects(RDFS.label, None) if isinstance(subject, URIRef)}
     rows: list[dict[str, str]] = []
     for child in sorted(classes, key=str):
@@ -160,9 +170,11 @@ def ontology_catalog() -> tuple[dict[str, str], ...]:
                 rows.append({
                     "child_iri": str(child), "child_label": label,
                     "child_profile": class_sources.get(str(child), ""),
+                    "child_description": description(child),
                     "parent_iri": str(parent_iri),
                     "parent_label": next((str(value) for value in graph.objects(parent_iri, RDFS.label)), str(parent_iri)),
                     "parent_profile": class_sources.get(str(parent_iri), ""),
+                    "parent_description": description(parent_iri),
                 })
     return tuple(rows)
 
@@ -172,6 +184,11 @@ def ontology_catalog_from_reasoner(ontologies: tuple[Any, ...]) -> tuple[dict[st
     if not ontologies:
         return ()
     graph, class_sources = _local_rdf_graph()
+    def description(node: URIRef) -> str:
+        values = list(graph.objects(node, RDFS.comment))
+        values.extend(value for predicate, value in graph.predicate_objects(node)
+                      if str(predicate).lower().endswith(('definition', 'definitiontext', 'description')))
+        return next((str(value) for value in values if str(value).strip()), "")
     world = ontologies[0].world
     classes = tuple(world.classes())
     rows: list[dict[str, str]] = []
@@ -182,6 +199,7 @@ def ontology_catalog_from_reasoner(ontologies: tuple[Any, ...]) -> tuple[dict[st
         child_label = child.label.first() if child.label else next(
             (str(value) for value in graph.objects(URIRef(child_iri), RDFS.label)), child.name
         )
+        child_node = URIRef(str(child_iri))
         named_parents = [parent for parent in child.is_a if getattr(parent, "iri", None)
                          and getattr(parent, "iri", None) != "http://www.w3.org/2002/07/owl#Thing"]
         if not named_parents:
@@ -196,6 +214,7 @@ def ontology_catalog_from_reasoner(ontologies: tuple[Any, ...]) -> tuple[dict[st
             rows.append({
                 "child_iri": str(child_iri), "child_label": str(child_label),
                 "child_profile": class_sources.get(str(child_iri), ""),
+                "child_description": description(child_node),
                 "parent_iri": "", "parent_label": "", "parent_profile": "",
             })
         for parent in named_parents:
@@ -212,5 +231,7 @@ def ontology_catalog_from_reasoner(ontologies: tuple[Any, ...]) -> tuple[dict[st
                 "child_profile": class_sources.get(str(child_iri), ""),
                 "parent_iri": str(parent_iri), "parent_label": str(parent_label),
                 "parent_profile": class_sources.get(str(parent_iri), ""),
+                "child_description": description(child_node),
+                "parent_description": description(URIRef(parent_iri)),
             })
     return tuple(rows)

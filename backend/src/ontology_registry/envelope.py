@@ -72,16 +72,18 @@ class OntologyExtractionEnvelope:
     assertions: tuple[ExtractionAssertion, ...] = ()
     ontology_id: str | None = None
     source_document_id: str | None = None
+    document_description: str | None = None
     extraction_model: str | None = None
     envelope_version: str = "1.0"
 
     def as_dict(self) -> dict[str, Any]:
         return {"envelope_version": self.envelope_version, "ontology_id": self.ontology_id,
                 "source_document_id": self.source_document_id,
+                "document_description": self.document_description,
                 "extraction_model": self.extraction_model,
                 "assertions": [item.as_dict() for item in self.assertions]}
 
     @classmethod
     def from_mapping(cls, value: Mapping[str, Any]) -> "OntologyExtractionEnvelope":
         return cls(assertions=tuple(ExtractionAssertion.from_mapping(item) for item in value.get("assertions", ())),
-                   **{key: value[key] for key in ("ontology_id", "source_document_id", "extraction_model", "envelope_version") if key in value})
+                   **{key: value[key] for key in ("ontology_id", "source_document_id", "document_description", "extraction_model", "envelope_version") if key in value})

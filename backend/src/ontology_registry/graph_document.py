@@ -48,6 +48,7 @@ def _property_iri(profile: Any, predicate: Any) -> str | None:
 def graph_documents_to_envelope(
     graph_documents: Iterable[Any], *, model: str | None = None,
     ontology_id: str | None = None, profile: Any = None,
+    document_description: str | None = None,
 ) -> OntologyExtractionEnvelope:
     """Create candidate assertions without changing the original documents.
 
@@ -68,6 +69,7 @@ def graph_documents_to_envelope(
         chunk_ids = metadata.get("combined_chunk_ids") or metadata.get("chunk_id") or ["unknown-chunk"]
         if isinstance(chunk_ids, str):
             chunk_ids = [chunk_ids]
+        chunk_metadata = metadata.get("chunk_metadata") or {}
         for relationship in getattr(document, "relationships", ()) or ():
             source = getattr(relationship, "source", None)
             target = getattr(relationship, "target", None)
@@ -81,9 +83,16 @@ def graph_documents_to_envelope(
             subject_class = _class_iri(profile, source_type) or source_type
             object_class = _class_iri(profile, target_type) or target_type
             predicate_iri = _property_iri(profile, predicate) or predicate
+            evidence_chunk = chunk_metadata.get(str(chunk_ids[0]), {})
+            evidence_text = evidence_chunk.get("text")
+            evidence_page = evidence_chunk.get("page_number")
             evidence = EvidenceProvenance(
                 source_document_id=str(metadata.get("source_document_id", "unknown-document")),
                 source_chunk_id=str(chunk_ids[0]),
+                text_span=evidence_text,
+                page=int(evidence_page) if evidence_page is not None else None,
+                start_offset=0 if evidence_text is not None else None,
+                end_offset=len(evidence_text) if evidence_text is not None else None,
             )
             assertions.append(ExtractionAssertion.candidate(
                 subject_iri=_stable_mention_iri(source.id), subject_class_iri=subject_class,
@@ -93,7 +102,10 @@ def graph_documents_to_envelope(
                 evidence=evidence, extraction_model=model,
             ))
     logging.info("Ontology envelope conversion: input_nodes=%d input_relationships=%d assertions=%d skipped=%d", input_nodes, input_relationships, len(assertions), skipped)
-    return OntologyExtractionEnvelope(tuple(assertions), ontology_id=ontology_id, extraction_model=model)
+    return OntologyExtractionEnvelope(
+        tuple(assertions), ontology_id=ontology_id,
+        document_description=document_description, extraction_model=model,
+    )
 
 
 def filter_graph_documents_by_envelope(

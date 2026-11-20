@@ -1,471 +1,2347 @@
 profile:
-  id: core-selected
+  id: core-complete
   ontology_artifact: core
   description: >-
-    Shared IOF Core context for agents, organizations, material entities, information content, processes, roles, capabilities and measurement. Only the explicitly selected classes are sent to the LLM; ancestors appear as context only.
+    Complete profile generated from Core.rdf (IOF Core Ontology); all named classes and properties declared in the RDF artifact are represented here.
   include_ancestors: true
   include_compatible_properties: true
 
-groups:
-  agents_and_organizations:
-    - label: "Agent"
-      iri: https://spec.industrialontologies.org/ontology/construct/Agent
-      parent: "Material Entity"
-      definition: "A person, group of persons, or engineered system with an agent role."
-    - label: "Person"
-      iri: https://spec.industrialontologies.org/ontology/construct/Person
-      parent: "Material Entity"
-      definition: "An organism that is a member of the species Homo sapiens."
-    - label: "Organized Group Of Agents"
-      iri: https://spec.industrialontologies.org/ontology/construct/OrganizedGroupOfAgents
-      parent: "Group Of Agents"
-      definition: "A group of agents pursuing a common set of plans and objectives."
-    - label: "Group Of Agents"
-      iri: https://spec.industrialontologies.org/ontology/construct/GroupOfAgents
-      parent: "Object Aggregate"
-      definition: "A group that has one or more agents as members."
-    - label: "Agent Role"
-      iri: https://spec.industrialontologies.org/ontology/construct/AgentRole
-      parent: "Role"
-      definition: "A role held when acting on behalf of a person, engineered system, or group of agents."
-  material_and_systems:
-    - label: "Material Artifact"
-      iri: https://spec.industrialontologies.org/ontology/construct/MaterialArtifact
-      parent: "Object"
-      definition: "An object deliberately created to have a certain function."
-    - label: "Material Product"
-      iri: https://spec.industrialontologies.org/ontology/construct/MaterialProduct
-      parent: "Material Entity"
-      definition: "A material entity that has the material product role."
-    - label: "Raw Material"
-      iri: https://spec.industrialontologies.org/ontology/construct/RawMaterial
-      parent: "Material Entity"
-      definition: "A material entity acquired with a plan to transform or modify it into components, substances, or a product."
-    - label: "Material Component"
-      iri: https://spec.industrialontologies.org/ontology/construct/MaterialComponent
-      parent: "Material Entity"
-      definition: "A material entity that has the material component role."
-    - label: "Container"
-      iri: https://spec.industrialontologies.org/ontology/construct/Container
-      parent: "Material Artifact"
-      definition: "A material artifact designed to hold one or more material entities."
-    - label: "System"
-      iri: https://spec.industrialontologies.org/ontology/construct/System
-      parent: "Object Aggregate"
-      definition: "A collection of elements that forms a unified whole and interacts."
-    - label: "Engineered System"
-      iri: https://spec.industrialontologies.org/ontology/construct/EngineeredSystem
-      parent: "System"
-      definition: "A system deliberately created to have a certain function."
-    - label: "Piece Of Equipment"
-      iri: https://spec.industrialontologies.org/ontology/construct/PieceOfEquipment
-      parent: "Material Entity"
-      definition: "A material artifact or engineered system with an equipment role."
-  processes_and_roles:
-    - label: "Planned Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/PlannedProcess
-      parent: "Process"
-      definition: "A process prescribed by a plan specification."
-    - label: "Manufacturing Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/ManufacturingProcess
-      parent: "Planned Process"
-      definition: "A planned process in which input material is transformed or modified through structured operations."
-    - label: "Business Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/BusinessProcess
-      parent: "Planned Process"
-      definition: "A planned process prescribed by a plan specification with objectives specified by a business organization."
-    - label: "Role"
-      iri: http://purl.obolibrary.org/obo/BFO_0000023
-      parent: "Specifically Dependent Continuant"
-      definition: "A realizable entity that exists because something bears it in a particular context."
-    - label: "Capability"
-      iri: https://spec.industrialontologies.org/ontology/construct/Capability
-      parent: "Disposition"
-      definition: "A disposition in whose realization some agent has an interest."
-    - label: "Process Characteristic"
-      iri: https://spec.industrialontologies.org/ontology/construct/ProcessCharacteristic
-      parent: "Continuant"
-      definition: "A continuant that summarizes an attribute of a process over its entire duration."
-  information_and_measurement:
-    - label: "Information Content Entity"
-      iri: https://spec.industrialontologies.org/ontology/construct/InformationContentEntity
-      parent: "Generically Dependent Continuant"
-      definition: "Content or a pattern that is about some entity."
-    - label: "Plan Specification"
-      iri: https://spec.industrialontologies.org/ontology/construct/PlanSpecification
-      parent: "Information Content Entity"
-      definition: "An information content entity that has action specifications and objective specifications as parts."
-    - label: "Requirement Specification"
-      iri: https://spec.industrialontologies.org/ontology/construct/RequirementSpecification
-      parent: "Information Content Entity"
-      definition: "An information content entity that prescribes a set of requirements."
-    - label: "Value Expression"
-      iri: https://spec.industrialontologies.org/ontology/construct/ValueExpression
-      parent: "Information Content Entity"
-      definition: "An information content entity containing a value within a classification scheme or quantitative scale."
-    - label: "Measured Value Expression"
-      iri: https://spec.industrialontologies.org/ontology/construct/MeasuredValueExpression
-      parent: "Value Expression"
-      definition: "A value expression containing the measured value of an attribute or temporal region."
-    - label: "Measurement Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/MeasurementProcess
-      parent: "Planned Process"
-      definition: "A planned process to determine the value of an attribute of an entity of interest."
 
-  rdf_core_additional_classes:
-    # Additional named classes declared in Core.rdf. Existing curated classes
-    # above are intentionally preserved with their prompt-facing metadata.
-    - label: "Process Profile"
-      iri: http://purl.obolibrary.org/obo/BFO_0000144
-      parent: "Process"
-      definition: "A process that is a proper part of another process and that captures the time-dependent behavior of some attribute of that process."
-    - label: "Action Specification"
-      iri: https://spec.industrialontologies.org/ontology/construct/ActionSpecification
-      parent: "Information Content Entity"
-      definition: "An information content entity that prescribes what participants shall do in a process."
-    - label: "Agreement"
-      iri: https://spec.industrialontologies.org/ontology/construct/Agreement
-      parent: "Information Content Entity"
-      definition: "An understanding between two or more parties that contains a set of commitments on the part of the parties."
-    - label: "Algorithm"
-      iri: https://spec.industrialontologies.org/ontology/construct/Algorithm
-      parent: "Information Content Entity"
-      definition: "An information content entity that prescribes procedural or declarative steps which can be translated to computer interpretable instructions."
-    - label: "Assembly"
-      iri: https://spec.industrialontologies.org/ontology/construct/Assembly
-      parent: "Material Artifact"
-      definition: "A material artifact that is composed of material components that are physically connected and that is capable of disassembly."
-    - label: "Assembly Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/AssemblyProcess
-      parent: "Manufacturing Process"
-      definition: "A manufacturing process in which a number of material components are physically connected to each other to form an assembly."
-    - label: "Business Function"
-      iri: https://spec.industrialontologies.org/ontology/construct/BusinessFunction
-      parent: "Function"
-      definition: "A function of an organization to partake in for profit activities as prescribed by the objectives specified by that organization."
-    - label: "Business Organization"
-      iri: https://spec.industrialontologies.org/ontology/construct/BusinessOrganization
-      parent: "Organization"
-      definition: "An organization engaging in or planning to engage in any activity of buying and selling goods or services for a profit."
-    - label: "Buyer"
-      iri: https://spec.industrialontologies.org/ontology/construct/Buyer
-      parent: "Agent"
-      definition: "A person or organization which has a buyer role."
-    - label: "Buyer Role"
-      iri: https://spec.industrialontologies.org/ontology/construct/BuyerRole
-      parent: "Agent Role"
-      definition: "An agent role held by a person or organization when it buys a product or a service."
-    - label: "Buying Business Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/BuyingBusinessProcess
-      parent: "Business Process"
-      definition: "A business process wherein a financial instrument is used by an agent (buyer) to acquire ownership of a product or commercial service from another agent (seller) for the buyer itself or for another agent (customer)."
-    - label: "Classifier"
-      iri: https://spec.industrialontologies.org/ontology/construct/Classifier
-      parent: "Denoter"
-      definition: "A denoter that classifies some entity."
-    - label: "Commercial Service"
-      iri: https://spec.industrialontologies.org/ontology/construct/CommercialService
-      parent: "Business Process"
-      definition: "A business process that consists of a service provisioning process and a consumption process."
-    - label: "Commercial Service Agreement"
-      iri: https://spec.industrialontologies.org/ontology/construct/CommercialServiceAgreement
-      parent: "Agreement"
-      definition: "An agreement between a customer and service provider that is about some commercial service to be provided by the service provider in exchange for compensation from the customer."
-    - label: "Commercial Service Specification"
-      iri: https://spec.industrialontologies.org/ontology/construct/CommercialServiceSpecification
-      parent: "Plan Specification"
-      definition: "A plan specification that prescribes a commercial service."
-    - label: "Complex Material State"
-      iri: https://spec.industrialontologies.org/ontology/construct/ComplexMaterialState
-      parent: "Material State"
-      definition: "A material state whose condition is an aggregated condition composed from the conditions of two or more material states that hold in it."
-    - label: "Computing Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/ComputingProcess
-      parent: "Planned Process"
-      definition: "A planned process in which an algorithm or an encoded algorithm is realized by an agent."
-    - label: "Consumable"
-      iri: https://spec.industrialontologies.org/ontology/construct/Consumable
-      parent: "Material Entity"
-      definition: "A material entity which has the consumable role."
-    - label: "Consumable Role"
-      iri: https://spec.industrialontologies.org/ontology/construct/ConsumableRole
-      parent: "Role"
-      definition: "A role held by a material entity when it is planned to be, or is partially or fully used up in a planned process."
-    - label: "Customer"
-      iri: https://spec.industrialontologies.org/ontology/construct/Customer
-      parent: "Agent"
-      definition: "A person or organization which has a customer role."
-    - label: "Customer Role"
-      iri: https://spec.industrialontologies.org/ontology/construct/CustomerRole
-      parent: "Agent Role"
-      definition: "An agent role held by a person or organization when it utilizes the product or receives the service or subscribes to the commercial service agreement."
-    - label: "Denoter"
-      iri: https://spec.industrialontologies.org/ontology/construct/Denoter
-      parent: "Information Content Entity"
-      definition: "An information content entity that denotes some entity."
-    - label: "Descriptive Information Content Entity"
-      iri: https://spec.industrialontologies.org/ontology/construct/DescriptiveInformationContentEntity
-      parent: "Information Content Entity"
-      definition: "An information content entity that characterizes (gives a description of) an entity."
-    - label: "Design Specification"
-      iri: https://spec.industrialontologies.org/ontology/construct/DesignSpecification
-      parent: "Information Content Entity"
-      definition: "An information content entity that prescribes something man-made."
-    - label: "Designative Information Content Entity"
-      iri: https://spec.industrialontologies.org/ontology/construct/DesignativeInformationContentEntity
-      parent: "Information Content Entity"
-      definition: "An information content entity that uniquely identifies an entity."
-    - label: "Designed Function"
-      iri: https://spec.industrialontologies.org/ontology/construct/DesignedFunction
-      parent: "Function"
-      definition: "A function that is intentionally designed."
-    - label: "Directive Information Content Entity"
-      iri: https://spec.industrialontologies.org/ontology/construct/DirectiveInformationContentEntity
-      parent: "Information Content Entity"
-      definition: "An information content entity that prescribes a set of rules or guidelines for a process or a model of something man-made."
-    - label: "Encoded Algorithm"
-      iri: https://spec.industrialontologies.org/ontology/construct/EncodedAlgorithm
-      parent: "Plan Specification"
-      definition: "A plan specification that is the implementation of an algorithm encoded in a specific programming language or framework and that is readily executable."
-    - label: "Equipment Role"
-      iri: https://spec.industrialontologies.org/ontology/construct/EquipmentRole
-      parent: "Role"
-      definition: "A role held by a material artifact or an engineered system when it is planned to be involved in or is involved in carrying out some part of a planned process and that is not consumed in that planned process."
-    - label: "Event"
-      iri: https://spec.industrialontologies.org/ontology/construct/Event
-      parent: "Occurrent"
-      definition: "A phenomenon (process or process boundary) that is recognized by an agent and typically recorded."
-    - label: "Gain Of Role"
-      iri: https://spec.industrialontologies.org/ontology/construct/GainOfRole
-      parent: "Process"
-      definition: "A process in which someone or something (independent continuant that is not a spatial region) becomes the bearer of a role."
-    - label: "Group Of Persons"
-      iri: https://spec.industrialontologies.org/ontology/construct/GroupOfPersons
-      parent: "Object Aggregate"
-      definition: "A group (object aggregate) that has one or more persons as members."
-    - label: "Identifier"
-      iri: https://spec.industrialontologies.org/ontology/construct/Identifier
-      parent: "Denoter"
-      definition: "A denoter that is used to uniquely identify an entity within a particular context."
-    - label: "Input Specification"
-      iri: https://spec.industrialontologies.org/ontology/construct/InputSpecification
-      parent: "Information Content Entity"
-      definition: "An information content entity that prescribes the entities to be used as inputs to a planned process or the attributes they must possess to serve as valid inputs."
-    - label: "Loss Of Role"
-      iri: https://spec.industrialontologies.org/ontology/construct/LossOfRole
-      parent: "Process"
-      definition: "A process in which someone or something (independent continuant that is not a spatial region) ceases to be the bearer of a role."
-    - label: "Maintainable Material Item"
-      iri: https://spec.industrialontologies.org/ontology/construct/MaintainableMaterialItem
-      parent: "Material Entity"
-      definition: "A material artifact or engineered system which has the maintainable material item role."
-    - label: "Maintainable Material Item Role"
-      iri: https://spec.industrialontologies.org/ontology/construct/MaintainableMaterialItemRole
-      parent: "Role"
-      definition: "A role played by an asset (engineered system or material artifact) when there is a maintenance strategy prescribing its maintenance process."
-    - label: "Manufacturer"
-      iri: https://spec.industrialontologies.org/ontology/construct/Manufacturer
-      parent: "Agent"
-      definition: "An organization which has a manufacturer role."
-    - label: "Manufacturer Role"
-      iri: https://spec.industrialontologies.org/ontology/construct/ManufacturerRole
-      parent: "Agent Role"
-      definition: "An agent role held by an organization when it produces material products."
-    - label: "Material Component Role"
-      iri: https://spec.industrialontologies.org/ontology/construct/MaterialComponentRole
-      parent: "Role"
-      definition: "A role held by a material entity when it is a proper part of another material entity or is planned to be a proper part of another material entity."
-    - label: "Material Containment Capability"
-      iri: https://spec.industrialontologies.org/ontology/construct/MaterialContainmentCapability
-      parent: "Capability"
-      definition: "A capability of a material entity that is grounded in the entity's physical structure and that can be realized in a process in which the entity holds one or more material entities within a bounded interior, cavity, surface-delimited area, or contained site."
-    - label: "Material Containment Function"
-      iri: https://spec.industrialontologies.org/ontology/construct/MaterialContainmentFunction
-      parent: "Material Containment Capability"
-      definition: "A material containment capability that is a function of a material entity."
-    - label: "Material Location Change Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/MaterialLocationChangeProcess
-      parent: "Planned Process"
-      definition: "A planned process that results in a material entity moving from one physical location to another."
-    - label: "Material Product Role"
-      iri: https://spec.industrialontologies.org/ontology/construct/MaterialProductRole
-      parent: "Role"
-      definition: "A role held by a material entity that is intended to be sold, or has been bought, or has been supplied."
-    - label: "Material Resource"
-      iri: https://spec.industrialontologies.org/ontology/construct/MaterialResource
-      parent: "Material Entity"
-      definition: "A material entity which has the material resource role."
-    - label: "Material Resource Role"
-      iri: https://spec.industrialontologies.org/ontology/construct/MaterialResourceRole
-      parent: "Role"
-      definition: "A role played by a material entity that consists in it being available to a person or group of agents or engineered system."
-    - label: "Material State"
-      iri: https://spec.industrialontologies.org/ontology/construct/MaterialState
-      parent: "Process"
-      definition: "A process in which a material entity that participates in the process has a condition that remains unchanged."
-    - label: "Material State Condition Expression"
-      iri: https://spec.industrialontologies.org/ontology/construct/MaterialStateConditionExpression
-      parent: "Value Expression"
-      definition: "A value expression that, as part of a material state specification, expresses a condition on a characteristic, profile, quality, location, or other relevant feature, to which the material state prescribed by that specification continuously conforms throughout its occurrence."
-    - label: "Material State Specification"
-      iri: https://spec.industrialontologies.org/ontology/construct/MaterialStateSpecification
-      parent: "Information Content Entity"
-      definition: "An information content entity that prescribes a material state."
-    - label: "Measurement Capability"
-      iri: https://spec.industrialontologies.org/ontology/construct/MeasurementCapability
-      parent: "Capability"
-      definition: "A capability of a material entity to measure the value of some entity."
-    - label: "Measurement Information Content Entity"
-      iri: https://spec.industrialontologies.org/ontology/construct/MeasurementInformationContentEntity
-      parent: "Information Content Entity"
-      definition: "Informational content that is the result of measuring a set of attributes belonging to the entity the informational content is about."
-    - label: "Objective Specification"
-      iri: https://spec.industrialontologies.org/ontology/construct/ObjectiveSpecification
-      parent: "Information Content Entity"
-      definition: "An information content entity that prescribes what the outcome of some process should be."
-    - label: "Organization"
-      iri: https://spec.industrialontologies.org/ontology/construct/Organization
-      parent: "Organized Group Of Agents"
-      definition: "A group of persons that identifies itself by some name and pursues a common set of plans and objectives."
-    - label: "Organization Identifier"
-      iri: https://spec.industrialontologies.org/ontology/construct/OrganizationIdentifier
-      parent: "Identifier"
-      definition: "An identifier that identifies an organization."
-    - label: "Output Objective Specification"
-      iri: https://spec.industrialontologies.org/ontology/construct/OutputObjectiveSpecification
-      parent: "Objective Specification"
-      definition: "An objective specification that prescribes the entities to be produced or modified in a planned process or the attributes they must possess to serve as valid outputs."
-    - label: "Physical Location Identifier"
-      iri: https://spec.industrialontologies.org/ontology/construct/PhysicalLocationIdentifier
-      parent: "Identifier"
-      definition: "An identifier that identifies a physical location (site)."
-    - label: "Procuring Business Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/ProcuringBusinessProcess
-      parent: "Business Process"
-      definition: "A business process that consists of buying and ensuring the supply of products or services."
-    - label: "Product Production Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/ProductProductionProcess
-      parent: "Business Process"
-      definition: "A business process that consists of at least one manufacturing process through which raw materials and components are transformed or modified to create a material product."
-    - label: "Raw Material Role"
-      iri: https://spec.industrialontologies.org/ontology/construct/RawMaterialRole
-      parent: "Role"
-      definition: "A role held by a material entity when it is acquired by an organizational entity with some plan to transform or modify it into intermediate-level components or substances or into a product."
-    - label: "Offering For Sale Business Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/SellingBusinessProcess
-      parent: "Business Process"
-      definition: "A business process wherein a product or commercial service is offered by an agent (seller) for another agent (buyer) to acquire ownership via a financial instrument."
-    - label: "Service Provider"
-      iri: https://spec.industrialontologies.org/ontology/construct/ServiceProvider
-      parent: "Supplier"
-      definition: "A person or organization which has a service provider role."
-    - label: "Service Provider Role"
-      iri: https://spec.industrialontologies.org/ontology/construct/ServiceProviderRole
-      parent: "Supplier Role"
-      definition: "A supplier role held by a person or organization when it offers to sell or provide a commercial service."
-    - label: "Supplier"
-      iri: https://spec.industrialontologies.org/ontology/construct/Supplier
-      parent: "Agent"
-      definition: "A person or organization which has a supplier role."
-    - label: "Supplier Role"
-      iri: https://spec.industrialontologies.org/ontology/construct/SupplierRole
-      parent: "Agent Role"
-      definition: "An agent role held by a person or organization when it offers to sell or provide products or services."
-    - label: "Supplying Business Process"
-      iri: https://spec.industrialontologies.org/ontology/construct/SupplyingBusinessProcess
-      parent: "Business Process"
-      definition: "A business process wherein a product or service is supplied."
-    - label: "Temporal Duration Value Expression"
-      iri: https://spec.industrialontologies.org/ontology/construct/TemporalDurationValueExpression
-      parent: "Value Expression"
-      definition: "A value expression that describes the duration of some temporal interval."
-    - label: "Temporal Instant Value Expression"
-      iri: https://spec.industrialontologies.org/ontology/construct/TemporalInstantValueExpression
-      parent: "Value Expression"
-      definition: "A value expression that describes the position of a time instant in the time line."
+entities:
+  - label: Action Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/ActionSpecification"
+    parent_class: Information Content Entity
+    definition: >
+      information content entity that prescribes what participants shall do in a process
+    examples:
+      - pour the contents of flask 1 into flask 2
+    classification_conditions:
+      - The entity must be an Information Content Entity.
+      - Any Information Content Entity that prescribes some Process is an Action Specification.
+    logical_definition: >
+      InformationContentEntity(x) ∧ ∃p (Process(p) ∧ prescribes(x, p)) → ActionSpecification(x)
 
-type_sets:
-  entity_participants: &entity_participants [Agent, Person, Organization, Group Of Agents, Organized Group Of Agents, Material Artifact, Material Product, Raw Material, Material Component, Container, System, Engineered System, Piece Of Equipment]
-  process_types: &process_types [Planned Process, Manufacturing Process, Business Process, Measurement Process]
-  roles: &roles [Role, Agent Role]
-  process_participants: &process_participants [Agent, Person, Organization, Group Of Agents, Organized Group Of Agents, Material Artifact, Material Product, Raw Material, Material Component, Container, System, Engineered System, Piece Of Equipment, Planned Process, Manufacturing Process, Business Process, Measurement Process, Capability]
+  - label: Agent
+    iri: "https://spec.industrialontologies.org/ontology/construct/Agent"
+    parent_class: Material Entity
+    definition: >
+      person, group of persons, or engineered system with an agent role
+    examples:
+      - an employee
+      - a robot
+    classification_conditions:
+      - The entity must be a Person, Group Of Agents or Engineered System.
+      - It must have some Agent Role.
+    logical_definition: >
+      Agent(x) ↔ (Person(x) ∨ GroupOfAgents(x) ∨ EngineeredSystem(x)) ∧ ∃r (AgentRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      Defined class formalized through Agent Role, for modeling convenience. IOF excludes
+      material substances often called agents (e.g., a reducing agent) and non-human agents such
+      as animals and other organisms.
+
+  - label: Agent Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/AgentRole"
+    parent_class: Role
+    definition: >
+      role that someone or something has when they act on behalf of a person, engineered system or a group of agents
+    examples:
+      - a person has an employee role when he/she acts on behalf of the business organization that employs them
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Material Entity that is not a Fiat Object Part.
+      - That material entity must act on behalf of at some time some Person, Group Of Agents or Engineered System.
+    logical_definition: >
+      AgentRole(x) → Role(x) ∧ ∃n ∃m ((MaterialEntity(m) ∧ ¬FiatObjectPart(x)) ∧ roleOf(x, m) ∧ (Person(n) ∨ GroupOfAgents(n) ∨ EngineeredSystem(n)) ∧ actsOnBehalfOfAtSomeTime(m, n))
+    explanatory_note: >
+      Material substances that realize a function a person desires (e.g., platinum as a reducing
+      agent), and animals or other organisms, are not agents in IOF.
+
+  - label: Agreement
+    iri: "https://spec.industrialontologies.org/ontology/construct/Agreement"
+    parent_class: Information Content Entity
+    definition: >
+      understanding between two or more parties that contains a set of commitments on the part of the parties
+    examples:
+      - non-disclosure agreement
+      - employment agreement
+    classification_conditions:
+      - The entity must be an Information Content Entity.
+      - It must have some Objective Specification as continuant part at all times.
+    logical_definition: >
+      Agreement(x) → InformationContentEntity(x) ∧ ∃o (ObjectiveSpecification(o) ∧ hasContinuantPartAtAllTimes(x, o))
+
+  - label: Algorithm
+    iri: "https://spec.industrialontologies.org/ontology/construct/Algorithm"
+    parent_class: Information Content Entity
+    definition: >
+      information content entity that prescribes procedural or declarative steps which can be translated to computer interpretable instructions
+    examples:
+      - pseudo code for sorting data
+    classification_conditions:
+      - The entity must be an Information Content Entity.
+      - Any Information Content Entity that prescribes some Encoded Algorithm is an Algorithm.
+    logical_definition: >
+      InformationContentEntity(x) ∧ ∃y (EncodedAlgorithm(y) ∧ prescribes(x, y)) → Algorithm(x)
+
+  - label: Assembly
+    iri: "https://spec.industrialontologies.org/ontology/construct/Assembly"
+    parent_class: Material Artifact
+    definition: >
+      material artifact that is composed of material components that are physically connected and that is capable of disassembly
+    examples:
+      - powertrain assembly
+    classification_conditions:
+      - The entity must be a Material Artifact.
+      - It must have some Material Component as component part at all times.
+      - Any Material Artifact that is the specified output of some Assembly Process is an Assembly.
+    logical_definition: >
+      Assembly(x) → MaterialArtifact(x) ∧ ∃c ∃c1 (MaterialComponent(c) ∧ MaterialComponent(c1) ∧ componentPartOfAtAllTimes(c, x) ∧ componentPartOfAtAllTimes(c1, x) ∧ ¬(c = c1 ∨ (componentPartOfAtAllTimes(c, c1) ∨ componentPartOfAtAllTimes(c1, c))))
+    explanatory_note: >
+      Introduced as a covering term for any man-made artifact meeting the conditions. The OWL
+      axiom uses 'some' component, but instances should have at least two material components.
+
+  - label: Assembly Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/AssemblyProcess"
+    parent_class: Manufacturing Process
+    definition: >
+      manufacturing process in which a number of material components are physically connected to each other to form an assembly
+    examples:
+      - welding two metal parts into a single object
+    classification_conditions:
+      - The process must be a Manufacturing Process.
+      - It must have some Material Component as input.
+      - It must have some Assembly as specified output.
+    logical_definition: >
+      AssemblyProcess(x) → ManufacturingProcess(x) ∧ ∃a ∃c (Assembly(a) ∧ MaterialComponent(c) ∧ isInputOf(c, x) ∧ hasComponentPartAtAllTimes(a, c) ∧ hasSpecifiedOutput(x, a))
+
+  - label: Business Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/BusinessFunction"
+    parent_class: Function
+    definition: >
+      function of an organization to partake in for profit activities as prescribed by the objectives specified by that organization
+    examples:
+      - Airbus has the business function of manufacturing planes
+    classification_conditions:
+      - The entity must be a Function.
+      - It can only be realized in Business Processes.
+      - It must be the function of some Organization.
+      - It must be prescribed by some Objective Specification.
+    logical_definition: >
+      BusinessFunction(x) → Function(x) ∧ ∃o ∃i (Organization(o) ∧ ObjectiveSpecification(i) ∧ functionOf(x, o) ∧ genericallyDependsOnAtSomeTime(i, o) ∧ prescribedBy(x, i)) ∧ ∀y (hasRealization(x, y) → BusinessProcess(y))
+
+  - label: Business Organization
+    iri: "https://spec.industrialontologies.org/ontology/construct/BusinessOrganization"
+    parent_class: Organization
+    definition: >
+      organization engaging in or planning to engage in any activity of buying and selling goods or services for a profit
+    examples:
+      - Pfizer
+      - Airbus
+    classification_conditions:
+      - The entity must be an Organization.
+      - It must have some Business Function.
+    logical_definition: >
+      BusinessOrganization(x) ↔ Organization(x) ∧ ∃f (BusinessFunction(f) ∧ hasFunction(x, f))
+
+  - label: Business Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/BusinessProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process which is prescribed by a plan specification with one or more objectives specified by a business organization
+    examples:
+      - product production process
+      - logistics operation
+    classification_conditions:
+      - The process must be a Planned Process.
+      - It must have some Agent that acts on behalf of a Business Organization as participant.
+      - It must be prescribed by some Plan Specification.
+    logical_definition: >
+      BusinessProcess(p) → PlannedProcess(p) ∧ ∃o ∃b ∃s ∃y (ObjectiveSpecification(o) ∧ BusinessOrganization(b) ∧ PlanSpecification(s) ∧ isCarrierOfAtSomeTime(b, o) ∧ continuantPartofAtAllTimes(o, s) ∧ Agent(y) ∧ actsOnBehalfOfAtSomeTime(y, b) ∧ participatesInAtSomeTime(y, x))
+    explanatory_note: >
+      The business organization that carries the plan need not participate directly; a
+      third-party agent acting on its behalf may.
+
+  - label: Buyer
+    iri: "https://spec.industrialontologies.org/ontology/construct/Buyer"
+    parent_class: Agent
+    definition: >
+      person or organization which has a buyer role
+    examples:
+      - Pfizer when it buys a bulk of chemicals from MiliporeSigma
+    classification_conditions:
+      - The entity must be an Organization or a Person.
+      - It must have some Buyer Role.
+    logical_definition: >
+      Buyer(x) ↔ Person(x) ∨ Organization(x) ∧ ∃r (BuyerRole(r) ∧ hasRole(x, r))
+
+  - label: Buyer Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/BuyerRole"
+    parent_class: Agent Role
+    definition: >
+      agent role held by a person or organization when it buys a product or a service
+    classification_conditions:
+      - The role must be an Agent Role.
+      - It must be the role of some Organization or Person that participates in some Buying Business Process.
+    logical_definition: >
+      BuyerRole(x) → Role(x) ∧ ∃y ∃p ((Organization(y) ∨ Person(y)) ∧ BuyingBusinessProcess(p) ∧ participatesInAtSomeTime(y, p) ∧ roleOf(x, y))
+
+  - label: Buying Business Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/BuyingBusinessProcess"
+    parent_class: Business Process
+    definition: >
+      business process wherein a financial instrument is used by an agent (buyer) to acquire ownership of a product or commercial service from another agent (seller) for the buyer itself or for another agent (customer)
+    examples:
+      - GM buys tires from Good Year to be assembled into its cars
+    classification_conditions:
+      - The process must be a Business Process.
+      - It must have some Buyer as participant.
+      - It must have some Commercial Service Agreement or Material Product as participant.
+    logical_definition: >
+      BuyingBusinessProcess(x) → BusinessProcess(x) ∧ ∃y ∃z ((MaterialProduct(y) ∨ CommercialServiceAgreement(y)) ∧ Buyer(z) ∧ hasParticipantAtSomeTIme(x, y) ∧ hasParticipantAtSomeTime(x, z))
+
+  - label: Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/Capability"
+    parent_class: Disposition
+    definition: >
+      disposition in whose realization some agent has an interest
+    examples:
+      - capability of a lathe to turn at maximal speed of 4,000 RPM
+    classification_conditions:
+      - The entity must be a Disposition.
+    logical_definition: >
+      Capability(x) → Disposition(x)
+    explanatory_note: >
+      Narrower than BFO disposition: requires an agent with an interest in its realization. Not
+      all capabilities are functions, and 'proper capabilities' only (not task-based ones such
+      as a stone's capability to kill).
+
+  - label: Classifier
+    iri: "https://spec.industrialontologies.org/ontology/construct/Classifier"
+    definition: >
+      denoter that classifies some entity
+    examples:
+      - UNSPSC code 26101507 classifies turboshaft engine
+    classification_conditions:
+      - The entity must be a Denoter.
+      - It must classify some Entity.
+    logical_definition: >
+      Classifier(x) ↔ Denoter(x) ∧ ∃e (classifies(x, e))
+    extractable: false
+
+  - label: Commercial Service
+    iri: "https://spec.industrialontologies.org/ontology/construct/CommercialService"
+    parent_class: Business Process
+    definition: >
+      business process that consists of a service provisioning process and a consumption process
+    examples:
+      - Lufthansa Aviation Services maintains airplanes for United Airlines
+    classification_conditions:
+      - The process must be a Business Process.
+      - It must have some Service Provider as participant.
+      - It must have some Supplying Business Process as occurrent part.
+      - It must be the subject of some Commercial Service Agreement.
+      - It must be prescribed by some Commercial Service Specification.
+    logical_definition: >
+      CommercialService(x) → BusinessProcess(x) ∧ ∃p ∃y ∃a ∃s (CommercialServiceSpecification(p) ∧ ServiceProvider(y) ∧ CommercialServiceAgreement(s) ∧ SupplyingBusinessProcess(a) ∧ hasParticipantAtSomeTime(x, y) ∧ hasOccurentPart(x, a) ∧ prescribedBy(x, p) ∧ isSubjectOf(x, s))
+
+  - label: Commercial Service Agreement
+    iri: "https://spec.industrialontologies.org/ontology/construct/CommercialServiceAgreement"
+    parent_class: Agreement
+    definition: >
+      agreement between a customer and service provider that is about some commercial service to be provided by the service provider in exchange for compensation from the customer
+    examples:
+      - a cellphone plan
+      - a maintenance service agreement
+    classification_conditions:
+      - The entity must be an Agreement.
+      - Any Agreement that is about some Commercial Service and prescribes some Customer Role and some Service Provider Role is a Commercial Service Agreement.
+    logical_definition: >
+      Agreement(x) ∧ ∃c ∃y ∃z (CommercialService(c) ∧ ServiceProviderRole(y) ∧ CustomerRole(z) ∧ isAbout(x, c) ∧ prescribes(x, y) ∧ prescribes(x, z)) → CommercialServiceAgreement(x)
+
+  - label: Commercial Service Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/CommercialServiceSpecification"
+    parent_class: Plan Specification
+    definition: >
+      plan specification that prescribes a commercial service
+    classification_conditions:
+      - The entity must be a Plan Specification.
+      - Any Plan Specification that prescribes some Commercial Service is a Commercial Service Specification.
+    logical_definition: >
+      PlanSpecification(x) ∧ ∃c (CommercialService(c) ∧ prescribes(x, c)) → CommercialServiceSpecification(x)
+
+  - label: Complex Material State
+    iri: "https://spec.industrialontologies.org/ontology/construct/ComplexMaterialState"
+    parent_class: Material State
+    definition: >
+      material state whose condition is an aggregated condition composed from the conditions of two or more material states that hold in it
+    classification_conditions:
+      - The entity must be a Material State.
+      - Some other Material State must hold in it.
+    logical_definition: >
+      ComplexMaterialState(s) ↔ MaterialState(s) ∧ ∃s′ (MaterialState(s′) ∧ materialStateHoldsIn(s′, s))
+    explanatory_note: >
+      Not merely a collection of co-occurring material states; its condition is aggregated from
+      other material states (e.g., by conjunction, threshold or constraint satisfaction) related
+      through 'material state holds in'.
+    extractable: false
+
+  - label: Computing Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/ComputingProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process in which an algorithm or an encoded algorithm is realized by an agent
+    examples:
+      - running of the MPC algorithm to control pressure during the production process
+    classification_conditions:
+      - The process must be a Planned Process.
+      - Every input must be an Information Content Entity.
+      - Every specified output must be an Information Content Entity.
+      - It must have some Agent as participant and concretize some Algorithm or Encoded Algorithm.
+    logical_definition: >
+      ComputingProcess(x) → ∀y ((hasInput(x, y) ∨ hasSpecifiedOutput(x, y)) → InformationContentEntity(y))
+
+  - label: Consumable
+    iri: "https://spec.industrialontologies.org/ontology/construct/Consumable"
+    parent_class: Material Entity
+    definition: >
+      material entity which has the consumable role
+    examples:
+      - Dry ice used as a refrigerant medium in cold-chain shipping and sublimed during transport
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - It must have some Consumable Role.
+    logical_definition: >
+      Consumable(x) ↔ MaterialEntity(x) ∧ ∃r (ConsumableRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      Defined class formalized through Consumable Role. 'Used up' means the entity no longer
+      exists at the end of the process or has reduced or lost capability as a result.
+
+  - label: Consumable Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/ConsumableRole"
+    parent_class: Role
+    definition: >
+      role held by a material entity when it is planned to be, or is partially or fully used up in a planned process
+    classification_conditions:
+      - The role must be a Role.
+      - It can only be realized in Planned Processes.
+      - It must be the role of a Material Entity that is input of a Planned Process, has a Capability realized in a Planned Process, or is prescribed by an Input Specification.
+    logical_definition: >
+      ConsumableRole(x) → Role(x) ∧ ∀y (hasRealization(x, y) → PlannedProcess(y)) ∧ (∃a (roleOf(x, a) ∧ MaterialEntity(a) ∧ (∃f (hasCapability(a, f) ∧ Capability(f) ∧ ∃p (hasRealization(f, p) ∧ PlannedProcess(p))) ∨ ∃p (isInputOf(a, p) ∧ PlannedProcess(p)))) ∨ ∃a (roleOf(x, a) ∧ MaterialEntity(a) ∧ ∃b (prescribedBy(a, b) ∧ InputSpecification(b))))
+
+  - label: Container
+    iri: "https://spec.industrialontologies.org/ontology/construct/Container"
+    parent_class: Material Artifact
+    definition: >
+      material artifact designed to hold one or more material entities within a bounded interior, cavity, surface-delimited area, or contained site
+    examples:
+      - ISO 20-foot freight container
+      - beaker
+    classification_conditions:
+      - The entity must be a Material Artifact.
+      - It must have some Material Containment Function.
+    logical_definition: >
+      Container(x) ↔ MaterialArtifact(x) ∧ ∃f (MaterialContainmentFunction(f) ∧ hasFunction(x, f))
+
+  - label: Customer
+    iri: "https://spec.industrialontologies.org/ontology/construct/Customer"
+    parent_class: Agent
+    definition: >
+      person or organization which has a customer role
+    examples:
+      - a person when they subscribe for a phone plan
+    classification_conditions:
+      - The entity must be an Organization or a Person.
+      - It must have some Customer Role.
+    logical_definition: >
+      Customer(x) ↔ (Person(x) ∨ Organization(x)) ∧ ∃r (CustomerRole(r) ∧ hasRole(x, r))
+
+  - label: Customer Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/CustomerRole"
+    parent_class: Agent Role
+    definition: >
+      agent role held by a person or organization when it utilizes the product or receives the service or subscribes to the commercial service agreement
+    classification_conditions:
+      - The role must be an Agent Role.
+      - It must be the role of some Organization or Person.
+    logical_definition: >
+      CustomerRole(x) → AgentRole(x) ∧ ∃y ((Person(y) ∨ Organization(y)) ∧ roleOf(x, y))
+
+  - label: Denoter
+    iri: "https://spec.industrialontologies.org/ontology/construct/Denoter"
+    parent_class: Information Content Entity
+    definition: >
+      information content entity that denotes some entity
+    examples:
+      - vehicle identification number denotes a vehicle
+    classification_conditions:
+      - The entity must be an Information Content Entity.
+      - It must denote some Entity.
+    logical_definition: >
+      Denoter(x) ↔ InformationContentEntity(x) ∧ ∃e (Entity(e) ∧ denotes(x, e))
+    explanatory_note: >
+      An information content entity used to distinguish an entity in a particular context.
+      Denotes does not require uniqueness. Use Identifier for individual-level uniqueness and
+      Classifier for type-level uniqueness.
+    extractable: false
+
+  - label: Descriptive Information Content Entity
+    iri: "https://spec.industrialontologies.org/ontology/construct/DescriptiveInformationContentEntity"
+    parent_class: Information Content Entity
+    definition: >
+      information content entity that characterizes (gives a description of) an entity
+    examples:
+      - a description of a product in a product catalogue
+    classification_conditions:
+      - The entity must be an Information Content Entity.
+      - It must describe some Entity.
+    logical_definition: >
+      DescriptiveInformationContentEntity(x) ↔ InformationContentEntity(x) ∧ ∃e (Entity(e) ∧ describes(x, e))
+    explanatory_note: >
+      This class is intended to be a defined class used for axiomatization and assertion
+      convenience. It is not expected nor recommended that entities will be asserted as a
+      subclass of this class.
+    extractable: false
+
+  - label: Design Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/DesignSpecification"
+    parent_class: Information Content Entity
+    definition: >
+      information content entity that prescribes something man-made
+    examples:
+      - document specifying the characteristics of a pharmaceutical product
+    classification_conditions:
+      - The entity must be an Information Content Entity.
+      - Everything it prescribes must be a Continuant.
+    logical_definition: >
+      DesignSpecification(x) → InformationContentEntity(x) ∧ ∀c (prescribes(x, c) → Continuant(c))
+    explanatory_note: >
+      Not intended to represent the design of planned processes; use Plan Specification for
+      that. Specifies what a thing should be (shape, size, tolerance, performance) but not
+      necessarily how it is made. How-to-make information belongs in a separate Plan
+      Specification that is part of the design specification.
+    extractable: false
+
+  - label: Designative Information Content Entity
+    iri: "https://spec.industrialontologies.org/ontology/construct/DesignativeInformationContentEntity"
+    parent_class: Information Content Entity
+    definition: >
+      information content entity that uniquely identifies an entity
+    examples:
+      - serial number on a machine
+    classification_conditions:
+      - The entity must be an Information Content Entity.
+      - It must designate some Entity.
+    logical_definition: >
+      DesignativeInformationContentEntity(x) ↔ InformationContentEntity(x) ∧ ∃e (Entity(e) ∧ designates(x, e))
+    explanatory_note: >
+      This class is intended to be a defined class used for axiomatization and assertion
+      convenience. It is not expected nor recommended that entities will be asserted as a
+      subclass of this class. Since the relation designates is functional, uniqueness is
+      enforced in the term's formalization.
+    extractable: false
+
+  - label: Designed Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/DesignedFunction"
+    parent_class: Function
+    definition: >
+      function that is intentionally designed
+    examples:
+      - the function of a knife to cut things
+    classification_conditions:
+      - The entity must be a Function.
+      - It must be prescribed by some Design Specification.
+    logical_definition: >
+      ArtifactFunction(x) ↔ Function(x) ∧ ∃d (DesignSpecification(m) ∧ prescribedBy(x, d))
+
+  - label: Directive Information Content Entity
+    iri: "https://spec.industrialontologies.org/ontology/construct/DirectiveInformationContentEntity"
+    parent_class: Information Content Entity
+    definition: >
+      information content entity that prescribes a set of rules or guidelines for a process or a model of something man-made
+    examples:
+      - blueprint of a building
+    classification_conditions:
+      - The entity must be an Information Content Entity.
+      - It must prescribe some Entity.
+    logical_definition: >
+      DirectiveInformationContentEntity(x) ↔ InformationContentEntity(x) ∧ ∃e (Entity(e) ∧ prescribes(x, e))
+    explanatory_note: >
+      This class is intended to be a defined class used for axiomatization and assertion
+      convenience. It is not expected nor recommended that entities will be asserted as a
+      subclass of this class.
+    extractable: false
+
+  - label: Encoded Algorithm
+    iri: "https://spec.industrialontologies.org/ontology/construct/EncodedAlgorithm"
+    parent_class: Plan Specification
+    definition: >
+      plan specification that is the implementation of an algorithm encoded in a specific programming language or framework and that is readily executable
+    examples:
+      - source code encoded in Java that implements a sorting algorithm
+    classification_conditions:
+      - The entity must be a Plan Specification.
+      - Any Plan Specification that prescribes some Computing Process is an Encoded Algorithm.
+    logical_definition: >
+      PlanSpecification(x) ∧ ∃y (ComputingProcess(y) ∧ prescribes(x, y)) → EncodedAlgorithm(x)
+
+  - label: Engineered System
+    iri: "https://spec.industrialontologies.org/ontology/construct/EngineeredSystem"
+    parent_class: System
+    definition: >
+      system that is deliberately created to have a certain function
+    examples:
+      - machine
+      - traffic light system
+    classification_conditions:
+      - The entity must be a System.
+      - It must bear some Designed Function.
+    logical_definition: >
+      EngineeredSystem(x) ↔ System(x) ∧ ∃f (DesignedFunction(f) ∧ bearerOf(x, f))
+
+  - label: Equipment Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/EquipmentRole"
+    parent_class: Role
+    definition: >
+      role held by a material artifact or an engineered system when it is planned to be involved in or is involved in carrying out some part of a planned process and that is not consumed in that planned process
+    examples:
+      - role of a wrench when it is used in the maintenance process of a car
+    classification_conditions:
+      - The role must be a Role.
+      - It can only be realized in Planned Processes that realize a function of some Engineered System or Material Artifact.
+      - It must only be the role of an Engineered System or Material Artifact.
+      - It must be the role of some Engineered System or Material Artifact prescribed by a Plan Specification.
+    logical_definition: >
+      EquipmentRole(x) → ∀y (roleOf(x, y) → (EngineeredSystem(y) ∨ MaterialArtifact(y)))
+
+  - label: Event
+    iri: "https://spec.industrialontologies.org/ontology/construct/Event"
+    parent_class: Occurrent
+    definition: >
+      phenomena (process or process boundary) that is recognized by an agent and typically recorded
+    examples:
+      - a machine failure event
+    classification_conditions:
+      - The entity must be a Process or a Process Boundary.
+      - It must be recognized by some Agent at some time.
+    logical_definition: >
+      Event(x) → (Process(x) ∨ ProcessBoundary(x)) ∧ ∃y (Agent(y) ∧ recognizedByAtSomeTime(x, y))
+    explanatory_note: >
+      Not every occurrent recognized by an agent is an event. A generic event in discrete event
+      simulation is just an occurrent and is not an Event here.
+    extractable: false
+
+  - label: Gain Of Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/GainOfRole"
+    parent_class: Process
+    definition: >
+      process in which someone or something (independent continuant that is not a spatial region) becomes the bearer of a role
+    examples:
+      - the process of gaining an operator role when someone is assigned in that position
+    classification_conditions:
+      - The entity must be a Process.
+      - It must have some Role as output.
+      - It must have some Independent Continuant that is not a Spatial Region as participant.
+    logical_definition: >
+      GainOfRole(p) ↔ Process(p) ∧ ∃t ∃t1 ∃r ∃y (TemporalInterval(t) ∧ TemporalInterval(t1) ∧ Role(r) ∧ (IndependentContinuant(y) ∧ ¬SpatialRegion(y)) ∧ occupiesTemporalRegion(p, t) ∧ (temporallyOverlaps(t, t1) ∨ temporallyStarts(t, t1) ∨ meets(t, t1)) ∧ hasOutput(p, r) ∧ existsAt(r, t1) ∧ hasRole(y, r) ∧ hasParticipantAtAllTimes(p, y) ∧ ∀t2 (TemporalRegion(t2) ∧ existsAt(r, t2) → (occurrentPartOf(t2, t1) ∨ t2 = t1)))
+    extractable: false
+
+  - label: Group Of Agents
+    iri: "https://spec.industrialontologies.org/ontology/construct/GroupOfAgents"
+    parent_class: Object Aggregate
+    definition: >
+      group (object aggregate) that has one or more agents as members
+    examples:
+      - organization
+      - an automated manufacturing cell
+    classification_conditions:
+      - The entity must be an Object Aggregate.
+      - It must have some Agent as member part.
+      - Every member part must be an Agent.
+    logical_definition: >
+      GroupOfAgents(x) ↔ ObjectAggregate(x) ∧ ∃y (Agent(y) ∧ hasMemberPartAtSomeTime(x, y)) ∧ ∀z (hasMemberPartAtSomeTime(x, z) → Agent(z))
+    explanatory_note: >
+      Only agents can be members. Members can be any combination of persons, organizations or
+      engineered systems. May temporarily have only one member.
+
+  - label: Group Of Persons
+    iri: "https://spec.industrialontologies.org/ontology/construct/GroupOfPersons"
+    parent_class: Object Aggregate
+    definition: >
+      group (object aggregate) that has one or more persons as members
+    classification_conditions:
+      - The entity must be an Object Aggregate.
+      - It must have some Person as member part.
+      - Every member part must be a Person.
+    logical_definition: >
+      GroupOfPersons(x) ↔ ObjectAggregate(x) ∧ ∃y (Person(y) ∧ hasMemberPartAtSomeTime(x, y)) ∧ ∀z (hasMemberPartAtSomelTime(x, z) → Person(z))
+
+  - label: Identifier
+    iri: "https://spec.industrialontologies.org/ontology/construct/Identifier"
+    parent_class: Denoter
+    definition: >
+      denoter that is used to uniquely identify an entity within a particular context
+    examples:
+      - URI of a website
+      - the VIN number assigned to a car
+    classification_conditions:
+      - The entity must be a Denoter.
+      - It must designate some Entity.
+    logical_definition: >
+      Identifier(x) → Denoter(x) ∧ ∃e (Entity(e) ∧ designates(x, e))
+    explanatory_note: >
+      Can be one designative ICE or a combination of them. Designates is functional, so each
+      identifier designates exactly one entity within its context.
+    extractable: false
+
+  - label: Information Content Entity
+    iri: "https://spec.industrialontologies.org/ontology/construct/InformationContentEntity"
+    parent_class: Generically Dependent Continuant
+    definition: >
+      content or a pattern (generically dependent continuant) that is about some entity
+    examples:
+      - the content of an email
+      - the content in a CAD file
+    classification_conditions:
+      - The entity must be a Generically Dependent Continuant.
+      - Any Generically Dependent Continuant that is about some Entity is an Information Content Entity.
+    logical_definition: >
+      GenericallyDependentContinuant(x) ∧ ∃e (Entity(e) ∧ isAbout(x, e)) → InformationContentEntity(x)
+    explanatory_note: >
+      Represents distinct content or a pattern independent of the physical, electronic or other
+      means of conveying it. Subtyping is based on the relationship an ICE has to the entity it
+      is about, not on format, language, or media.
+    extractable: false
+
+  - label: Input Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/InputSpecification"
+    parent_class: Information Content Entity
+    definition: >
+      information content entity that prescribes the entities to be used as inputs to a planned process or the attributes they must posses to serve as valid inputs
+    classification_conditions:
+      - The entity must be an Information Content Entity.
+      - Everything it prescribes must be a Continuant that is input of a Planned Process, or a Specifically Dependent Continuant depending on such a Continuant.
+    logical_definition: >
+      InputSpecification(x) → InformationContentEntity(x) ∧ ∀y (prescribes(x, y) → ((Continuant(y) ∧ ∃p (isInputOf(y, p) ∧ PlannedProcess(p))) ∨ (SpecificallyDependentContinuant(y) ∧ ∃z (specificallyDependsOn(y, z) ∧ Continuant(z) ∧ ∃p (isInputOf(z, p) ∧ PlannedProcess(p))))))
+
+  - label: Loss Of Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/LossOfRole"
+    parent_class: Process
+    definition: >
+      process in which someone or something (independent continuant that is not a spatial region) ceases to be the bearer of a role
+    examples:
+      - the process of losing a student role when a student graduates
+    classification_conditions:
+      - The entity must be a Process.
+      - It must have some Role as input.
+      - It must have some Independent Continuant that is not a Spatial Region as participant.
+    logical_definition: >
+      LossOfRole(p) ↔ Process(p) ∧ ∃t ∃t1 ∃r ∃y (TemporalInterval(t) ∧ TemporalInterval(t1) ∧ Role(r) ∧ (IndependentContinuant(y) ∧ ¬SpatialRegion(y)) ∧ occupiesTemporalRegion(p, t) ∧ (isTemporallyOverlappedBy(t, t1) ∨ temporallyFinishes(t, t1) ∨ metBy(t, t1)) ∧ hasInput(p, r) ∧ existsAt(r, t1) ∧ hasRole(y, r) ∧ hasParticipantAtAllTimes(p, y) ∧ ∀t2 (TemporalRegion(t2) ∧ existsAt(r, t2) → (occurrentPartOf(t2, t1) ∨ t2 = t1)))
+    extractable: false
+
+  - label: Maintainable Material Item
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaintainableMaterialItem"
+    parent_class: Material Entity
+    definition: >
+      material artifact or engineered system which has the maintainable material item role
+    examples:
+      - CNC machine on which routine maintenance is performed
+    classification_conditions:
+      - The entity must be a Material Artifact or an Engineered System.
+      - It must have some Maintainable Material Item Role.
+    logical_definition: >
+      MaintainableMaterialItem(x) ↔ (MaterialArtifact(x) ∨ EngineeredSystem(x)) ∧ ∃r (MaintainableMaterialItemRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      Defined class formalized through Maintainable Material Item Role, for modeling
+      convenience.
+
+  - label: Maintainable Material Item Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaintainableMaterialItemRole"
+    parent_class: Role
+    definition: >
+      role played by an asset (engineered system or material artifact) when there is a maintenance strategy prescribing its maintenance process
+    classification_conditions:
+      - The role must be a Role.
+    logical_definition: >
+      MaintainableMaterialItemRole(x) → Role(x)
+
+  - label: Manufacturer
+    iri: "https://spec.industrialontologies.org/ontology/construct/Manufacturer"
+    parent_class: Agent
+    definition: >
+      organization which has a manufacturer role
+    examples:
+      - Boeing is a manufacturer of airplanes
+    classification_conditions:
+      - The entity must be an Organization.
+      - It must have some Manufacturer Role.
+    logical_definition: >
+      Manufacturer(x) ↔ Organization(x) ∧ ∃r (ManufacturerRole(r) ∧ hasRole(x, r))
+
+  - label: Manufacturer Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/ManufacturerRole"
+    parent_class: Agent Role
+    definition: >
+      agent role held by an organization when it produces material products
+    classification_conditions:
+      - The role must be an Agent Role.
+      - It must be the role of some Organization that participates in some Product Production Process.
+    logical_definition: >
+      ManufacturerRole(x) → Role(x) ∧ ∃y ∃p (Organization(y) ∧ ProductProductionProcess(p) ∧ participatesInAtSomeTime(y, p) ∧ roleOf(x, y))
+
+  - label: Manufacturing Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/ManufacturingProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process that consists of a structured set of operations through which input material is transformed or modified
+    examples:
+      - Drilling a hole on an engine block
+    classification_conditions:
+      - The process must be a Planned Process.
+      - It must have some Material Entity as input.
+      - It must have some Material Artifact (or Material Entity prescribed by a Design Specification) as specified output.
+      - It must have some Agent carrying a Plan Specification as participant.
+    logical_definition: >
+      ManufacturingProcess(x) → PlannedProcess(x) ∧ ∃m ∃y ∃p ∃z (MaterialEntity(m) ∧ (MaterialArtifact(y) ∨ ∃d (MaterialEntity(y) ∧ DesignSpecification(d) ∧ prescribes(d, y))) ∧ PlanSpecification(p) ∧ prescribes(p, x) ∧ Agent(z) ∧ isCarrierOfAtSomeTime(z, p) ∧ participatesInAtSomeTime(z, x) ∧ isInputOf(m, x) ∧ hasSpecifiedOutput(x, y))
+    explanatory_note: >
+      Outputs are material artifacts or man-made substances. Setup, tear down, transport and
+      inspection are not transformative and are excluded.
+
+  - label: Material Artifact
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialArtifact"
+    parent_class: Object
+    definition: >
+      object that is deliberately created to have a certain function
+    examples:
+      - a machine
+      - a screwdriver
+    classification_conditions:
+      - The entity must be an Object.
+      - It must bear some Designed Function.
+    logical_definition: >
+      MaterialArtifact(x) ↔ Object(x) ∧ ∃f (DesignedFunction(f) ∧ bearerOf(x, f))
+    explanatory_note: >
+      Object deliberately created to have a designed function. Specific machines, devices and
+      tools should be asserted here (or under Engineered System) rather than under Piece Of
+      Equipment.
+
+  - label: Material Component
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialComponent"
+    parent_class: Material Entity
+    definition: >
+      material entity which has the material component role
+    examples:
+      - bolt
+      - engine in an airplane
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - It must have some Material Component Role.
+    logical_definition: >
+      MaterialComponent(x) ↔ MaterialEntity(x) ∧ ∃r (MaterialComponentRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      Defined class formalized through Material Component Role. Whether something is a component
+      depends on context (an engine is a final product for one manufacturer and a component for
+      another). In most manufacturing use cases material components will be a subclass of
+      Material Artifact.
+
+  - label: Material Component Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialComponentRole"
+    parent_class: Role
+    definition: >
+      role held by a material entity when it is a proper part of another material entity or is planned to be a proper part of another material entity
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Material Entity.
+    logical_definition: >
+      MaterialComponentRole(x) → Role(x)
+
+  - label: Material Containment Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialContainmentCapability"
+    parent_class: Capability
+    definition: >
+      capability of a material entity that is grounded in the entity’s physical structure and that can be realized in a process in which the entity holds one or more material entities within a bounded interior, cavity, surface-delimited area, or contained site
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of some Material Entity.
+    logical_definition: >
+      MaterialContainmentCapability(x) → Capability(x) ∧ ∃z (MaterialEntity(z) ∧ capabilityOf(x, z))
+
+  - label: Material Containment Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialContainmentFunction"
+    parent_class: Material Containment Capability
+    definition: >
+      material containment capability that is a function of a material entity
+    classification_conditions:
+      - The entity must be a Material Containment Capability.
+      - It must be the function of some Material Entity.
+    logical_definition: >
+      MaterialContainmentFunction(x) ↔ MaterialContainmentCapability(x) ∧ ∃m (MaterialEntity(m) ∧ functionOf(x, m))
+
+  - label: Material Location Change Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialLocationChangeProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process that results in a material entity moving from one physical location to another
+    examples:
+      - Shipping goods from a warehouse to a customer
+    classification_conditions:
+      - The process must be a Planned Process.
+      - It must have some Material Entity as participant that is located in one Site at the start and in another Site at the end.
+    logical_definition: >
+      MaterialLocationChangeProcess(x) → PlannedProcess(x) ∧ ∃y ∃t ∃t1 ∃t2 ∃s ∃s1 ∃z ∃z1 (MaterialEntity(y) ∧ TemporalInstant(t) ∧ TemporalInstant(t1) ∧ TemporalRegion(t2) ∧ IndependentContinuant(s) ∧ IndependentContinuant(s1) ∧ Site(z) ∧ Site(z1) ∧ hasParticipantAtSomeTime(x, y) ∧ firstInstantOf(t, t2) ∧ lastInstantOf(t1, t2) ∧ occupiesTemporalRegion(x, t2) ∧ existsAt(s, t) ∧ existsAt(s1, t1) ∧ locatedInAtalltimes(s, z) ∧ locatedInAtAlltimes(s1, z1) ∧ locationOfAtAlltimes(s, y) ∧ locationOfAtAllTimes(s1, y))
+
+  - label: Material Product
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialProduct"
+    parent_class: Material Entity
+    definition: >
+      material entity which has the material product role
+    examples:
+      - Any manufactured good when it is offered for sale, supplied or being bought
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - It must have some Material Product Role.
+    logical_definition: >
+      MaterialProduct(x) ↔ MaterialEntity(x) ∧ ∃r (MaterialProductRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      Excludes services sold as products and software products. Defined class formalized through
+      Material Product Role.
+
+  - label: Material Product Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialProductRole"
+    parent_class: Role
+    definition: >
+      role held by a material entity that is intended to be sold, or has been bought, or has been supplied
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Material Entity that participates in a Buying, Selling or Supplying Business Process.
+    logical_definition: >
+      MaterialProductRole(x) → Role(x) ∧ ∃y ∃z ((BuyingBusinessProcess(y) ∨ OfferingForSaleBusinessProcess(y) ∨ SupplyingBusinessProcess(y)) ∧ MaterialEntity(z) ∧ participatesInAtSomeTime(z, y) ∧ roleOf(x, z))
+
+  - label: Material Resource
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialResource"
+    parent_class: Material Entity
+    definition: >
+      material entity which has the material resource role
+    examples:
+      - a body of water available to cool a reactor
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - It must have some Material Resource Role.
+    logical_definition: >
+      MaterialResource(x) ↔ MaterialEntity(x) ∧ ∃r (MaterialResourceRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      Designed to group material entities by a very broad criterion; not intended as a parent
+      class for resource types that can be more specifically asserted under another class.
+      Skills and capabilities are not resources but can be considered resources indirectly
+      through their bearer.
+    extractable: false
+
+  - label: Material Resource Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialResourceRole"
+    parent_class: Role
+    definition: >
+      role played by a material entity that consists in it being available to a person or group of agents or engineered system
+    classification_conditions:
+      - The role must be a Role.
+      - It must be the role of some Material Entity that is available to some Person, Group Of Agents or Engineered System.
+    logical_definition: >
+      MaterialResourceRole(x) → Role(x) ∧ ∃a ∃y ((Person(a) ∨ GroupOfAgents(a) ∨ EngineeredSystem(y)) ∧ MaterialEntity(y) ∧ isAvailableToAtSomeTime(y, a) ∧ roleOf(x, y))
+
+  - label: Material State
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialState"
+    parent_class: Process
+    definition: >
+      process in which a material entity that participates in the process has a condition that remains unchanged
+    examples:
+      - the machine in fail state from 4 PM to 5 PM
+    classification_conditions:
+      - The entity must be a Process.
+      - It must be the material state of some Material Entity.
+      - Everything it has as occurrent part must be a Process Boundary or a Material State.
+    logical_definition: >
+      MaterialState(s) → ∃m (MaterialEntity(m) ∧ isMaterialStateOf(s, m))
+    explanatory_note: >
+      Applies to real material entities only, not to states of virtual, informational or
+      abstract entities. Unchanging includes staying within a prescribed range of values.
+    extractable: false
+
+  - label: Material State Condition Expression
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialStateConditionExpression"
+    parent_class: Value Expression
+    definition: >
+      value expression that, as part of a material state specification, expresses a condition on a characteristic, profile, quality, location, or other relevant feature, to which the material state prescribed by that specification continuously conforms throughout its occurrence
+    classification_conditions:
+      - The entity must be a Value Expression.
+      - It must be a continuant part at all times of some Material State Specification.
+      - It cannot have a Material State Condition Expression as continuant part.
+    logical_definition: >
+      MaterialStateConditionExpression(x) → ValueExpression(x) ∧ ∃y (MaterialStateSpecification(y) ∧ continuantPartOfAtAllTimes(x, y))
+
+  - label: Material State Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/MaterialStateSpecification"
+    parent_class: Information Content Entity
+    definition: >
+      information content entity that prescribes a material state
+    classification_conditions:
+      - The entity must be an Information Content Entity.
+      - Everything it prescribes must be a Material State.
+    logical_definition: >
+      MaterialStateSpecification(sp) → ∀s (prescribes(sp, s) → MaterialState(s))
+
+  - label: Measured Value Expression
+    iri: "https://spec.industrialontologies.org/ontology/construct/MeasuredValueExpression"
+    parent_class: Value Expression
+    definition: >
+      value expression that contains the measured value of an attribute (specifically dependent continuant or process characteristic or process profile or temporal region)
+    classification_conditions:
+      - The entity must be a Value Expression.
+      - It must be the measured value at some time of some Temporal Region, Specifically Dependent Continuant, Process Profile or Process Characteristic.
+    logical_definition: >
+      MeasuredValueSpecification(x) ↔ ValueExpression(x) ∧ ∃e ((TemporalRegion(e) ∨ ProcessCharacteristic(e) ∨ ProcessProfile(e) ∨ SpecificallyDependentContinuant(e)) ∧ isMeasuredValueOfAtSomeTime(x, e))
+
+  - label: Measurement Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/MeasurementCapability"
+    parent_class: Capability
+    definition: >
+      capability of a material entity to measure the value of some entity
+    examples:
+      - the capability of a pH sensor to measure the pH
+    classification_conditions:
+      - The entity must be a Capability.
+      - It must be the capability of some Material Entity.
+      - It can only be realized in Measurement Processes.
+    logical_definition: >
+      MeasurementCapability(x) → Capability(x) ∧ ∃z (MaterialEntity(z) ∧ capabilityOf(x, z)) ∧ ∀y (hasRealization(x, y) → MeasurementProcess(y))
+
+  - label: Measurement Information Content Entity
+    iri: "https://spec.industrialontologies.org/ontology/construct/MeasurementInformationContentEntity"
+    parent_class: Information Content Entity
+    definition: >
+      informational content that is the result of measuring a set of attributes (specifically dependent continuant or process characteristic or temporal region) belonging to the entity (independent continuant or process or process boundary) the informational content is about
+    examples:
+      - results of measuring the thickness of a piece of steel
+    classification_conditions:
+      - The entity must be an Information Content Entity.
+      - It must have some Measured Value Expression as continuant part at all times.
+      - It must be the output of some Measurement Process.
+    logical_definition: >
+      MeasurementInformationContentEntity(x) ↔ InformationContentEntity(x) ∧ ∃m ∃p (MeasuredValueExpression(m) ∧ MeasurementProcess(p) ∧ hasContinuantPartAtAllTimes(x, m) ∧ isOutputOf(x, p))
+
+  - label: Measurement Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/MeasurementProcess"
+    parent_class: Planned Process
+    definition: >
+      planned process to determine the value of an attribute (specifically dependent continuant or temporal region or process characteristic or process profile) of an entity of interest
+    examples:
+      - measuring the pH of a buffer by a pH probe
+    classification_conditions:
+      - The process must be a Planned Process.
+      - Every specified output must be a Measurement Information Content Entity.
+      - It must have some Material Entity with a Measurement Capability as participant.
+    logical_definition: >
+      MeasurementProcess(x) ↔ PlannedProcess(x) ∧ ∃m ∃c (MaterialEntity(m) ∧ MeasurementCapability(c) ∧ hasCapability(m, c)) ∧ ∀b (hasSpecifiedOutput(x, b) → MeasurementInformationContentEntity(b))
+
+  - label: Objective Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/ObjectiveSpecification"
+    parent_class: Information Content Entity
+    definition: >
+      information content entity that prescribes what the outcome of some process should be
+    classification_conditions:
+      - The entity must be an Information Content Entity.
+      - Any Information Content Entity achieved by some Process that prescribes its process characteristic, process profile, capability or output is an Objective Specification.
+    logical_definition: >
+      InformationContentEntity(x) ∧ ∃y ∃p (Process(p) ∧ isAchievedByAtSomeTime(x, p) ∧ ((ProcessCharacteristic(y) ∧ processCharacteristicOf(y, p)) ∨ (ProcessProfile(y) ∧ processProfileOf(y, p)) ∨ (Capability(y) ∧ hasRealization(x, y)) ∨ (Continuant(y) ∧ isOutputOf(y, p))) ∧ prescribes(x, y)) → ObjectiveSpecification(x)
+
+  - label: Organization
+    iri: "https://spec.industrialontologies.org/ontology/construct/Organization"
+    parent_class: Organized Group Of Agents
+    definition: >
+      group of persons that identifies itself by some name and pursues a common set of plans and objectives
+    examples:
+      - a company
+      - a city government
+    classification_conditions:
+      - The entity must be an Organized Group Of Agents.
+      - It must have some Person as member part at all times.
+      - It must be designated by some Organization Identifier.
+      - Every member part must be a Person or an Organization.
+    logical_definition: >
+      Organization(x) ↔ OrganizedGroupOfAgents(x) ∧ ∃p ∃i (Person(p) ∧ OrganizationIdentifier(i) ∧ designatedBy(x, i) ∧ hasMemberPartAtAllTimes(x, p))
+    explanatory_note: >
+      A mere gathering of persons is not an organization until members agree to form one and
+      share a common set of objectives. Sub-organizations (e.g., departments) are modeled via
+      proper continuant part.
+
+  - label: Organization Identifier
+    iri: "https://spec.industrialontologies.org/ontology/construct/OrganizationIdentifier"
+    parent_class: Identifier
+    definition: >
+      identifier that identifies an organization
+    examples:
+      - DUNS Number
+      - CAGE Code
+    classification_conditions:
+      - The entity must be an Identifier.
+      - It must designate some Organization.
+    logical_definition: >
+      OrganizationIdentifier(x) ↔ Identifier(x) ∧ ∃b (Organization(b) ∧ designates(x, b))
+
+  - label: Organized Group Of Agents
+    iri: "https://spec.industrialontologies.org/ontology/construct/OrganizedGroupOfAgents"
+    parent_class: Group Of Agents
+    definition: >
+      group of agents that is pursuing a common set of plans and objectives
+    examples:
+      - government
+      - division
+    classification_conditions:
+      - The entity must be a Group Of Agents.
+      - It must bear some Function prescribed by some Directive Information Content Entity.
+    logical_definition: >
+      OrganizedGroupOfAgents(x) ↔ ObjectAggregate(x) ∧ ∃i ∃f (DirectiveInformationContentEntity(i) ∧ Function(f) ∧ bearerOf(x, f) ∧ prescribes(i, f))
+    explanatory_note: >
+      A group of agents bearing a function prescribed by a directive information content entity,
+      i.e., pursuing a common set of plans and objectives.
+
+  - label: Output Objective Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/OutputObjectiveSpecification"
+    parent_class: Objective Specification
+    definition: >
+      objective specification that prescribes the entities to be produced or modified in a planned process or the attributes they must posses to serve as valid outputs
+    classification_conditions:
+      - The entity must be an Objective Specification.
+      - Everything it prescribes must be a Continuant that is specified output of a Planned Process, or a Specifically Dependent Continuant depending on such a Continuant.
+    logical_definition: >
+      OutputObjectiveSpecification(x) → ObjectiveSpecification(x) ∧ ∀y (prescribes(x, y) → ((Continuant(y) ∧ ∃p (isSpecifiedOutputOf(y, p) ∧ PlannedProcess(p))) ∨ (SpecificallyDependentContinuant(y) ∧ ∃z (specificallyDependsOn(y, z) ∧ Continuant(z) ∧ ∃p (isSpecifiedOutputOf(z, p) ∧ PlannedProcess(p))))))
+
+  - label: Person
+    iri: "https://spec.industrialontologies.org/ontology/construct/Person"
+    parent_class: Object
+    definition: >
+      organism that is the member of the species of homo sapiens
+    examples:
+      - any individual human being
+    classification_conditions:
+      - The entity must be an Object.
+    logical_definition: >
+      Person(x) → Object(x)
+
+  - label: Physical Location Identifier
+    iri: "https://spec.industrialontologies.org/ontology/construct/PhysicalLocationIdentifier"
+    parent_class: Identifier
+    definition: >
+      identifier that identifies a physical location (site)
+    examples:
+      - postal address
+      - GPS coordinate
+    classification_conditions:
+      - The entity must be an Identifier.
+      - It must designate some Site.
+    logical_definition: >
+      PhysicalLocationIdentifier(x) ↔ Identifier(x) ∧ ∃l (Site(l) ∧ designates(x, l))
+
+  - label: Piece Of Equipment
+    iri: "https://spec.industrialontologies.org/ontology/construct/PieceOfEquipment"
+    parent_class: Material Entity
+    definition: >
+      material artifact or engineered system with an equipment role
+    examples:
+      - chromatography column that is planned to be used in a protein purification process
+    classification_conditions:
+      - The entity must be a Material Artifact or an Engineered System.
+      - It must have some Equipment Role.
+    logical_definition: >
+      PieceOfEquipment(x) ↔ (MaterialArtifact(x) ∨ EngineeredSystem(x)) ∧ ∃r (EquipmentRole(r) ∧ hasRole(x, r))
+    explanatory_note: >
+      Defined class formalized through its role class (Equipment Role) for modeling convenience.
+      Specific kinds of equipment such as machines, devices, and tools should be asserted under
+      Material Artifact or Engineered System as appropriate and not directly under Piece Of
+      Equipment.
+    extractable: false
+
+  - label: Plan Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/PlanSpecification"
+    parent_class: Information Content Entity
+    definition: >
+      information content entity that has action specifications and objective specifications as parts
+    examples:
+      - process plan for producing a part
+      - a work order to build 100 of a particular kind component for today
+    classification_conditions:
+      - The entity must be an Information Content Entity.
+      - It must have some Action Specification as continuant part at all times.
+      - It must have some Objective Specification as continuant part at all times.
+    logical_definition: >
+      InformationContentEntity(x) ∧ ∃a ∃o ∃p (ActionSpecification(a) ∧ ObjectiveSpecification(o) ∧ PlannedProcess(p) ∧ continuantPartOfAtAllTimes(a, x) ∧ continuantPartOfAtAllTimes(o, x) ∧ prescribes(x, p)) → PlanSpecification(x)
+
+  - label: Planned Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/PlannedProcess"
+    parent_class: Process
+    definition: >
+      process that is prescribed by a plan specification
+    examples:
+      - A tire manufacturing process occurs as prescribed by a manufacturing plan specification.
+    classification_conditions:
+      - The entity must be a Process.
+      - It must be prescribed by some Plan Specification.
+    logical_definition: >
+      PlannedProcess(x) ↔ Process(x) ∧ ∃s (PlanSpecification(s) ∧ prescribes(s, x))
+    explanatory_note: >
+      'Planned' is a specifier, not a modifier like 'cancelled'. It means protocol-,
+      instruction-, command- or software-driven, and does not mean the process has not yet taken
+      place. Unexpected failures and unplanned malfunctions are not planned processes.
+    extractable: false
+
+  - label: Process Characteristic
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProcessCharacteristic"
+    parent_class: Continuant
+    definition: >
+      continuant that summarizes an attribute of a process over its entire duration, providing a time-independent characterization of the process as a whole
+    examples:
+      - The maximum temperature of a heating process
+    classification_conditions:
+      - The entity must be a Continuant.
+      - It must be the process characteristic of some Process.
+    logical_definition: >
+      ProcessCharacteristic(x) ↔ Continuant(x) ∧ ∃p (Process(p) ∧ processCharacteristicOf(x, p))
+    explanatory_note: >
+      A continuant that characterizes a process as a single whole, not something that unfolds in
+      time (e.g., maximum temperature of a heating process). Time-varying behavior (e.g.,
+      temperature curve) is a Process Profile, not a Process Characteristic.
+    extractable: false
+
+  - label: Procuring Business Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProcuringBusinessProcess"
+    parent_class: Business Process
+    definition: >
+      business process that consists of buying and ensuring the supply of products or services
+    classification_conditions:
+      - The process must be a Business Process.
+      - It must have some Buying Business Process as occurrent part.
+      - It must have some Selling Business Process or Supplying Business Process as occurrent part.
+    logical_definition: >
+      ProcuringBusinessProcess(x) ↔ BusinessProcess(x) ∧ ∃b ∃s (BuyingBusinessProcess(b) ∧ SupplyingBusinessProcess(s) ∧ hasOccurrentPart(x, b) ∧ hasOccurrentPart(x, s))
+
+  - label: Product Production Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/ProductProductionProcess"
+    parent_class: Business Process
+    definition: >
+      business process that consists of at least one manufacturing process through which raw materials and components are transformed or modified to create a material product
+    examples:
+      - Making of an engine block as a product
+    classification_conditions:
+      - The process must be a Business Process.
+      - It must have some Manufacturing Process as occurrent part.
+      - It must have some Material Product as specified output.
+    logical_definition: >
+      ProductProductionProcess(x) ↔ BusinessProcess(x) ∧ ∃m (ManufacturingProcess(m) ∧ occurentPartOf(m, x)) ∧ ∃y ∃t ∃t1 (MaterialProduct(y) ∧ TemporalRegion(t) ∧ TemporalRegion(t1) ∧ hasSpecifiedOutput(x, y) ∧ occupiesTemporalRegion(x, t) ∧ temporallyOverlaps(t, t1) ∧ existsAt(y, t1))
+
+  - label: Raw Material
+    iri: "https://spec.industrialontologies.org/ontology/construct/RawMaterial"
+    parent_class: Material Entity
+    definition: >
+      material entity which has the raw material role
+    examples:
+      - crude oil that is converted into gasoline in a refining process
+    classification_conditions:
+      - The entity must be a Material Entity.
+      - It must have some Raw Material Role.
+    logical_definition: >
+      RawMaterial(x) ↔ MaterialEntity(x) ∧ ∃r (RawMaterialRole(x) ∧ hasRole(x, r))
+    explanatory_note: >
+      Very general class intended for grouping inputs to the product production process that are
+      external to the business organization. Things like material artifacts should not be
+      asserted as subclasses of this class.
+    extractable: false
+
+  - label: Raw Material Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/RawMaterialRole"
+    parent_class: Role
+    definition: >
+      role held by a material entity when it is acquired by an organizational entity with some plan to transform or modify it into intermediate-level components or substances or into a product
+    classification_conditions:
+      - The role must be a Role.
+      - It can only be realized in Product Production Processes or Manufacturing Processes.
+      - It must be the role of some Material Entity that participates in a Buying Business Process with an Organization that has a Buyer Role.
+    logical_definition: >
+      RawMaterialRole(x) → Role(x) ∧ ∃y ∃m ∃z ∃b (BuyingBusinessProcess(y) ∧ Organization(m) ∧ MaterialEntity(z) ∧ BuyerRole(b) ∧ roleOf(b, m) ∧ roleOf(x, z) ∧ hasParticipantAtSomeTime(y, m) ∧ hasParticipantAtSomeTime(y, z)) ∧ ∀y1 (hasRealization(x, y1) → (ProductProductionProcess(y1) ∨ ManufacturingProcess(y1)))
+
+  - label: Requirement Specification
+    iri: "https://spec.industrialontologies.org/ontology/construct/RequirementSpecification"
+    parent_class: Information Content Entity
+    definition: >
+      information content entity that prescribes a set of requirements
+    examples:
+      - UML use case document
+      - competency questions
+    classification_conditions:
+      - The entity must be an Information Content Entity.
+      - It must be about some Objective Specification.
+      - Any Information Content Entity that is satisfied by some Entity is a Requirement Specification.
+    logical_definition: >
+      RequirementSpecification(x) → InformationContentEntity(x) ∧ ∃y (ObjectiveSpecification(y) ∧ isAbout(x, y))
+    explanatory_note: >
+      Being a requirement specification can be context specific. For example, a UML class
+      diagram may be a requirement specification for a data exchange specification or a design
+      specification for software code.
+    extractable: false
+
+  - label: Selling Business Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/SellingBusinessProcess"
+    parent_class: Business Process
+    definition: >
+      business process wherein a product or commercial service is offered by an agent (seller) for another agent (buyer) to acquire ownership via a financial instrument
+    examples:
+      - Good Year offers tires for sale
+    classification_conditions:
+      - The process must be a Business Process.
+      - It must have some Supplier as participant.
+      - It must have some Commercial Service Agreement or Material Product as participant.
+    logical_definition: >
+      OfferingForSaleBusinessProcess(x) → BusinessProcess(x) ∧ ∃y ∃z ((MaterialProduct(y) ∨ CommercialServiceAgreement(y)) ∧ Supplier(z) ∧ hasParticipantAtSomeTIme(x, y) ∧ hasParticipantAtSomeTime(x, z))
+
+  - label: Service Provider
+    iri: "https://spec.industrialontologies.org/ontology/construct/ServiceProvider"
+    parent_class: Supplier
+    definition: >
+      person or organization which has a service provider role
+    examples:
+      - FedEx
+      - internet service provider
+    classification_conditions:
+      - The entity must be an Organization or a Person.
+      - It must have some Service Provider Role.
+    logical_definition: >
+      ServiceProvider(x) ↔ (Person(x) ∨ Organization(x)) ∧ ∃r (ServiceProviderRole(r) ∧ hasRole(x, r))
+
+  - label: Service Provider Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/ServiceProviderRole"
+    parent_class: Supplier Role
+    definition: >
+      supplier role held by a person or organization when it offers to sell or provide a commercial service
+    classification_conditions:
+      - The role must be a Supplier Role.
+      - It must be the role of some Organization or Person that participates in a Commercial Service or a Selling Business Process involving a Commercial Service Agreement.
+    logical_definition: >
+      ServiceProviderRole(x) → AgentRole(x) ∧ ∃y ∃p ((Organization(y) ∨ Person(y)) ∧ (CommercialService(p) ∨ (OfferingForSaleBusinessProcess(p) ∧ ∃c (CommercialServiceAgreement(c) ∧ hasParticipantAtSomeTime(p, c)))) ∧ participatesInAtSomeTime(y, p) ∧ roleOf(x, y))
+
+  - label: Supplier
+    iri: "https://spec.industrialontologies.org/ontology/construct/Supplier"
+    parent_class: Agent
+    definition: >
+      person or organization which has a supplier role
+    examples:
+      - logistics service provider
+      - vending machine
+    classification_conditions:
+      - The entity must be an Organization or a Person.
+      - It must have some Supplier Role.
+    logical_definition: >
+      Supplier(x) ↔ Person(x) ∨ Organization(x) ∧ ∃r (SupplierRole(r) ∧ hasRole(x, r))
+
+  - label: Supplier Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/SupplierRole"
+    parent_class: Agent Role
+    definition: >
+      agent role held by a person or organization when it offers to sell or provide products or services
+    classification_conditions:
+      - The role must be an Agent Role.
+      - It must be the role of some Organization or Person that participates in a Selling Business Process or Supplying Business Process.
+    logical_definition: >
+      SupplierRole(x) → Role(x) ∧ ∃y ∃p ((Organization(y) ∨ Person(y)) ∧ (SupplyingBusinessProcess(p) ∨ OfferingForSaleBusinessProcess(p)) ∧ participatesInAtSomeTime(y, p) ∧ roleOf(x, y))
+
+  - label: Supplying Business Process
+    iri: "https://spec.industrialontologies.org/ontology/construct/SupplyingBusinessProcess"
+    parent_class: Business Process
+    definition: >
+      business process wherein a product or service is supplied
+    examples:
+      - BMW dealer supplies a car to the Customer
+    classification_conditions:
+      - The process must be a Business Process.
+      - It must have some Supplier as participant.
+      - It must have some Material Product as participant or be an occurrent part of some Commercial Service.
+    logical_definition: >
+      SupplyingBusinessProcess(x) → BusinessProcess(x) ∧ ∃y (Supplier(y) ∧ hasParticipantAtSomeTime(x, y)) ∧ (∃p (MaterialProduct(p) ∧ hasParticipantAtSomeTime(x, p)) ∨ ∃c (CommercialService(c) ∧ occurrentPartOf(x, c)))
+
+  - label: System
+    iri: "https://spec.industrialontologies.org/ontology/construct/System"
+    parent_class: Object Aggregate
+    definition: >
+      collection of elements (object aggregate) that form a unified whole and interact
+    examples:
+      - hydraulic system
+      - subway system
+    classification_conditions:
+      - The entity must be an Object Aggregate.
+    logical_definition: >
+      System(x) → ObjectAggregate(x)
+    explanatory_note: >
+      Limited to natural, social and technical systems that are tangible and whose elements are
+      also tangible. Cyber-physical systems are modeled indirectly via 'generically depends on'
+      between software and its physical bearer.
+
+  - label: Temporal Duration Value Expression
+    iri: "https://spec.industrialontologies.org/ontology/construct/TemporalDurationValueExpression"
+    parent_class: Value Expression
+    definition: >
+      value expression that describes the duration of some temporal interval
+    classification_conditions:
+      - The entity must be a Value Expression.
+      - It must be the value expression at all times of some Temporal Interval.
+      - It must be disjoint from Temporal Instant Value Expression.
+    logical_definition: >
+      TemporalDurationValueExpression(x) → ValueExpression(x) ∧ ∃y (TimeInterval(y) ∧ isValueExpressionOfAtAllTimes(x, y))
+
+  - label: Temporal Instant Value Expression
+    iri: "https://spec.industrialontologies.org/ontology/construct/TemporalInstantValueExpression"
+    parent_class: Value Expression
+    definition: >
+      value expression that describes the position of a time instant in the time line
+    classification_conditions:
+      - The entity must be a Value Expression.
+      - It must be the value expression at all times of some Temporal Instant.
+    logical_definition: >
+      TemporalInstantValueExpression(x) ↔ ValueExpression(x) ∧ ∃y (TemporalInstant(y) ∧ isValueExpressionOfAtAllTimes(x, y))
+
+  - label: Value Expression
+    iri: "https://spec.industrialontologies.org/ontology/construct/ValueExpression"
+    parent_class: Information Content Entity
+    definition: >
+      information content entity that contains a value of an entity within a classification scheme or on a quantitative scale
+    examples:
+      - 1cm is the value expression of the diameter of a screw head that is specified in its design
+    classification_conditions:
+      - The entity must be an Information Content Entity.
+      - It must be the value expression at some time of some Entity.
+    logical_definition: >
+      ValueExpression(x) → InformationContentEntity(x) ∧ ∃e (Entity(e) ∧ isValueExpressionOfAtSomeTime(x, e))
+    explanatory_note: >
+      Covers qualitative, semi-quantitative and quantitative values. Every instance must have a
+      'has simple expression value' (or sub-property) pointing to a value.
+    extractable: false
+
+  - label: Process Profile
+    iri: "http://purl.obolibrary.org/obo/BFO_0000144"
+    parent_class: Process
+    definition: >
+      process that is proper part of another process and that captures the time-dependent behavior of some attribute of that process
+    examples:
+      - temperature profile of a heating process
+    classification_conditions:
+      - The entity must be a Process.
+      - It must be the process profile of some Process.
+      - It must be disjoint from Process Boundary.
+    logical_definition: >
+      ProcessProfile(x) ↔ ∃y (Process(y) ∧ processProfileOf(x, y))
+    explanatory_note: >
+      Captures time-dependent attributes of a process (e.g., speed profile, temperature
+      profile). Single summary values such as maximum, average or total are Process
+      Characteristics, not Process Profiles.
+    extractable: false
 
 relationships:
-  - label: "has capability"
-    type: HAS_CAPABILITY
-    iri: https://spec.industrialontologies.org/ontology/construct/hasCapability
-    domain: *entity_participants
-    range: ["Capability"]
-    definition: "The thing has this capability."
-  - label: "has component part at all times"
-    type: HAS_COMPONENT_PART_AT_ALL_TIMES
-    iri: https://spec.industrialontologies.org/ontology/construct/hasComponentPartAtAllTimes
-    domain: *entity_participants
-    range: *entity_participants
-    definition: "The thing always has this component as a part."
-  - label: "has component part at some time"
-    type: HAS_COMPONENT_PART_AT_SOME_TIME
-    iri: https://spec.industrialontologies.org/ontology/construct/hasComponentPartAtSomeTime
-    domain: *entity_participants
-    range: *entity_participants
-    definition: "The thing has this component as a part at some time."
-  - label: "has input"
-    type: HAS_INPUT
-    iri: https://spec.industrialontologies.org/ontology/construct/hasInput
-    domain: *process_types
-    range: *entity_participants
-    definition: "The process takes this material as input."
-  - label: "has output"
-    type: HAS_OUTPUT
-    iri: https://spec.industrialontologies.org/ontology/construct/hasOutput
-    domain: *process_types
-    range: *entity_participants
-    definition: "The process produces this material as output."
-  - label: "has role"
-    type: HAS_ROLE
-    iri: https://spec.industrialontologies.org/ontology/construct/hasRole
-    domain: *entity_participants
-    range: *roles
-    definition: "The thing holds this role."
-  - label: "has process characteristic"
-    type: HAS_PROCESS_CHARACTERISTIC
-    iri: https://spec.industrialontologies.org/ontology/construct/hasProcessCharacteristic
-    domain: *process_types
-    range: ["Process Characteristic"]
-    definition: "The process has this summary characteristic."
-  - label: "has process profile"
-    type: HAS_PROCESS_PROFILE
-    iri: https://spec.industrialontologies.org/ontology/construct/hasProcessProfile
-    domain: *process_types
-    range: ["Process Profile"]
-    definition: "The process has this process profile."
-  - label: "is input of"
-    type: IS_INPUT_OF
-    iri: https://spec.industrialontologies.org/ontology/construct/isInputOf
-    domain: *entity_participants
-    range: *process_types
-    definition: "The material is an input of this process."
-  - label: "is output of"
-    type: IS_OUTPUT_OF
-    iri: https://spec.industrialontologies.org/ontology/construct/isOutputOf
-    domain: *entity_participants
-    range: *process_types
-    definition: "The material is an output of this process."
-  - label: "participates in at some time"
-    type: PARTICIPATES_IN_AT_SOME_TIME
-    iri: http://purl.obolibrary.org/obo/BFO_0000056
-    domain: *entity_participants
-    range: *process_types
-    definition: "The thing takes part in this process."
-  - label: "measured by at some time"
-    type: MEASURED_BY_AT_SOME_TIME
-    iri: https://spec.industrialontologies.org/ontology/construct/measuredByAtSomeTime
-    domain: *process_participants
-    range: ["Measurement Process"]
-    definition: "The thing is measured by this measurement process."
-  - label: "is measured value of at some time"
-    type: IS_MEASURED_VALUE_OF_AT_SOME_TIME
-    iri: https://spec.industrialontologies.org/ontology/construct/isMeasuredValueOfAtSomeTime
-    domain: ["Measured Value Expression"]
-    range: *process_participants
-    definition: "This measured value expression gives the measured value of the entity."
+
+  - label: Achieves At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/achievesAtSomeTime"
+    definition: >
+      relation from a process to an information content entity wherein the process partially or fully concretizes the information content entity
+    domain: [Process]
+    range: [Information Content Entity]
+    inverse: Is Achieved By At Some Time
+    extraction_constraints:
+      - Subject must be a Process.
+      - Object must be an Information Content Entity.
+      - The relationship direction is Process → Information Content Entity.
+
+  - label: Acts On Behalf Of At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/actsOnBehalfOfAtSomeTime"
+    definition: >
+      relation from a material entity to a person or a group of agents or engineered system that holds when the material entity participates in some planned process in order to fulfill an objective for the person or group of agents or engineered system
+    domain: [Material Entity that is not a Fiat Object Part]
+    range: [Engineered System, Group Of Agents, Person]
+    extraction_constraints:
+      - Subject must be a Material Entity that is not a Fiat Object Part.
+      - Object must be an Engineered System, Group Of Agents or Person.
+      - The relationship direction is Actor → Entity Acted For.
+
+  - label: After
+    iri: "https://spec.industrialontologies.org/ontology/construct/after"
+    definition: >
+      relation that holds between two intervals or processes i and j when the last instant of the temporal extent of i is later than the first instant of the temporal extent of j
+    domain: [Process, Temporal Interval]
+    range: [Process, Temporal Interval]
+    inverse: Before
+    extraction_constraints:
+      - Subject and Object must both be Processes or both be Temporal Intervals.
+      - The relationship is transitive.
+      - The relationship direction is Later → Earlier.
+
+  - label: Before
+    iri: "https://spec.industrialontologies.org/ontology/construct/before"
+    definition: >
+      relation that holds between two intervals or processes i and j when the last instant of the temporal extent of i is earlier than the first instant of the temporal extent of j
+    domain: [Process, Temporal Interval]
+    range: [Process, Temporal Interval]
+    inverse: After
+    extraction_constraints:
+      - Subject and Object must both be Processes or both be Temporal Intervals.
+      - The relationship is transitive.
+      - The relationship direction is Earlier → Later.
+
+  - label: Capability Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/capabilityOf"
+    definition: >
+      relation from a capability to an independent continuant (the bearer), in which the capability specifically depends on the bearer for its existence
+    domain: [Capability]
+    range: [Independent Continuant]
+    inverse: Has Capability
+    extraction_constraints:
+      - Subject must be a Capability.
+      - Object must be an Independent Continuant.
+      - The relationship direction is Capability → Bearer.
+
+  - label: Categorized By
+    iri: "https://spec.industrialontologies.org/ontology/construct/categorizedBy"
+    definition: >
+      relation between a lower-order classifier by a higher-order classifier such that the latter classifier categorizes the former
+    domain: [Classifier]
+    range: [Classifier]
+    inverse: Categorizes
+    extraction_constraints:
+      - Subject must be a Classifier.
+      - Object must be a Classifier.
+      - The relationship direction is Lower-Order Classifier → Higher-Order Classifier.
+
+  - label: Categorizes
+    iri: "https://spec.industrialontologies.org/ontology/construct/categorizes"
+    definition: >
+      relation between classifiers in which a higher-order classifier classifies a lower-order classifier and designates a set that has as members only sets designated by lower-order classifiers that it organizes
+    domain: [Classifier]
+    range: [Classifier]
+    inverse: Categorized By
+    extraction_constraints:
+      - Subject must be a Classifier.
+      - Object must be a Classifier.
+      - The relationship direction is Higher-Order Classifier → Lower-Order Classifier.
+
+  - label: Causes
+    iri: "https://spec.industrialontologies.org/ontology/construct/causes"
+    definition: >
+      relation between a process or event and another process or event that holds when the first has a post material state that is also a pre material state in virtue of which the second is initiated
+    domain: [Process, Event]
+    range: [Process, Event]
+    extraction_constraints:
+      - Subject must be a Process or Event.
+      - Object must be a Process or Event.
+      - The relationship direction is Cause → Effect.
+
+  - label: Classified By
+    iri: "https://spec.industrialontologies.org/ontology/construct/classifiedBy"
+    definition: >
+      relation that holds between an entity y and an information content entity x when the information content entity designates a set whose members are all the entities of a particular type and y is a member of that set
+    domain: [Entity]
+    range: [Information Content Entity]
+    inverse: Classifies
+    extraction_constraints:
+      - Subject must be an Entity.
+      - Object must be an Information Content Entity.
+      - The relationship direction is Classified Entity → Classifier.
+
+  - label: Classifies
+    iri: "https://spec.industrialontologies.org/ontology/construct/classifies"
+    definition: >
+      relation that holds between an information content entity x and an entity y when the information content entity designates a set whose members are instances of a particular type and y is a member of that set
+    domain: [Information Content Entity]
+    range: [Entity]
+    inverse: Classified By
+    extraction_constraints:
+      - Subject must be an Information Content Entity.
+      - Object must be an Entity.
+      - The relationship direction is Classifier → Classified Entity.
+
+  - label: Component Part Of At All Times
+    iri: "https://spec.industrialontologies.org/ontology/construct/componentPartOfAtAllTimes"
+    definition: >
+      relation from a material entity to another material entity that it is a proper part of at all times it exists
+    domain: [Material Entity that is not a Fiat Object Part]
+    range: [Material Entity that is not a Fiat Object Part]
+    extraction_constraints:
+      - Subject must be a Material Entity that is not a Fiat Object Part.
+      - Object must be a Material Entity that is not a Fiat Object Part.
+      - The relationship is transitive.
+      - The relationship direction is Component → Whole.
+
+  - label: Component Part Of At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/componentPartOfAtSomeTime"
+    definition: >
+      relation from a material entity to another material entity that it is a proper part of at some time
+    domain: [Material Entity that is not a Fiat Object Part]
+    range: [Material Entity that is not a Fiat Object Part]
+    inverse: Has Component Part At Some Time
+    extraction_constraints:
+      - Subject must be a Material Entity that is not a Fiat Object Part.
+      - Object must be a Material Entity that is not a Fiat Object Part.
+      - The relationship direction is Component → Whole.
+
+  - label: Contains Occurrence Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/containsOccurrenceOf"
+    definition: >
+      relation that holds between two intervals or processes i and j when the first instant of the temporal extent of j is later than the first instant of the temporal extent of i and the last instant of the temporal extent of j is earlier than the last instant of the temporal extent of i
+    domain: [Process, Temporal Interval]
+    range: [Process, Temporal Interval]
+    inverse: Occurs During
+    extraction_constraints:
+      - Subject and Object must both be Processes or both be Temporal Intervals.
+      - The relationship is transitive.
+      - The relationship direction is Containing Occurrent → Contained Occurrent.
+
+  - label: Controls
+    iri: "https://spec.industrialontologies.org/ontology/construct/controls"
+    definition: >
+      relation between a process profile and a process that holds when the process profile modulates the process and concretizes one or more action specifications as part of a planned process
+    domain: [Process Profile that is the process profile of some Planned Process]
+    range: [Process]
+    extraction_constraints:
+      - Subject must be a Process Profile that is the process profile of a Planned Process.
+      - Object must be a Process.
+      - The relationship direction is Process Profile → Controlled Process.
+
+  - label: Denoted By
+    iri: "https://spec.industrialontologies.org/ontology/construct/denotedBy"
+    definition: >
+      relation from an entity to an information content entity that distinguishes the entity
+    domain: [Entity]
+    range: [Information Content Entity]
+    inverse: Denotes
+    extraction_constraints:
+      - Subject must be an Entity.
+      - Object must be an Information Content Entity.
+      - The relationship direction is Entity → Information Content Entity.
+
+  - label: Denotes
+    iri: "https://spec.industrialontologies.org/ontology/construct/denotes"
+    definition: >
+      relation from an information content entity to an entity that the information content entity distinguishes
+    domain: [Information Content Entity]
+    range: [Entity]
+    inverse: Denoted By
+    extraction_constraints:
+      - Subject must be an Information Content Entity.
+      - Object must be an Entity.
+      - The relationship direction is Information Content Entity → Entity.
+
+  - label: Described By
+    iri: "https://spec.industrialontologies.org/ontology/construct/describedBy"
+    definition: >
+      relation from an entity to an information content entity that characterizes the entity
+    domain: [Entity]
+    range: [Information Content Entity]
+    inverse: Describes
+    extraction_constraints:
+      - Subject must be an Entity.
+      - Object must be an Information Content Entity.
+      - The relationship direction is Entity → Information Content Entity.
+
+  - label: Describes
+    iri: "https://spec.industrialontologies.org/ontology/construct/describes"
+    definition: >
+      relation from an information content entity to an entity that the information content entity characterizes
+    domain: [Information Content Entity]
+    range: [Entity]
+    inverse: Described By
+    extraction_constraints:
+      - Subject must be an Information Content Entity.
+      - Object must be an Entity.
+      - The relationship direction is Information Content Entity → Entity.
+
+  - label: Designated By
+    iri: "https://spec.industrialontologies.org/ontology/construct/designatedBy"
+    definition: >
+      relation from an entity to an information content entity that uniquely distinguishes the entity from other entities
+    domain: [Entity]
+    range: [Information Content Entity]
+    inverse: Designates
+    extraction_constraints:
+      - Subject must be an Entity.
+      - Object must be an Information Content Entity.
+      - The relationship is inverse functional.
+      - The relationship direction is Entity → Information Content Entity.
+
+  - label: Designates
+    iri: "https://spec.industrialontologies.org/ontology/construct/designates"
+    definition: >
+      relation from an information content entity to an entity that the information content entity uniquely distinguishes from other entities
+    domain: [Information Content Entity]
+    range: [Entity]
+    inverse: Designated By
+    extraction_constraints:
+      - Subject must be an Information Content Entity.
+      - Object must be an Entity.
+      - The relationship is functional, so each Information Content Entity designates exactly one Entity.
+      - The relationship direction is Information Content Entity → Entity.
+
+  - label: Disposition Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/dispositionOf"
+    definition: >
+      relation from a disposition to an independent continuant (the bearer), in which the disposition specifically depends on the bearer for its existence
+    domain: [Disposition]
+    range: [Independent Continuant]
+    inverse: Has Disposition
+    extraction_constraints:
+      - Subject must be a Disposition.
+      - Object must be an Independent Continuant.
+      - The relationship direction is Disposition → Bearer.
+
+  - label: Function Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/functionOf"
+    definition: >
+      relation from a function to an independent continuant (the bearer), in which the function specifically depends on the bearer for its existence
+    domain: [Function]
+    range: [Independent Continuant]
+    inverse: Has Function
+    extraction_constraints:
+      - Subject must be a Function.
+      - Object must be an Independent Continuant.
+      - The relationship direction is Function → Function Bearer.
+
+  - label: Generalizes
+    iri: "https://spec.industrialontologies.org/ontology/construct/generalizes"
+    definition: >
+      relation between two classifiers such that everything classified by the latter is also classified by the former
+    domain: [Classifier]
+    range: [Classifier]
+    inverse: Specializes
+    extraction_constraints:
+      - Subject must be a Classifier.
+      - Object must be a Classifier.
+      - The relationship is transitive.
+      - The relationship direction is More General Classifier → More Specific Classifier.
+
+  - label: Has Capability
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasCapability"
+    definition: >
+      relation from an independent continuant (the bearer) to a capability, in which the capability specifically depends on the bearer for its existence
+    domain: [Independent Continuant]
+    range: [Capability]
+    inverse: Capability Of
+    extraction_constraints:
+      - Subject must be an Independent Continuant.
+      - Object must be a Capability.
+      - The relationship direction is Bearer → Capability.
+
+  - label: Has Component Part At All Times
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasComponentPartAtAllTimes"
+    definition: >
+      relation from a material entity to another material entity that it has as a proper part at all times it exists
+    domain: [Material Entity that is not a Fiat Object Part]
+    range: [Material Entity that is not a Fiat Object Part]
+    extraction_constraints:
+      - Subject must be a Material Entity that is not a Fiat Object Part.
+      - Object must be a Material Entity that is not a Fiat Object Part.
+      - The relationship is transitive.
+      - The relationship direction is Whole → Component.
+
+  - label: Has Component Part At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasComponentPartAtSomeTime"
+    definition: >
+      relation from a material entity to another material entity that it has as a proper part at some time
+    domain: [Material Entity that is not a Fiat Object Part]
+    range: [Material Entity that is not a Fiat Object Part]
+    inverse: Component Part Of At Some Time
+    extraction_constraints:
+      - Subject must be a Material Entity that is not a Fiat Object Part.
+      - Object must be a Material Entity that is not a Fiat Object Part.
+      - The relationship direction is Whole → Component.
+
+  - label: Has Date-Time Instant Value
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasDateTimeInstantValue"
+    definition: >
+      data property that relates a time instance value to a XSD date-time
+    domain: [Temporal Instant Value Expression]
+    range: [xsd:dateTime]
+    extraction_constraints:
+      - Subject must be a Temporal Instant Value Expression.
+      - Object must be an xsd:dateTime literal.
+      - The relationship direction is Temporal Instant Value Expression → Literal.
+
+  - label: Has Disposition
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasDisposition"
+    definition: >
+      relation from an independent continuant (the bearer) to a disposition, in which the disposition specifically depends on the bearer for its existence
+    domain: [Independent Continuant]
+    range: [Disposition]
+    inverse: Disposition Of
+    extraction_constraints:
+      - Subject must be an Independent Continuant.
+      - Object must be a Disposition.
+      - The relationship direction is Bearer → Disposition.
+
+  - label: Has Function
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasFunction"
+    definition: >
+      relation from an independent continuant (the bearer) to a function, in which the function specifically depends on the bearer for its existence
+    domain: [Independent Continuant]
+    range: [Function]
+    inverse: Function Of
+    extraction_constraints:
+      - Subject must be an Independent Continuant.
+      - Object must be a Function.
+      - The relationship direction is Function Bearer → Function.
+
+  - label: Has Input
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasInput"
+    definition: >
+      relation from a process to someone or something physical or digital (continuant) that is a necessary precondition for the process to start
+    domain: [Process]
+    range: [Continuant]
+    inverse: Is Input Of
+    extraction_constraints:
+      - Subject must be a Process.
+      - Object must be a Continuant.
+      - The relationship direction is Process → Input.
+
+  - label: Has Material State
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasMaterialState"
+    definition: >
+      relation between a material entity and a material state in which the material entity participates throughout the material states duration
+    domain: [Material Entity]
+    range: [Material State]
+    inverse: Is Material State Of
+    extraction_constraints:
+      - Subject must be a Material Entity.
+      - Object must be a Material State.
+      - The relationship direction is Material Entity → Material State.
+
+  - label: Has Measured Value At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasMeasuredValueAtSomeTime"
+    definition: >
+      relation from an entity to a value expression that contains the value of the entity measured at some time t
+    domain: [Entity]
+    range: [Value Expression]
+    inverse: Is Measured Value Of At Some Time
+    extraction_constraints:
+      - Subject must be an Entity.
+      - Object must be a Value Expression.
+      - The relationship direction is Entity → Value Expression.
+
+  - label: Has Output
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasOutput"
+    definition: >
+      relation from a process to someone or something physical or digital (continuant) that participates in the process such that it is generated or modified during the process, and that it exists at the end of the process
+    domain: [Process]
+    range: [Continuant]
+    inverse: Is Output Of
+    extraction_constraints:
+      - Subject must be a Process.
+      - Object must be a Continuant.
+      - The relationship direction is Process → Output.
+
+  - label: Has Post Material State
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasPostMaterialState"
+    definition: >
+      relation between a process or event and a material state that holds when the process or event meets or overlaps the material state, or when the material state finishes the process or event
+    domain: [Process, Event]
+    range: [Material State]
+    extraction_constraints:
+      - Subject must be a Process or Event.
+      - Object must be a Material State.
+      - The relationship direction is Process or Event → Material State.
+
+  - label: Has Pre Material State
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasPreMaterialState"
+    definition: >
+      relation between a process or event and a material state that holds when the material state meets, overlaps, or starts the process or event
+    domain: [Process, Event]
+    range: [Material State]
+    extraction_constraints:
+      - Subject must be a Process or Event.
+      - Object must be a Material State.
+      - The relationship direction is Process or Event → Material State.
+
+  - label: Has Process Characteristic
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasProcessCharacteristic"
+    definition: >
+      relation between a process and its characteristic
+    domain: [Process]
+    range: [Process Characteristic]
+    inverse: Process Characteristic Of
+    extraction_constraints:
+      - Subject must be a Process.
+      - Object must be a Process Characteristic.
+      - The relationship direction is Process → Process Characteristic.
+
+  - label: Has Process Profile
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasProcessProfile"
+    definition: >
+      relation that holds between a process and a process profile that is part of the process such that the part is temporally coextensive with another proper part that is mutually dependent on it and has no parts in common with it
+    domain: [Process]
+    range: [Process Profile]
+    inverse: Process Profile Of
+    extraction_constraints:
+      - Subject must be a Process.
+      - Object must be a Process Profile.
+      - The relationship direction is Process → Process Profile.
+
+  - label: Has Quality
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasQuality"
+    definition: >
+      relation from an independent continuant (the bearer) to a quality, in which the quality specifically depends on the bearer for its existence
+    domain: [Independent Continuant]
+    range: [Quality]
+    inverse: Quality Of
+    extraction_constraints:
+      - Subject must be an Independent Continuant.
+      - Object must be a Quality.
+      - The relationship direction is Bearer → Quality.
+
+  - label: Has Role
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasRole"
+    definition: >
+      relation from an independent continuant (the bearer) to a role, in which the role specifically depends on the bearer for its existence
+    domain: [Independent Continuant]
+    range: [Role]
+    inverse: Role Of
+    extraction_constraints:
+      - Subject must be an Independent Continuant.
+      - Object must be a Role.
+      - The relationship direction is Role Bearer → Role.
+
+  - label: Has Simple Expression Value
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasSimpleExpressionValue"
+    definition: >
+      data property that relates a value expression to a literal
+    domain: [Value Expression]
+    range: [Literal]
+    extraction_constraints:
+      - Subject must be a Value Expression.
+      - Object must be a Literal.
+      - The relationship direction is Value Expression → Literal.
+
+  - label: Has Specified Output
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasSpecifiedOutput"
+    definition: >
+      relation from a planned process to someone or something physical or digital (continuant) that is produced or modified in the planned process as prescribed by an objective
+    domain: [Planned Process]
+    range: [Continuant]
+    inverse: Is Specified Output Of
+    extraction_constraints:
+      - Subject must be a Planned Process.
+      - Object must be a Continuant.
+      - The relationship direction is Planned Process → Specified Output.
+
+  - label: Has Value Expression At All Times
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasValueExpressionAtAllTimes"
+    definition: >
+      relation from an entity to a value expression that contains the value of the entity which does not change during the entire existence of the entity
+    domain: [Entity]
+    range: [Value Expression]
+    inverse: Is Value Expression Of At All Times
+    extraction_constraints:
+      - Subject must be an Entity.
+      - Object must be a Value Expression.
+      - The relationship direction is Entity → Value Expression.
+
+  - label: Has Value Expression At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/hasValueExpressionAtSomeTime"
+    definition: >
+      relation from an entity to a value expression that contains the value of the entity determined or set at some time t
+    domain: [Entity]
+    range: [Value Expression]
+    inverse: Is Value Expression Of At Some Time
+    extraction_constraints:
+      - Subject must be an Entity.
+      - Object must be a Value Expression.
+      - The relationship direction is Entity → Value Expression.
+
+  - label: Is About
+    iri: "https://spec.industrialontologies.org/ontology/construct/isAbout"
+    definition: >
+      primitive, generic relationship between an information content entity and some entity
+    domain: [Information Content Entity]
+    range: [Entity]
+    inverse: Is Subject Of
+    extraction_constraints:
+      - Subject must be an Information Content Entity.
+      - Object must be an Entity.
+      - The relationship direction is Information Content Entity → Entity.
+
+  - label: Is Achieved By At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/isAchievedByAtSomeTime"
+    definition: >
+      relation from an information content entity to a process that partially or fully concretizes the information content entity
+    domain: [Information Content Entity]
+    range: [Process]
+    inverse: Achieves At Some Time
+    extraction_constraints:
+      - Subject must be an Information Content Entity.
+      - Object must be a Process.
+      - The relationship direction is Information Content Entity → Process.
+
+  - label: Is Available To At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/isAvailableToAtSomeTime"
+    definition: >
+      relation from a material entity or physical location to an agent that holds when the material entity or physical location have a capability that is needed by the agent to fulfil some objective carried by the agent
+    domain: [Site, Material Entity]
+    range: [Agent]
+    extraction_constraints:
+      - Subject must be a Site or Material Entity.
+      - Object must be an Agent.
+      - The relationship direction is Resource → Agent.
+
+  - label: Is Input Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/isInputOf"
+    definition: >
+      relates someone or something physical or digital (continuant) to a process that it is a necessary precondition for the process to start
+    domain: [Continuant]
+    range: [Process]
+    inverse: Has Input
+    extraction_constraints:
+      - Subject must be a Continuant.
+      - Object must be a Process.
+      - The relationship direction is Input → Process.
+
+  - label: Is Made Of At All Times
+    iri: "https://spec.industrialontologies.org/ontology/construct/isMadeOfAtAllTimes"
+    definition: >
+      relation between material entity b and material entity that is not a fiat object c such that b has continuant part at all times c and if portion of c is removed from b, that portion stops being part of b, while the remaining c continues to exist as the same material entity
+    domain: [Material Entity]
+    range: [Material Entity that is not a Fiat Object Part]
+    extraction_constraints:
+      - Subject must be a Material Entity.
+      - Object must be a Material Entity that is not a Fiat Object Part.
+      - The relationship direction is Object → Material.
+
+  - label: Is Made Of At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/isMadeOfAtSomeTime"
+    definition: >
+      relation between material entity b and material entity that is not a fiat object c such that b has continuant part at some time c and if portion of c is removed from b, that portion stops being part of b, while the remaining c continues to exist as the same material entity
+    domain: [Material Entity]
+    range: [Material Entity that is not a Fiat Object Part]
+    extraction_constraints:
+      - Subject must be a Material Entity.
+      - Object must be a Material Entity that is not a Fiat Object Part.
+      - The relationship is irreflexive, asymmetric and non-transitive.
+      - The relationship direction is Object → Material.
+
+  - label: Is Material State Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/isMaterialStateOf"
+    definition: >
+      relation between a material state and a material entity that participates in that state throughout its duration
+    domain: [Material State]
+    range: [Material Entity]
+    inverse: Has Material State
+    extraction_constraints:
+      - Subject must be a Material State.
+      - Object must be a Material Entity.
+      - The relationship direction is Material State → Material Entity.
+
+  - label: Is Measured Value Of At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/isMeasuredValueOfAtSomeTime"
+    definition: >
+      relation from a value expression to the entity indicating that the value expression contains the value of the entity measured at some time t
+    domain: [Value Expression]
+    range: [Entity]
+    inverse: Has Measured Value At Some Time
+    extraction_constraints:
+      - Subject must be a Value Expression.
+      - Object must be an Entity.
+      - The relationship direction is Value Expression → Entity.
+
+  - label: Is Output Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/isOutputOf"
+    definition: >
+      relation from someone or something physical or digital (continuant) to a process that it participates in such that it is generated or modified during the process, and it exists at the end of the process
+    domain: [Continuant]
+    range: [Process]
+    inverse: Has Output
+    extraction_constraints:
+      - Subject must be a Continuant.
+      - Object must be a Process.
+      - The relationship direction is Output → Process.
+
+  - label: Is Specified Output Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/isSpecifiedOutputOf"
+    definition: >
+      relation from someone or something physical or digital (continuant) to a planned process in which it is produced or modified as prescribed by some objective
+    domain: [Continuant]
+    range: [Planned Process]
+    inverse: Has Specified Output
+    extraction_constraints:
+      - Subject must be a Continuant.
+      - Object must be a Planned Process.
+      - The relationship direction is Specified Output → Planned Process.
+
+  - label: Is Subject Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/isSubjectOf"
+    definition: >
+      primitive, generic relationship between an entity and some information content entity
+    domain: [Entity]
+    range: [Information Content Entity]
+    inverse: Is About
+    extraction_constraints:
+      - Subject must be an Entity.
+      - Object must be an Information Content Entity.
+      - The relationship direction is Entity → Information Content Entity.
+
+  - label: Is Temporally Overlapped By
+    iri: "https://spec.industrialontologies.org/ontology/construct/isTemporallyOverlappedBy"
+    definition: >
+      relation that holds between two intervals and processes i and j when the first instant of the temporal extent of j is earlier than the last instant of the temporal extent of j is later than the first instant of the temporal extent of i
+    domain: [Process, Temporal Interval]
+    range: [Process, Temporal Interval]
+    inverse: Temporally Overlaps
+    extraction_constraints:
+      - Subject and Object must both be Processes or both be Temporal Intervals.
+      - The relationship direction is Overlapped → Overlapping.
+
+  - label: Is Value Expression Of At All Times
+    iri: "https://spec.industrialontologies.org/ontology/construct/isValueExpressionOfAtAllTimes"
+    definition: >
+      relation from a value expression to an entity indicating that the value expression contains the value of the entity which does not change during the entire existence of the entity
+    domain: [Value Expression]
+    range: [Entity]
+    inverse: Has Value Expression At All Times
+    extraction_constraints:
+      - Subject must be a Value Expression.
+      - Object must be an Entity.
+      - The relationship direction is Value Expression → Entity.
+
+  - label: Is Value Expression Of At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/isValueExpressionOfAtSomeTime"
+    definition: >
+      relation from a value expression to the entity indicating that the value expression contains the value of the entity determined or set at some time t
+    domain: [Value Expression]
+    range: [Entity]
+    inverse: Has Value Expression At Some Time
+    extraction_constraints:
+      - Subject must be a Value Expression.
+      - Object must be an Entity.
+      - The relationship direction is Value Expression → Entity.
+
+  - label: Material State Holds In
+    iri: "https://spec.industrialontologies.org/ontology/construct/materialStateholdsIn"
+    definition: >
+      relation between two material states that holds when the first material state is one of the states whose condition contributes to the aggregated condition of the second material state, and the first material state at least occurs for the duration of the second material state
+    domain: [Material State]
+    range: [Material State]
+    extraction_constraints:
+      - Subject must be a Material State.
+      - Object must be a Material State.
+      - The relationship direction is Contributing Material State → Aggregated Material State.
+
+  - label: Measured By At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/measuredByAtSomeTime"
+    definition: >
+      relation from an entity to a material entity with a measurement capability that got realized to determine the value of the entity, at some time
+    domain: [Entity]
+    range: [Material Entity]
+    inverse: Measures At Some Time
+    extraction_constraints:
+      - Subject must be an Entity.
+      - Object must be a Material Entity.
+      - The relationship direction is Measured Entity → Measuring Material Entity.
+
+  - label: Measures At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/measuresAtSomeTime"
+    definition: >
+      relation from a material entity to an entity indicating that the measurement capability of the material entity got realized to determine the value of the entity, at some time
+    domain: [Material Entity]
+    range: [Entity]
+    inverse: Measured By At Some Time
+    extraction_constraints:
+      - Subject must be a Material Entity.
+      - Object must be an Entity.
+      - The relationship direction is Measuring Material Entity → Measured Entity.
+
+  - label: Meets
+    iri: "https://spec.industrialontologies.org/ontology/construct/meets"
+    definition: >
+      relation that holds between two intervals or processes i and j when the last instant of the temporal extent of i is the same as the first instant of the temporal extent of j
+    domain: [Process, Temporal Interval]
+    range: [Process, Temporal Interval]
+    inverse: Met By
+    extraction_constraints:
+      - Subject and Object must both be Processes or both be Temporal Intervals.
+      - The relationship direction is Earlier → Later.
+
+  - label: Met By
+    iri: "https://spec.industrialontologies.org/ontology/construct/metBy"
+    definition: >
+      relation that holds between two intervals or processes i and j when the last instant of the temporal extent of j is the same as the first instant of the temporal extent of i
+    domain: [Process, Temporal Interval]
+    range: [Process, Temporal Interval]
+    inverse: Meets
+    extraction_constraints:
+      - Subject and Object must both be Processes or both be Temporal Intervals.
+      - The relationship direction is Later → Earlier.
+
+  - label: Modulates
+    iri: "https://spec.industrialontologies.org/ontology/construct/modulates"
+    definition: >
+      relation between a process and another process that holds when the first overlaps the second in time and every state changing temporal part of the first causes some temporal part of the second
+    domain: [Process that is not a Material State]
+    range: [Process]
+    extraction_constraints:
+      - Subject must be a Process that is not a Material State.
+      - Object must be a Process.
+      - The relationship direction is Modulating Process → Modulated Process.
+
+  - label: Observed By At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/observedByAtSomeTime"
+    definition: >
+      relation from an entity to an agent indicating that the agent participates in some process that outputs information about the entity, at some time
+    domain: [Entity]
+    range: [Agent]
+    inverse: Observes At Some Time
+    extraction_constraints:
+      - Subject must be an Entity.
+      - Object must be an Agent.
+      - The relationship direction is Observed Entity → Observer.
+
+  - label: Observes At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/observesAtSomeTime"
+    definition: >
+      relation from an agent to an entity indicating that the agent participates in some process that outputs information about the entity, at some time
+    domain: [Agent]
+    range: [Entity]
+    inverse: Observed By At Some Time
+    extraction_constraints:
+      - Subject must be an Agent.
+      - Object must be an Entity.
+      - The relationship direction is Observer → Observed Entity.
+
+  - label: Occurs During
+    iri: "https://spec.industrialontologies.org/ontology/construct/occursDuring"
+    definition: >
+      relation that holds between two intervals or processes i and j when the first instant of the temporal extent of i is later than the first instant of the temporal extent of j and the last instant of the temporal extent of i is earlier than the last instant of the temporal extent of j
+    domain: [Process, Temporal Interval]
+    range: [Process, Temporal Interval]
+    inverse: Contains Occurrence Of
+    extraction_constraints:
+      - Subject and Object must both be Processes or both be Temporal Intervals.
+      - The relationship is transitive.
+      - The relationship direction is Contained Occurrent → Containing Occurrent.
+
+  - label: Occurs Simultaneously With
+    iri: "https://spec.industrialontologies.org/ontology/construct/occursSimultaneouslyWith"
+    definition: >
+      relation that holds between two time instants when they are simultaneous or between two intervals when they have same first and last instants or between two processes or two process boundaries when their temporal extents are the same
+    domain: [Process, Process Boundary, Temporal Interval, Temporal Instant]
+    range: [Process, Process Boundary, Temporal Interval, Temporal Instant]
+    extraction_constraints:
+      - Subject and Object must both be Processes, Process Boundaries, Temporal Intervals or Temporal Instants.
+      - The relationship is symmetric and transitive.
+
+  - label: Prescribed By
+    iri: "https://spec.industrialontologies.org/ontology/construct/prescribedBy"
+    definition: >
+      relation from an entity to an information content entity that the information content entity serves as a collection of rules or guide for if the entity is something that unfolds in time (occurrent), or as a model if the entity is someone or something physical or digital (continuant)
+    domain: [Entity]
+    range: [Information Content Entity]
+    inverse: Prescribes
+    extraction_constraints:
+      - Subject must be an Entity.
+      - Object must be an Information Content Entity.
+      - The relationship direction is Prescribed Entity → Information Content Entity.
+
+  - label: Prescribes
+    iri: "https://spec.industrialontologies.org/ontology/construct/prescribes"
+    definition: >
+      relation from an information content entity to an entity such that the information content entity serves as a collection of rules or guide for the entity if the entity is something that unfolds in time (occurrent), or as a model if the entity is someone or something physical or digital (continuant)
+    domain: [Information Content Entity]
+    range: [Entity]
+    inverse: Prescribed By
+    extraction_constraints:
+      - Subject must be an Information Content Entity.
+      - Object must be an Entity.
+      - The relationship direction is Information Content Entity → Prescribed Entity.
+
+  - label: Process Characteristic Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/processCharacteristicOf"
+    definition: >
+      relation between a characteristic and the process it is a characteristic of
+    domain: [Process Characteristic]
+    range: [Process]
+    inverse: Has Process Characteristic
+    extraction_constraints:
+      - Subject must be a Process Characteristic.
+      - Object must be a Process.
+      - The relationship direction is Process Characteristic → Process.
+
+  - label: Process Profile Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/processProfileOf"
+    definition: >
+      relation that holds between a process profile and a process that it is part of such that the source process is a proper part of the target process and is temporally coextensive with another proper part of the target process that is mutually dependent on it and shares no parts with it
+    domain: [Process Profile]
+    range: [Process]
+    inverse: Has Process Profile
+    extraction_constraints:
+      - Subject must be a Process Profile.
+      - Object must be a Process.
+      - The relationship direction is Process Profile → Process.
+
+  - label: Quality Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/qualityOf"
+    definition: >
+      relation from a quality to an independent continuant (the bearer), in which the quality specifically depends on the bearer for its existence
+    domain: [Quality]
+    range: [Independent Continuant]
+    inverse: Has Quality
+    extraction_constraints:
+      - Subject must be a Quality.
+      - Object must be an Independent Continuant.
+      - The relationship direction is Quality → Bearer.
+
+  - label: Recognized By At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/recognizedByAtSomeTime"
+    definition: >
+      relation from an entity to an agent that is able to describe the entity or is able to associate an information content entity that describes the entity, at some time
+    domain: [Entity]
+    range: [Agent]
+    inverse: Recognizes At Some Time
+    extraction_constraints:
+      - Subject must be an Entity.
+      - Object must be an Agent.
+      - The relationship direction is Recognized Entity → Agent.
+
+  - label: Recognizes At Some Time
+    iri: "https://spec.industrialontologies.org/ontology/construct/recognizesAtSomeTime"
+    definition: >
+      relation from an agent to an entity that the agent is able to describe the entity or is able to associate an information content entity that describes the entity, at some time
+    domain: [Agent]
+    range: [Entity]
+    inverse: Recognized By At Some Time
+    extraction_constraints:
+      - Subject must be an Agent.
+      - Object must be an Entity.
+      - The relationship direction is Agent → Recognized Entity.
+
+  - label: Requirement Satisfied By
+    iri: "https://spec.industrialontologies.org/ontology/construct/requirementSatisfiedBy"
+    definition: >
+      relation from a requirement specification to an entity that conforms to the requirement specification
+    domain: [Requirement Specification]
+    range: [Entity]
+    inverse: Satisfies Requirement
+    extraction_constraints:
+      - Subject must be a Requirement Specification.
+      - Object must be an Entity.
+      - The relationship direction is Requirement Specification → Satisfying Entity.
+
+  - label: Role Of
+    iri: "https://spec.industrialontologies.org/ontology/construct/roleOf"
+    definition: >
+      relation from a role to an independent continuant (the bearer), in which the role specifically depends on the bearer for its existence
+    domain: [Role]
+    range: [Independent Continuant]
+    inverse: Has Role
+    extraction_constraints:
+      - Subject must be a Role.
+      - Object must be an Independent Continuant.
+      - The relationship direction is Role → Role Bearer.
+
+  - label: Satisfies Requirement
+    iri: "https://spec.industrialontologies.org/ontology/construct/satisfiesRequirement"
+    definition: >
+      relation from an entity to a requirement specification that the entity conforms to
+    domain: [Entity]
+    range: [Requirement Specification]
+    inverse: Requirement Satisfied By
+    extraction_constraints:
+      - Subject must be an Entity.
+      - Object must be a Requirement Specification.
+      - The relationship direction is Satisfying Entity → Requirement Specification.
+
+  - label: Specializes
+    iri: "https://spec.industrialontologies.org/ontology/construct/specializes"
+    definition: >
+      relation between two classifiers such that everything classified by the former is also classified by the latter
+    domain: [Classifier]
+    range: [Classifier]
+    inverse: Generalizes
+    extraction_constraints:
+      - Subject must be a Classifier.
+      - Object must be a Classifier.
+      - The relationship is transitive.
+      - The relationship direction is More Specific Classifier → More General Classifier.
+
+  - label: Temporally Finished By
+    iri: "https://spec.industrialontologies.org/ontology/construct/temporallyFinishedBy"
+    definition: >
+      relation that holds between two intervals or processes i and j when the last instant of the temporal extent of j is the same as the last instant of the temporal extent of i and the first instant of i is preceded by the first instant of j
+    domain: [Process, Temporal Interval]
+    range: [Process, Temporal Interval]
+    inverse: Temporally Finishes
+    extraction_constraints:
+      - Subject and Object must both be Processes or both be Temporal Intervals.
+      - The relationship is transitive.
+      - The relationship direction is Longer Occurrent → Finishing Occurrent.
+
+  - label: Temporally Finishes
+    iri: "https://spec.industrialontologies.org/ontology/construct/temporallyFinishes"
+    definition: >
+      relation that holds between two intervals or processes i and j when the last instant of the temporal extent of i is the same as the last instant of the temporal extent of j and the first instant of j precedes the first instant of i
+    domain: [Process, Temporal Interval]
+    range: [Process, Temporal Interval]
+    inverse: Temporally Finished By
+    extraction_constraints:
+      - Subject and Object must both be Processes or both be Temporal Intervals.
+      - The relationship is transitive.
+      - The relationship direction is Finishing Occurrent → Longer Occurrent.
+
+  - label: Temporally Overlaps
+    iri: "https://spec.industrialontologies.org/ontology/construct/temporallyOverlaps"
+    definition: >
+      relation that holds between two intervals and processes i and j when the first instant of the temporal extent of i is earlier than the first instant of the temporal extent of j, and the last instant of i is later than the first instant and earlier than the last instant of j
+    domain: [Process, Temporal Interval]
+    range: [Process, Temporal Interval]
+    inverse: Is Temporally Overlapped By
+    extraction_constraints:
+      - Subject and Object must both be Processes or both be Temporal Intervals.
+      - The relationship direction is Overlapping → Overlapped.
+
+  - label: Temporally Started By
+    iri: "https://spec.industrialontologies.org/ontology/construct/temporallyStartedBy"
+    definition: >
+      relation that holds between two intervals or processes i and j when the first instant of the temporal extent of j is the same as first the instant of the temporal extent of i and the last instant of j precedes the last instant of i
+    domain: [Process, Temporal Interval]
+    range: [Process, Temporal Interval]
+    inverse: Temporally Starts
+    extraction_constraints:
+      - Subject and Object must both be Processes or both be Temporal Intervals.
+      - The relationship is transitive.
+      - The relationship direction is Longer Occurrent → Starting Occurrent.
+
+  - label: Temporally Starts
+    iri: "https://spec.industrialontologies.org/ontology/construct/temporallyStarts"
+    definition: >
+      relation that holds between two intervals or processes i and j when the first instant of the temporal extent of i is the same as first the instant of the temporal extent of j and the last instant of i precedes the last instant of j
+    domain: [Process, Temporal Interval]
+    range: [Process, Temporal Interval]
+    inverse: Temporally Started By
+    extraction_constraints:
+      - Subject and Object must both be Processes or both be Temporal Intervals.
+      - The relationship is transitive.
+      - The relationship direction is Starting Occurrent → Longer Occurrent.
+
+  - label: Has Post-Condition
+    iri: "https://spec.industrialontologies.org/ontology/core/Core/hasPostCondition"
+    definition: >
+      relation between an action specification or plan specification and a material state specification such that every material state prescribed by the material state specification holds in a post-state of every process or event prescribed by the action specification or plan specification
+    domain: [Action Specification, Plan Specification]
+    range: [Material State Specification]
+    extraction_constraints:
+      - Subject must be an Action Specification or Plan Specification.
+      - Object must be a Material State Specification.
+      - The relationship direction is Specification → Material State Specification.
+
+  - label: Has Pre-Condition
+    iri: "https://spec.industrialontologies.org/ontology/core/Core/hasPreCondition"
+    definition: >
+      relation between an Action Specification or Plan Specification and a Material State Specification such that every material state prescribed by the Material State Specification holds in a pre-state of every process or event prescribed by the Action Specification or Plan Specification
+    domain: [Action Specification, Plan Specification]
+    range: [Material State Specification]
+    extraction_constraints:
+      - Subject must be an Action Specification or Plan Specification.
+      - Object must be a Material State Specification.
+      - The relationship direction is Specification → Material State Specification.

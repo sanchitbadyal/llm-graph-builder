@@ -438,6 +438,8 @@ def _yaml_entries(profile: dict, key: str) -> Iterable[tuple[str, dict]]:
         for entry in entries:
             if not isinstance(entry, dict) or not entry.get("label") or not entry.get("iri"):
                 raise ValueError(f"Invalid {key} entry in YAML profile group '{group_name}'")
+            if key == "class" and entry.get("extractable") is False:
+                continue
             yield group_name, entry
 
 

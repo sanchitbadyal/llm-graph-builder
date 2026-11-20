@@ -119,6 +119,7 @@ def project_entity_metadata(graph: object, envelope: OntologyExtractionEnvelope)
     SET n.iri = $iri,
         n.primary_class_iri = $class_iri,
         n.ontology_layer = $layer,
+        n.source_document_id = $source_document_id,
         n.aliases = CASE WHEN $mention IS NULL THEN coalesce(n.aliases, [])
                          WHEN $mention IN coalesce(n.aliases, []) THEN coalesce(n.aliases, [])
                          ELSE coalesce(n.aliases, []) + $mention END
@@ -133,9 +134,11 @@ def project_entity_metadata(graph: object, envelope: OntologyExtractionEnvelope)
             if not entity_id or not iri or not class_iri or (entity_id, iri) in seen:
                 continue
             seen.add((entity_id, iri))
+            source_document_id = assertion.evidence.source_document_id if assertion.evidence else None
             try:
                 graph.query(query, {"id": entity_id, "iri": iri, "class_iri": class_iri,
-                                    "layer": "domain", "mention": mention})
+                                    "layer": "domain", "mention": mention,
+                                    "source_document_id": source_document_id})
                 updates += 1
             except Exception:
                 continue

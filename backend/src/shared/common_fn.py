@@ -379,17 +379,20 @@ def save_ontology_catalog_in_neo4j(graph: Neo4jGraph, catalog_rows):
         classes[row["child_iri"]] = {
             "iri": row["child_iri"], "label": row["child_label"],
             "ontology_profile": row.get("child_profile", ""),
+            "description": row.get("child_description", ""),
         }
         if row.get("parent_iri"):
             classes[row["parent_iri"]] = {
             "iri": row["parent_iri"], "label": row["parent_label"],
             "ontology_profile": row.get("parent_profile", ""),
+                "description": row.get("parent_description", ""),
         }
     graph.query(
         """
         UNWIND $classes AS row
         MERGE (c:__OntologyClass {iri: row.iri})
-        SET c.label = row.label, c.ontology_profile = row.ontology_profile
+        SET c.label = row.label, c.ontology_profile = row.ontology_profile,
+            c.description = row.description
         """,
         params={"classes": list(classes.values())},
     )
@@ -404,18 +407,20 @@ def save_ontology_catalog_in_neo4j(graph: Neo4jGraph, catalog_rows):
                           if row.get("parent_iri") and row["child_iri"] != row["parent_iri"]]},
     )
            
-def handle_backticks_nodes_relationship_id_type(graph_document_list:List[GraphDocument]):
-  def normalize_neo4j_type(value: str, *, uppercase: bool = False) -> str:
-    """Return a stable Neo4j-safe label or relationship type.
+def normalize_neo4j_type(value: str, *, uppercase: bool = False) -> str:
+  """Return a stable Neo4j-safe label or relationship type.
 
     Neo4j identifiers used as labels/relationship types should not contain
     punctuation such as hyphens.  Keep the existing spelling semantics while
     converting separators to underscores, e.g. ``HAS_SUB-UNIT`` becomes
     ``HAS_SUB_UNIT``.
     """
-    value = re.sub(r"[^0-9A-Za-z_]+", "_", value.strip())
-    value = re.sub(r"_+", "_", value).strip("_")
-    return value.upper() if uppercase else value
+  value = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", value.strip())
+  value = re.sub(r"[^0-9A-Za-z_]+", "_", value)
+  value = re.sub(r"_+", "_", value).strip("_")
+  return value.upper() if uppercase else value
+
+def handle_backticks_nodes_relationship_id_type(graph_document_list:List[GraphDocument]):
 
   for graph_document in graph_document_list:
     # Clean node id and types
@@ -538,6 +543,39 @@ class UniversalTokenUsageHandler(BaseCallbackHandler):
     def __init__(self):
         self.total_prompt_tokens = 0
         self.total_completion_tokens = 0
+        self.total_prompt_characters = 0
+
+    @staticmethod
+    def _content_characters(value):
+        if isinstance(value, str):
+            return len(value)
+        if isinstance(value, dict):
+            return len(str(value.get("text", value.get("content", ""))))
+        return len(str(value))
+
+    def on_llm_start(self, serialized, prompts, **kwargs):
+        for index, prompt in enumerate(prompts or []):
+            character_count = self._content_characters(prompt)
+            self.total_prompt_characters += character_count
+            logging.info(
+                "LLM input characters: kind=provider_prompt chars=%d request_index=%d",
+                character_count,
+                index,
+            )
+
+    def on_chat_model_start(self, serialized, messages, **kwargs):
+        for request_index, request_messages in enumerate(messages or []):
+            character_count = sum(
+                self._content_characters(getattr(message, "content", message))
+                for message in request_messages
+            )
+            self.total_prompt_characters += character_count
+            logging.info(
+                "LLM input characters: kind=provider_messages chars=%d request_index=%d message_count=%d",
+                character_count,
+                request_index,
+                len(request_messages),
+            )
 
     def on_llm_end(self, response, **kwargs):
         usage = response.llm_output.get("token_usage") if response.llm_output else None
@@ -559,8 +597,117 @@ class UniversalTokenUsageHandler(BaseCallbackHandler):
         return {
             "prompt_tokens": self.total_prompt_tokens,
             "completion_tokens": self.total_completion_tokens,
+            "prompt_characters": self.total_prompt_characters,
             "total_tokens": self.total_prompt_tokens + self.total_completion_tokens,
         }
+
+
+class AnthropicTokenUsageHandler(UniversalTokenUsageHandler):
+    """Count Anthropic input tokens with the official Token Counting API."""
+
+    def __init__(self, client, model):
+        super().__init__()
+        self.client = client
+        self.model = model
+        self._count_api_failed = False
+        self._request_index = 0
+
+    @staticmethod
+    def _message_content(message):
+        content = getattr(message, "content", message)
+        if isinstance(content, (str, list)):
+            return content
+        return str(content)
+
+    def count_diagnostic_text(self, label, text):
+        """Count an isolated prompt component for diagnostic logging only."""
+        if not text:
+            return 0
+        result = self.client.messages.count_tokens(
+            model=self.model,
+            messages=[{"role": "user", "content": str(text)}],
+        )
+        input_tokens = int(result.input_tokens)
+        logging.info(
+            "Anthropic Token Counting API diagnostic: component=%s input_tokens=%s",
+            label,
+            input_tokens,
+        )
+        return input_tokens
+
+    def on_chat_model_start(self, serialized, messages, **kwargs):
+        if self._count_api_failed:
+            return super().on_chat_model_start(serialized, messages, **kwargs)
+
+        try:
+            for request_messages in messages or []:
+                request_index = self._request_index
+                self._request_index += 1
+                api_messages = []
+                system = None
+                for message in request_messages:
+                    message_type = getattr(message, "type", "")
+                    content = self._message_content(message)
+                    if message_type == "system":
+                        system = content if system is None else f"{system}\n{content}"
+                    else:
+                        role = "assistant" if message_type == "ai" else "user"
+                        api_messages.append({"role": role, "content": content})
+
+                count_kwargs = {"model": self.model, "messages": api_messages}
+                if system:
+                    count_kwargs["system"] = system
+                result = self.client.messages.count_tokens(**count_kwargs)
+                input_tokens = int(result.input_tokens)
+                self.total_prompt_tokens += input_tokens
+                self.total_prompt_characters += sum(
+                    self._content_characters(self._message_content(message))
+                    for message in request_messages
+                )
+                logging.info(
+                    "Anthropic Token Counting API usage: request_index=%s model=%s "
+                    "input_tokens=%s cumulative_input_tokens=%s",
+                    request_index,
+                    self.model,
+                    input_tokens,
+                    self.total_prompt_tokens,
+                )
+        except Exception as error:
+            # Fall back to provider response metadata for the whole request if
+            # counting fails, avoiding a partial/double-counted total.
+            self._count_api_failed = True
+            self.total_prompt_tokens = 0
+            logging.warning("Anthropic Token Counting API failed; falling back to response usage: %s", error)
+
+    def on_llm_end(self, response, **kwargs):
+        usage = response.llm_output.get("token_usage") if response.llm_output else None
+        if usage:
+            if self._count_api_failed:
+                self.total_prompt_tokens += usage.get("prompt_tokens") or usage.get("input_tokens") or 0
+            output_tokens = usage.get("completion_tokens") or usage.get("output_tokens") or 0
+            self.total_completion_tokens += output_tokens
+            logging.info(
+                "Anthropic response usage: input_tokens=%s output_tokens=%s total_tokens=%s",
+                self.total_prompt_tokens,
+                self.total_completion_tokens,
+                self.total_prompt_tokens + self.total_completion_tokens,
+            )
+            return
+
+        for generations in response.generations:
+            for generation in generations:
+                if hasattr(generation, "message"):
+                    metadata = getattr(generation.message, "usage_metadata", {}) or {}
+                    if self._count_api_failed:
+                        self.total_prompt_tokens += metadata.get("input_tokens", 0)
+                    output_tokens = metadata.get("output_tokens", 0)
+                    self.total_completion_tokens += output_tokens
+                    logging.info(
+                        "Anthropic response usage: input_tokens=%s output_tokens=%s total_tokens=%s",
+                        self.total_prompt_tokens,
+                        self.total_completion_tokens,
+                        self.total_prompt_tokens + self.total_completion_tokens,
+                    )
 
 def track_token_usage(
     email: str,

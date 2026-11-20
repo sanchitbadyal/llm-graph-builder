@@ -37,6 +37,9 @@ Run the server:
 # To debug
  PYTHONPATH=. uvicorn score:app --reload 2>&1 | tee -a backend.log
 
+# Make frontend changes with doing extraction again
+   backend/venv/bin/python backend/scripts/backfill_ontology_catalog.py
+   
 ## Run project using docker
 ## prerequisite 
 Before proceeding, ensure the following software is installed on your machine

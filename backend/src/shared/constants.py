@@ -792,7 +792,7 @@ QUERY_TO_GET_CHUNKS = """
             WHERE d.fileName = $filename
             WITH d
             OPTIONAL MATCH (d)<-[:PART_OF|FIRST_CHUNK]-(c:Chunk)
-            RETURN c.id as id, c.text as text, c.position as position 
+            RETURN c.id as id, c.text as text, c.position as position, c.page_number as page_number
             """
             
 QUERY_TO_DELETE_EXISTING_ENTITIES = """

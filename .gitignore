@@ -184,3 +184,5 @@ graphify-out/cache/ast/v0.9.97-s29-g7154a062ba57/0bbeb6fd5ef299d926adc6f9e81e23c
 graphify-out/
 docs/backend/ontology_registry.adoc
 backend/src/Ontology/oldprofiles/order_2_cash
+backend/src/Ontology/ontologies/iof/test.yaml
+.gitignore
